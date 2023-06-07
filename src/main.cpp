@@ -1,5 +1,5 @@
-#include <base.hpp>
+#include <cppgui.hpp>
 
-int main() {
-  cout << "こんにちは！" << endl;
+void hello() {
+    cout << "こんにちはです！" << endl;
 }

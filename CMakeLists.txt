@@ -5,6 +5,16 @@ add_library(${PROJECT_NAME} SHARED
     src/main.cpp
 )
 
+set(INCLUDE_DIRS include)
+target_include_directories(cppgui PUBLIC ${INCLUDE_DIRS})
+
+# インストール設定
+install(TARGETS cppgui
+    LIBRARY DESTINATION /usr/local/lib # ライブラリファイルのインストール先
+    ARCHIVE DESTINATION /usr/local/lib # 静的ライブラリファイルのインストール先
+)
+install(DIRECTORY ${INCLUDE_DIRS} DESTINATION /usr/local) # ヘッダファイルのインストール先
+
 # GLFWのリンク
 # target_link_libraries(${PROJECT_NAME} PRIVATE GL glfw)
 
