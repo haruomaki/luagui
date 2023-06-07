@@ -6,11 +6,11 @@ void hello() {
 
 static set<function<void(int, int)> *> global_key_callbacks;
 
-Element::Element() {
-    key_callback_ = bind(&Element::keyCallback, this, placeholders::_1, placeholders::_2);
+KeyCallback::KeyCallback() {
+    key_callback_ = bind(&KeyCallback::keyCallback, this, placeholders::_1, placeholders::_2);
     global_key_callbacks.insert(&key_callback_);
 }
-Element::~Element() {
+KeyCallback::~KeyCallback() {
     global_key_callbacks.erase(&key_callback_);
 }
 
@@ -91,8 +91,13 @@ void Window::mainloop(std::function<void()> f) {
     // 描画のループ
     while (glfwWindowShouldClose(gwin_) == 0) {
         // 更新処理
+        tick_++;
         for (auto &&poly : polys_) {
             poly->update();
+        }
+
+        if (tick_ % 60 == 0) {
+            cout << "み" << global_key_callbacks << endl;
         }
 
         // 画面を塗りつぶす

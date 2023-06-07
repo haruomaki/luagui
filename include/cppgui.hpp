@@ -1,10 +1,5 @@
 #include <base.hpp>
 
-void hello();
-int x;
-
-#include <base.hpp>
-
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -56,16 +51,13 @@ class Polygon {
     }
 };
 
-class Element {
-  public:
-    Point<float> pos_;
-    set<Element> childs_;
+class KeyCallback {
     function<void(int, int)> key_callback_;
 
-    Element();
-    ~Element();
-
-    virtual void keyCallback(int /*unused*/, int /*unused*/) {}
+  public:
+    virtual void keyCallback(int key, int action) = 0;
+    KeyCallback();
+    ~KeyCallback();
 };
 
 class Window {
@@ -77,6 +69,8 @@ class Window {
     set<function<void(int, int)> *> key_callbacks_;
 
   public:
+    int tick_ = 0;
+
     Window(int width, int height);
     ~Window();
     void mainloop(std::function<void()> f);
