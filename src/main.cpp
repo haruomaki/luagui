@@ -4,16 +4,6 @@ void hello() {
     cout << "こんにちはです！" << endl;
 }
 
-static set<function<void(int, int)> *> global_key_callbacks;
-
-KeyCallback::KeyCallback() {
-    key_callback_ = bind(&KeyCallback::keyCallback, this, placeholders::_1, placeholders::_2);
-    global_key_callbacks.insert(&key_callback_);
-}
-KeyCallback::~KeyCallback() {
-    global_key_callbacks.erase(&key_callback_);
-}
-
 Window::Window(int width, int height) {
     // ライブラリglfw の初期化
     if (glfwInit() == 0) {
@@ -51,12 +41,7 @@ Window::Window(int width, int height) {
         window->setCameraCorner({0, 0}, 1);
     });
 
-    glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int scancode, int action, int mods) {
-        // Window *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
-        for (auto key_callback : global_key_callbacks) {
-            (*key_callback)(key, action);
-        }
-    });
+    glfwSetKeyCallback(gwin_, masterKeyCallback);
 
     // camera_ = {0, (double)width, 0, (double)height};
     setCameraCorner({0, 0}, zoom_);
@@ -97,7 +82,7 @@ void Window::mainloop(std::function<void()> f) {
         }
 
         if (tick_ % 60 == 0) {
-            cout << "み" << global_key_callbacks << endl;
+            cout << "み" << endl;
         }
 
         // 画面を塗りつぶす

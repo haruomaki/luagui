@@ -1,9 +1,7 @@
-#include <base.hpp>
+#pragma once
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include <set>
+#include <KeyCallback.hpp>
+#include <guibase.hpp>
 
 class Window;
 
@@ -49,15 +47,6 @@ class Polygon {
         glBindBuffer(GL_ARRAY_BUFFER, vbo_);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * vertices_.size() * 2, vertices_.data());
     }
-};
-
-class KeyCallback {
-    function<void(int, int)> key_callback_;
-
-  public:
-    virtual void keyCallback(int key, int action) = 0;
-    KeyCallback();
-    ~KeyCallback();
 };
 
 class Window {
