@@ -13,10 +13,13 @@ GLuint createShader() {
     string vertexShader = R"#(
     attribute vec3 position;
     attribute vec2 uv;
+    attribute vec4 color;
     varying vec2 vuv;
+    varying vec4 vColor;
     void main(void){
         gl_Position = vec4(position, 1.0);
         vuv = uv;
+        vColor = color;
     }
     )#";
     const char *vs = vertexShader.c_str();
@@ -31,8 +34,14 @@ GLuint createShader() {
     string fragmentShader = R"#(
     varying vec2 vuv;
     uniform sampler2D texture;
+    uniform bool is_tex;
+    varying vec4 vColor;
     void main(void){
-        gl_FragColor = texture2D(texture, vuv);
+        if (is_tex) {
+            gl_FragColor = texture2D(texture, vuv);
+        } else {
+            gl_FragColor = vColor;
+        }
     }
     )#";
     const char *fs = fragmentShader.c_str();
