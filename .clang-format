@@ -1,0 +1,15 @@
+# 参考：https://blog.takuchalle.dev/post/2018/04/26/setup_clang_format/
+
+BasedOnStyle: LLVM # ここを上記の別のスタイルにすることで変えられる
+
+# ここから自分の好みのオプションを指定する
+IndentWidth:     4
+# Language:        Cpp
+# Standard:        Cpp11
+# TabWidth:        4
+# UseTab:          Never
+ColumnLimit:     0
+AllowAllConstructorInitializersOnNextLine: false
+BreakConstructorInitializers: BeforeComma
+DerivePointerAlignment: false
+IndentCaseLabels: false
