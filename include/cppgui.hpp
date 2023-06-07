@@ -3,6 +3,8 @@
 #include <KeyCallback.hpp>
 #include <guibase.hpp>
 
+#include <fstream>
+
 class Window;
 
 template <typename T>
@@ -71,3 +73,6 @@ class Window {
 
     friend class Polygon;
 };
+
+GLuint createShader();
+GLuint loadTexture(string filename);

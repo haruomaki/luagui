@@ -4,6 +4,85 @@ void hello() {
     cout << "こんにちはです！" << endl;
 }
 
+// シェーダ https://gist.github.com/tasonco/73a7291769278320c76928b1bd963cba
+GLuint createShader() {
+    // バーテックスシェーダのコンパイル
+    cout << "crateShader内" << endl;
+    GLuint vShaderId = glCreateShader(GL_VERTEX_SHADER);
+    cout << "glCreateShader完了" << endl;
+    string vertexShader = R"#(
+    attribute vec3 position;
+    attribute vec2 uv;
+    varying vec2 vuv;
+    void main(void){
+        gl_Position = vec4(position, 1.0);
+        vuv = uv;
+    }
+    )#";
+    const char *vs = vertexShader.c_str();
+    cout << "いくぜ！" << endl;
+    glShaderSource(vShaderId, 1, &vs, NULL);
+    cout << "source完了" << endl;
+    glCompileShader(vShaderId);
+    cout << "コンパイル完了" << endl;
+
+    // フラグメントシェーダのコンパイル
+    GLuint fShaderId = glCreateShader(GL_FRAGMENT_SHADER);
+    string fragmentShader = R"#(
+    varying vec2 vuv;
+    uniform sampler2D texture;
+    void main(void){
+        gl_FragColor = texture2D(texture, vuv);
+    }
+    )#";
+    const char *fs = fragmentShader.c_str();
+    glShaderSource(fShaderId, 1, &fs, NULL);
+    glCompileShader(fShaderId);
+
+    // プログラムオブジェクトの作成
+    GLuint programId = glCreateProgram();
+    glAttachShader(programId, vShaderId);
+    glAttachShader(programId, fShaderId);
+
+    // リンク
+    glLinkProgram(programId);
+
+    glUseProgram(programId);
+
+    return programId;
+}
+
+// 画像 https://nn-hokuson.hatenablog.com/entry/2017/02/24/171230
+GLuint loadTexture(string filename) {
+    // テクスチャIDの生成
+    GLuint tex_id;
+    glGenTextures(1, &tex_id);
+
+    // ファイルの読み込み
+    std::ifstream fstr(filename, std::ios::binary);
+    const size_t fileSize = static_cast<size_t>(fstr.seekg(0, fstr.end).tellg());
+    fstr.seekg(0, fstr.beg);
+    char *textureBuffer = new char[fileSize];
+    fstr.read(textureBuffer, fileSize);
+
+    // テクスチャをGPUに転送
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glBindTexture(GL_TEXTURE_2D, tex_id);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, textureBuffer);
+
+    // テクスチャの設定
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // テクスチャのアンバインド
+    delete[] textureBuffer;
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return tex_id;
+}
+
 Window::Window(int width, int height) {
     // ライブラリglfw の初期化
     if (glfwInit() == 0) {
@@ -22,6 +101,7 @@ Window::Window(int width, int height) {
 
     // 作成したウィンドウを，OpenGLの描画関数のターゲットにする
     glfwMakeContextCurrent(gwin_);
+    glfwSwapInterval(1);
 
     // GLEWの初期化
     if (glewInit() != GLEW_OK) {
@@ -85,10 +165,12 @@ void Window::mainloop(std::function<void()> f) {
             cout << "み" << endl;
         }
 
-        // 画面を塗りつぶす
-        glClear(GL_COLOR_BUFFER_BIT);
+        // 画面の初期化
+        glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearDepth(1.0);
 
-        // // カメラの設定
+        // カメラの設定
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(camera_.left_, camera_.right_, camera_.bottom_, camera_.top_, -1.0, 1.0);
