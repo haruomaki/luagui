@@ -216,9 +216,7 @@ void Window::mainloop(std::function<void()> f) {
     while (glfwWindowShouldClose(gwin_) == 0) {
         // 更新処理
         tick_++;
-        // for (auto &&poly : polys_) {
-        //     poly->update();
-        // }
+        masterUpdate();
 
         if (tick_ % 60 == 0) {
             cout << "み" << polys_ << endl;

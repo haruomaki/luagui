@@ -1,6 +1,7 @@
 #pragma once
 
 #include <KeyCallback.hpp>
+#include <Update.hpp>
 #include <guibase.hpp>
 
 #include <fstream>
@@ -14,11 +15,13 @@ struct Rect {
 };
 
 class Polygon {
-    vector<Point<GLfloat>> vertices_;
     // GLuint vbo_;
     Window &window_;
     set<Polygon *> &polys_;
     GLuint tex_id_ = 0;
+
+  protected:
+    vector<Point<GLfloat>> vertices_;
 
   public:
     vector<RGBA> colors_;
@@ -40,17 +43,6 @@ class Polygon {
     }
 
     void draw() const;
-
-    // void update() {
-    //     // for (auto &vert : vertices_) {
-    //     //     const float velocity = 0.3f;
-    //     //     vert.y_ += velocity;
-    //     // }
-
-    //     // // VRAM上のVBOを更新
-    //     // glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    //     // glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * vertices_.size() * 2, vertices_.data());
-    // }
 };
 
 class Window {

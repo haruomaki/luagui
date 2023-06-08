@@ -11,7 +11,7 @@ KeyCallback::~KeyCallback() {
 }
 
 void masterKeyCallback(GLFWwindow *gwin, int key, int scancode, int action, int mods) {
-    for (auto key_callback : global_key_callbacks) {
+    for (auto *key_callback : global_key_callbacks) {
         (*key_callback)(key, action);
     }
 }

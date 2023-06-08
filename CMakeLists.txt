@@ -4,6 +4,7 @@ project(cppgui CXX)
 add_library(${PROJECT_NAME} SHARED
     src/main.cpp
     src/KeyCallback.cpp
+    src/Update.cpp
 )
 
 set(INCLUDE_DIRS include)
