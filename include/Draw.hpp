@@ -1,3 +1,5 @@
+#pragma once
+
 #include <guibase.hpp>
 
 void masterDraw();
