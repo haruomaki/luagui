@@ -14,41 +14,37 @@ struct Rect {
 
 class Polygon {
     vector<Point<GLfloat>> vertices_;
-    GLuint vbo_;
+    // GLuint vbo_;
     Window &window_;
     set<Polygon *> &polys_;
 
   public:
-    RGB color_;
-    function<void(int, int)> key_callback_ = nullptr;
+    vector<RGBA> colors_;
+    // function<void(int, int)> key_callback_ = [](int, int) {
+    //     cout << "💙💙💙💙💙" << endl;
+    // };
 
     Polygon(Window &window, vector<Point<float>> points, GLenum usage = GL_DYNAMIC_DRAW);
+    // Polygon(Window &window) {}
+    // Polygon(Window &window, vector<Point<float>> ps) {}
 
     ~Polygon() {
         polys_.erase(this);
         // key_callbacks_.erase(this->keyCallback);
     }
 
-    void draw() const {
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-        glColor3ub(color_.r_, color_.b_, color_.g_);
-        glDrawArrays(GL_POLYGON, 0, vertices_.size());
+    void draw() const;
 
-        glDisableVertexAttribArray(0); // TODO: 不要？
-    }
+    // void update() {
+    //     // for (auto &vert : vertices_) {
+    //     //     const float velocity = 0.3f;
+    //     //     vert.y_ += velocity;
+    //     // }
 
-    void update() {
-        for (auto &vert : vertices_) {
-            const float velocity = 0.3f;
-            vert.y_ += velocity;
-        }
-
-        // VRAM上のVBOを更新
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * vertices_.size() * 2, vertices_.data());
-    }
+    //     // // VRAM上のVBOを更新
+    //     // glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+    //     // glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * vertices_.size() * 2, vertices_.data());
+    // }
 };
 
 class Window {
@@ -61,6 +57,7 @@ class Window {
 
   public:
     int tick_ = 0;
+    GLuint program_id_;
 
     Window(int width, int height);
     ~Window();

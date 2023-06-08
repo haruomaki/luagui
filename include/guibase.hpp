@@ -70,6 +70,10 @@ struct RGB {
     unsigned char r_, g_, b_;
 };
 
+struct RGBA {
+    float r_, g_, b_, a_;
+};
+
 } // namespace base
 
 using namespace base;

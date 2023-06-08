@@ -92,6 +92,27 @@ GLuint loadTexture(string filename) {
     return tex_id;
 }
 
+void Polygon::draw() const {
+    // 何番目のattribute変数か
+    int attLocation = glGetAttribLocation(window_.program_id_, "position");
+    int colorLocation = glGetAttribLocation(window_.program_id_, "color");
+    int is_texLocation = glGetAttribLocation(window_.program_id_, "is_tex");
+
+    // attribute属性を有効にする
+    glEnableVertexAttribArray(attLocation);
+    glEnableVertexAttribArray(colorLocation);
+
+    // attribute属性を登録
+    glVertexAttribPointer(attLocation, 2, GL_FLOAT, false, 0, vertices_.data());
+    glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
+
+    // モデルの描画
+    glUniform1i(is_texLocation, int(false));
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
+
+    // glDisableVertexAttribArray(0); // TODO: 不要？
+}
+
 Window::Window(int width, int height) {
     // ライブラリglfw の初期化
     if (glfwInit() == 0) {
@@ -134,6 +155,8 @@ Window::Window(int width, int height) {
 
     // camera_ = {0, (double)width, 0, (double)height};
     setCameraCorner({0, 0}, zoom_);
+
+    program_id_ = createShader();
 }
 
 Window::~Window() { glfwTerminate(); }
@@ -166,9 +189,9 @@ void Window::mainloop(std::function<void()> f) {
     while (glfwWindowShouldClose(gwin_) == 0) {
         // 更新処理
         tick_++;
-        for (auto &&poly : polys_) {
-            poly->update();
-        }
+        // for (auto &&poly : polys_) {
+        //     poly->update();
+        // }
 
         if (tick_ % 60 == 0) {
             cout << "み" << endl;
@@ -225,11 +248,12 @@ Polygon::Polygon(Window &window, vector<Point<float>> points, GLenum usage)
     : vertices_(points)
     , window_(window)
     , polys_(window.polys_) {
+    cout << "こんです" << endl;
     // ポリゴンリストに追加
     polys_.insert(this);
 
     // 頂点バッファオブジェクト（VBO）の生成とデータの転送
-    glGenBuffers(1, &vbo_);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices_.size() * 2, vertices_.data(), usage); // WARNING: vertices_のアライメントによっては動作しない
+    // glGenBuffers(1, &vbo_);
+    // glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices_.size() * 2, vertices_.data(), usage); // WARNING: vertices_のアライメントによっては動作しない
 }
