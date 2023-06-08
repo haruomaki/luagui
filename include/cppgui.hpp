@@ -4,6 +4,7 @@
 #include <guibase.hpp>
 
 #include <fstream>
+#include <optional>
 
 class Window;
 
@@ -17,6 +18,7 @@ class Polygon {
     // GLuint vbo_;
     Window &window_;
     set<Polygon *> &polys_;
+    GLuint tex_id_ = 0;
 
   public:
     vector<RGBA> colors_;
@@ -31,6 +33,10 @@ class Polygon {
     ~Polygon() {
         polys_.erase(this);
         // key_callbacks_.erase(this->keyCallback);
+    }
+
+    void setTexture(GLuint tex_id) {
+        tex_id_ = tex_id;
     }
 
     void draw() const;

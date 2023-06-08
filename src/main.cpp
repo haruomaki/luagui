@@ -94,23 +94,50 @@ GLuint loadTexture(string filename) {
 
 void Polygon::draw() const {
     // 何番目のattribute変数か
-    int attLocation = glGetAttribLocation(window_.program_id_, "position");
+    int positionLocation = glGetAttribLocation(window_.program_id_, "position");
+    int uvLocation = glGetAttribLocation(window_.program_id_, "uv");
     int colorLocation = glGetAttribLocation(window_.program_id_, "color");
-    int is_texLocation = glGetAttribLocation(window_.program_id_, "is_tex");
 
-    // attribute属性を有効にする
-    glEnableVertexAttribArray(attLocation);
-    glEnableVertexAttribArray(colorLocation);
+    int textureLocation = glGetUniformLocation(window_.program_id_, "texture");
+    int is_texLocation = glGetUniformLocation(window_.program_id_, "is_tex");
 
-    // attribute属性を登録
-    glVertexAttribPointer(attLocation, 2, GL_FLOAT, false, 0, vertices_.data());
-    glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
+    // テクスチャを持つ場合
+    if (tex_id_ != 0) {
+        // attribute属性を有効にする
+        glEnableVertexAttribArray(positionLocation);
+        glEnableVertexAttribArray(uvLocation);
+        glEnableVertexAttribArray(colorLocation);
 
-    // モデルの描画
-    glUniform1i(is_texLocation, int(false));
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
+        // uniform属性を設定する
+        glUniform1i(textureLocation, 0);
+        glUniform1i(is_texLocation, int(true));
 
-    // glDisableVertexAttribArray(0); // TODO: 不要？
+        const GLfloat vertex_uv[] = {1, 0, 0, 0, 0, 1, 1, 1};
+
+        // attribute属性を登録
+        glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, vertices_.data());
+        glVertexAttribPointer(uvLocation, 2, GL_FLOAT, false, 0, vertex_uv);
+        glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
+
+        // モデルの描画
+        glBindTexture(GL_TEXTURE_2D, tex_id_);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, vertices_.size());
+        glBindTexture(GL_TEXTURE_2D, 0);
+    } else {
+        // attribute属性を有効にする
+        glEnableVertexAttribArray(positionLocation);
+        glEnableVertexAttribArray(colorLocation);
+
+        // attribute属性を登録
+        glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, vertices_.data());
+        glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
+
+        // モデルの描画
+        glUniform1i(is_texLocation, int(false));
+        glDrawArrays(GL_TRIANGLE_FAN, 0, vertices_.size());
+
+        // // glDisableVertexAttribArray(0); // TODO: 不要？
+    }
 }
 
 Window::Window(int width, int height) {
@@ -194,7 +221,7 @@ void Window::mainloop(std::function<void()> f) {
         // }
 
         if (tick_ % 60 == 0) {
-            cout << "み" << endl;
+            cout << "み" << polys_ << endl;
         }
 
         // 画面の初期化
