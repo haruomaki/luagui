@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <array>
 #include <functional> // 関数型 std::function
 #include <iostream>
 #include <set>
@@ -51,6 +52,10 @@ string to_str(const T &val) {
 template <typename T>
 struct Point {
     T x_, y_;
+
+    // Point(T x, T y)
+    //     : x_(x)
+    //     , y_(y) {}
 
     Point operator+(Point p) const {
         return Point{x_ + p.x_, y_ + p.y_};

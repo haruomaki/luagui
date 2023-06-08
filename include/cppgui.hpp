@@ -2,7 +2,6 @@
 
 #include <Draw.hpp>
 #include <KeyCallback.hpp>
-#include <Polygon.hpp>
 #include <Update.hpp>
 #include <guibase.hpp>
 
@@ -36,3 +35,5 @@ class Window {
 
 GLuint createShader();
 GLuint loadTexture(string filename);
+
+#include <Polygon.hpp>
