@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Draw.hpp>
 #include <KeyCallback.hpp>
 #include <Update.hpp>
 #include <guibase.hpp>
@@ -14,10 +15,9 @@ struct Rect {
     T left_, right_, bottom_, top_;
 };
 
-class Polygon {
+class Polygon : Draw {
     // GLuint vbo_;
     Window &window_;
-    set<Polygon *> &polys_;
     GLuint tex_id_ = 0;
 
   protected:
@@ -33,16 +33,11 @@ class Polygon {
     // Polygon(Window &window) {}
     // Polygon(Window &window, vector<Point<float>> ps) {}
 
-    ~Polygon() {
-        polys_.erase(this);
-        // key_callbacks_.erase(this->keyCallback);
-    }
-
     void setTexture(GLuint tex_id) {
         tex_id_ = tex_id;
     }
 
-    void draw() const;
+    void draw() const override;
 };
 
 class Window {
@@ -50,8 +45,6 @@ class Window {
     Rect<double> camera_;
     float zoom_ = 1;
     bool looping_ = false;
-    set<Polygon *> polys_;
-    set<function<void(int, int)> *> key_callbacks_;
 
   public:
     int tick_ = 0;
@@ -65,8 +58,6 @@ class Window {
     pair<float, float> getWindowContentScale();
     void setCamera(Point<float> pos, float zoom);
     void setCameraCorner(Point<float> pos, float zoom);
-
-    friend class Polygon;
 };
 
 GLuint createShader();

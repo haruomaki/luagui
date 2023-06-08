@@ -219,7 +219,7 @@ void Window::mainloop(std::function<void()> f) {
         masterUpdate();
 
         if (tick_ % 60 == 0) {
-            cout << "み" << polys_ << endl;
+            cout << "み" << endl;
         }
 
         // 画面の初期化
@@ -237,9 +237,7 @@ void Window::mainloop(std::function<void()> f) {
         glLoadIdentity();
 
         // 登録された図形の描画
-        for (auto &&poly : polys_) {
-            poly->draw();
-        }
+        masterDraw();
 
         // ユーザの描画関数
         f();
@@ -271,12 +269,8 @@ void Window::setCameraCorner(Point<float> pos, float zoom) {
 // Windowの要素にアクセスするためここで定義
 Polygon::Polygon(Window &window, vector<Point<float>> points, GLenum usage)
     : vertices_(points)
-    , window_(window)
-    , polys_(window.polys_) {
+    , window_(window) {
     cout << "こんです" << endl;
-    // ポリゴンリストに追加
-    polys_.insert(this);
-
     // 頂点バッファオブジェクト（VBO）の生成とデータの転送
     // glGenBuffers(1, &vbo_);
     // glBindBuffer(GL_ARRAY_BUFFER, vbo_);
