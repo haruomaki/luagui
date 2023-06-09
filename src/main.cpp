@@ -91,6 +91,7 @@ GLuint loadTexture(string filename) {
 
     return tex_id;
 }
+
 Window::Window(int width, int height) {
     // ライブラリglfw の初期化
     if (glfwInit() == 0) {
@@ -165,6 +166,9 @@ void Window::mainloop(std::function<void()> f) {
 
     // 描画のループ
     while (glfwWindowShouldClose(gwin_) == 0) {
+        // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
+        // world_object_root_.refreshAbsolutePosition();
+
         // 更新処理
         tick_++;
         masterUpdate();

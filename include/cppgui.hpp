@@ -8,9 +8,70 @@
 #include <fstream>
 #include <optional>
 
+class WorldObject;
+
 template <typename T>
 struct Rect {
     T left_, right_, bottom_, top_;
+};
+
+class WorldObject {
+    Point<float> pos_;
+    Point<float> abspos_;
+    WorldObject *parent_;
+    set<WorldObject *> childs_;
+
+    void refreshAbsolutePosition() {
+        if (parent_ != nullptr) {
+            abspos_ = parent_->abspos_ + pos_;
+        }
+        for (auto *child : childs_) {
+            child->refreshAbsolutePosition();
+        }
+    }
+
+  public:
+    WorldObject()
+        : pos_{0, 0}
+        , abspos_({0, 0})
+        , parent_(nullptr) {}
+
+    ~WorldObject() {
+        if (parent_ != nullptr) {
+            parent_->childs_.erase(this);
+        }
+        for (auto *child : childs_) {
+            child->parent_ = nullptr;
+        }
+    }
+
+    void append(WorldObject &child) {
+        child.parent_ = this;
+        this->childs_.insert(&child);
+        this->refreshAbsolutePosition();
+    }
+
+    void deleteRecursively() {
+        for (auto *child : childs_) {
+            child->deleteRecursively();
+        }
+        delete this;
+    }
+
+    Point<float> getPosition() const {
+        return pos_;
+    }
+
+    Point<float> getAbsolutePosition() const {
+        return abspos_;
+    }
+
+    void setPosition(Point<float> pos) {
+        pos_ = pos;
+        this->refreshAbsolutePosition();
+    }
+
+    friend class Window;
 };
 
 class Window {
@@ -20,6 +81,7 @@ class Window {
     bool looping_ = false;
 
   public:
+    WorldObject world_object_root_;
     int tick_ = 0;
     GLuint program_id_;
 
