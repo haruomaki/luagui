@@ -3,7 +3,7 @@
 #include <cppgui.hpp>
 
 template <size_t N>
-class Polygon : Draw {
+class CorePolygon : Draw {
     // GLuint vbo_;
     Window &window_;
     GLuint tex_id_ = 0;
@@ -12,7 +12,7 @@ class Polygon : Draw {
   public:
     array<RGBA, N> colors_;
 
-    Polygon(Window &window, array<Point<float>, N> points, GLuint tex_id = 0, GLenum usage = GL_DYNAMIC_DRAW)
+    CorePolygon(Window &window, array<Point<float>, N> points, GLuint tex_id = 0, GLenum usage = GL_DYNAMIC_DRAW)
         : window_(window)
         , vertices_(points)
         , tex_id_(tex_id) {

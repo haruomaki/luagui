@@ -36,4 +36,4 @@ class Window {
 GLuint createShader();
 GLuint loadTexture(string filename);
 
-#include <Polygon.hpp>
+#include <CorePolygon.hpp>
