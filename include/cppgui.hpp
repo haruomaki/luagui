@@ -125,6 +125,10 @@ class WorldObject {
         this->refreshAbsolutePosition();
     }
 
+    WorldObject *getParent() {
+        return parent_;
+    }
+
     friend class Window;
 };
 
