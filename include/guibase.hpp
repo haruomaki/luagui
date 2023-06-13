@@ -22,10 +22,10 @@ ostream &operator<<(ostream &os, const pair<T1, T2> &input) {
 
 template <typename T>
 ostream &operator<<(ostream &os, const vector<T> &input) {
+    os << "[";
     auto it = input.cbegin();
-    os << "[" << *it;
-    for (it++; it != input.cend(); it++) {
-        os << ", " << *it;
+    while (it != input.cend()) {
+        os << *it++ << (it == input.cend() ? "" : ", ");
     }
     os << "]";
     return os;
@@ -33,10 +33,10 @@ ostream &operator<<(ostream &os, const vector<T> &input) {
 
 template <typename T>
 ostream &operator<<(ostream &os, const set<T> &input) {
+    os << "{";
     auto it = input.cbegin();
-    os << "{" << *it;
-    for (it++; it != input.cend(); it++) {
-        os << ", " << *it;
+    while (it != input.cend()) {
+        os << *it++ << (it == input.cend() ? "" : ", ");
     }
     os << "}";
     return os;
@@ -48,6 +48,62 @@ string to_str(const T &val) {
     ss << val;
     return ss.str();
 }
+
+static std::string strip(const std::string &str, const std::string &chars = " \t\r\n") {
+    std::string result = str;
+    // 文字列の先頭から指定された文字を削除
+    result.erase(0, result.find_first_not_of(chars));
+    // 文字列の末尾から指定された文字を削除
+    result.erase(result.find_last_not_of(chars) + 1);
+    return result;
+}
+
+static std::vector<std::string> split(const std::string &str, const std::string &delimiter = ",", const std::string &strip_chars = " \t\r\n") {
+    std::vector<std::string> list = {};
+    size_t head = 0, tail;
+    do {
+        tail = str.find(delimiter, head);
+        // cout << head << "~" << tail << endl;
+        // cout << "progress: " << list << " + " << str.substr(head, tail - head) << endl;
+        auto sub = str.substr(head, tail - head);
+        list.push_back(strip(sub, strip_chars));
+        head = tail + delimiter.length();
+    } while (tail != std::string::npos);
+    return list;
+}
+
+// 再帰の終端。引数が0個の場合を担当。改行を出力。
+static void debugImpl(bool brace) {}
+
+// 可変長引数。引数が1つ以上存在する場合を担当。
+// 最初の引数をHead、残りをTailとして切り離すことを再帰的に行う。
+template <class Head, class... Tail>
+void debugImpl(bool brace, Head &&head, Tail &&...tail) {
+    cerr << head;
+    if (sizeof...(Tail) == 0) {
+        cerr << (brace ? "]" : "");
+    } else {
+        cerr << ", ";
+    }
+    debugImpl(brace, std::move(tail)...);
+}
+
+template <class... T>
+void debugPre(const char *file, int line, const char *argnames, T &&...args) {
+    cerr << "🐝(" << file << ":" << line << ")";
+    // argsの要素数 0 or 1 or それ以上
+    constexpr size_t n = sizeof...(args);
+    if (n >= 2) {
+        cout << " [" << argnames << "] = [";
+        debugImpl(true, args...);
+    } else if (n == 1) {
+        cerr << " " << argnames << " = ";
+        debugImpl(false, args...);
+    }
+    cerr << endl;
+}
+
+#define debug(...) debugPre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__))
 
 template <typename T>
 struct Point {

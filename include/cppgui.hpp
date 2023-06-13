@@ -8,8 +8,6 @@
 #include <fstream>
 #include <optional>
 
-class WorldObject;
-
 template <typename T>
 struct Rect {
     T left_, right_, bottom_, top_;
@@ -19,13 +17,13 @@ class WorldObject {
     Point<float> pos_;
     Point<float> abspos_;
     WorldObject *parent_;
-    set<WorldObject *> childs_;
+    set<WorldObject *> children_;
 
     void refreshAbsolutePosition() {
         if (parent_ != nullptr) {
             abspos_ = parent_->abspos_ + pos_;
         }
-        for (auto *child : childs_) {
+        for (auto *child : children_) {
             child->refreshAbsolutePosition();
         }
     }
@@ -34,28 +32,84 @@ class WorldObject {
     WorldObject()
         : pos_{0, 0}
         , abspos_({0, 0})
-        , parent_(nullptr) {}
+        , parent_(nullptr) {
+        cout << "コンストラクタ " << this << endl;
+    }
 
     ~WorldObject() {
+        cout << "フリー！ " << this << endl;
         if (parent_ != nullptr) {
-            parent_->childs_.erase(this);
+            parent_->children_.erase(this);
         }
-        for (auto *child : childs_) {
+        for (auto *child : children_) {
             child->parent_ = nullptr;
         }
     }
 
-    void append(WorldObject &child) {
-        child.parent_ = this;
-        this->childs_.insert(&child);
+    WorldObject(const WorldObject &) = delete;
+    //     : pos_(wo.pos_)
+    //     , abspos_(wo.abspos_) {
+    //     cout << "コピーコンストラクタ " << this << endl;
+
+    //     if (wo.parent_ != nullptr) {
+    //         wo.parent_->append(this);
+    //     }
+    //     for (auto *child : children_) {
+    //         child->parent_ = nullptr;
+    //     }
+    // }
+
+    WorldObject &operator=(WorldObject &&other) {
+        cout << "ムーブ代入演算子です " << &other << " -> " << this << endl;
+        pos_ = other.pos_;
+        abspos_ = other.abspos_;
+        parent_ = other.parent_;
+        children_ = other.children_;
+
+        // 親の子情報を更新
+        if (parent_ != nullptr) {
+            parent_->children_.erase(&other);
+            parent_->children_.insert(this);
+        }
+
+        // 子たちの親情報を更新
+        for (auto *child : children_) {
+            child->parent_ = this;
+        }
+
+        debug();
+        debug(this);
+        debug(&other, other.children_);
+
+        return *this;
+    }
+
+    // WorldObject(WorldObject &&other) = default;
+    WorldObject(WorldObject &&other) noexcept {
+        cout << "ムーブコンストラクタです " << this << endl;
+        *this = std::move(other);
+    }
+
+    void append(WorldObject *child) {
+        child->parent_ = this;
+        this->children_.insert(child);
+        cout << "Append❢ " << this->children_ << endl;
         this->refreshAbsolutePosition();
     }
 
     void deleteRecursively() {
-        for (auto *child : childs_) {
+        for (auto *child : children_) {
             child->deleteRecursively();
         }
         delete this;
+    }
+
+    void showAbsolutePositionRecursively(int depth) const {
+        // cout << "showです。" << endl;
+        cout << std::string(depth, ' ') << this->abspos_ << endl;
+        for (auto *child : children_) {
+            child->showAbsolutePositionRecursively(depth + 1);
+        }
     }
 
     Point<float> getPosition() const {

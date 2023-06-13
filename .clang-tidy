@@ -27,3 +27,4 @@ CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
     value:           CamelCase
   - key:             readability-identifier-naming.VariableCase
     value:           lower_case
+  readability-identifier-length.IgnoredVariableNames: ["it"]
