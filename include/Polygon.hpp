@@ -7,15 +7,20 @@ class Polygon : Draw {
     Window &window_;
     GLuint tex_id_ = 0;
     vector<Point<GLfloat>> vertices_;
+    vector<RGBA> colors_ = {};
+    const size_t n_;
 
   public:
-    vector<RGBA> colors_;
-
-    Polygon(Window &window, vector<Point<float>> points, GLuint tex_id = 0, GLenum usage = GL_DYNAMIC_DRAW)
+    Polygon(Window &window, vector<Point<float>> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_DYNAMIC_DRAW)
         : window_(window)
         , tex_id_(tex_id)
-        , vertices_(points) {
-        cout << "こんです" << endl;
+        , vertices_(coords)
+        , n_(coords.size()) {
+        for (size_t i = 0; i < n_; i++) {
+            RGBA color = (i < colors.size() ? colors[i] : RGBA{0.8, 0.8, 0.8, 1});
+            colors_.push_back(color);
+        }
+
         // 頂点バッファオブジェクト（VBO）の生成とデータの転送
         // glGenBuffers(1, &vbo_);
         // glBindBuffer(GL_ARRAY_BUFFER, vbo_);
