@@ -12,7 +12,6 @@ class Polygon : Draw {
     Window &window_;
     GLuint tex_id_ = 0;
     vector<InterleavedVertexInfo> vers_ = {};
-    vector<RGBA> colors_ = {};
     const size_t n_;
 
   public:
@@ -24,7 +23,6 @@ class Polygon : Draw {
             Point<float> coord = coords[i];
             RGBA color = (i < colors.size() ? colors[i] : RGBA{0.8, 0.8, 0.8, 1});
             vers_.push_back({coord, color});
-            colors_.push_back(color);
         }
 
         // 頂点バッファオブジェクト（VBO）の生成とデータの転送
@@ -45,26 +43,6 @@ class Polygon : Draw {
 
         // テクスチャを持つ場合
         if (tex_id_ != 0) {
-            // attribute属性を有効にする
-            glEnableVertexAttribArray(positionLocation);
-            glEnableVertexAttribArray(uvLocation);
-            glEnableVertexAttribArray(colorLocation);
-
-            // uniform属性を設定する
-            glUniform1i(textureLocation, 0);
-            glUniform1i(is_texLocation, int(true));
-
-            const GLfloat vertex_uv[] = {1, 0, 0, 0, 0, 1, 1, 1};
-
-            // attribute属性を登録
-            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, vers_.data());
-            glVertexAttribPointer(uvLocation, 2, GL_FLOAT, false, 0, vertex_uv);
-            glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
-
-            // モデルの描画
-            glBindTexture(GL_TEXTURE_2D, tex_id_);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
-            glBindTexture(GL_TEXTURE_2D, 0);
         } else {
             // attribute属性を有効にする
             glEnableVertexAttribArray(positionLocation);
@@ -73,8 +51,8 @@ class Polygon : Draw {
             // attribute属性を登録
             glBindBuffer(GL_ARRAY_BUFFER, vbo_);
             glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, sizeof(InterleavedVertexInfo), nullptr);
+            glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(Point<float>)));
             glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
 
             // モデルの描画
             glUniform1i(is_texLocation, int(false));
