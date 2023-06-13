@@ -2,11 +2,16 @@
 
 #include <cppgui.hpp>
 
+struct InterleavedVertexInfo {
+    Point<float> coord_;
+    RGBA color_;
+};
+
 class Polygon : Draw {
     GLuint vbo_;
     Window &window_;
     GLuint tex_id_ = 0;
-    vector<Point<GLfloat>> coords_;
+    vector<InterleavedVertexInfo> vers_ = {};
     vector<RGBA> colors_ = {};
     const size_t n_;
 
@@ -14,17 +19,18 @@ class Polygon : Draw {
     Polygon(Window &window, vector<Point<float>> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_DYNAMIC_DRAW)
         : window_(window)
         , tex_id_(tex_id)
-        , coords_(coords)
         , n_(coords.size()) {
         for (size_t i = 0; i < n_; i++) {
+            Point<float> coord = coords[i];
             RGBA color = (i < colors.size() ? colors[i] : RGBA{0.8, 0.8, 0.8, 1});
+            vers_.push_back({coord, color});
             colors_.push_back(color);
         }
 
         // 頂点バッファオブジェクト（VBO）の生成とデータの転送
         glGenBuffers(1, &vbo_);
         glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * coords_.size() * 2, coords_.data(), usage); // WARNING: coords_のアライメントによっては動作しない
+        glBufferData(GL_ARRAY_BUFFER, sizeof(InterleavedVertexInfo) * n_, vers_.data(), usage); // WARNING: coords_のアライメントによっては動作しない
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
@@ -51,7 +57,7 @@ class Polygon : Draw {
             const GLfloat vertex_uv[] = {1, 0, 0, 0, 0, 1, 1, 1};
 
             // attribute属性を登録
-            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, coords_.data());
+            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, vers_.data());
             glVertexAttribPointer(uvLocation, 2, GL_FLOAT, false, 0, vertex_uv);
             glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
 
@@ -66,7 +72,7 @@ class Polygon : Draw {
 
             // attribute属性を登録
             glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, nullptr);
+            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, sizeof(InterleavedVertexInfo), nullptr);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
 
