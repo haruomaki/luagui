@@ -14,6 +14,7 @@ class Polygon : Draw {
     Window &window_;
     GLuint tex_id_ = 0;
     const size_t n_;
+    static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}};
 
   public:
     Polygon(Window &window, vector<Point<float>> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
@@ -30,6 +31,7 @@ class Polygon : Draw {
 
         int va_position_location = glGetAttribLocation(window_.program_id_, "position");
         int va_color_location = glGetAttribLocation(window_.program_id_, "color");
+        int uv_location = glGetAttribLocation(window_.program_id_, "uv");
 
         // 頂点バッファオブジェクト（VBO）の生成とデータの転送
         glGenBuffers(1, &vbo_);
@@ -42,32 +44,32 @@ class Polygon : Draw {
 
         glEnableVertexAttribArray(va_position_location);
         glEnableVertexAttribArray(va_color_location);
+        glEnableVertexAttribArray(uv_location);
         glVertexAttribPointer(va_position_location, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
         glVertexAttribPointer(va_color_location, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+        glVertexAttribPointer(uv_location, 2, GL_FLOAT, GL_FALSE, 0, vertex_uv);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0); // VBOのバインドを解除
         glBindVertexArray(0);             // VAOのバインドを解除
     }
 
     void draw() const override {
-        // 何番目のattribute変数か
-        int positionLocation = glGetAttribLocation(window_.program_id_, "position");
-        int uvLocation = glGetAttribLocation(window_.program_id_, "uv");
-        int colorLocation = glGetAttribLocation(window_.program_id_, "color");
-
-        int textureLocation = glGetUniformLocation(window_.program_id_, "texture");
-        int is_texLocation = glGetUniformLocation(window_.program_id_, "is_tex");
+        int is_tex_location = glGetUniformLocation(window_.program_id_, "is_tex");
 
         // テクスチャを持つ場合
         if (tex_id_ != 0) {
+            glUniform1i(is_tex_location, GL_TRUE);
+            glBindVertexArray(vao_);
+            glBindTexture(GL_TEXTURE_2D, tex_id_);
+            glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0); // NOTE: 必須
         } else {
             // モデルの描画
-            glUniform1i(is_texLocation, int(false));
+            glUniform1i(is_tex_location, GL_FALSE);
             glBindVertexArray(vao_);
             glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
             glBindVertexArray(0); // NOTE: 必須
-
-            // // glDisableVertexAttribArray(0); // TODO: 不要？
         }
     }
 };
