@@ -60,37 +60,12 @@ class Polygon : Draw {
 
         // テクスチャを持つ場合
         if (tex_id_ != 0) {
-            // attribute属性を有効にする
-            glEnableVertexAttribArray(positionLocation);
-            glEnableVertexAttribArray(uvLocation);
-            glEnableVertexAttribArray(colorLocation);
-
-            // uniform属性を設定する
-            glUniform1i(textureLocation, 0);
-            glUniform1i(is_texLocation, int(true));
-
-            const GLfloat vertex_uv[] = {1, 0, 0, 0, 0, 1, 1, 1};
-
-            // attribute属性を登録
-            glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-            glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
-
-            // モデルの描画
-            glBindTexture(GL_TEXTURE_2D, tex_id_);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
-            glBindTexture(GL_TEXTURE_2D, 0);
         } else {
-            // attribute属性を有効にする
-            glEnableVertexAttribArray(positionLocation);
-            glEnableVertexAttribArray(colorLocation);
-
-            // attribute属性を登録
-            glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-            glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
-
             // モデルの描画
             glUniform1i(is_texLocation, int(false));
+            glBindVertexArray(vao_);
             glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
+            glBindVertexArray(0); // NOTE: 必須
 
             // // glDisableVertexAttribArray(0); // TODO: 不要？
         }
