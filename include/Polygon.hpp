@@ -3,10 +3,10 @@
 #include <cppgui.hpp>
 
 class Polygon : Draw {
-    // GLuint vbo_;
+    GLuint vbo_;
     Window &window_;
     GLuint tex_id_ = 0;
-    vector<Point<GLfloat>> vertices_;
+    vector<Point<GLfloat>> coords_;
     vector<RGBA> colors_ = {};
     const size_t n_;
 
@@ -14,7 +14,7 @@ class Polygon : Draw {
     Polygon(Window &window, vector<Point<float>> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_DYNAMIC_DRAW)
         : window_(window)
         , tex_id_(tex_id)
-        , vertices_(coords)
+        , coords_(coords)
         , n_(coords.size()) {
         for (size_t i = 0; i < n_; i++) {
             RGBA color = (i < colors.size() ? colors[i] : RGBA{0.8, 0.8, 0.8, 1});
@@ -22,9 +22,10 @@ class Polygon : Draw {
         }
 
         // 頂点バッファオブジェクト（VBO）の生成とデータの転送
-        // glGenBuffers(1, &vbo_);
-        // glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-        // glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices_.size() * 2, vertices_.data(), usage); // WARNING: vertices_のアライメントによっては動作しない
+        glGenBuffers(1, &vbo_);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * coords_.size() * 2, coords_.data(), usage); // WARNING: coords_のアライメントによっては動作しない
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     void draw() const override {
@@ -50,13 +51,13 @@ class Polygon : Draw {
             const GLfloat vertex_uv[] = {1, 0, 0, 0, 0, 1, 1, 1};
 
             // attribute属性を登録
-            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, vertices_.data());
+            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, coords_.data());
             glVertexAttribPointer(uvLocation, 2, GL_FLOAT, false, 0, vertex_uv);
             glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
 
             // モデルの描画
             glBindTexture(GL_TEXTURE_2D, tex_id_);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, vertices_.size());
+            glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
             glBindTexture(GL_TEXTURE_2D, 0);
         } else {
             // attribute属性を有効にする
@@ -64,12 +65,14 @@ class Polygon : Draw {
             glEnableVertexAttribArray(colorLocation);
 
             // attribute属性を登録
-            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, vertices_.data());
+            glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, nullptr);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
             glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
 
             // モデルの描画
             glUniform1i(is_texLocation, int(false));
-            glDrawArrays(GL_TRIANGLE_FAN, 0, vertices_.size());
+            glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
 
             // // glDisableVertexAttribArray(0); // TODO: 不要？
         }
