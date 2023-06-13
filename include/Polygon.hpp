@@ -2,24 +2,51 @@
 
 #include <cppgui.hpp>
 
+#include <glm/glm.hpp>
+
+struct InterleavedVertexInfo {
+    glm::vec3 coord_;
+    RGBA color_;
+};
+
 class Polygon : Draw {
-    // GLuint vbo_;
+    GLuint vbo_, vao_;
     Window &window_;
     GLuint tex_id_ = 0;
-    vector<Point<GLfloat>> vertices_;
+    const size_t n_;
 
   public:
-    vector<RGBA> colors_;
-
-    Polygon(Window &window, vector<Point<float>> points, GLuint tex_id = 0, GLenum usage = GL_DYNAMIC_DRAW)
+    Polygon(Window &window, vector<Point<float>> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
         : window_(window)
         , tex_id_(tex_id)
-        , vertices_(points) {
-        cout << "こんです" << endl;
+        , n_(coords.size()) {
+
+        vector<InterleavedVertexInfo> vers = {};
+        for (size_t i = 0; i < n_; i++) {
+            glm::vec3 coord = {coords[i].x_, coords[i].y_, 0};
+            RGBA color = (i < colors.size() ? colors[i] : RGBA{0.8, 0.8, 0.8, 1}); // 色情報がないときは黒に
+            vers.push_back({coord, color});
+        }
+
+        int va_position_location = glGetAttribLocation(window_.program_id_, "position");
+        int va_color_location = glGetAttribLocation(window_.program_id_, "color");
+
         // 頂点バッファオブジェクト（VBO）の生成とデータの転送
-        // glGenBuffers(1, &vbo_);
-        // glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-        // glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices_.size() * 2, vertices_.data(), usage); // WARNING: vertices_のアライメントによっては動作しない
+        glGenBuffers(1, &vbo_);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(InterleavedVertexInfo) * n_, vers.data(), usage); // WARNING: versのアライメントによっては動作しない
+
+        // VAOを作成し、頂点の座標と色を関連付ける
+        glGenVertexArrays(1, &vao_); // VAOの生成
+        glBindVertexArray(vao_);     // VAOをバインド
+
+        glEnableVertexAttribArray(va_position_location);
+        glEnableVertexAttribArray(va_color_location);
+        glVertexAttribPointer(va_position_location, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+        glVertexAttribPointer(va_color_location, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0); // VBOのバインドを解除
+        glBindVertexArray(0);             // VAOのバインドを解除
     }
 
     void draw() const override {
@@ -45,13 +72,12 @@ class Polygon : Draw {
             const GLfloat vertex_uv[] = {1, 0, 0, 0, 0, 1, 1, 1};
 
             // attribute属性を登録
-            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, vertices_.data());
-            glVertexAttribPointer(uvLocation, 2, GL_FLOAT, false, 0, vertex_uv);
-            glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
+            glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+            glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
 
             // モデルの描画
             glBindTexture(GL_TEXTURE_2D, tex_id_);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, vertices_.size());
+            glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
             glBindTexture(GL_TEXTURE_2D, 0);
         } else {
             // attribute属性を有効にする
@@ -59,12 +85,12 @@ class Polygon : Draw {
             glEnableVertexAttribArray(colorLocation);
 
             // attribute属性を登録
-            glVertexAttribPointer(positionLocation, 2, GL_FLOAT, false, 0, vertices_.data());
-            glVertexAttribPointer(colorLocation, 4, GL_FLOAT, false, 0, colors_.data());
+            glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+            glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
 
             // モデルの描画
             glUniform1i(is_texLocation, int(false));
-            glDrawArrays(GL_TRIANGLE_FAN, 0, vertices_.size());
+            glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
 
             // // glDisableVertexAttribArray(0); // TODO: 不要？
         }
