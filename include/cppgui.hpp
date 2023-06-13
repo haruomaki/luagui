@@ -157,3 +157,4 @@ GLuint createShader();
 GLuint loadTexture(string filename);
 
 #include <CorePolygon.hpp>
+#include <Polygon.hpp>
