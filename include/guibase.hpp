@@ -23,8 +23,7 @@ ostream &operator<<(ostream &os, const pair<T1, T2> &input) {
 template <typename T>
 ostream &operator<<(ostream &os, const vector<T> &input) {
     os << "[";
-    auto it = input.cbegin();
-    while (it != input.cend()) {
+    for (auto it = input.cbegin(); it != input.cend();) {
         os << *it++ << (it == input.cend() ? "" : ", ");
     }
     os << "]";
@@ -34,8 +33,7 @@ ostream &operator<<(ostream &os, const vector<T> &input) {
 template <typename T>
 ostream &operator<<(ostream &os, const set<T> &input) {
     os << "{";
-    auto it = input.cbegin();
-    while (it != input.cend()) {
+    for (auto it = input.cbegin(); it != input.cend();) {
         os << *it++ << (it == input.cend() ? "" : ", ");
     }
     os << "}";
@@ -43,7 +41,7 @@ ostream &operator<<(ostream &os, const set<T> &input) {
 }
 
 template <typename T>
-string to_str(const T &val) {
+string toStr(const T &val) {
     stringstream ss;
     ss << val;
     return ss.str();
@@ -92,11 +90,11 @@ template <class... T>
 void debugPre(const char *file, int line, const char *argnames, T &&...args) {
     cerr << "🐝(" << file << ":" << line << ")";
     // argsの要素数 0 or 1 or それ以上
-    constexpr size_t n = sizeof...(args);
-    if (n >= 2) {
-        cout << " [" << argnames << "] = [";
+    constexpr size_t len = sizeof...(args);
+    if (len >= 2) {
+        cerr << " [" << argnames << "] = [";
         debugImpl(true, args...);
-    } else if (n == 1) {
+    } else if (len == 1) {
         cerr << " " << argnames << " = ";
         debugImpl(false, args...);
     }
@@ -113,16 +111,16 @@ struct Point {
     //     : x_(x)
     //     , y_(y) {}
 
-    Point operator+(Point p) const {
-        return Point{x_ + p.x_, y_ + p.y_};
+    Point operator+(Point point) const {
+        return Point{x_ + point.x_, y_ + point.y_};
     }
 
     operator pair<T, T>() const {
         return pair<T, T>(x_, y_);
     }
 
-    friend ostream &operator<<(ostream &os, const Point &p) {
-        os << static_cast<pair<T, T>>(p);
+    friend ostream &operator<<(ostream &os, const Point &point) {
+        os << static_cast<pair<T, T>>(point);
         return os;
     }
 };

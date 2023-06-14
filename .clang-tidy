@@ -11,21 +11,15 @@ HeaderFilterRegex: 'source.*\.(hpp|h)'
 AnalyzeTemporaryDtors: false
 FormatStyle: file
 CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
-  - key: readability-identifier-naming.ClassCase
-    value: CamelCase
-  - key: readability-identifier-naming.EnumCase
-    value: CamelCase
-  - key: readability-identifier-naming.FunctionCase
-    value: camelBack
-  - key: readability-identifier-naming.MemberCase
-    value: lower_case
-  - key: readability-identifier-naming.MemberSuffix
-    value: _
-  - key: readability-identifier-naming.ParameterCase
-    value: lower_case
-  - key: readability-identifier-naming.UnionCase
-    value: CamelCase
-  - key: readability-identifier-naming.VariableCase
-    value: lower_case
-  - key: readability-identifier-length.IgnoredVariableNames
-    value: it
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.FunctionCase: camelBack
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.MemberSuffix: _
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.UnionCase: CamelCase
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-length.IgnoredVariableNames: ss
+  readability-identifier-length.IgnoredParameterNames: os
+  # readability-identifier-length.MinimumParameterNameLength: 2
+  # readability-identifier-length.MinimumVariableNameLength: 2

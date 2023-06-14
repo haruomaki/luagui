@@ -15,6 +15,7 @@ class Polygon : Draw {
     GLuint tex_id_ = 0;
     const size_t n_;
     static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}};
+    static constexpr RGBA default_color{0.8, 0.8, 0.8, 1};
 
   public:
     Polygon(Window &window, vector<Point<float>> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
@@ -25,7 +26,7 @@ class Polygon : Draw {
         vector<InterleavedVertexInfo> vers = {};
         for (size_t i = 0; i < n_; i++) {
             glm::vec3 coord = {coords[i].x_, coords[i].y_, 0};
-            RGBA color = (i < colors.size() ? colors[i] : RGBA{0.8, 0.8, 0.8, 1}); // 色情報がないときは黒に
+            RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
             vers.push_back({coord, color});
         }
 

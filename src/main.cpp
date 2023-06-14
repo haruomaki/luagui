@@ -69,15 +69,15 @@ GLuint loadTexture(string filename) {
 
     // ファイルの読み込み
     std::ifstream fstr(filename, std::ios::binary);
-    const size_t fileSize = static_cast<size_t>(fstr.seekg(0, fstr.end).tellg());
+    const size_t file_size = static_cast<size_t>(fstr.seekg(0, fstr.end).tellg());
     fstr.seekg(0, fstr.beg);
-    char *textureBuffer = new char[fileSize];
-    fstr.read(textureBuffer, fileSize);
+    char *texture_buffer = new char[file_size];
+    fstr.read(texture_buffer, file_size);
 
     // テクスチャをGPUに転送
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glBindTexture(GL_TEXTURE_2D, tex_id);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, textureBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_buffer);
 
     // テクスチャの設定
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -86,7 +86,7 @@ GLuint loadTexture(string filename) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // テクスチャのアンバインド
-    delete[] textureBuffer;
+    delete[] texture_buffer;
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return tex_id;
@@ -158,7 +158,7 @@ pair<float, float> Window::getWindowContentScale() {
     return pair<float, float>(xscale, yscale);
 }
 
-void Window::mainloop(std::function<void()> f) {
+void Window::mainloop(std::function<void()> callback) {
     if (looping_) {
         throw runtime_error("すでにメインループが始まっています");
     }
@@ -178,7 +178,8 @@ void Window::mainloop(std::function<void()> f) {
         }
 
         // 画面の初期化
-        glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+        constexpr RGBA bg_color{0.2, 0.2, 0.2, 1};
+        glClearColor(bg_color.r_, bg_color.g_, bg_color.b_, bg_color.a_);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearDepth(1.0);
 
@@ -195,7 +196,7 @@ void Window::mainloop(std::function<void()> f) {
         masterDraw();
 
         // ユーザの描画関数
-        f();
+        callback();
 
         // 上記描画した図形を表画面のバッファにスワップする
         glfwSwapBuffers(gwin_);
@@ -208,15 +209,15 @@ void Window::mainloop(std::function<void()> f) {
 }
 
 void Window::setCamera(Point<float> pos, float zoom) {
-    auto fb = getFrameBufferSize();
-    auto width = fb.first;
-    auto height = fb.second;
+    auto framebuf = getFrameBufferSize();
+    auto width = framebuf.first;
+    auto height = framebuf.second;
     camera_ = {pos.x_ - width / 2, pos.x_ + width / 2, pos.y_ - height / 2, pos.y_ + height / 2};
 }
 
 void Window::setCameraCorner(Point<float> pos, float zoom) {
-    auto fb = getFrameBufferSize();
-    auto width = fb.first;
-    auto height = fb.second;
+    auto framebuf = getFrameBufferSize();
+    auto width = framebuf.first;
+    auto height = framebuf.second;
     camera_ = {pos.x_, pos.x_ + width, pos.y_, pos.y_ + height};
 }

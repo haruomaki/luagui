@@ -145,7 +145,7 @@ class Window {
 
     Window(int width, int height);
     ~Window();
-    void mainloop(std::function<void()> f);
+    void mainloop(std::function<void()> callback);
     pair<int, int> getWindowSize();
     pair<int, int> getFrameBufferSize();
     pair<float, float> getWindowContentScale();
