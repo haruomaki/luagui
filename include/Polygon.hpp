@@ -11,7 +11,7 @@ struct InterleavedVertexInfo {
     RGBA color_;
 };
 
-class Polygon : Draw, WorldObject {
+class Polygon : Draw, public WorldObject {
     GLuint vbo_, vao_;
     Window &window_;
     GLuint tex_id_ = 0;
@@ -68,7 +68,8 @@ class Polygon : Draw, WorldObject {
         int model_view_matrix_location = glGetUniformLocation(window_.program_id_, "modelViewMatrix");
 
         // ワールド座標変換
-        glm::mat4 model_matrix = glm::translate(glm::mat4(1), glm::vec3(0.5f, 0, 0));
+        auto diff = this->getAbsolutePosition();
+        glm::mat4 model_matrix = glm::translate(glm::mat4(1), glm::vec3(diff.x_, diff.y_, 0));
         glUniformMatrix4fv(model_view_matrix_location, 1, GL_FALSE, glm::value_ptr(model_matrix));
 
         // モデルの描画
