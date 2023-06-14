@@ -3,10 +3,8 @@
 // シェーダ https://gist.github.com/tasonco/73a7291769278320c76928b1bd963cba
 GLuint createShader() {
     // バーテックスシェーダのコンパイル
-    cout << "crateShader内" << endl;
-    GLuint vShaderId = glCreateShader(GL_VERTEX_SHADER);
-    cout << "glCreateShader完了" << endl;
-    string vertexShader = R"#(
+    GLuint vsh_id = glCreateShader(GL_VERTEX_SHADER);
+    string vertex_shader = R"#(
     attribute vec3 position;
     attribute vec2 uv;
     attribute vec4 color;
@@ -18,16 +16,13 @@ GLuint createShader() {
         vColor = color;
     }
     )#";
-    const char *vs = vertexShader.c_str();
-    cout << "いくぜ！" << endl;
-    glShaderSource(vShaderId, 1, &vs, NULL);
-    cout << "source完了" << endl;
-    glCompileShader(vShaderId);
-    cout << "コンパイル完了" << endl;
+    const char *vsh_char = vertex_shader.c_str();
+    glShaderSource(vsh_id, 1, &vsh_char, nullptr);
+    glCompileShader(vsh_id);
 
     // フラグメントシェーダのコンパイル
-    GLuint fShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-    string fragmentShader = R"#(
+    GLuint fsh_id = glCreateShader(GL_FRAGMENT_SHADER);
+    string fragment_shader = R"#(
     varying vec2 vuv;
     uniform sampler2D texture;
     uniform bool is_tex;
@@ -40,19 +35,19 @@ GLuint createShader() {
         }
     }
     )#";
-    const char *fs = fragmentShader.c_str();
-    glShaderSource(fShaderId, 1, &fs, NULL);
-    glCompileShader(fShaderId);
+    const char *fsh_char = fragment_shader.c_str();
+    glShaderSource(fsh_id, 1, &fsh_char, nullptr);
+    glCompileShader(fsh_id);
 
     // プログラムオブジェクトの作成
-    GLuint programId = glCreateProgram();
-    glAttachShader(programId, vShaderId);
-    glAttachShader(programId, fShaderId);
+    GLuint program_id = glCreateProgram();
+    glAttachShader(program_id, vsh_id);
+    glAttachShader(program_id, fsh_id);
 
     // リンク
-    glLinkProgram(programId);
+    glLinkProgram(program_id);
 
-    glUseProgram(programId);
+    glUseProgram(program_id);
 
-    return programId;
+    return program_id;
 }
