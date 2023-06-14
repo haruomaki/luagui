@@ -2,7 +2,10 @@
 
 #include <cppgui.hpp>
 
+#include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 struct InterleavedVertexInfo {
     glm::vec3 coord_;
@@ -25,7 +28,7 @@ class Polygon : Draw, WorldObject {
 
         vector<InterleavedVertexInfo> vers = {};
         for (size_t i = 0; i < n_; i++) {
-            glm::vec3 coord = {coords[i].x_, coords[i].y_, 0};
+            glm::vec3 coord = {coords[i].x_, coords[i].y_, 1};
             RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
             vers.push_back({coord, color});
         }
@@ -63,6 +66,12 @@ class Polygon : Draw, WorldObject {
 
     void draw() const override {
         int is_tex_location = glGetUniformLocation(window_.program_id_, "is_tex");
+        int model_view_matrix_location = glGetUniformLocation(window_.program_id_, "modelViewMatrix");
+
+        // auto model_matrix = glm::mat3{1, 0, 0.5, 0, 1, 0, 0, 0, 1};
+        auto model_matrix = glm::mat3(1);
+        model_matrix[2] = glm::vec3(0.5f, 0, 0);
+        glUniformMatrix3fv(model_view_matrix_location, 1, GL_FALSE, glm::value_ptr(model_matrix));
 
         // モデルの描画
         glUniform1i(is_tex_location, (tex_id_ != 0 ? GL_TRUE : GL_FALSE));
