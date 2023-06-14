@@ -2,9 +2,8 @@
 
 #include <cppgui.hpp>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <glm/ext.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 struct InterleavedVertexInfo {
     glm::vec3 coord_;
@@ -80,7 +79,13 @@ class PolygonInstance : Draw, public WorldObject {
         // ワールド座標変換
         auto diff = this->getAbsolutePosition();
         glm::mat4 model_matrix = glm::translate(glm::mat4(1), glm::vec3(diff.x_, diff.y_, 0));
-        glUniformMatrix4fv(model_view_matrix_location, 1, GL_FALSE, glm::value_ptr(model_matrix));
+
+        // ビュー座標変換
+        glm::mat4 view_matrix = glm::scale(glm::mat4(1), glm::vec3(0.2f, 0.2f, 0.2f));
+
+        // 合成して、モデルビュー行列を得る
+        glm::mat4 model_view_matrix = view_matrix * model_matrix;
+        glUniformMatrix4fv(model_view_matrix_location, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
 
         // モデルの描画
         glUniform1i(is_tex_location, (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
