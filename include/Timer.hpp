@@ -2,6 +2,7 @@
 #include <functional>
 #include <thread>
 
+// https://anohobby.com/cpp-self-made-timer/
 static void setInterval(int interval_ms, const std::function<bool()> &proc) {
     auto interval = std::chrono::milliseconds(interval_ms);
 

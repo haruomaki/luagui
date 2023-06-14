@@ -11,13 +11,15 @@ struct InterleavedVertexInfo {
     RGBA color_;
 };
 
-class Polygon : Draw, public WorldObject {
+class Polygon {
     GLuint vbo_, vao_;
     Window &window_;
     GLuint tex_id_ = 0;
     const size_t n_;
     static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}};
     static constexpr RGBA default_color{0.8, 0.8, 0.8, 1};
+
+    friend class PolygonInstance;
 
   public:
     Polygon(Window &window, vector<Point<float>> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
@@ -62,10 +64,18 @@ class Polygon : Draw, public WorldObject {
         glBindVertexArray(0);
         // VAOのバインドを解除
     }
+};
+
+class PolygonInstance : Draw, public WorldObject {
+    const Polygon &polygon_;
+
+  public:
+    PolygonInstance(const Polygon &polygon)
+        : polygon_(polygon) {}
 
     void draw() const override {
-        int is_tex_location = glGetUniformLocation(window_.program_id_, "is_tex");
-        int model_view_matrix_location = glGetUniformLocation(window_.program_id_, "modelViewMatrix");
+        int is_tex_location = glGetUniformLocation(polygon_.window_.program_id_, "is_tex");
+        int model_view_matrix_location = glGetUniformLocation(polygon_.window_.program_id_, "modelViewMatrix");
 
         // ワールド座標変換
         auto diff = this->getAbsolutePosition();
@@ -73,10 +83,10 @@ class Polygon : Draw, public WorldObject {
         glUniformMatrix4fv(model_view_matrix_location, 1, GL_FALSE, glm::value_ptr(model_matrix));
 
         // モデルの描画
-        glUniform1i(is_tex_location, (tex_id_ != 0 ? GL_TRUE : GL_FALSE));
-        glBindVertexArray(vao_);
-        glBindTexture(GL_TEXTURE_2D, tex_id_);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, n_);
+        glUniform1i(is_tex_location, (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
+        glBindVertexArray(polygon_.vao_);
+        glBindTexture(GL_TEXTURE_2D, polygon_.tex_id_);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, polygon_.n_);
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindVertexArray(0); // NOTE: 必須
     }
