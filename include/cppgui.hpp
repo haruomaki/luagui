@@ -2,6 +2,7 @@
 
 #include <Draw.hpp>
 #include <KeyCallback.hpp>
+#include <Shader.hpp>
 #include <Update.hpp>
 #include <guibase.hpp>
 
@@ -144,7 +145,7 @@ class Window {
 
     Window(int width, int height);
     ~Window();
-    void mainloop(std::function<void()> const &callback);
+    void mainloop(const std::function<void()> &callback);
     pair<int, int> getWindowSize();
     pair<int, int> getFrameBufferSize();
     pair<float, float> getWindowContentScale();
@@ -152,8 +153,7 @@ class Window {
     void setCameraCorner(Point<float> pos, float zoom);
 };
 
-GLuint createShader();
-GLuint loadTexture(string filename);
+GLuint loadTexture(const string &filename);
 
 #include <CorePolygon.hpp>
 #include <Polygon.hpp>

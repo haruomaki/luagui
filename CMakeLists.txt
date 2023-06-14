@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME} SHARED
     src/KeyCallback.cpp
     src/Update.cpp
     src/Draw.cpp
+    src/Shader.cpp
 )
 
 set(INCLUDE_DIRS include)

@@ -4,65 +4,8 @@ void hello() {
     cout << "こんにちはです！" << endl;
 }
 
-// シェーダ https://gist.github.com/tasonco/73a7291769278320c76928b1bd963cba
-GLuint createShader() {
-    // バーテックスシェーダのコンパイル
-    cout << "crateShader内" << endl;
-    GLuint vShaderId = glCreateShader(GL_VERTEX_SHADER);
-    cout << "glCreateShader完了" << endl;
-    string vertexShader = R"#(
-    attribute vec3 position;
-    attribute vec2 uv;
-    attribute vec4 color;
-    varying vec2 vuv;
-    varying vec4 vColor;
-    void main(void){
-        gl_Position = vec4(position, 1.0);
-        vuv = uv;
-        vColor = color;
-    }
-    )#";
-    const char *vs = vertexShader.c_str();
-    cout << "いくぜ！" << endl;
-    glShaderSource(vShaderId, 1, &vs, NULL);
-    cout << "source完了" << endl;
-    glCompileShader(vShaderId);
-    cout << "コンパイル完了" << endl;
-
-    // フラグメントシェーダのコンパイル
-    GLuint fShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-    string fragmentShader = R"#(
-    varying vec2 vuv;
-    uniform sampler2D texture;
-    uniform bool is_tex;
-    varying vec4 vColor;
-    void main(void){
-        if (is_tex) {
-            gl_FragColor = texture2D(texture, vuv);
-        } else {
-            gl_FragColor = vColor;
-        }
-    }
-    )#";
-    const char *fs = fragmentShader.c_str();
-    glShaderSource(fShaderId, 1, &fs, NULL);
-    glCompileShader(fShaderId);
-
-    // プログラムオブジェクトの作成
-    GLuint programId = glCreateProgram();
-    glAttachShader(programId, vShaderId);
-    glAttachShader(programId, fShaderId);
-
-    // リンク
-    glLinkProgram(programId);
-
-    glUseProgram(programId);
-
-    return programId;
-}
-
 // 画像 https://nn-hokuson.hatenablog.com/entry/2017/02/24/171230
-GLuint loadTexture(string filename) {
+GLuint loadTexture(const string &filename) {
     // テクスチャIDの生成
     GLuint tex_id;
     glGenTextures(1, &tex_id);
@@ -75,9 +18,10 @@ GLuint loadTexture(string filename) {
     fstr.read(texture_buffer, file_size);
 
     // テクスチャをGPUに転送
+    const int width = 256, height = 256;
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glBindTexture(GL_TEXTURE_2D, tex_id);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 256, 256, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_buffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_buffer);
 
     // テクスチャの設定
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -158,7 +102,7 @@ pair<float, float> Window::getWindowContentScale() {
     return {xscale, yscale};
 }
 
-void Window::mainloop(std::function<void()> const &callback) {
+void Window::mainloop(const std::function<void()> &callback) {
     if (looping_) {
         throw runtime_error("すでにメインループが始まっています");
     }
