@@ -3,6 +3,7 @@
 #include <Draw.hpp>
 #include <KeyCallback.hpp>
 #include <Shader.hpp>
+#include <Timer.hpp>
 #include <Update.hpp>
 #include <guibase.hpp>
 
@@ -155,5 +156,4 @@ class Window {
 
 GLuint loadTexture(const string &filename);
 
-#include <CorePolygon.hpp>
 #include <Polygon.hpp>

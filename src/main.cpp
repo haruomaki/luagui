@@ -117,11 +117,6 @@ void Window::mainloop(const std::function<void()> &callback) {
         tick_++;
         masterUpdate();
 
-        constexpr int interval = 60;
-        if (tick_ % interval == 0) {
-            cout << "み" << endl;
-        }
-
         // 画面の初期化
         constexpr RGBA bg_color{0.2, 0.2, 0.2, 1};
         glClearColor(bg_color.r_, bg_color.g_, bg_color.b_, bg_color.a_);
