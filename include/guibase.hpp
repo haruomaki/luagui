@@ -2,6 +2,9 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/ext.hpp>
+#include <glm/gtx/string_cast.hpp>
+
 #include <array>
 #include <fstream>
 #include <functional> // 関数型 std::function

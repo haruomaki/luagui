@@ -2,9 +2,6 @@
 
 #include <cppgui.hpp>
 
-#include <glm/ext.hpp>
-#include <glm/ext/matrix_transform.hpp>
-
 struct InterleavedVertexInfo {
     glm::vec3 coord_;
     RGBA color_;
@@ -81,7 +78,7 @@ class PolygonInstance : Draw, public WorldObject {
         glm::mat4 model_matrix = glm::translate(glm::mat4(1), glm::vec3(diff.x_, diff.y_, 0));
 
         // ビュー座標変換
-        glm::mat4 view_matrix = glm::scale(glm::mat4(1), glm::vec3(0.2f, 0.2f, 0.2f));
+        const glm::mat4 &view_matrix = polygon_.window_.getViewMatrix();
 
         // 合成して、モデルビュー行列を得る
         glm::mat4 model_view_matrix = view_matrix * model_matrix;

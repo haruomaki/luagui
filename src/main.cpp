@@ -1,9 +1,5 @@
 #include <cppgui.hpp>
 
-void hello() {
-    cout << "こんにちはです！" << endl;
-}
-
 // 画像 https://nn-hokuson.hatenablog.com/entry/2017/02/24/171230
 GLuint loadTexture(const string &filename) {
     // テクスチャIDの生成
@@ -70,14 +66,12 @@ Window::Window(int width, int height) {
         glViewport(0, 0, width, height);
         // ここで描画処理などを行う
         auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
-        // window->setCamera({200, 200}, 1);
-        window->setCameraCorner({0, 0}, 1);
+        window->setCamera({0, 0}, 400);
     });
 
     glfwSetKeyCallback(gwin_, masterKeyCallback);
 
-    // camera_ = {0, (double)width, 0, (double)height};
-    setCameraCorner({0, 0}, zoom_);
+    setCamera({0, 0}, 400);
 
     program_id_ = createShader();
 }
@@ -123,15 +117,6 @@ void Window::mainloop(const std::function<void()> &callback) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearDepth(1.0);
 
-        // カメラの設定
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(camera_.left_, camera_.right_, camera_.bottom_, camera_.top_, -1.0, 1.0);
-
-        // 描画準備
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
         // 登録された図形の描画
         masterDraw();
 
@@ -148,16 +133,16 @@ void Window::mainloop(const std::function<void()> &callback) {
     looping_ = false;
 }
 
-void Window::setCamera(Point<float> pos, float /*zoom*/) {
-    auto framebuf = getFrameBufferSize();
-    auto width = framebuf.first;
-    auto height = framebuf.second;
-    camera_ = {pos.x_ - width / 2, pos.x_ + width / 2, pos.y_ - height / 2, pos.y_ + height / 2};
+const glm::mat4 &Window::getViewMatrix() const {
+    return this->view_matrix_;
 }
 
-void Window::setCameraCorner(Point<float> pos, float /*zoom*/) {
-    auto framebuf = getFrameBufferSize();
-    auto width = framebuf.first;
-    auto height = framebuf.second;
-    camera_ = {pos.x_, pos.x_ + width, pos.y_, pos.y_ + height};
+void Window::setCamera(Point<float> pos, float zoom) {
+    auto frame_buf = getFrameBufferSize();
+    const int width = frame_buf.first;
+    const int height = frame_buf.second;
+
+    glm::mat4 pos_mat = glm::translate(glm::mat4(1), glm::vec3(-pos.x_, -pos.y_, 0));
+    glm::mat4 zoom_mat = glm::scale(glm::mat4(1), glm::vec3(zoom / width, zoom / height, 1));
+    view_matrix_ = zoom_mat * pos_mat;
 }

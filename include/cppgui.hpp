@@ -7,9 +7,6 @@
 #include <Update.hpp>
 #include <guibase.hpp>
 
-#include <fstream>
-#include <optional>
-
 template <typename T>
 struct Rect {
     T left_, right_, bottom_, top_;
@@ -135,8 +132,9 @@ class WorldObject {
 
 class Window {
     GLFWwindow *gwin_;
-    Rect<double> camera_;
-    float zoom_ = 1;
+    glm::mat4 view_matrix_ = glm::mat4(1);
+    glm::vec3 camera_pos_;
+    float camera_zoom_ = 1;
     bool looping_ = false;
 
   public:
@@ -150,8 +148,9 @@ class Window {
     pair<int, int> getWindowSize();
     pair<int, int> getFrameBufferSize();
     pair<float, float> getWindowContentScale();
+
+    [[nodiscard]] const glm::mat4 &getViewMatrix() const;
     void setCamera(Point<float> pos, float zoom);
-    void setCameraCorner(Point<float> pos, float zoom);
 };
 
 GLuint loadTexture(const string &filename);
