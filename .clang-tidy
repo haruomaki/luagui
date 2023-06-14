@@ -1,9 +1,20 @@
 # https://qiita.com/s_araki/items/32aded38dca734c0e02d
 Checks: "-*,\
+  cert-*,\
+  clang-analyzer-*,\
+  concurrency-*,\
+  # cppcoreguidelines-*,\
+  linuxkernel-*,\
+  llvm-*,\
+  misc-*,\
+  -misc-no-recursion,\
+  -misc-non-private-member-variables-in-classes,\
+  modernize-*,\
+  -modernize-use-trailing-return-type,\
+  -modernize-avoid-c-arrays,\
+  performance-*,\
+  portability-*,\
   readability-*,\
-  -readability-convert-member-functions-to-static,\
-  -readability-uppercase-literal-suffix,\
-  -readability-static-accessed-through-instance,\
   -readability-isolate-declaration,\
   "
 WarningsAsErrors: ""

@@ -16,7 +16,7 @@ struct Rect {
 class WorldObject {
     Point<float> pos_;
     Point<float> abspos_;
-    WorldObject *parent_;
+    WorldObject *parent_ = nullptr;
     set<WorldObject *> children_;
 
     void refreshAbsolutePosition() {
@@ -31,8 +31,7 @@ class WorldObject {
   public:
     WorldObject()
         : pos_{0, 0}
-        , abspos_({0, 0})
-        , parent_(nullptr) {
+        , abspos_({0, 0}) {
         cout << "コンストラクタ " << this << endl;
     }
 
@@ -59,7 +58,7 @@ class WorldObject {
     //     }
     // }
 
-    WorldObject &operator=(WorldObject &&other) {
+    WorldObject &operator=(WorldObject &&other) noexcept {
         cout << "ムーブ代入演算子です " << &other << " -> " << this << endl;
         pos_ = other.pos_;
         abspos_ = other.abspos_;
@@ -112,11 +111,11 @@ class WorldObject {
         }
     }
 
-    Point<float> getPosition() const {
+    [[nodiscard]] Point<float> getPosition() const {
         return pos_;
     }
 
-    Point<float> getAbsolutePosition() const {
+    [[nodiscard]] Point<float> getAbsolutePosition() const {
         return abspos_;
     }
 
@@ -145,7 +144,7 @@ class Window {
 
     Window(int width, int height);
     ~Window();
-    void mainloop(std::function<void()> callback);
+    void mainloop(std::function<void()> const &callback);
     pair<int, int> getWindowSize();
     pair<int, int> getFrameBufferSize();
     pair<float, float> getWindowContentScale();

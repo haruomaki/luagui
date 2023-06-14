@@ -6,6 +6,7 @@
 #include <functional> // 関数型 std::function
 #include <iostream>
 #include <set>
+#include <span>
 #include <sstream>   // 文字列のストリーム
 #include <stdexcept> // 例外はとりあえずこれ std::runime_error
 #include <vector>
@@ -25,6 +26,16 @@ ostream &operator<<(ostream &os, const vector<T> &input) {
     os << "[";
     for (auto it = input.cbegin(); it != input.cend();) {
         os << *it++ << (it == input.cend() ? "" : ", ");
+    }
+    os << "]";
+    return os;
+}
+
+template <typename T, size_t Extent>
+ostream &operator<<(ostream &os, const std::span<T, Extent> &input) {
+    os << "[";
+    for (auto it = input.begin(); it != input.end();) {
+        os << *it++ << (it == input.end() ? "" : ", ");
     }
     os << "]";
     return os;
@@ -135,8 +146,8 @@ struct RGBA {
 
 template <class T>
 class MemoryView {
-    T *data_;
-    size_t size_;
+    const T *data_;
+    const size_t size_;
 
   public:
     MemoryView(T *data, size_t size)
@@ -144,7 +155,7 @@ class MemoryView {
         , size_(size) {}
 
     T *data() const { return data_; }
-    size_t size() const { return size_; }
+    [[nodiscard]] size_t size() const { return size_; }
 
     T &operator[](size_t index) { return data_[index]; }
     const T &operator[](size_t index) const { return data_[index]; }

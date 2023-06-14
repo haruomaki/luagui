@@ -69,8 +69,8 @@ GLuint loadTexture(string filename) {
 
     // ファイルの読み込み
     std::ifstream fstr(filename, std::ios::binary);
-    const size_t file_size = static_cast<size_t>(fstr.seekg(0, fstr.end).tellg());
-    fstr.seekg(0, fstr.beg);
+    const size_t file_size = static_cast<size_t>(fstr.seekg(0, ifstream::end).tellg());
+    fstr.seekg(0, ifstream::beg);
     char *texture_buffer = new char[file_size];
     fstr.read(texture_buffer, file_size);
 
@@ -125,7 +125,7 @@ Window::Window(int width, int height) {
         // OpenGLのビューポートを再設定する
         glViewport(0, 0, width, height);
         // ここで描画処理などを行う
-        Window *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
         // window->setCamera({200, 200}, 1);
         window->setCameraCorner({0, 0}, 1);
     });
@@ -143,22 +143,22 @@ Window::~Window() { glfwTerminate(); }
 pair<int, int> Window::getWindowSize() {
     int width, height;
     glfwGetWindowSize(gwin_, &width, &height);
-    return pair<int, int>(width, height);
+    return {width, height};
 }
 
 pair<int, int> Window::getFrameBufferSize() {
     int width, height;
     glfwGetFramebufferSize(gwin_, &width, &height);
-    return pair<int, int>(width, height);
+    return {width, height};
 }
 
 pair<float, float> Window::getWindowContentScale() {
     float xscale, yscale;
     glfwGetWindowContentScale(gwin_, &xscale, &yscale);
-    return pair<float, float>(xscale, yscale);
+    return {xscale, yscale};
 }
 
-void Window::mainloop(std::function<void()> callback) {
+void Window::mainloop(std::function<void()> const &callback) {
     if (looping_) {
         throw runtime_error("すでにメインループが始まっています");
     }
@@ -173,7 +173,8 @@ void Window::mainloop(std::function<void()> callback) {
         tick_++;
         masterUpdate();
 
-        if (tick_ % 60 == 0) {
+        constexpr int interval = 60;
+        if (tick_ % interval == 0) {
             cout << "み" << endl;
         }
 
@@ -208,14 +209,14 @@ void Window::mainloop(std::function<void()> callback) {
     looping_ = false;
 }
 
-void Window::setCamera(Point<float> pos, float zoom) {
+void Window::setCamera(Point<float> pos, float /*zoom*/) {
     auto framebuf = getFrameBufferSize();
     auto width = framebuf.first;
     auto height = framebuf.second;
     camera_ = {pos.x_ - width / 2, pos.x_ + width / 2, pos.y_ - height / 2, pos.y_ + height / 2};
 }
 
-void Window::setCameraCorner(Point<float> pos, float zoom) {
+void Window::setCameraCorner(Point<float> pos, float /*zoom*/) {
     auto framebuf = getFrameBufferSize();
     auto width = framebuf.first;
     auto height = framebuf.second;

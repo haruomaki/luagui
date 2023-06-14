@@ -9,7 +9,7 @@ struct InterleavedVertexInfo {
     RGBA color_;
 };
 
-class Polygon : Draw {
+class Polygon : Draw, WorldObject {
     GLuint vbo_, vao_;
     Window &window_;
     GLuint tex_id_ = 0;

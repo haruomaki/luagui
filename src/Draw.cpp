@@ -3,7 +3,7 @@
 static std::set<std::function<void()> *> global_draws;
 
 Draw::Draw() {
-    draw_ = bind(&Draw::draw, this);
+    draw_ = [this] { this->draw(); };
     global_draws.insert(&draw_);
 }
 Draw::~Draw() {

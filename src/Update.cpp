@@ -3,7 +3,7 @@
 static std::set<std::function<void()> *> global_updates;
 
 Update::Update() {
-    update_ = bind(&Update::update, this);
+    update_ = [this] { this->update(); };
     global_updates.insert(&update_);
 }
 Update::~Update() {
