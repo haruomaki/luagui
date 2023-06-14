@@ -135,6 +135,32 @@ struct RGBA {
     float r_, g_, b_, a_;
 };
 
+template <class T>
+class MemoryView {
+    T *data_;
+    size_t size_;
+
+  public:
+    MemoryView(T *data, size_t size)
+        : data_(data)
+        , size_(size) {}
+
+    T *data() const { return data_; }
+    size_t size() const { return size_; }
+
+    T &operator[](size_t index) { return data_[index]; }
+    const T &operator[](size_t index) const { return data_[index]; }
+
+    friend ostream &operator<<(ostream &os, const MemoryView &view) {
+        os << "[";
+        for (size_t i = 0; i < view.size();) {
+            os << view[i++] << (i < view.size() ? ", " : "");
+        }
+        os << "]";
+        return os;
+    }
+};
+
 } // namespace base
 
 using namespace base;
