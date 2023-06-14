@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <array>
+#include <fstream>
 #include <functional> // 関数型 std::function
 #include <iostream>
 #include <set>
@@ -113,6 +114,19 @@ void debugPre(const char *file, int line, const char *argnames, T &&...args) {
 }
 
 #define debug(...) debugPre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__))
+
+// ファイルから文字列を読み込む
+static string loadString(const string &path) {
+    ifstream file(path);
+    if (!file.is_open()) {
+        cerr << "Failed to open shader file: " << path << endl;
+        return "";
+    }
+    stringstream ss;
+    ss << file.rdbuf();
+    file.close();
+    return ss.str();
+}
 
 template <typename T>
 struct Point {
