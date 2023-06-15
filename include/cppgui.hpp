@@ -120,7 +120,7 @@ class Window {
   public:
     WorldObject world_object_root_;
     int tick_ = 0;
-    GLuint program_id_;
+    ProgramObject shader_;
 
     Window(int width, int height);
     ~Window();

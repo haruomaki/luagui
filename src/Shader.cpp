@@ -49,3 +49,13 @@ GLuint ProgramObject::getPrgramId() const {
 void ProgramObject::use() const {
     glUseProgram(program_id_);
 }
+
+template <>
+GLint ProgramObject::getLocation<Attribute>(const string &name) {
+    return glGetAttribLocation(program_id_, name.c_str());
+}
+
+template <>
+GLint ProgramObject::getLocation<Uniform>(const string &name) {
+    return glGetUniformLocation(program_id_, name.c_str());
+}

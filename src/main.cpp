@@ -86,9 +86,8 @@ Window::Window(int width, int height) {
     auto fsh_string = loadString("shader/shader.fsh");
     auto fsh_id = createShader(GL_FRAGMENT_SHADER, fsh_string);
 
-    ProgramObject shader = {vsh_id, fsh_id};
-    shader.use();
-    program_id_ = shader.getPrgramId();
+    shader_ = ProgramObject{vsh_id, fsh_id};
+    shader_.use();
 }
 
 Window::~Window() { glfwTerminate(); }

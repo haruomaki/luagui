@@ -32,9 +32,9 @@ class Polygon {
 
         // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
 
-        int va_position_location = glGetAttribLocation(window_.program_id_, "position");
-        int va_color_location = glGetAttribLocation(window_.program_id_, "color");
-        int uv_location = glGetAttribLocation(window_.program_id_, "uv");
+        auto va_position_location = window_.shader_.getLocation<Attribute>("position");
+        auto va_color_location = window_.shader_.getLocation<Attribute>("color");
+        auto uv_location = window_.shader_.getLocation<Attribute>("uv");
 
         // 頂点バッファオブジェクト（VBO）の生成とデータの転送
         glGenBuffers(1, &vbo_);
@@ -70,8 +70,8 @@ class PolygonInstance : Draw, public WorldObject {
         : polygon_(polygon) {}
 
     void draw() const override {
-        int is_tex_location = glGetUniformLocation(polygon_.window_.program_id_, "is_tex");
-        int model_view_matrix_location = glGetUniformLocation(polygon_.window_.program_id_, "modelViewMatrix");
+        auto is_tex_location = polygon_.window_.shader_.getLocation<Uniform>("is_tex");
+        auto model_view_matrix_location = polygon_.window_.shader_.getLocation<Uniform>("modelViewMatrix");
 
         // ワールド座標変換
         auto diff = this->getAbsolutePosition();
