@@ -58,6 +58,10 @@ Window::Window(int width, int height) {
         throw runtime_error("Failed to initialize GLEW");
     }
 
+    debug(glGetString(GL_VERSION));
+    debug(glGetString(GL_VENDOR));
+    debug(glGetString(GL_RENDERER));
+
     glfwSetWindowUserPointer(gwin_, this);
 
     // ウィンドウサイズコールバック関数を登録する

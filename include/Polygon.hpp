@@ -30,7 +30,7 @@ class Polygon {
             vers.push_back({coord, color});
         }
 
-        debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
+        // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
 
         int va_position_location = glGetAttribLocation(window_.program_id_, "position");
         int va_color_location = glGetAttribLocation(window_.program_id_, "color");

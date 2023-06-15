@@ -1,6 +1,8 @@
 #pragma once
 
-#include <GL/glew.h>
+#include <GL/glew.h> // glとglfw3より早く
+
+#include <GL/gl.h> // glGetString()のため
 #include <GLFW/glfw3.h>
 #include <glm/ext.hpp>
 #include <glm/gtx/string_cast.hpp>
