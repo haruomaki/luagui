@@ -16,7 +16,7 @@ GLuint createShader(GLenum shader_type, const string &source_code) {
     GLint compiled;
     glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compiled);
     if (compiled == GL_FALSE) {
-        // 失敗していたらエラーログの例外を投げる
+        // 失敗していたらエラーログの例外を投げる https://qiita.com/jasmingirl@github/items/135a58ff27e3c934d15c#シェーダがちゃんとコンパイルできたか確認する
         GLsizei buf_size; // ログメッセージの長さ
         glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &buf_size);
 
@@ -29,25 +29,23 @@ GLuint createShader(GLenum shader_type, const string &source_code) {
     return shader_id;
 }
 
-// シェーダ https://gist.github.com/tasonco/73a7291769278320c76928b1bd963cba
-GLuint createProgram() {
-    // バーテックスシェーダのコンパイル
-    auto vsh_string = loadString("shader/shader.vsh");
-    auto vsh_id = createShader(GL_VERTEX_SHADER, vsh_string);
-
-    // フラグメントシェーダのコンパイル
-    auto fsh_string = loadString("shader/shader.fsh");
-    auto fsh_id = createShader(GL_FRAGMENT_SHADER, fsh_string);
-
+ProgramObject::ProgramObject(std::initializer_list<GLuint> shader_ids) {
     // プログラムオブジェクトの作成
     GLuint program_id = glCreateProgram();
-    glAttachShader(program_id, vsh_id);
-    glAttachShader(program_id, fsh_id);
+    for (auto &&shader_id : shader_ids) {
+        glAttachShader(program_id, shader_id);
+    }
 
     // リンク
     glLinkProgram(program_id);
 
-    glUseProgram(program_id);
+    program_id_ = program_id;
+}
 
-    return program_id;
+GLuint ProgramObject::getPrgramId() const {
+    return program_id_;
+}
+
+void ProgramObject::use() const {
+    glUseProgram(program_id_);
 }

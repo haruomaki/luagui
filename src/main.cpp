@@ -78,7 +78,17 @@ Window::Window(int width, int height) {
 
     setCamera({0, 0}, 400);
 
-    program_id_ = createProgram();
+    // バーテックスシェーダのコンパイル
+    auto vsh_string = loadString("shader/shader.vsh");
+    auto vsh_id = createShader(GL_VERTEX_SHADER, vsh_string);
+
+    // フラグメントシェーダのコンパイル
+    auto fsh_string = loadString("shader/shader.fsh");
+    auto fsh_id = createShader(GL_FRAGMENT_SHADER, fsh_string);
+
+    ProgramObject shader = {vsh_id, fsh_id};
+    shader.use();
+    program_id_ = shader.getPrgramId();
 }
 
 Window::~Window() { glfwTerminate(); }
