@@ -78,7 +78,7 @@ Window::Window(int width, int height) {
 
     setCamera({0, 0}, 400);
 
-    program_id_ = createShader();
+    program_id_ = createProgram();
 }
 
 Window::~Window() { glfwTerminate(); }

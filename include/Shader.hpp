@@ -1,3 +1,3 @@
 #include <guibase.hpp>
 
-GLuint createShader();
+GLuint createProgram();
