@@ -67,6 +67,7 @@ Window::Window(int width, int height) {
         // ここで描画処理などを行う
         auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
         window->setCamera({0, 0}, 400);
+        debug(window->getViewMatrix());
     });
 
     glfwSetKeyCallback(gwin_, masterKeyCallback);

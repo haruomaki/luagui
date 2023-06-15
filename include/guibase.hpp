@@ -55,6 +55,18 @@ ostream &operator<<(ostream &os, const set<T> &input) {
     return os;
 }
 
+template <glm::length_t L, class T, glm::qualifier Q>
+ostream &operator<<(ostream &os, const glm::vec<L, T, Q> input_vec) {
+    os << glm::to_string(input_vec);
+    return os;
+}
+
+template <glm::length_t C, glm::length_t R, class T, glm::qualifier Q>
+ostream &operator<<(ostream &os, const glm::mat<C, R, T, Q> input_mat) {
+    os << glm::to_string(input_mat);
+    return os;
+}
+
 template <typename T>
 string toStr(const T &val) {
     stringstream ss;
