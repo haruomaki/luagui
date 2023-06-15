@@ -11,6 +11,7 @@
 #include <fstream>
 #include <functional> // 関数型 std::function
 #include <iostream>
+#include <memory>
 #include <set>
 #include <span>
 #include <sstream>   // 文字列のストリーム
@@ -131,6 +132,11 @@ void debugPre(const char *file, int line, const char *argnames, T &&...args) {
 }
 
 #define debug(...) debugPre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__))
+
+#define DEFINE_RUNTIME_ERROR(name)          \
+    class name : public runtime_error {     \
+        using runtime_error::runtime_error; \
+    }
 
 // ファイルから文字列を読み込む
 static string loadString(const string &path) {
