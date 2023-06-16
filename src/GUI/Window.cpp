@@ -70,13 +70,13 @@ Window::Window(int width, int height) {
         glViewport(0, 0, width, height);
         // ここで描画処理などを行う
         auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
-        window->setCamera({0, 0}, 400);
+        window->setCamera({0, 0}, default_camera_zoom);
         debug(window->getViewMatrix());
     });
 
     glfwSetKeyCallback(gwin_, masterKeyCallback);
 
-    setCamera({0, 0}, 400);
+    setCamera({0, 0}, default_camera_zoom);
 
     // バーテックスシェーダのコンパイル
     auto vsh_string = loadString("assets/shaders/shader.vsh");

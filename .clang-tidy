@@ -6,7 +6,7 @@ Checks: "-*,\
   # cppcoreguidelines-*,\
   linuxkernel-*,\
   llvm-*,\
-  -llvm-include-order,\
+  -llvm-include-order,\ #マクロによるインクルード時、見かけの順序を保つ
   misc-*,\
   -misc-no-recursion,\
   -misc-non-private-member-variables-in-classes,\

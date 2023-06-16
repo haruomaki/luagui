@@ -70,6 +70,9 @@ class PolygonInstance : Draw, public WorldObject {
         : polygon_(polygon) {}
 
     void draw() const override {
+        // シェーダを有効化
+        polygon_.window_.shader_.use();
+
         auto is_tex_location = polygon_.window_.shader_.getLocation<Uniform>("is_tex");
         auto model_view_matrix_location = polygon_.window_.shader_.getLocation<Uniform>("modelViewMatrix");
 

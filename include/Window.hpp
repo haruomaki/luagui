@@ -115,6 +115,7 @@ class Window {
     glm::mat4 view_matrix_ = glm::mat4(1);
     glm::vec3 camera_pos_;
     float camera_zoom_ = 1;
+    static constexpr float default_camera_zoom = 400;
     bool looping_ = false;
 
   public:
