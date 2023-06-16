@@ -8,7 +8,8 @@ struct InterleavedVertexInfo {
 };
 
 class Polygon {
-    GLuint vbo_, vao_;
+    VertexArrayObject vao_;
+    GLuint vbo_;
     Window &window_;
     GLuint tex_id_ = 0;
     const size_t n_;
@@ -36,29 +37,26 @@ class Polygon {
         auto va_color_location = window_.shader_.getLocation<Attribute>("color");
         auto uv_location = window_.shader_.getLocation<Attribute>("uv");
 
-        // 頂点バッファオブジェクト（VBO）の生成とデータの転送
-        glGenBuffers(1, &vbo_);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(InterleavedVertexInfo) * n_, vers.data(), usage); // WARNING: versのアライメントによっては動作しない
-
         // VAOを作成。頂点の座標と色、uvを関連付ける
-        glGenVertexArrays(1, &vao_); // VAOの生成
-        glBindVertexArray(vao_);     // VAOをバインド
+        vao_ = VertexArrayObject::gen();
+        vao_.bind([&] {
+            // 頂点バッファオブジェクト（VBO）の生成とデータの転送
+            glGenBuffers(1, &vbo_);
+            glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(InterleavedVertexInfo) * n_, vers.data(), usage); // WARNING: versのアライメントによっては動作しない
 
-        glEnableVertexAttribArray(va_position_location);
-        glEnableVertexAttribArray(va_color_location);
-        glVertexAttribPointer(va_position_location, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-        glVertexAttribPointer(va_color_location, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+            glEnableVertexAttribArray(va_position_location);
+            glEnableVertexAttribArray(va_color_location);
+            glVertexAttribPointer(va_position_location, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+            glVertexAttribPointer(va_color_location, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // VBOのバインドを解除
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            // VBOのバインドを解除
 
-        // uvの設定
-        glEnableVertexAttribArray(uv_location);
-        glVertexAttribPointer(uv_location, 2, GL_FLOAT, GL_FALSE, 0, vertex_uv);
-
-        glBindVertexArray(0);
-        // VAOのバインドを解除
+            // uvの設定
+            glEnableVertexAttribArray(uv_location);
+            glVertexAttribPointer(uv_location, 2, GL_FLOAT, GL_FALSE, 0, vertex_uv);
+        });
     }
 };
 
@@ -89,10 +87,10 @@ class PolygonInstance : Draw, public WorldObject {
 
         // モデルの描画
         glUniform1i(is_tex_location, (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
-        glBindVertexArray(polygon_.vao_);
-        glBindTexture(GL_TEXTURE_2D, polygon_.tex_id_);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, polygon_.n_);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindVertexArray(0); // NOTE: 必須
+        polygon_.vao_.bind([&] {
+            glBindTexture(GL_TEXTURE_2D, polygon_.tex_id_);
+            glDrawArrays(GL_TRIANGLE_FAN, 0, polygon_.n_);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        });
     }
 };
