@@ -1,4 +1,4 @@
-#include <guibase.hpp>
+#include <GUI.hpp>
 
 void masterUpdate();
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <guibase.hpp>
+#include <GUI.hpp>
 
 void masterDraw();
 

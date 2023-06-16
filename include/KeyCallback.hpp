@@ -1,4 +1,4 @@
-#include <guibase.hpp>
+#include <GUI.hpp>
 
 void masterKeyCallback(GLFWwindow *gwin, int key, int scancode, int action, int mods);
 

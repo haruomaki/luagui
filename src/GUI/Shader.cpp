@@ -1,5 +1,5 @@
+#include <GUI.hpp>
 #include <Shader.hpp>
-#include <guibase.hpp>
 
 DEFINE_RUNTIME_ERROR(GLShaderCreationException);
 

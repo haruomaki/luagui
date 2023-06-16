@@ -1,11 +1,11 @@
 #pragma once
 
 #include <Draw.hpp>
+#include <GUI.hpp>
 #include <KeyCallback.hpp>
 #include <Shader.hpp>
 #include <Timer.hpp>
 #include <Update.hpp>
-#include <guibase.hpp>
 
 template <typename T>
 struct Rect {

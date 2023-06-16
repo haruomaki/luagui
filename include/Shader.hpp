@@ -1,4 +1,4 @@
-#include <guibase.hpp>
+#include <GUI.hpp>
 
 GLuint createShader(GLenum shader_type, const string &source_code);
 
