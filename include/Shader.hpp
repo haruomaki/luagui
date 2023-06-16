@@ -38,20 +38,24 @@ struct VertexArrayObject {
     }
 };
 
-template <GLenum target>
+template <GLenum TARGET>
 struct BufferObject {
     GLuint buffer_;
 
-    static inline BufferObject gen() {
+    // glGenBuffers() + glBufferData()
+    static inline BufferObject gen(GLsizeiptr size, const void *data, GLenum usage) {
         BufferObject xbo;
         glGenBuffers(1, &xbo.buffer_);
+        glBindBuffer(TARGET, xbo.buffer_);
+        glBufferData(TARGET, size, data, usage);
+        glBindBuffer(TARGET, 0);
         return xbo;
     }
 
     inline void bind(const function<void()> &proc_in_bind) const {
-        glBindBuffer(target, buffer_);
+        glBindBuffer(TARGET, buffer_);
         proc_in_bind();
-        glBindBuffer(target, 0);
+        glBindBuffer(TARGET, 0);
     }
 };
 

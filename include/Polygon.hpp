@@ -41,10 +41,8 @@ class Polygon {
         vao_ = VertexArrayObject::gen();
         vao_.bind([&] {
             // 頂点バッファオブジェクト（VBO）の生成とデータの転送
-            vbo_ = VertexBufferObject::gen();
+            vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * n_, vers.data(), usage);
             vbo_.bind([&] {
-                glBufferData(GL_ARRAY_BUFFER, sizeof(InterleavedVertexInfo) * n_, vers.data(), usage); // WARNING: versのアライメントによっては動作しない
-
                 glEnableVertexAttribArray(va_position_location);
                 glEnableVertexAttribArray(va_color_location);
                 glVertexAttribPointer(va_position_location, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
