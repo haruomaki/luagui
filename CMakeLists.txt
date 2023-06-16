@@ -1,26 +1,17 @@
 cmake_minimum_required(VERSION 3.5)
 project(cppgui CXX)
 
-add_library(${PROJECT_NAME} SHARED
+add_executable(${PROJECT_NAME}
     src/main.cpp
-    src/KeyCallback.cpp
-    src/Update.cpp
-    src/Draw.cpp
-    src/Shader.cpp
+    src/GUI/Window.cpp
+    src/GUI/KeyCallback.cpp
+    src/GUI/Update.cpp
+    src/GUI/Draw.cpp
+    src/GUI/Shader.cpp
 )
-
-set(INCLUDE_DIRS include)
-target_include_directories(cppgui PUBLIC ${INCLUDE_DIRS})
-
-# インストール設定
-install(TARGETS cppgui
-    LIBRARY DESTINATION /usr/local/lib # ライブラリファイルのインストール先
-    ARCHIVE DESTINATION /usr/local/lib # 静的ライブラリファイルのインストール先
-)
-install(DIRECTORY ${INCLUDE_DIRS} DESTINATION /usr/local) # ヘッダファイルのインストール先
 
 # GLFWのリンク
-# target_link_libraries(${PROJECT_NAME} PRIVATE GL glfw)
+target_link_libraries(${PROJECT_NAME} PRIVATE GL glfw GLEW)
 
 # コンパイルオプション
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20) # -std=c++20 を指定
