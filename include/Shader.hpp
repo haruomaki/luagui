@@ -22,13 +22,10 @@ class ProgramObject {
     void setVertexAttribute(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
 };
 
-class VertexArrayObject {
+struct VertexArrayObject {
     GLuint array_;
 
-  public:
-    VertexArrayObject() = default;
-
-    static VertexArrayObject gen() {
+    static inline VertexArrayObject gen() {
         VertexArrayObject vao;
         glGenVertexArrays(1, &vao.array_); // VAOの生成
         return vao;
@@ -40,3 +37,22 @@ class VertexArrayObject {
         glBindVertexArray(0);
     }
 };
+
+template <GLenum target>
+struct BufferObject {
+    GLuint buffer_;
+
+    static inline BufferObject gen() {
+        BufferObject xbo;
+        glGenBuffers(1, &xbo.buffer_);
+        return xbo;
+    }
+
+    inline void bind(const function<void()> &proc_in_bind) const {
+        glBindBuffer(target, buffer_);
+        proc_in_bind();
+        glBindBuffer(target, 0);
+    }
+};
+
+using VertexBufferObject = BufferObject<GL_ARRAY_BUFFER>;

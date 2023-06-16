@@ -9,7 +9,7 @@ struct InterleavedVertexInfo {
 
 class Polygon {
     VertexArrayObject vao_;
-    GLuint vbo_;
+    VertexBufferObject vbo_;
     Window &window_;
     GLuint tex_id_ = 0;
     const size_t n_;
@@ -41,17 +41,15 @@ class Polygon {
         vao_ = VertexArrayObject::gen();
         vao_.bind([&] {
             // 頂点バッファオブジェクト（VBO）の生成とデータの転送
-            glGenBuffers(1, &vbo_);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(InterleavedVertexInfo) * n_, vers.data(), usage); // WARNING: versのアライメントによっては動作しない
+            vbo_ = VertexBufferObject::gen();
+            vbo_.bind([&] {
+                glBufferData(GL_ARRAY_BUFFER, sizeof(InterleavedVertexInfo) * n_, vers.data(), usage); // WARNING: versのアライメントによっては動作しない
 
-            glEnableVertexAttribArray(va_position_location);
-            glEnableVertexAttribArray(va_color_location);
-            glVertexAttribPointer(va_position_location, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-            glVertexAttribPointer(va_color_location, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
-
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            // VBOのバインドを解除
+                glEnableVertexAttribArray(va_position_location);
+                glEnableVertexAttribArray(va_color_location);
+                glVertexAttribPointer(va_position_location, 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+                glVertexAttribPointer(va_color_location, 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+            });
 
             // uvの設定
             glEnableVertexAttribArray(uv_location);
