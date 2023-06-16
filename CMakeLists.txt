@@ -15,6 +15,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE include)
 # GLFWのリンク
 target_link_libraries(${PROJECT_NAME} PRIVATE GL glfw GLEW)
 
+# FreeType
+find_package(Freetype REQUIRED)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${FREETYPE_LIBRARIES})
+
 # コンパイルオプション
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20) # -std=c++20 を指定
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF) # GNU拡張を無効化

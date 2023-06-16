@@ -6,6 +6,7 @@ Checks: "-*,\
   # cppcoreguidelines-*,\
   linuxkernel-*,\
   llvm-*,\
+  -llvm-include-order,\
   misc-*,\
   -misc-no-recursion,\
   -misc-non-private-member-variables-in-classes,\

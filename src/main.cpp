@@ -1,5 +1,8 @@
 #include <Window.hpp>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 class QButton : KeyCallback {
     void keyCallback(int key, int action) {
         cout << "QButtonのコールバックだよ" << endl;
