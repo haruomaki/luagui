@@ -79,11 +79,11 @@ Window::Window(int width, int height) {
     setCamera({0, 0}, 400);
 
     // バーテックスシェーダのコンパイル
-    auto vsh_string = loadString("shader/shader.vsh");
+    auto vsh_string = loadString("assets/shaders/shader.vsh");
     auto vsh_id = createShader(GL_VERTEX_SHADER, vsh_string);
 
     // フラグメントシェーダのコンパイル
-    auto fsh_string = loadString("shader/shader.fsh");
+    auto fsh_string = loadString("assets/shaders/shader.fsh");
     auto fsh_id = createShader(GL_FRAGMENT_SHADER, fsh_string);
 
     shader_ = ProgramObject{vsh_id, fsh_id};

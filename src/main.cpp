@@ -1,6 +1,7 @@
 #include <Window.hpp>
 
 #include <ft2build.h>
+#include <stdexcept>
 #include FT_FREETYPE_H
 
 class QButton : KeyCallback {
@@ -51,11 +52,21 @@ class MovingPolygonInstance : public PolygonInstance, Update {
 };
 
 int main() {
+    FT_Library ft;
+    if (FT_Init_FreeType(&ft) != 0) {
+        throw runtime_error("ERROR::FREETYPE: Could not init FreeType Library");
+    }
+
+    FT_Face face;
+    if (FT_New_Face(ft, "assets/fonts/migmix-2p-regular.ttf", 0, &face) != 0) {
+        throw runtime_error("ERROR::FREETYPE: Failed to load font");
+    }
+
     Window window(600, 500);
 
     Leaf leaf;
 
-    GLuint tex_id = loadTexture("image/cat.raw");
+    GLuint tex_id = loadTexture("assets/images/cat.raw");
 
     Polygon gon(window, {{0.9f, 0.9f}, {0.5f, 0.f}, {0.f, 0.f}, {0.f, 0.5f}},
                 {
