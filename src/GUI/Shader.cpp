@@ -65,3 +65,11 @@ void ProgramObject::setAttribute(const string &name, GLint size, GLenum type, GL
     glEnableVertexAttribArray(location);
     glVertexAttribPointer(location, size, type, normalized, stride, pointer);
 }
+
+void ProgramObject::setUniform(const string &name, GLint int_value) const {
+    glUniform1i(getLocation<Uniform>(name), int_value);
+}
+
+void ProgramObject::setUniform(const string &name, const glm::mat4 &mat4_value) const {
+    glUniformMatrix4fv(getLocation<Uniform>(name), 1, GL_FALSE, glm::value_ptr(mat4_value));
+}

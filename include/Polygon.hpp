@@ -60,10 +60,8 @@ class PolygonInstance : Draw, public WorldObject {
 
     void draw() const override {
         // シェーダを有効化
-        polygon_.window_.shader_.use();
-
-        auto is_tex_location = polygon_.window_.shader_.getLocation<Uniform>("is_tex");
-        auto model_view_matrix_location = polygon_.window_.shader_.getLocation<Uniform>("modelViewMatrix");
+        const auto &shader = polygon_.window_.shader_;
+        shader.use();
 
         // ワールド座標変換
         auto diff = this->getAbsolutePosition();
@@ -74,10 +72,10 @@ class PolygonInstance : Draw, public WorldObject {
 
         // 合成して、モデルビュー行列を得る
         glm::mat4 model_view_matrix = view_matrix * model_matrix;
-        glUniformMatrix4fv(model_view_matrix_location, 1, GL_FALSE, glm::value_ptr(model_view_matrix));
+        shader.setUniform("modelViewMatrix", model_view_matrix);
 
         // モデルの描画
-        glUniform1i(is_tex_location, (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
+        polygon_.window_.shader_.setUniform("is_tex", (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
         polygon_.vao_.bind([&] {
             glBindTexture(GL_TEXTURE_2D, polygon_.tex_id_);
             glDrawArrays(GL_TRIANGLE_FAN, 0, polygon_.n_);
