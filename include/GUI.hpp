@@ -11,6 +11,7 @@
 #include <fstream>
 #include <functional> // 関数型 std::function
 #include <iostream>
+#include <map>
 #include <memory>
 #include <set>
 #include <span>
