@@ -131,7 +131,11 @@ void debugPre(const char *file, int line, const char *argnames, T &&...args) {
     cerr << endl;
 }
 
+#ifdef DEBUG
 #define debug(...) debugPre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__))
+#else
+#define debug(...)
+#endif
 
 #define DEFINE_RUNTIME_ERROR(name)          \
     class name : public runtime_error {     \
