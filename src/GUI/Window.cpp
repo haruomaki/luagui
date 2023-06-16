@@ -1,4 +1,4 @@
-#include <cppgui.hpp>
+#include <Window.hpp>
 
 // 画像 https://nn-hokuson.hatenablog.com/entry/2017/02/24/171230
 GLuint loadTexture(const string &filename) {

@@ -10,6 +10,8 @@ add_executable(${PROJECT_NAME}
     src/GUI/Shader.cpp
 )
 
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+
 # GLFWのリンク
 target_link_libraries(${PROJECT_NAME} PRIVATE GL glfw GLEW)
 

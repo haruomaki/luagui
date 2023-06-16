@@ -1,4 +1,4 @@
-#include <cppgui.hpp>
+#include <Window.hpp>
 
 class QButton : KeyCallback {
     void keyCallback(int key, int action) {

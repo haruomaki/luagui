@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cppgui.hpp>
+#include <Window.hpp>
 
 struct InterleavedVertexInfo {
     glm::vec3 coord_;
