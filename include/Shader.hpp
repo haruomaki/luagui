@@ -17,9 +17,9 @@ class ProgramObject {
     void use() const;
 
     template <StorageQualifier q>
-    GLint getLocation(const string &name);
+    [[nodiscard]] GLint getLocation(const string &name) const;
 
-    void setVertexAttribute(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
+    void setAttribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const;
 };
 
 struct VertexArrayObject {
@@ -45,9 +45,9 @@ struct BufferObject {
     // glGenBuffers() + glBufferData()
     static inline BufferObject gen(GLsizeiptr size, const void *data, GLenum usage) {
         BufferObject xbo;
-        glGenBuffers(1, &xbo.buffer_);
+        glGenBuffers(1, &xbo.buffer_); // BOの生成
         glBindBuffer(TARGET, xbo.buffer_);
-        glBufferData(TARGET, size, data, usage);
+        glBufferData(TARGET, size, data, usage); // バインド中にデータを設定
         glBindBuffer(TARGET, 0);
         return xbo;
     }

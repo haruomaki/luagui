@@ -51,11 +51,17 @@ void ProgramObject::use() const {
 }
 
 template <>
-GLint ProgramObject::getLocation<Attribute>(const string &name) {
+GLint ProgramObject::getLocation<Attribute>(const string &name) const {
     return glGetAttribLocation(program_id_, name.c_str());
 }
 
 template <>
-GLint ProgramObject::getLocation<Uniform>(const string &name) {
+GLint ProgramObject::getLocation<Uniform>(const string &name) const {
     return glGetUniformLocation(program_id_, name.c_str());
+}
+
+void ProgramObject::setAttribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const {
+    GLint location = getLocation<Attribute>(name);
+    glEnableVertexAttribArray(location);
+    glVertexAttribPointer(location, size, type, normalized, stride, pointer);
 }
