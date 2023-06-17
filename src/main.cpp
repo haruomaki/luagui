@@ -42,13 +42,13 @@ class Leaf : KeyCallback {
 
 class MovingPolygonInstance : public PolygonInstance, Update {
     using PolygonInstance::PolygonInstance;
-    static constexpr float speed = 0.005f;
+    static constexpr float speed = 1.5f;
     float velocity_ = -speed;
 
     void update() override {
         auto next_pos = getPosition() + glm::vec3(0, velocity_, 0);
         setPosition(next_pos);
-        if (next_pos.y < -1 || 1 < next_pos.y) {
+        if (next_pos.y < -300 || 300 < next_pos.y) {
             velocity_ *= -1.1f;
         }
     }
@@ -228,8 +228,9 @@ int main() {
     MovingPolygonInstance ins3(gon3);
     window.world_object_root_.append(&ins3);
     ins3.append(&ins);
-    ins3.setScale(3);
-    ins2.setScale(5);
+    ins3.setScale(900);
+    ins2.setScale(1500);
+    inspoly.setScale(300);
 
     setInterval(1000, [&] {
         debug(ins3.getAbsoluteTransform());
