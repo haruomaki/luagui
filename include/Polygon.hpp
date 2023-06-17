@@ -19,14 +19,14 @@ class Polygon {
     friend class PolygonInstance;
 
   public:
-    Polygon(Window &window, vector<Point<float>> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
+    Polygon(Window &window, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
         : window_(window)
         , tex_id_(tex_id)
         , n_(coords.size()) {
 
         vector<InterleavedVertexInfo> vers = {};
         for (size_t i = 0; i < n_; i++) {
-            glm::vec3 coord = {coords[i].x_, coords[i].y_, 1};
+            glm::vec3 coord = coords[i];
             RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
             vers.push_back({coord, color});
         }
