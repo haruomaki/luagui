@@ -123,16 +123,11 @@ class WorldObject {
 
 class Window {
     GLFWwindow *gwin_;
-    glm::mat4 view_matrix_ = glm::mat4(1);
-    glm::vec3 camera_pos_;
-    float camera_zoom_ = 1;
-    static constexpr float default_camera_zoom = 1;
     bool looping_ = false;
 
   public:
     WorldObject world_object_root_;
     int tick_ = 0;
-    ProgramObject shader_;
 
     Window(int width, int height);
     ~Window();
@@ -140,13 +135,11 @@ class Window {
     pair<int, int> getWindowSize();
     pair<int, int> getFrameBufferSize();
     pair<float, float> getWindowContentScale();
-
-    [[nodiscard]] const glm::mat4 &getViewMatrix() const;
-    void setCamera(Point<float> pos, float zoom);
 };
 
 GLuint loadTexture(const string &filename);
 
 // Windowを利用するヘッダ。Windowの宣言のあとにインクルード
+#include <Camera.hpp>
 #include <Polygon.hpp>
 #include <Text.hpp>

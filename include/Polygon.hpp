@@ -10,7 +10,8 @@ struct InterleavedVertexInfo {
 class Polygon {
     VertexArrayObject vao_;
     VertexBufferObject vbo_;
-    Window &window_;
+    const ProgramObject &shader_;
+    const Camera &camera_;
     GLuint tex_id_ = 0;
     const size_t n_;
     static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}};
@@ -19,8 +20,9 @@ class Polygon {
     friend class PolygonInstance;
 
   public:
-    Polygon(Window &window, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
-        : window_(window)
+    Polygon(const ProgramObject &shader, const Camera &camera, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
+        : shader_(shader)
+        , camera_(camera)
         , tex_id_(tex_id)
         , n_(coords.size()) {
 
@@ -32,8 +34,6 @@ class Polygon {
         }
 
         // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
-
-        const auto &shader = window_.shader_;
 
         // 頂点バッファオブジェクト（VBO）の生成とデータの転送
         vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * n_, vers.data(), usage);
@@ -61,14 +61,14 @@ class PolygonInstance : Draw, public WorldObject {
 
     void draw() const override {
         // シェーダを有効化
-        const auto &shader = polygon_.window_.shader_;
+        const auto &shader = polygon_.shader_;
         shader.use();
 
         // ワールド座標変換
         glm::mat4 model_matrix = this->getAbsoluteTransform();
 
         // ビュー座標変換
-        const glm::mat4 &view_matrix = polygon_.window_.getViewMatrix();
+        const glm::mat4 &view_matrix = polygon_.camera_.getViewMatrix();
 
         // 合成して、モデルビュー行列を得る
         glm::mat4 model_view_matrix = view_matrix * model_matrix;

@@ -70,24 +70,13 @@ Window::Window(int width, int height) {
         glViewport(0, 0, width, height);
         // ここで描画処理などを行う
         auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
-        window->setCamera({0, 0}, default_camera_zoom);
-        debug(window->getViewMatrix());
+        // window->setCamera({0, 0}, default_camera_zoom);
+        // debug(window->getViewMatrix());
     });
 
     glfwSetKeyCallback(gwin_, masterKeyCallback);
 
-    setCamera({0, 0}, default_camera_zoom);
-
-    // バーテックスシェーダのコンパイル
-    auto vsh_string = loadString("assets/shaders/shader.vsh");
-    auto vsh_id = createShader(GL_VERTEX_SHADER, vsh_string);
-
-    // フラグメントシェーダのコンパイル
-    auto fsh_string = loadString("assets/shaders/shader.fsh");
-    auto fsh_id = createShader(GL_FRAGMENT_SHADER, fsh_string);
-
-    shader_ = ProgramObject{vsh_id, fsh_id};
-    shader_.use();
+    // setCamera({0, 0}, default_camera_zoom);
 }
 
 Window::~Window() { glfwTerminate(); }
@@ -147,16 +136,13 @@ void Window::mainloop(const std::function<void()> &callback) {
     looping_ = false;
 }
 
-const glm::mat4 &Window::getViewMatrix() const {
-    return this->view_matrix_;
-}
+// void Window::setCamera(Point<float> pos, float zoom) {
+//     auto frame_buf = getFrameBufferSize();
+//     const int width = frame_buf.first;
+//     const int height = frame_buf.second;
 
-void Window::setCamera(Point<float> pos, float zoom) {
-    auto frame_buf = getFrameBufferSize();
-    const int width = frame_buf.first;
-    const int height = frame_buf.second;
-
-    glm::mat4 pos_mat = glm::translate(glm::mat4(1), glm::vec3(-pos.x_, -pos.y_, 0));
-    glm::mat4 zoom_mat = glm::scale(glm::mat4(1), glm::vec3(zoom / width, zoom / height, 1));
-    view_matrix_ = zoom_mat * pos_mat;
-}
+//     // glm::mat4 pos_mat = glm::translate(glm::mat4(1), glm::vec3(-pos.x_, -pos.y_, -1));
+//     // glm::mat4 zoom_mat = glm::scale(glm::mat4(1), glm::vec3(zoom / width, zoom / height, 1));
+//     // view_matrix_ = zoom_mat * pos_mat;
+//     view_matrix_ = projection_matrix_ * glm::lookAt(glm::vec3(0.f, 0.f, 800.f), {0.f, 400.f, 0.f}, {1.f, 1.f, 10.f});
+// }

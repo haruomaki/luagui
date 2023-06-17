@@ -10,15 +10,15 @@ struct Character {
 };
 
 class Font {
-    Window &window_;
     ProgramObject shader_;
+    const Camera &camera_;
     std::map<char, Character> Characters;
     unsigned int VAO, VBO;
 
     friend class Text;
 
   public:
-    Font(Window &window);
+    Font(const Camera &camera);
 };
 
 class Text : public WorldObject, Draw {

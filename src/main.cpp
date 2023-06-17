@@ -50,7 +50,20 @@ class MovingPolygonInstance : public PolygonInstance, Update {
 int main() {
     Window window(600, 500);
 
-    Font migmix_font(window);
+    // バーテックスシェーダのコンパイル
+    auto vsh_string = loadString("assets/shaders/shader.vsh");
+    auto vsh_id = createShader(GL_VERTEX_SHADER, vsh_string);
+
+    // フラグメントシェーダのコンパイル
+    auto fsh_string = loadString("assets/shaders/shader.fsh");
+    auto fsh_id = createShader(GL_FRAGMENT_SHADER, fsh_string);
+
+    auto main_shader = ProgramObject{vsh_id, fsh_id};
+
+    Camera camera;
+    camera.setScale(700);
+
+    Font migmix_font(camera);
     Text sample_text(migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2});
     Text credit_text(migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9});
 
@@ -60,7 +73,7 @@ int main() {
 
     GLuint tex_id = loadTexture("assets/images/cat.raw");
 
-    Polygon gon(window, {{0.9f, 0.9f, 0}, {0.5f, 0.f, 0}, {0.f, 0.f, 0}, {0.f, 0.5f, 0}},
+    Polygon gon(main_shader, camera, {{0.9f, 0.9f, 0}, {0.5f, 0.f, 0}, {0.f, 0.f, 0}, {0.f, 0.5f, 0}},
                 {
                     {0.9, 0.3, 0, 1},
                     {0.1, 0.2, 0.7, 0.3},
@@ -69,14 +82,14 @@ int main() {
                 },
                 tex_id);
 
-    Polygon gon2(window, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+    Polygon gon2(main_shader, camera, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
                  {
                      {0.9, 0.3, 0, 1},
                      {0.9, 0.2, 0.7, 0.3},
                      {0.3, 0.7, 0.5f, 0.5},
                  });
 
-    Polygon gon3(window, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
+    Polygon gon3(main_shader, camera, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
                  {
                      {0.9, 0.3, 0, 1},
                      {0.9, 0.2, 0.7, 0.3},
@@ -85,7 +98,7 @@ int main() {
                      {0.3, 0.7, 0.5f, 0.5},
                  });
 
-    Polygon poly(window, {{-0.9, -0.9, -1}, {-0.9, 0, 0}, {0, 0, 1}, {0, -0.9, 0}}, {{0.3, 0.7, 0.1, 1}});
+    Polygon poly(main_shader, camera, {{-0.9, -0.9, -1}, {-0.9, 0, 0}, {0, 0, 1}, {0, -0.9, 0}}, {{0.3, 0.7, 0.1, 1}});
 
     PolygonInstance ins(gon), ins2(gon2), inspoly(poly);
     MovingPolygonInstance ins3(gon3);
