@@ -61,7 +61,6 @@ GLint ProgramObject::getLocation<Uniform>(const string &name) const {
 }
 
 void ProgramObject::setAttribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const {
-    debug(name);
     GLint location = getLocation<Attribute>(name);
     glVertexAttribPointer(location, size, type, normalized, stride, pointer);
     glEnableVertexAttribArray(location);
