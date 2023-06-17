@@ -8,6 +8,7 @@ add_executable(${PROJECT_NAME}
     src/GUI/Update.cpp
     src/GUI/Draw.cpp
     src/GUI/Shader.cpp
+    src/GUI/Text.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)

@@ -147,4 +147,6 @@ class Window {
 
 GLuint loadTexture(const string &filename);
 
+// Windowを利用するヘッダ。Windowの宣言のあとにインクルード
 #include <Polygon.hpp>
+#include <Text.hpp>
