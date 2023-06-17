@@ -9,5 +9,25 @@ struct Character {
     unsigned int Advance;   // Offset to advance to next glyph
 };
 
-void prepareText();
-void RenderText(const Window &window, std::string text, Point<float> pos, float scale, glm::vec3 color);
+class Font {
+    Window &window_;
+    ProgramObject shader_;
+    std::map<char, Character> Characters;
+    unsigned int VAO, VBO;
+
+    friend class Text;
+
+  public:
+    Font(Window &window);
+};
+
+class Text : public WorldObject, Draw {
+    Font &font_;
+    string text_;
+    glm::vec3 color_;
+
+  public:
+    Text(Font &font, string text, glm::vec3 color);
+
+    void draw() const override;
+};

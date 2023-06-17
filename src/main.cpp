@@ -50,7 +50,11 @@ class MovingPolygonInstance : public PolygonInstance, Update {
 int main() {
     Window window(600, 500);
 
-    prepareText();
+    Font migmix_font(window);
+    Text sample_text(migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2});
+    Text credit_text(migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9});
+
+    credit_text.setPosition({200, 500, 0});
 
     Leaf leaf;
 
@@ -121,9 +125,6 @@ int main() {
 
     // レンダリングループ
     window.mainloop([&] {
-        RenderText(window, "This is sample text", Point<float>{-0.5, 0}, 1, glm::vec3(0.5, 0.8f, 0.2f));
-        // RenderText(font_shader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
-
         shader.use();
         vao.bind([&] {
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

@@ -22,6 +22,7 @@ class ProgramObject {
     void setAttribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const;
 
     void setUniform(const string &name, GLint int_value) const;
+    void setUniform(const string &name, const glm::vec3 &vec3_value) const;
     void setUniform(const string &name, const glm::mat4 &mat4_value) const;
 };
 

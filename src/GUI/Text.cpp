@@ -5,11 +5,8 @@
 
 DEFINE_RUNTIME_ERROR(FreeTypeException);
 
-std::map<char, Character> Characters;
-ProgramObject font_shader;
-unsigned int VAO, VBO;
-
-void prepareText() {
+Font::Font(Window &window)
+    : window_(window) {
     // FreeTypeを初期化
     FT_Library ft;
     if (FT_Init_FreeType(&ft) != 0) {
@@ -82,24 +79,29 @@ void prepareText() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    font_shader = ProgramObject{
+    shader_ = ProgramObject{
         createShader(GL_VERTEX_SHADER, loadString("assets/shaders/font.vsh")),
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/font.fsh"))};
 }
 
-void RenderText(const Window &window, std::string text, Point<float> pos, float scale, glm::vec3 color) {
+Text::Text(Font &font, string text, glm::vec3 color)
+    : font_(font)
+    , text_(std::move(text))
+    , color_(color) {}
+
+void Text::draw() const {
     // activate corresponding render state
-    font_shader.use();
-    glUniform3f(glGetUniformLocation(font_shader.getPrgramId(), "textColor"), color.x, color.y, color.z);
+    font_.shader_.use();
+    font_.shader_.setUniform("textColor", color_);
     glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(VAO);
+    glBindVertexArray(font_.VAO);
 
     float tail = 0;
 
     // iterate through all characters
     std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++) {
-        Character ch = Characters[*c];
+    for (c = text_.begin(); c != text_.end(); c++) {
+        Character ch = font_.Characters.at(*c);
 
         float xpos = tail + ch.Bearing.x;
         float ypos = -(ch.Size.y - ch.Bearing.y);
@@ -118,14 +120,14 @@ void RenderText(const Window &window, std::string text, Point<float> pos, float 
         // render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
         // update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, font_.VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // モデルビュー行列
-        const auto model_matrix = glm::translate(glm::mat4(1), {pos.x_, pos.y_, 1}) * glm::scale(glm::mat4(1), {scale, scale, scale});
-        const auto model_view_matrix = window.getViewMatrix() * model_matrix;
-        font_shader.setUniform("modelViewMatrix", model_view_matrix);
+        const auto model_matrix = this->getAbsoluteTransform();
+        const auto model_view_matrix = font_.window_.getViewMatrix() * model_matrix;
+        font_.shader_.setUniform("modelViewMatrix", model_view_matrix);
 
         // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
