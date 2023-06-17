@@ -106,6 +106,15 @@ class WorldObject {
         this->refreshAbsoluteTransform();
     }
 
+    void setScale(glm::vec3 scale) {
+        scale_ = scale;
+        this->refreshAbsoluteTransform();
+    }
+    void setScale(float scale) {
+        // FIXME: z軸を拡大すると、視錐台から外れてしまう。射影行列を設定すべき
+        setScale({scale, scale, 1});
+    }
+
     WorldObject *getParent() {
         return parent_;
     }

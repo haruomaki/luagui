@@ -228,6 +228,7 @@ int main() {
     MovingPolygonInstance ins3(gon3);
     window.world_object_root_.append(&ins3);
     ins3.append(&ins);
+    ins3.setScale(3);
 
     setInterval(1000, [&] {
         debug(ins3.getAbsoluteTransform());
