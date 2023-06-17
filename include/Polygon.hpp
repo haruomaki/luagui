@@ -44,7 +44,7 @@ class Polygon {
                 shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
                 shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
             });
-
+            getErrors();
             // uvの設定
             shader.setAttribute("uv", 2, GL_FLOAT, GL_FALSE, 0, vertex_uv);
         });
@@ -75,7 +75,7 @@ class PolygonInstance : Draw, public WorldObject {
         shader.setUniform("modelViewMatrix", model_view_matrix);
 
         // モデルの描画
-        polygon_.window_.shader_.setUniform("is_tex", (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
+        shader.setUniform("is_tex", (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
         polygon_.vao_.bind([&] {
             glBindTexture(GL_TEXTURE_2D, polygon_.tex_id_);
             glDrawArrays(GL_TRIANGLE_FAN, 0, polygon_.n_);

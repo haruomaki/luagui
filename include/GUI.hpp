@@ -143,6 +143,13 @@ void debugPre(const char *file, int line, const char *argnames, T &&...args) {
         using runtime_error::runtime_error; \
     }
 
+inline void getErrors() {
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        debug(err);
+    }
+}
+
 // ファイルから文字列を読み込む
 static string loadString(const string &path) {
     ifstream file(path);

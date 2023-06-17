@@ -1,4 +1,5 @@
-#include "GUI.hpp"
+#include <GUI.hpp>
+
 #include <Window.hpp>
 
 #include <ft2build.h>
@@ -225,11 +226,32 @@ int main() {
         return true;
     });
 
-    GLuint vbo, vao;
+    ProgramObject hello_shader = {
+        createShader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
+        createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
+
+    static constexpr float hello_vertices[4][3] = {{-1, -1, 0},
+                                                   {1, -1, 0},
+                                                   {1, 1, 0},
+                                                   {-1, 1, 0}};
+
+    VertexBufferObject vbo;
+    auto vao = VertexArrayObject::gen();
+    vao.bind([&] {
+        vbo = VertexBufferObject::gen(12, hello_vertices, GL_STATIC_DRAW);
+        vbo.bind([&] {
+            hello_shader.setAttribute("aPos", 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
+        });
+    });
 
     // レンダリングループ
     window.mainloop([&] {
         RenderText(font_shader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
         RenderText(font_shader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+
+        hello_shader.use();
+        vao.bind([&] {
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        });
     });
 }
