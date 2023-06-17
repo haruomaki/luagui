@@ -13,24 +13,26 @@ struct Rect {
 };
 
 class WorldObject {
-    Point<float> pos_;
-    Point<float> abspos_;
+    glm::vec3 pos_;
+    glm::vec3 scale_;
+    glm::mat4 abs_transform_;
     WorldObject *parent_ = nullptr;
     set<WorldObject *> children_;
 
-    void refreshAbsolutePosition() {
+    void refreshAbsoluteTransform() {
         if (parent_ != nullptr) {
-            abspos_ = parent_->abspos_ + pos_;
+            abs_transform_ = parent_->abs_transform_ * TRANSLATE(pos_) * SCALE(scale_);
         }
         for (auto *child : children_) {
-            child->refreshAbsolutePosition();
+            child->refreshAbsoluteTransform();
         }
     }
 
   public:
     WorldObject()
-        : pos_{0, 0}
-        , abspos_({0, 0}) {}
+        : pos_(glm::vec3(0))
+        , scale_(glm::vec3(1))
+        , abs_transform_(glm::mat4(1)) {}
 
     ~WorldObject() {
         cout << "フリー！ " << this << endl;
@@ -47,7 +49,8 @@ class WorldObject {
 
     WorldObject &operator=(WorldObject &&other) noexcept {
         pos_ = other.pos_;
-        abspos_ = other.abspos_;
+        scale_ = other.scale_;
+        abs_transform_ = other.abs_transform_;
         parent_ = other.parent_;
         children_ = other.children_;
 
@@ -72,7 +75,7 @@ class WorldObject {
     void append(WorldObject *child) {
         child->parent_ = this;
         this->children_.insert(child);
-        this->refreshAbsolutePosition();
+        this->refreshAbsoluteTransform();
     }
 
     void deleteRecursively() {
@@ -82,25 +85,25 @@ class WorldObject {
         delete this;
     }
 
-    void showAbsolutePositionRecursively(int depth) const {
-        // cout << "showです。" << endl;
-        cout << std::string(depth, ' ') << this->abspos_ << endl;
-        for (auto *child : children_) {
-            child->showAbsolutePositionRecursively(depth + 1);
-        }
-    }
+    // void showAbsolutePositionRecursively(int depth) const {
+    //     // cout << "showです。" << endl;
+    //     cout << std::string(depth, ' ') << this->abspos_ << endl;
+    //     for (auto *child : children_) {
+    //         child->showAbsolutePositionRecursively(depth + 1);
+    //     }
+    // }
 
-    [[nodiscard]] Point<float> getPosition() const {
+    [[nodiscard]] glm::vec3 getPosition() const {
         return pos_;
     }
 
-    [[nodiscard]] Point<float> getAbsolutePosition() const {
-        return abspos_;
+    [[nodiscard]] glm::mat4 getAbsoluteTransform() const {
+        return abs_transform_;
     }
 
-    void setPosition(Point<float> pos) {
+    void setPosition(glm::vec3 pos) {
         pos_ = pos;
-        this->refreshAbsolutePosition();
+        this->refreshAbsoluteTransform();
     }
 
     WorldObject *getParent() {
@@ -115,7 +118,7 @@ class Window {
     glm::mat4 view_matrix_ = glm::mat4(1);
     glm::vec3 camera_pos_;
     float camera_zoom_ = 1;
-    static constexpr float default_camera_zoom = 1;
+    static constexpr float default_camera_zoom = 300;
     bool looping_ = false;
 
   public:

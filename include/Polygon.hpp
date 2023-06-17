@@ -65,8 +65,7 @@ class PolygonInstance : Draw, public WorldObject {
         shader.use();
 
         // ワールド座標変換
-        auto diff = this->getAbsolutePosition();
-        glm::mat4 model_matrix = glm::translate(glm::mat4(1), glm::vec3(diff.x_, diff.y_, 0));
+        glm::mat4 model_matrix = this->getAbsoluteTransform();
 
         // ビュー座標変換
         const glm::mat4 &view_matrix = polygon_.window_.getViewMatrix();

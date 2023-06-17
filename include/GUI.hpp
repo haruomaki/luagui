@@ -199,6 +199,9 @@ struct RGBA {
     //     , a_(color[3]) {}
 };
 
+#define TRANSLATE(v) glm::translate(glm::mat4(1), v)
+#define SCALE(v) glm::scale(glm::mat4(1), v)
+
 template <class T>
 class MemoryView {
     const T *data_;

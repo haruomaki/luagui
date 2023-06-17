@@ -46,9 +46,9 @@ class MovingPolygonInstance : public PolygonInstance, Update {
     float velocity_ = -speed;
 
     void update() override {
-        auto next_pos = getPosition() + Point<float>{0, velocity_};
+        auto next_pos = getPosition() + glm::vec3(0, velocity_, 0);
         setPosition(next_pos);
-        if (next_pos.y_ < -1 || 1 < next_pos.y_) {
+        if (next_pos.y < -1 || 1 < next_pos.y) {
             velocity_ *= -1.1f;
         }
     }
@@ -230,7 +230,7 @@ int main() {
     ins3.append(&ins);
 
     setInterval(1000, [&] {
-        debug(ins3.getAbsolutePosition());
+        debug(ins3.getAbsoluteTransform());
         return true;
     });
 
