@@ -65,23 +65,25 @@ std::map<char, Character> Characters;
 
 unsigned int VAO, VBO;
 
-void RenderText(ProgramObject &s, std::string text, float x, float y, float scale, glm::vec3 color) {
+void RenderText(const Window &window, ProgramObject &s, std::string text, Point<float> pos, float scale, glm::vec3 color) {
     // activate corresponding render state
     s.use();
     glUniform3f(glGetUniformLocation(s.getPrgramId(), "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
+    float tail = 0;
+
     // iterate through all characters
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++) {
         Character ch = Characters[*c];
 
-        float xpos = x + ch.Bearing.x * scale;
-        float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+        float xpos = tail + ch.Bearing.x;
+        float ypos = -(ch.Size.y - ch.Bearing.y);
 
-        float w = ch.Size.x * scale;
-        float h = ch.Size.y * scale;
+        float w = ch.Size.x;
+        float h = ch.Size.y;
         // update VBO for each character
         float vertices[6][4] = {
             {xpos, ypos + h, 0.0f, 0.0f},
@@ -97,10 +99,16 @@ void RenderText(ProgramObject &s, std::string text, float x, float y, float scal
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        // モデルビュー行列
+        const auto model_matrix = glm::translate(glm::mat4(1), {pos.x_, pos.y_, 1}) * glm::scale(glm::mat4(1), {scale, scale, scale});
+        const auto model_view_matrix = window.getViewMatrix() * model_matrix;
+        s.setUniform("modelViewMatrix", model_view_matrix);
+
         // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
         // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+        tail += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -251,8 +259,8 @@ int main() {
 
     // レンダリングループ
     window.mainloop([&] {
-        RenderText(font_shader, "This is sample text", -0.5, 0, 0.003, glm::vec3(0.5, 0.8f, 0.2f));
-        RenderText(font_shader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+        RenderText(window, font_shader, "This is sample text", Point<float>{-0.5, 0}, 1, glm::vec3(0.5, 0.8f, 0.2f));
+        // RenderText(font_shader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 
         shader.use();
         vao.bind([&] {
