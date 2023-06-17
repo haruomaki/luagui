@@ -226,9 +226,9 @@ int main() {
         return true;
     });
 
-    // ProgramObject hello_shader = {
-    //     createShader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
-    //     createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
+    ProgramObject hello_shader = {
+        createShader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
+        createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
 
     static constexpr float hello_vertices[4][3] = {{-1, -1, 0},
                                                    {1, -1, 0},
@@ -242,7 +242,7 @@ int main() {
         {glm::vec3(-0.5, 0, 0), {1, 0.5, 1, 1}},
     };
 
-    const auto &shader = window.shader_;
+    const auto &shader = hello_shader;
     auto vbo = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * 4, vertices.data(), GL_STATIC_DRAW);
 
     // VAOを作成。頂点の座標と色、uvを関連付ける
@@ -263,11 +263,8 @@ int main() {
         RenderText(font_shader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
         RenderText(font_shader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 
-        // モデルビュー行列
-        const auto model_view_matrix = glm::mat4(1);
         shader.use();
         vao.bind([&] {
-            shader.setUniform("modelViewMatrix", model_view_matrix);
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         });
     });
