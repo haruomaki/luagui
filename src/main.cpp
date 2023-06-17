@@ -230,32 +230,23 @@ int main() {
         createShader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
 
-    static constexpr float hello_vertices[4][3] = {{-1, -1, 0},
-                                                   {1, -1, 0},
-                                                   {1, 1, 0},
-                                                   {-1, 1, 0}};
-
-    const vector<InterleavedVertexInfo> vertices = {
-        {glm::vec3(0, -0.5, 0), {1, 0.5, 1, 0}},
-        {glm::vec3(0.5, 0, 0), {1, 0.5, 1, 1}},
-        {glm::vec3(0, 0.5, 0), {1, 0.5, 1, 0}},
-        {glm::vec3(-0.5, 0, 0), {1, 0.5, 1, 1}},
+    const vector<glm::vec3> vertices = {
+        glm::vec3(0, -0.9, 0),
+        glm::vec3(0.5, 0, 0),
+        glm::vec3(0, 0.5, 0),
+        glm::vec3(-0.5, 0, 0),
     };
 
     const auto &shader = hello_shader;
-    auto vbo = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * 4, vertices.data(), GL_STATIC_DRAW);
+    auto vbo = VertexBufferObject::gen(sizeof(glm::vec3) * 4, vertices.data(), GL_STATIC_DRAW);
 
     // VAOを作成。頂点の座標と色、uvを関連付ける
     auto vao = VertexArrayObject::gen();
     vao.bind([&] {
         vbo.bind([&] {
-            shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-            shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+            shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr); // 位置
         });
         getErrors();
-        // uvの設定
-        static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}};
-        shader.setAttribute("uv", 2, GL_FLOAT, GL_FALSE, 0, vertex_uv);
     });
 
     // レンダリングループ
