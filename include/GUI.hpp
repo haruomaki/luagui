@@ -191,6 +191,12 @@ struct RGB {
 
 struct RGBA {
     float r_, g_, b_, a_;
+
+    // RGBA(std::initializer_list<float> color)
+    //     : r_(color[0])
+    //     , g_(color[1])
+    //     , b_(color[2])
+    //     , a_(color[3]) {}
 };
 
 template <class T>

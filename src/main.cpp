@@ -226,22 +226,36 @@ int main() {
         return true;
     });
 
-    ProgramObject hello_shader = {
-        createShader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
-        createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
+    // ProgramObject hello_shader = {
+    //     createShader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
+    //     createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
 
     static constexpr float hello_vertices[4][3] = {{-1, -1, 0},
                                                    {1, -1, 0},
                                                    {1, 1, 0},
                                                    {-1, 1, 0}};
 
-    VertexBufferObject vbo;
+    const vector<InterleavedVertexInfo> vertices = {
+        {glm::vec3(0, -0.5, 0), {1, 0.5, 1, 0}},
+        {glm::vec3(0.5, 0, 0), {1, 0.5, 1, 1}},
+        {glm::vec3(0, 0.5, 0), {1, 0.5, 1, 0}},
+        {glm::vec3(-0.5, 0, 0), {1, 0.5, 1, 1}},
+    };
+
+    const auto &shader = window.shader_;
+    auto vbo = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * 4, vertices.data(), GL_STATIC_DRAW);
+
+    // VAOを作成。頂点の座標と色、uvを関連付ける
     auto vao = VertexArrayObject::gen();
     vao.bind([&] {
-        vbo = VertexBufferObject::gen(12, hello_vertices, GL_STATIC_DRAW);
         vbo.bind([&] {
-            hello_shader.setAttribute("aPos", 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
+            shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+            shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
         });
+        getErrors();
+        // uvの設定
+        static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}};
+        shader.setAttribute("uv", 2, GL_FLOAT, GL_FALSE, 0, vertex_uv);
     });
 
     // レンダリングループ
@@ -249,8 +263,11 @@ int main() {
         RenderText(font_shader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
         RenderText(font_shader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 
-        hello_shader.use();
+        // モデルビュー行列
+        const auto model_view_matrix = glm::mat4(1);
+        shader.use();
         vao.bind([&] {
+            shader.setUniform("modelViewMatrix", model_view_matrix);
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         });
     });
