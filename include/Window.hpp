@@ -20,9 +20,8 @@ class WorldObject {
     set<WorldObject *> children_;
 
     void refreshAbsoluteTransform() {
-        if (parent_ != nullptr) {
-            abs_transform_ = parent_->abs_transform_ * TRANSLATE(pos_) * SCALE(scale_);
-        }
+        const auto &parent_abs_transform = (parent_ != nullptr ? parent_->abs_transform_ : glm::mat4(1));
+        abs_transform_ = parent_abs_transform * TRANSLATE(pos_) * SCALE(scale_);
         for (auto *child : children_) {
             child->refreshAbsoluteTransform();
         }

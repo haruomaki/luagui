@@ -229,6 +229,7 @@ int main() {
     window.world_object_root_.append(&ins3);
     ins3.append(&ins);
     ins3.setScale(3);
+    ins2.setScale(5);
 
     setInterval(1000, [&] {
         debug(ins3.getAbsoluteTransform());
