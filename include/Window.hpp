@@ -4,6 +4,7 @@
 #include <GUI.hpp>
 #include <KeyCallback.hpp>
 #include <Shader.hpp>
+#include <SizeCallback.hpp>
 #include <Timer.hpp>
 #include <Update.hpp>
 
@@ -132,9 +133,9 @@ class Window {
     Window(int width, int height);
     ~Window();
     void mainloop(const std::function<void()> &callback);
-    pair<int, int> getWindowSize();
-    pair<int, int> getFrameBufferSize();
-    pair<float, float> getWindowContentScale();
+    [[nodiscard]] pair<int, int> getWindowSize() const;
+    [[nodiscard]] pair<int, int> getFrameBufferSize() const;
+    [[nodiscard]] pair<float, float> getWindowContentScale() const;
 };
 
 GLuint loadTexture(const string &filename);

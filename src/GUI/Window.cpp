@@ -69,9 +69,10 @@ Window::Window(int width, int height) {
         // OpenGLのビューポートを再設定する
         glViewport(0, 0, width, height);
         // ここで描画処理などを行う
-        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        // auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
         // window->setCamera({0, 0}, default_camera_zoom);
         // debug(window->getViewMatrix());
+        masterSizeCallback(gwin, width, height);
     });
 
     glfwSetKeyCallback(gwin_, masterKeyCallback);
@@ -81,19 +82,19 @@ Window::Window(int width, int height) {
 
 Window::~Window() { glfwTerminate(); }
 
-pair<int, int> Window::getWindowSize() {
+pair<int, int> Window::getWindowSize() const {
     int width, height;
     glfwGetWindowSize(gwin_, &width, &height);
     return {width, height};
 }
 
-pair<int, int> Window::getFrameBufferSize() {
+pair<int, int> Window::getFrameBufferSize() const {
     int width, height;
     glfwGetFramebufferSize(gwin_, &width, &height);
     return {width, height};
 }
 
-pair<float, float> Window::getWindowContentScale() {
+pair<float, float> Window::getWindowContentScale() const {
     float xscale, yscale;
     glfwGetWindowContentScale(gwin_, &xscale, &yscale);
     return {xscale, yscale};

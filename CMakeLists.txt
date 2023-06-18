@@ -5,6 +5,7 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/GUI/Window.cpp
     src/GUI/KeyCallback.cpp
+    src/GUI/SizeCallback.cpp
     src/GUI/Update.cpp
     src/GUI/Draw.cpp
     src/GUI/Shader.cpp

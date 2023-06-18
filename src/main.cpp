@@ -60,14 +60,14 @@ int main() {
 
     auto main_shader = ProgramObject{vsh_id, fsh_id};
 
-    Camera camera;
-    camera.setScale(700);
+    NormalCamera camera(window);
+    camera.setScale(1);
 
     Font migmix_font(camera);
     Text sample_text(migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2});
     Text credit_text(migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9});
 
-    credit_text.setPosition({200, 500, 0});
+    credit_text.setPosition({200, 400, 0});
 
     Leaf leaf;
 
