@@ -142,5 +142,6 @@ GLuint loadTexture(const string &filename);
 
 // Windowを利用するヘッダ。Windowの宣言のあとにインクルード
 #include <Camera.hpp>
+
 #include <Polygon.hpp>
 #include <Text.hpp>

@@ -2,6 +2,8 @@
 
 #include <Window.hpp>
 
+#include <Camera.hpp>
+
 struct InterleavedVertexInfo {
     glm::vec3 coord_;
     RGBA color_;

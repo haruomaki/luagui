@@ -61,19 +61,20 @@ int main() {
     auto main_shader = ProgramObject{vsh_id, fsh_id};
 
     NormalCamera camera(window);
+    camera.setPosition({0, 0, 1000});
     camera.setScale(1);
 
     Font migmix_font(camera);
     Text sample_text(migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2});
     Text credit_text(migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9});
 
-    credit_text.setPosition({200, 400, 0});
+    credit_text.setPosition({200, 400, 1});
 
     Leaf leaf;
 
     GLuint tex_id = loadTexture("assets/images/cat.raw");
 
-    Polygon gon(main_shader, camera, {{0.9f, 0.9f, 0}, {0.5f, 0.f, 0}, {0.f, 0.f, 0}, {0.f, 0.5f, 0}},
+    Polygon gon(main_shader, camera, {{0.9f, 0.9f, 2}, {0.5f, 0.f, 0}, {0.f, 0.f, 0}, {0.f, 0.5f, 0}},
                 {
                     {0.9, 0.3, 0, 1},
                     {0.1, 0.2, 0.7, 0.3},
@@ -98,7 +99,7 @@ int main() {
                      {0.3, 0.7, 0.5f, 0.5},
                  });
 
-    Polygon poly(main_shader, camera, {{-0.9, -0.9, -1}, {-0.9, 0, 0}, {0, 0, 1}, {0, -0.9, 0}}, {{0.3, 0.7, 0.1, 1}});
+    Polygon poly(main_shader, camera, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 1}});
 
     PolygonInstance ins(gon), ins2(gon2), inspoly(poly);
     MovingPolygonInstance ins3(gon3);
@@ -106,7 +107,19 @@ int main() {
     ins3.append(&ins);
     ins3.setScale(900);
     ins2.setScale(1500);
-    inspoly.setScale(300);
+    inspoly.setPosition({-50, -50, 500});
+
+    vector<unique_ptr<PolygonInstance>> poly_instances;
+    for (int i = -500; i <= 500; i += 100) {
+        auto instance = make_unique<PolygonInstance>(poly);
+        instance->setPosition({-200, -50, i});
+        poly_instances.push_back(std::move(instance));
+    }
+    for (int i = -300; i <= 300; i += 100) {
+        auto instance = make_unique<PolygonInstance>(poly);
+        instance->setPosition({-0, 300, i});
+        poly_instances.push_back(std::move(instance));
+    }
 
     setInterval(1000, [&] {
         debug(ins3.getAbsoluteTransform());
@@ -138,9 +151,9 @@ int main() {
 
     // レンダリングループ
     window.mainloop([&] {
-        shader.use();
-        vao.bind([&] {
-            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-        });
+        // shader.use();
+        // vao.bind([&] {
+        //     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        // });
     });
 }

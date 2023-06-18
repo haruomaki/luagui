@@ -62,6 +62,9 @@ Window::Window(int width, int height) {
     debug(glGetString(GL_VENDOR));
     debug(glGetString(GL_RENDERER));
 
+    // 深度テストを有効化
+    glEnable(GL_DEPTH_TEST);
+
     glfwSetWindowUserPointer(gwin_, this);
 
     // ウィンドウサイズコールバック関数を登録する
@@ -119,7 +122,6 @@ void Window::mainloop(const std::function<void()> &callback) {
         constexpr RGBA bg_color{0.2, 0.2, 0.2, 1};
         glClearColor(bg_color.r_, bg_color.g_, bg_color.b_, bg_color.a_);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearDepth(1.0);
 
         // 登録された図形の描画
         masterDraw();
