@@ -23,6 +23,7 @@ class ProgramObject {
 
     void setUniform(const string &name, GLint int_value) const;
     void setUniform(const string &name, const glm::vec3 &vec3_value) const;
+    void setUniform(const string &name, const glm::vec4 &vec4_value) const;
     void setUniform(const string &name, const glm::mat4 &mat4_value) const;
 };
 

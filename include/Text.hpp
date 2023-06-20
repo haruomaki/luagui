@@ -24,10 +24,10 @@ class Font {
 class Text : public WorldObject, Draw {
     Font &font_;
     string text_;
-    glm::vec3 color_;
+    RGBA color_;
 
   public:
-    Text(Font &font, string text, glm::vec3 color);
+    Text(Font &font, string text, RGBA color);
 
     void draw() const override;
 };

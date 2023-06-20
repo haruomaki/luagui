@@ -65,16 +65,17 @@ int main() {
     camera.setScale(1);
 
     Font migmix_font(camera);
-    Text sample_text(migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2});
-    Text credit_text(migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9});
+    Text sample_text(migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
+    Text credit_text(migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9, 0.4});
 
+    sample_text.setPosition({-200, 50, 200});
     credit_text.setPosition({200, 400, 1});
 
     Leaf leaf;
 
     GLuint tex_id = loadTexture("assets/images/cat.raw");
 
-    Polygon gon(main_shader, camera, {{0.9f, 0.9f, 2}, {0.5f, 0.f, 0}, {0.f, 0.f, 0}, {0.f, 0.5f, 0}},
+    Polygon gon(main_shader, camera, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
                 {
                     {0.9, 0.3, 0, 1},
                     {0.1, 0.2, 0.7, 0.3},
@@ -99,15 +100,15 @@ int main() {
                      {0.3, 0.7, 0.5f, 0.5},
                  });
 
-    Polygon poly(main_shader, camera, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 1}});
+    Polygon poly(main_shader, camera, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
-    PolygonInstance ins(gon), ins2(gon2), inspoly(poly);
     MovingPolygonInstance ins3(gon3);
+    PolygonInstance ins(gon), ins2(gon2), inspoly(poly);
     window.world_object_root_.append(&ins3);
     ins3.append(&ins);
-    ins3.setScale(900);
+    ins3.setScale(1000);
     ins2.setScale(1500);
-    inspoly.setPosition({-50, -50, 500});
+    inspoly.setPosition({0, 100, 100});
 
     vector<unique_ptr<PolygonInstance>> poly_instances;
     for (int i = -500; i <= 500; i += 100) {
@@ -131,29 +132,41 @@ int main() {
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
 
     const vector<glm::vec3> vertices = {
-        glm::vec3(0, -0.9, 0),
-        glm::vec3(0.5, 0, 0),
-        glm::vec3(0, 0.5, 0),
-        glm::vec3(-0.5, 0, 0),
+        glm::vec3(0, -900, 500),
+        glm::vec3(500, 0, 0),
+        glm::vec3(0, 500, 0),
+        glm::vec3(-500, 0, 0),
+    };
+    const vector<RGBA> colors = {
+        {0.1, 0.4, 0.7, 0.5},
+        {0.1, 0.4, 0.7, 1},
+        {0.1, 0.4, 0.7, 0.5},
+        {0.1, 0.4, 0.7, 1},
     };
 
-    const auto &shader = hello_shader;
+    // const auto &shader = hello_shader;
     auto vbo = VertexBufferObject::gen(sizeof(glm::vec3) * 4, vertices.data(), GL_STATIC_DRAW);
+    auto vbo_color = VertexBufferObject::gen(sizeof(RGBA) * 4, colors.data(), GL_STATIC_DRAW);
 
     // VAOを作成。頂点の座標と色、uvを関連付ける
     auto vao = VertexArrayObject::gen();
     vao.bind([&] {
         vbo.bind([&] {
-            shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr); // 位置
+            main_shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr); // 位置
+        });
+        vbo_color.bind([&] {
+            main_shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(RGBA), nullptr); // 位置
         });
         getErrors();
     });
 
     // レンダリングループ
     window.mainloop([&] {
-        // shader.use();
-        // vao.bind([&] {
-        //     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-        // });
+        main_shader.use();
+        main_shader.setUniform("modelViewMatrix", camera.getViewMatrix());
+        main_shader.setUniform("is_tex", GL_FALSE);
+        vao.bind([&] {
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        });
     });
 }

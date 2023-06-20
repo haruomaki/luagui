@@ -14,4 +14,7 @@ void masterDraw() {
     for (auto *draw : global_draws) {
         (*draw)();
     }
+    // for (auto it = global_draws.rbegin(); it != global_draws.rend(); it++) {
+    //     (*(*it))();
+    // }
 }

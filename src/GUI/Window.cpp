@@ -62,6 +62,10 @@ Window::Window(int width, int height) {
     debug(glGetString(GL_VENDOR));
     debug(glGetString(GL_RENDERER));
 
+    // ブレンド（透明処理）の設定
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     // 深度テストを有効化
     glEnable(GL_DEPTH_TEST);
 
@@ -127,7 +131,10 @@ void Window::mainloop(const std::function<void()> &callback) {
         masterDraw();
 
         // ユーザの描画関数
+        // glDisable(GL_DEPTH_TEST);
+        glClear(GL_DEPTH_BUFFER_BIT);
         callback();
+        // glEnable(GL_DEPTH_TEST);
 
         // 上記描画した図形を表画面のバッファにスワップする
         glfwSwapBuffers(gwin_);

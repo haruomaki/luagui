@@ -63,10 +63,6 @@ Font::Font(const Camera &camera)
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    // ブレンド（透明処理）の設定
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     glm::mat4 projection = glm::ortho(0.0f, 600.0f, 0.0f, 500.0f);
 
     glGenVertexArrays(1, &VAO);
@@ -84,7 +80,7 @@ Font::Font(const Camera &camera)
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/font.fsh"))};
 }
 
-Text::Text(Font &font, string text, glm::vec3 color)
+Text::Text(Font &font, string text, RGBA color)
     : font_(font)
     , text_(std::move(text))
     , color_(color) {}

@@ -111,8 +111,7 @@ class WorldObject {
         this->refreshAbsoluteTransform();
     }
     void setScale(float scale) {
-        // FIXME: z軸を拡大すると、視錐台から外れてしまう。射影行列を設定すべき
-        setScale({scale, scale, 1});
+        setScale({scale, scale, scale});
     }
 
     WorldObject *getParent() {
