@@ -13,7 +13,7 @@ int main() {
 
     DynamicArray line(main_shader, camera, {{0, 0, 0}, {200, 200, 200}});
     window.world_object_root_.append(&line);
-    setInterval(100, [&line] {
+    setInterval(0.1, [&line] {
         line.setPosition(line.getPosition() + glm::vec3{-10, 0, 0});
         return true;
     });

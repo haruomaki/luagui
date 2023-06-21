@@ -3,8 +3,8 @@
 #include <thread>
 
 // https://anohobby.com/cpp-self-made-timer/
-static void setInterval(int interval_ms, const std::function<bool()> &proc) {
-    auto interval = std::chrono::milliseconds(interval_ms);
+static void setInterval(float interval_sec, const std::function<bool()> &proc) {
+    auto interval = std::chrono::duration<float>(interval_sec);
 
     std::thread([proc, interval] {
         while (true) {

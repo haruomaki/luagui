@@ -17,6 +17,7 @@ Checks: "-*,\
   portability-*,\
   readability-*,\
   -readability-isolate-declaration,\
+  -readability-magic-numbers,\ #マジックナンバー
   "
 WarningsAsErrors: ""
 HeaderFilterRegex: 'source.*\.(hpp|h)'
