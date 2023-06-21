@@ -1,5 +1,7 @@
 #pragma once
 
+#include <span>
+
 #include <Draw.hpp>
 #include <GUI.hpp>
 #include <KeyCallback.hpp>
