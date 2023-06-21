@@ -34,7 +34,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     -Wno-ctad-maybe-unsupported # 型推論によってテンプレート引数を省略
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-fPIC -msse4.1 -fcolor-diagnostics")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-save-temps=obj -fPIC -msse4.1 -fcolor-diagnostics")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -march=x86-64 -mtune=generic")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")

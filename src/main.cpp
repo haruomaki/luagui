@@ -10,23 +10,20 @@ class QButton : KeyCallback {
     }
 };
 
-QButton *qbutton;
-bool is_there_qbutton = false;
-
 class Leaf : KeyCallback {
+    unique_ptr<QButton> qbutton_;
+
     void keyCallback(int key, int action) {
         if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
             cout << "UP!" << endl;
             for (int i = 0; i < 20; i++) {
                 // gon.update();
             }
-            if (!is_there_qbutton) {
-                qbutton = new QButton;
-                is_there_qbutton = true;
+            if (!qbutton_) {
+                qbutton_ = make_unique<QButton>();
                 cout << "出現！" << endl;
             } else {
-                delete qbutton;
-                is_there_qbutton = false;
+                qbutton_.reset();
                 cout << "消えます" << endl;
             }
         }
