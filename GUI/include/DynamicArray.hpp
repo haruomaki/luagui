@@ -9,7 +9,7 @@ struct InterleavedVertexInfo2 {
     RGBA color_;
 };
 
-class DynamicArray : public WorldObject, Draw {
+class DynamicArray : public WorldObject, Update, Draw {
     VertexArrayObject vao_;
     VertexBufferObject vbo_;
     const ProgramObject &shader_;
@@ -38,18 +38,30 @@ class DynamicArray : public WorldObject, Draw {
         vertices_ = vers;
 
         // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
+    }
 
-        // 空のVBOを生成
-        vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo2) * capacity_, nullptr, usage);
-
-        // VAOを作成。頂点の座標と色を関連付ける
-        vao_ = VertexArrayObject::gen();
+    void update() override {
+        // VBOの更新
         vao_.bind([&] {
+            if (capacity_ != vertices_.capacity()) {
+                // 空のVBOを生成
+                vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo2) * vertices_.capacity(), nullptr, GL_DYNAMIC_DRAW);
+
+                // VAOを作成。頂点の座標と色を関連付ける
+                vao_ = VertexArrayObject::gen();
+                vao_.bind([&] {
+                    vbo_.bind([&] {
+                        shader_.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo2), nullptr);                                  // 位置
+                        shader_.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo2), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+                    });
+                    getErrors();
+                });
+            }
+            capacity_ = vertices_.capacity();
+            n_ = vertices_.size();
             vbo_.bind([&] {
-                shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo2), nullptr);                                  // 位置
-                shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo2), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InterleavedVertexInfo2) * capacity_, vertices_.data());
             });
-            getErrors();
         });
     }
 
@@ -71,9 +83,6 @@ class DynamicArray : public WorldObject, Draw {
         // モデルの描画
         shader.setUniform("is_tex", GL_FALSE);
         vao_.bind([&] {
-            vbo_.bind([&] {
-                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InterleavedVertexInfo2) * capacity_, vertices_.data());
-            });
             glDrawArrays(draw_mode_, 0, GLsizei(n_));
         });
     }
