@@ -56,7 +56,13 @@ Window::Window(int width, int height) {
         }
     });
 
-    glfwSetKeyCallback(gwin_, masterKeyCallback);
+    // キーコールバック
+    glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int /*scancode*/, int action, int /*mods*/) {
+        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        for (auto *key_callback : window->key_callbacks_) {
+            (*key_callback)(key, action);
+        }
+    });
 
     // setCamera({0, 0}, default_camera_zoom);
 }

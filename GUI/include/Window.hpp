@@ -6,6 +6,7 @@ class Window {
     GLFWwindow *gwin_;
     bool looping_ = false;
     std::set<std::function<void(int, int)> *> size_callbacks_;
+    std::set<std::function<void(int, int)> *> key_callbacks_;
 
   public:
     int tick_ = 0;
@@ -18,4 +19,5 @@ class Window {
     [[nodiscard]] pair<float, float> getWindowContentScale() const;
 
     friend class SizeCallback;
+    friend class KeyCallback;
 };

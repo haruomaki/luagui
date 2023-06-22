@@ -1,12 +1,11 @@
-#include <GUI.hpp>
-
-void masterKeyCallback(GLFWwindow *gwin, int key, int scancode, int action, int mods);
+#include <Window.hpp>
 
 class KeyCallback {
+    Window &window_;
     std::function<void(int, int)> key_callback_;
 
   public:
     virtual void keyCallback(int key, int action) = 0;
-    KeyCallback();
+    KeyCallback(Window &window);
     ~KeyCallback();
 };

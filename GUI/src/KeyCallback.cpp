@@ -1,17 +1,10 @@
 #include <KeyCallback.hpp>
 
-static std::set<std::function<void(int, int)> *> global_key_callbacks;
-
-KeyCallback::KeyCallback() {
+KeyCallback::KeyCallback(Window &window)
+    : window_(window) {
     key_callback_ = [this](int key, int action) { this->keyCallback(key, action); };
-    global_key_callbacks.insert(&key_callback_);
+    window.key_callbacks_.insert(&key_callback_);
 }
 KeyCallback::~KeyCallback() {
-    global_key_callbacks.erase(&key_callback_);
-}
-
-void masterKeyCallback(GLFWwindow * /*gwin*/, int key, int /*scancode*/, int action, int /*mods*/) {
-    for (auto *key_callback : global_key_callbacks) {
-        (*key_callback)(key, action);
-    }
+    window_.key_callbacks_.erase(&key_callback_);
 }
