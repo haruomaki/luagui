@@ -1,4 +1,5 @@
 #include <Text.hpp>
+#include <utility>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -62,15 +63,13 @@ Font::Font() {
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    glm::mat4 projection = glm::ortho(0.0f, 600.0f, 0.0f, 500.0f);
-
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
@@ -82,8 +81,8 @@ Font::Font() {
 Text::Text(World &world, Font &font, string text, RGBA color)
     : DrawableWorldObject(world)
     , font_(font)
-    , text_(std::move(text))
-    , color_(color) {}
+    , color_(color)
+    , text_(std::move(text)) {}
 
 void Text::draw(const Camera &camera) const {
     // activate corresponding render state
@@ -106,13 +105,13 @@ void Text::draw(const Camera &camera) const {
         float h = ch.Size.y;
         // update VBO for each character
         float vertices[6][4] = {
-            {xpos, ypos + h, 0.0f, 0.0f},
-            {xpos, ypos, 0.0f, 1.0f},
-            {xpos + w, ypos, 1.0f, 1.0f},
+            {xpos, ypos + h, 0.0F, 0.0F},
+            {xpos, ypos, 0.0F, 1.0F},
+            {xpos + w, ypos, 1.0F, 1.0F},
 
-            {xpos, ypos + h, 0.0f, 0.0f},
-            {xpos + w, ypos, 1.0f, 1.0f},
-            {xpos + w, ypos + h, 1.0f, 0.0f}};
+            {xpos, ypos + h, 0.0F, 0.0F},
+            {xpos + w, ypos, 1.0F, 1.0F},
+            {xpos + w, ypos + h, 1.0F, 0.0F}};
         // render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
         // update content of VBO memory

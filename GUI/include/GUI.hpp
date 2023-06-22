@@ -97,7 +97,7 @@ static std::string strip(const std::string &str, const std::string &chars = " \t
     return result;
 }
 
-static std::vector<std::string> split(const std::string &str, const std::string &delimiter = ",", const std::string &strip_chars = " \t\r\n") {
+inline std::vector<std::string> split(const std::string &str, const std::string &delimiter = ",", const std::string &strip_chars = " \t\r\n") {
     std::vector<std::string> list = {};
     size_t head = 0, tail;
     do {
@@ -112,7 +112,7 @@ static std::vector<std::string> split(const std::string &str, const std::string 
 }
 
 // 再帰の終端。引数が0個の場合を担当。改行を出力。
-static void debugImpl(bool brace) {}
+static void debugImpl(bool /*unused*/) {}
 
 // 可変長引数。引数が1つ以上存在する場合を担当。
 // 最初の引数をHead、残りをTailとして切り離すことを再帰的に行う。
@@ -161,7 +161,7 @@ inline void getErrors() {
 }
 
 // ファイルから文字列を読み込む
-static string loadString(const string &path) {
+inline string loadString(const string &path) {
     ifstream file(path);
     if (!file.is_open()) {
         cerr << "Failed to open shader file: " << path << endl;
@@ -176,7 +176,7 @@ static string loadString(const string &path) {
 #define ReLU(x) std::max(x, 0)
 
 // 分割数指定で等差数列を生成する
-static vector<float> linspace(float start, float stop, size_t num, bool endpoint = true) {
+inline vector<float> linspace(float start, float stop, size_t num, bool endpoint = true) {
     vector<float> ret = {};
     float step = (stop - start) / float(endpoint ? num - 1 : num);
     for (size_t i = 0; i < num; i++) {
@@ -186,7 +186,7 @@ static vector<float> linspace(float start, float stop, size_t num, bool endpoint
 }
 
 // 幅指定で等差数列を生成する
-static vector<float> arange(float start, float stop, float step) {
+inline vector<float> arange(float start, float stop, float step) {
     vector<float> ret = {};
     float value = start;
     while (step > 0 ? value < stop : stop < value) {
