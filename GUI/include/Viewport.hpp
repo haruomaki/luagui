@@ -7,12 +7,24 @@ struct Viewport {
     GLint x_, y_;
     GLsizei width_, height_;
 
+    Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
+        : x_(x)
+        , y_(y)
+        , width_(width)
+        , height_(height) {}
+
     void set() const {
         glViewport(x_, y_, width_, height_);
+    }
+
+    [[nodiscard]] glm::vec<2, GLint> getSize() const {
+        return {width_, height_};
     }
 };
 
 class MaximumViewport : public Viewport, SizeCallback {
+    using Viewport::Viewport;
+
     void sizeCallback(int width, int height) override {
         x_ = y_ = 0;
         width_ = width;

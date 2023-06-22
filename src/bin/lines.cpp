@@ -6,7 +6,8 @@ static float f(float x) {
 
 int main() {
     Window window(600, 500);
-    MaximumViewport viewport;
+    const auto fbsize = window.getFrameBufferSize();
+    MaximumViewport viewport(0, 0, fbsize.first, fbsize.second);
 
     World world;
 
@@ -14,7 +15,7 @@ int main() {
         createShader(GL_VERTEX_SHADER, loadString("assets/shaders/shader.vsh")),
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
 
-    OrthoCamera camera(window);
+    OrthoCamera camera(viewport);
     camera.setScale(0.01F);
 
     DynamicArray line(world, main_shader, camera, {}, {}, GL_LINE_LOOP);
