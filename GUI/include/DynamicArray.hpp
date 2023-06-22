@@ -81,6 +81,10 @@ class DynamicArray : public WorldObject, Update, Draw {
         glm::mat4 model_view_matrix = view_matrix * model_matrix;
         shader.setUniform("modelViewMatrix", model_view_matrix);
 
+        // 射影変換行列
+        const auto projection_matrix = camera.getProjectionMatrix();
+        shader.setUniform("projectionMatrix", projection_matrix);
+
         // モデルの描画
         shader.setUniform("is_tex", GL_FALSE);
         vao_.bind([&] {
