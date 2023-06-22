@@ -13,7 +13,6 @@ class DynamicArray : public WorldObject, Update, Draw {
     VertexArrayObject vao_;
     VertexBufferObject vbo_;
     const ProgramObject &shader_;
-    const Camera &camera_;
     GLenum draw_mode_;
     size_t n_;
     size_t capacity_;
@@ -22,10 +21,9 @@ class DynamicArray : public WorldObject, Update, Draw {
   public:
     vector<InterleavedVertexInfo2> vertices_;
 
-    DynamicArray(World &world, const ProgramObject &shader, const Camera &camera, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP, GLenum usage = GL_DYNAMIC_DRAW)
+    DynamicArray(World &world, const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP, GLenum usage = GL_DYNAMIC_DRAW)
         : Draw(world)
         , shader_(shader)
-        , camera_(camera)
         , draw_mode_(draw_mode)
         , n_(coords.size())
         , capacity_(coords.capacity()) {
@@ -75,7 +73,7 @@ class DynamicArray : public WorldObject, Update, Draw {
         glm::mat4 model_matrix = this->getAbsoluteTransform();
 
         // ビュー座標変換
-        const glm::mat4 &view_matrix = camera_.getViewMatrix();
+        const glm::mat4 &view_matrix = camera.getViewMatrix();
 
         // 合成して、モデルビュー行列を得る
         glm::mat4 model_view_matrix = view_matrix * model_matrix;

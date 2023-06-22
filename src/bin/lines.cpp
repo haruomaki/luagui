@@ -18,7 +18,7 @@ int main() {
     OrthoCamera camera(viewport);
     camera.setScale(0.01F);
 
-    DynamicArray line(world, main_shader, camera, {}, {}, GL_LINE_LOOP);
+    DynamicArray line(world, main_shader, {}, {}, GL_LINE_LOOP);
 
     for (auto &&x : linspace(-9, 9, 100)) {
         InterleavedVertexInfo2 ver;
