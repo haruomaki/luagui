@@ -36,7 +36,7 @@ class NormalCamera : public Camera, SizeCallback {
     void sizeCallback(int width, int height) override {
         aspect_ratio_ = (float)width / height;
         // projection_matrix_ = glm::ortho<float>(-width / 2, width / 2, -height / 2, height / 2, 1000, 0);
-        projection_matrix_ = glm::perspective(glm::radians(60.0F), aspect_ratio_, 0.1F, 3000.f);
+        projection_matrix_ = glm::perspective(glm::radians(60.0F), aspect_ratio_, 0.1F, 3000.F);
         // debug(projection_matrix_);
     }
 };
