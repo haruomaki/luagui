@@ -8,6 +8,7 @@
 #include <Timer.hpp>
 #include <Update.hpp>
 #include <Window.hpp>
+#include <World.hpp>
 #include <WorldObject.hpp>
 
 template <typename T>
@@ -17,19 +18,6 @@ struct Rect {
 
 // Windowを利用するヘッダ。Windowの宣言のあとにインクルード
 #include <Camera.hpp>
-
-class World : public WorldObject {
-    set<function<void(const Camera &)> *> draws_;
-
-    friend class Draw;
-
-  public:
-    void masterDraw(const Camera &camera) {
-        for (auto *draw : draws_) {
-            (*draw)(camera);
-        }
-    }
-};
 
 class Draw {
     World &world_;
