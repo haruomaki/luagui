@@ -18,4 +18,4 @@ target_link_libraries(GUI PUBLIC GL glfw GLEW)
 # FreeType
 find_package(Freetype REQUIRED)
 target_include_directories(GUI PUBLIC ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(GUI PUBLIC ${FREETYPE_LIBRARIES})
+target_link_libraries(GUI PRIVATE ${FREETYPE_LIBRARIES})

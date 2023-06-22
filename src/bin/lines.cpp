@@ -12,13 +12,9 @@ int main() {
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
 
     OrthoCamera camera(window);
-    window.world_object_root_.append(&camera);
-    camera.setPosition({0, 0, 0});
     camera.setScale(0.01F);
 
-    DynamicArray line(main_shader, camera, {});
-    window.world_object_root_.append(&line);
-    line.setScale(1);
+    DynamicArray line(main_shader, camera, {}, {}, GL_LINE_LOOP);
 
     for (auto &&x : linspace(-9, 9, 100)) {
         InterleavedVertexInfo2 ver;
@@ -27,14 +23,12 @@ int main() {
         line.vertices_.push_back(ver);
     }
 
-    debug(linspace(0, 10, 5, false));
-    debug(linspace(10, 0, 5, false));
-
-    debug(arange(0, 10.5, 2));
-    debug(arange(0, 11.5, -2));
-    debug(arange(10.5, 0, 2));
-    debug(arange(10.5, 0, -2));
-
     // レンダリングループ
-    window.mainloop([] {});
+    window.mainloop([&line, &window] {
+        for (auto &&ver : line.vertices_) {
+            const float x = ver.coord_.x;
+            const float y = f(x + float(window.tick_) / 100);
+            ver.coord_ = glm::vec3{x, y, 0};
+        }
+    });
 }
