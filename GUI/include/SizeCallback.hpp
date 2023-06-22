@@ -1,3 +1,5 @@
+#pragma once
+
 #include <GUI.hpp>
 
 void masterSizeCallback(GLFWwindow *gwin, int width, int height);

@@ -1,6 +1,8 @@
 #pragma once
 
+#include <SizeCallback.hpp>
 #include <Window.hpp>
+#include <WorldObject.hpp>
 
 class Camera : public WorldObject {
   protected:
