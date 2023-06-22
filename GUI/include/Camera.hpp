@@ -40,6 +40,7 @@ class NormalCamera : public Camera {
     }
 };
 
+// 1ピクセルがfloat値1のスケールの正射影カメラ
 class OrthoCamera : public Camera {
   public:
     OrthoCamera(const Viewport &viewport)

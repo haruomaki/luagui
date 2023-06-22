@@ -5,7 +5,8 @@ static float f(float x) {
 }
 
 int main() {
-    Window window(600, 500);
+    constexpr int width = 600, height = 500;
+    Window window(width, height);
     MaximumViewport viewport(window);
 
     World world;
@@ -26,19 +27,12 @@ int main() {
         line.vertices_.push_back(ver);
     }
 
-    setInterval(2.F, [] {
-        array<GLint, 4> vp;
-        glGetIntegerv(GL_VIEWPORT, vp.data());
-        debug(vp);
-        return true;
-    });
-
     // レンダリングループ
     window.mainloop([&] {
         for (auto &&ver : line.vertices_) {
             const float x = ver.coord_.x;
             const float y = f(x + float(window.tick_) / 100);
-            ver.coord_ = glm::vec3{x, y, 0};
+            ver.coord_ = {x, y, 0};
         }
 
         world.masterDraw(camera);
