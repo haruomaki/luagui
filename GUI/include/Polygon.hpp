@@ -58,10 +58,11 @@ class PolygonInstance : Draw, public WorldObject {
     const Polygon &polygon_;
 
   public:
-    PolygonInstance(const Polygon &polygon)
-        : polygon_(polygon) {}
+    PolygonInstance(World &world, const Polygon &polygon)
+        : Draw(world)
+        , polygon_(polygon) {}
 
-    void draw() const override {
+    void draw(const Camera &camera) const override {
         // シェーダを有効化
         const auto &shader = polygon_.shader_;
         shader.use();

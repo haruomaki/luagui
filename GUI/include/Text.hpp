@@ -27,7 +27,7 @@ class Text : public WorldObject, Draw {
     RGBA color_;
 
   public:
-    Text(Font &font, string text, RGBA color);
+    Text(World &world, Font &font, string text, RGBA color);
 
-    void draw() const override;
+    void draw(const Camera &camera) const override;
 };

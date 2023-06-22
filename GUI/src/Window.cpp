@@ -127,9 +127,6 @@ void Window::mainloop(const std::function<void()> &callback) {
         glClearColor(bg_color.r_, bg_color.g_, bg_color.b_, bg_color.a_);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // 登録された図形の描画
-        masterDraw();
-
         // ユーザの描画関数
         // glDisable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);

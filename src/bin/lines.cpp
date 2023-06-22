@@ -7,6 +7,8 @@ static float f(float x) {
 int main() {
     Window window(600, 500);
 
+    World world;
+
     ProgramObject main_shader = {
         createShader(GL_VERTEX_SHADER, loadString("assets/shaders/shader.vsh")),
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
@@ -14,7 +16,7 @@ int main() {
     OrthoCamera camera(window);
     camera.setScale(0.01F);
 
-    DynamicArray line(main_shader, camera, {}, {}, GL_LINE_LOOP);
+    DynamicArray line(world, main_shader, camera, {}, {}, GL_LINE_LOOP);
 
     for (auto &&x : linspace(-9, 9, 100)) {
         InterleavedVertexInfo2 ver;
@@ -24,11 +26,13 @@ int main() {
     }
 
     // レンダリングループ
-    window.mainloop([&line, &window] {
+    window.mainloop([&] {
         for (auto &&ver : line.vertices_) {
             const float x = ver.coord_.x;
             const float y = f(x + float(window.tick_) / 100);
             ver.coord_ = glm::vec3{x, y, 0};
         }
+
+        world.masterDraw(camera);
     });
 }

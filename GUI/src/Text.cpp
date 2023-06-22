@@ -80,12 +80,13 @@ Font::Font(const Camera &camera)
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/font.fsh"))};
 }
 
-Text::Text(Font &font, string text, RGBA color)
-    : font_(font)
+Text::Text(World &world, Font &font, string text, RGBA color)
+    : Draw(world)
+    , font_(font)
     , text_(std::move(text))
     , color_(color) {}
 
-void Text::draw() const {
+void Text::draw(const Camera &camera) const {
     // activate corresponding render state
     font_.shader_.use();
     font_.shader_.setUniform("textColor", color_);

@@ -22,8 +22,9 @@ class DynamicArray : public WorldObject, Update, Draw {
   public:
     vector<InterleavedVertexInfo2> vertices_;
 
-    DynamicArray(const ProgramObject &shader, const Camera &camera, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP, GLenum usage = GL_DYNAMIC_DRAW)
-        : shader_(shader)
+    DynamicArray(World &world, const ProgramObject &shader, const Camera &camera, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP, GLenum usage = GL_DYNAMIC_DRAW)
+        : Draw(world)
+        , shader_(shader)
         , camera_(camera)
         , draw_mode_(draw_mode)
         , n_(coords.size())
@@ -65,7 +66,7 @@ class DynamicArray : public WorldObject, Update, Draw {
         });
     }
 
-    void draw() const override {
+    void draw(const Camera &camera) const override {
         // シェーダを有効化
         const auto &shader = shader_;
         shader.use();
