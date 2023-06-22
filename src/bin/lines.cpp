@@ -1,4 +1,5 @@
 #include <master.hpp>
+#include <utility.hpp>
 
 static float f(float x) {
     return 3 * sin(x);
@@ -29,10 +30,15 @@ int main() {
         line.vertices_.push_back(ver);
     }
 
+    // 左上に常在する点
+    StickyPointTopLeft top_left_point(viewport);
+
     // 文字の表示
     Font migmix_font;
     Text sample_text(world, migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
     Text credit_text(world, migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9, 0.4});
+    top_left_point.append(&sample_text);
+    sample_text.setPosition({20, -60, 0});
 
     // レンダリングループ
     window.mainloop([&] {
