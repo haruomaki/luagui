@@ -12,14 +12,13 @@ struct Character {
 
 class Font {
     ProgramObject shader_;
-    const Camera &camera_;
     std::map<char, Character> Characters;
     unsigned int VAO, VBO;
 
     friend class Text;
 
   public:
-    Font(const Camera &camera);
+    Font();
 };
 
 class Text : public WorldObject, Draw {

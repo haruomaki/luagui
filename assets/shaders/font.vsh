@@ -3,9 +3,10 @@ layout (location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>
 out vec2 TexCoords;
 
 uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
 
 void main()
 {
-    gl_Position = modelViewMatrix * vec4(vertex.xy, 0.0, 1.0);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(vertex.xy, 0.0, 1.0);
     TexCoords = vertex.zw;
 }  

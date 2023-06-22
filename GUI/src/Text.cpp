@@ -5,8 +5,7 @@
 
 DEFINE_RUNTIME_ERROR(FreeTypeException);
 
-Font::Font(const Camera &camera)
-    : camera_(camera) {
+Font::Font() {
     // FreeTypeを初期化
     FT_Library ft;
     if (FT_Init_FreeType(&ft) != 0) {
@@ -123,8 +122,12 @@ void Text::draw(const Camera &camera) const {
 
         // モデルビュー行列
         const auto model_matrix = this->getAbsoluteTransform();
-        const auto model_view_matrix = font_.camera_.getViewMatrix() * model_matrix;
+        const auto model_view_matrix = camera.getViewMatrix() * model_matrix;
         font_.shader_.setUniform("modelViewMatrix", model_view_matrix);
+
+        // 射影変換行列
+        const auto projection_matrix = camera.getProjectionMatrix();
+        font_.shader_.setUniform("projectionMatrix", projection_matrix);
 
         // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
