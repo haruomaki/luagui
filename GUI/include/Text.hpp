@@ -21,14 +21,14 @@ class Font {
     Font();
 };
 
-class Text : public WorldObject, Draw {
+class Text : public Draw {
     Font &font_;
     RGBA color_;
+
+    void draw(const Camera &camera) const override;
 
   public:
     string text_;
 
     Text(World &world, Font &font, string text, RGBA color);
-
-    void draw(const Camera &camera) const override;
 };

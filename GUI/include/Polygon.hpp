@@ -53,7 +53,7 @@ class Polygon {
     }
 };
 
-class PolygonInstance : Draw, public WorldObject {
+class PolygonInstance : public Draw {
     const Polygon &polygon_;
 
   public:

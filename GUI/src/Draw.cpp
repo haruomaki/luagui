@@ -1,10 +1,12 @@
 #include <Draw.hpp>
+#include <World.hpp>
 
 Draw::Draw(World &world)
-    : world_(world) {
+    : WorldObject(world) {
     draw_ = [this](const Camera &camera) { this->draw(camera); };
-    world_.draws_.insert(&draw_);
+    world.draws_.insert(&draw_);
 }
 Draw::~Draw() {
-    world_.draws_.erase(&draw_);
+    auto *world = getWorld();
+    world->draws_.erase(&draw_);
 }

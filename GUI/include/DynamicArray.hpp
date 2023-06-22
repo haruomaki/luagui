@@ -9,7 +9,7 @@ struct InterleavedVertexInfo2 {
     RGBA color_;
 };
 
-class DynamicArray : public WorldObject, Update, Draw {
+class DynamicArray : public Draw, Update {
     VertexArrayObject vao_;
     VertexBufferObject vbo_;
     const ProgramObject &shader_;
@@ -39,6 +39,7 @@ class DynamicArray : public WorldObject, Update, Draw {
         // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
     }
 
+    // TODO: privateに
     void update() override {
         // VBOの更新
         vao_.bind([&] {
@@ -64,6 +65,7 @@ class DynamicArray : public WorldObject, Update, Draw {
         });
     }
 
+    // TODO: privateに
     void draw(const Camera &camera) const override {
         // シェーダを有効化
         const auto &shader = shader_;

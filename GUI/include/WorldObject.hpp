@@ -2,7 +2,10 @@
 
 #include <GUI.hpp>
 
+class World;
+
 class WorldObject {
+    World *const world_;
     glm::vec3 pos_;
     glm::vec3 scale_;
     glm::mat4 abs_transform_;
@@ -18,8 +21,9 @@ class WorldObject {
     }
 
   public:
-    WorldObject()
-        : pos_(glm::vec3(0))
+    WorldObject(World &world)
+        : world_(&world)
+        , pos_(glm::vec3(0))
         , scale_(glm::vec3(1))
         , abs_transform_(glm::mat4(1)) {}
 
@@ -36,7 +40,9 @@ class WorldObject {
     // コピー禁止
     WorldObject(const WorldObject &) = delete;
 
-    WorldObject &operator=(WorldObject &&other) noexcept {
+    // ムーブは可能
+    WorldObject(WorldObject &&other) noexcept
+        : world_(other.world_) {
         pos_ = other.pos_;
         scale_ = other.scale_;
         abs_transform_ = other.abs_transform_;
@@ -53,12 +59,6 @@ class WorldObject {
         for (auto *child : children_) {
             child->parent_ = this;
         }
-
-        return *this;
-    }
-
-    WorldObject(WorldObject &&other) noexcept {
-        *this = std::move(other);
     }
 
     void append(WorldObject *child) {
@@ -81,6 +81,10 @@ class WorldObject {
     //         child->showAbsolutePositionRecursively(depth + 1);
     //     }
     // }
+
+    [[nodiscard]] World *getWorld() const {
+        return world_;
+    }
 
     [[nodiscard]] glm::vec3 getPosition() const {
         return pos_;

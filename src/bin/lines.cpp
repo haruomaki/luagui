@@ -16,12 +16,13 @@ int main() {
         createShader(GL_VERTEX_SHADER, loadString("assets/shaders/shader.vsh")),
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
 
-    OrthoCamera camera(viewport), ui_camera(viewport);
+    OrthoCamera camera(world, viewport), ui_camera(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
 
     DynamicArray line(world, main_shader, {}, {}, GL_LINE_LOOP);
     line.setScale(100);
+    line.draw(camera);
 
     for (auto &&x : linspace(-9, 9, 100)) {
         InterleavedVertexInfo2 ver;
@@ -31,7 +32,7 @@ int main() {
     }
 
     // 左上に常在する点
-    StickyPointTopLeft top_left_point(viewport);
+    StickyPointTopLeft top_left_point(world, viewport);
 
     // 文字の表示
     Font migmix_font;

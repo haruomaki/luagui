@@ -9,8 +9,9 @@ class Camera : public WorldObject {
     float aspect_ratio_ = 1;
 
   public:
-    Camera(const Viewport &viewport)
-        : viewport_(viewport) {}
+    Camera(World &world, const Viewport &viewport)
+        : WorldObject(world)
+        , viewport_(viewport) {}
     // glm::mat4 view_matrix_ = glm::mat4(1);
     // glm::mat4 projection_matrix_ = glm::perspective(glm::radians(90.0F), 1.f, 0.1F, 1000.f);
     // glm::mat4 projection_matrix_ = glm::ortho(-1, 1, -1, 1, 1, -1);
@@ -24,8 +25,8 @@ class Camera : public WorldObject {
 
 class NormalCamera : public Camera {
   public:
-    NormalCamera(const Viewport &viewport)
-        : Camera(viewport) {}
+    NormalCamera(World &world, const Viewport &viewport)
+        : Camera(world, viewport) {}
 
     [[nodiscard]] glm::mat4 getProjectionMatrix() const override {
         auto size = viewport_.getSize();
@@ -43,8 +44,8 @@ class NormalCamera : public Camera {
 // 1ピクセルがfloat値1のスケールの正射影カメラ
 class OrthoCamera : public Camera {
   public:
-    OrthoCamera(const Viewport &viewport)
-        : Camera(viewport) {}
+    OrthoCamera(World &world, const Viewport &viewport)
+        : Camera(world, viewport) {}
 
     [[nodiscard]] glm::mat4 getProjectionMatrix() const override {
         auto size = viewport_.getSize();

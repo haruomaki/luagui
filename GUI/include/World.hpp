@@ -1,9 +1,8 @@
 #pragma once
 
 #include <Camera.hpp>
-#include <WorldObject.hpp>
 
-class World : public WorldObject {
+class World {
     set<function<void(const Camera &)> *> draws_;
 
     friend class Draw;
