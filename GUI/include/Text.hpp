@@ -23,10 +23,11 @@ class Font {
 
 class Text : public WorldObject, Draw {
     Font &font_;
-    string text_;
     RGBA color_;
 
   public:
+    string text_;
+
     Text(World &world, Font &font, string text, RGBA color);
 
     void draw(const Camera &camera) const override;

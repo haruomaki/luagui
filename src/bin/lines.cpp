@@ -42,6 +42,8 @@ int main() {
             ver.coord_ = {x, y, 0};
         }
 
+        sample_text.text_ = toStr(window.tick_);
+
         world.masterDraw(camera);
     });
 }
