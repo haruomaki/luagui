@@ -3,11 +3,11 @@
 #include <Camera.hpp>
 #include <World.hpp>
 
-class Draw : public WorldObject {
+class DrawableWorldObject : public WorldObject {
     function<void(const Camera &camera)> draw_;
     virtual void draw(const Camera &camera) const = 0;
 
   public:
-    Draw(World &world);
-    ~Draw();
+    DrawableWorldObject(World &world);
+    ~DrawableWorldObject();
 };

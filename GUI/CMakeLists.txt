@@ -5,7 +5,7 @@ add_library(GUI STATIC
     src/KeyCallback.cpp
     src/SizeCallback.cpp
     src/Update.cpp
-    src/Draw.cpp
+    src/Drawable.cpp
     src/Shader.cpp
     src/Text.cpp
     src/Texture.cpp

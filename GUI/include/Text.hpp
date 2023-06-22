@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Draw.hpp>
+#include <Drawable.hpp>
 #include <Shader.hpp>
 
 struct Character {
@@ -21,7 +21,7 @@ class Font {
     Font();
 };
 
-class Text : public Draw {
+class Text : public DrawableWorldObject {
     Font &font_;
     RGBA color_;
 

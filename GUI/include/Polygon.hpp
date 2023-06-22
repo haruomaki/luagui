@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Draw.hpp>
+#include <Drawable.hpp>
 #include <Shader.hpp>
 
 struct InterleavedVertexInfo {
@@ -53,12 +53,12 @@ class Polygon {
     }
 };
 
-class PolygonInstance : public Draw {
+class PolygonInstance : public DrawableWorldObject {
     const Polygon &polygon_;
 
   public:
     PolygonInstance(World &world, const Polygon &polygon)
-        : Draw(world)
+        : DrawableWorldObject(world)
         , polygon_(polygon) {}
 
     void draw(const Camera &camera) const override {

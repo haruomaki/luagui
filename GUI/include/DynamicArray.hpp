@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Draw.hpp>
+#include <Drawable.hpp>
 #include <Shader.hpp>
 #include <Update.hpp>
 
@@ -9,7 +9,7 @@ struct InterleavedVertexInfo2 {
     RGBA color_;
 };
 
-class DynamicArray : public Draw, Update {
+class DynamicArray : public DrawableWorldObject, Update {
     VertexArrayObject vao_;
     VertexBufferObject vbo_;
     const ProgramObject &shader_;
@@ -22,7 +22,7 @@ class DynamicArray : public Draw, Update {
     vector<InterleavedVertexInfo2> vertices_;
 
     DynamicArray(World &world, const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP, GLenum usage = GL_DYNAMIC_DRAW)
-        : Draw(world)
+        : DrawableWorldObject(world)
         , shader_(shader)
         , draw_mode_(draw_mode)
         , n_(coords.size())

@@ -80,7 +80,7 @@ Font::Font() {
 }
 
 Text::Text(World &world, Font &font, string text, RGBA color)
-    : Draw(world)
+    : DrawableWorldObject(world)
     , font_(font)
     , text_(std::move(text))
     , color_(color) {}
