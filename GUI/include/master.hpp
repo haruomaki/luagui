@@ -1,7 +1,5 @@
 #pragma once
 
-#include <span>
-
 // #include <Draw.hpp>
 #include <GUI.hpp>
 #include <KeyCallback.hpp>
@@ -16,8 +14,6 @@ template <typename T>
 struct Rect {
     T left_, right_, bottom_, top_;
 };
-
-GLuint loadTexture(const string &filename);
 
 // Windowを利用するヘッダ。Windowの宣言のあとにインクルード
 #include <Camera.hpp>
