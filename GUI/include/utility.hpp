@@ -1,5 +1,4 @@
 #include <Camera.hpp>
-#include <KeyCallback.hpp>
 #include <Update.hpp>
 #include <Viewport.hpp>
 
@@ -22,28 +21,24 @@ class StickyPointTopLeft : public WorldObject, Update {
         , viewport_(viewport) {}
 };
 
-class MobileOrthoCamera : public OrthoCamera, KeyCallback {
-    void keyCallback(int key, int action) override {
-        if (action == GLFW_PRESS) {
-            switch (key) {
-            case GLFW_KEY_RIGHT:
-                debug("RIGHT!");
-                break;
-            case GLFW_KEY_LEFT:
-                debug("LEFT!");
-                break;
-            case GLFW_KEY_DOWN:
-                debug("DOWN!");
-                break;
-            case GLFW_KEY_UP:
-                debug("UP!");
-                break;
-            }
+class MobileOrthoCamera : public OrthoCamera, protected Update {
+    void update() override {
+        if (window_.getKey(GLFW_KEY_RIGHT)) {
+            debug("RIGHT");
+        }
+        if (window_.getKey(GLFW_KEY_LEFT)) {
+            debug("LEFT");
+        }
+        if (window_.getKey(GLFW_KEY_DOWN)) {
+            debug("DOWN");
+        }
+        if (window_.getKey(GLFW_KEY_UP)) {
+            debug("UP");
         }
     }
 
   public:
     MobileOrthoCamera(Window &window, World &world, const Viewport &viewport)
         : OrthoCamera(world, viewport)
-        , KeyCallback(window) {}
+        , Update(window) {}
 };

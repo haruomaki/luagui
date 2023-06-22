@@ -3,8 +3,10 @@
 #include <Window.hpp>
 
 class Update {
-    Window &window_;
     std::function<void()> update_;
+
+  protected:
+    Window &window_;
 
   public:
     virtual void update() = 0;

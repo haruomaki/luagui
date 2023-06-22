@@ -15,9 +15,13 @@ class Window {
     Window(int width, int height);
     ~Window();
     void mainloop(const std::function<void()> &callback);
+    [[nodiscard]] GLFWwindow *getGLFW() const;
     [[nodiscard]] pair<int, int> getWindowSize() const;
     [[nodiscard]] pair<int, int> getFrameBufferSize() const;
     [[nodiscard]] pair<float, float> getWindowContentScale() const;
+
+    // glfwGetKeyのラッパー。GLFW_PRESSのときtrue、GLFW_RELEASEのときfalse
+    [[nodiscard]] bool getKey(int key) const;
 
     friend class SizeCallback;
     friend class KeyCallback;

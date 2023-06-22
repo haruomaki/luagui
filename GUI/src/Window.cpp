@@ -69,6 +69,10 @@ Window::Window(int width, int height) {
 
 Window::~Window() { glfwTerminate(); }
 
+GLFWwindow *Window::getGLFW() const {
+    return this->gwin_;
+}
+
 pair<int, int> Window::getWindowSize() const {
     int width, height;
     glfwGetWindowSize(gwin_, &width, &height);
@@ -85,6 +89,10 @@ pair<float, float> Window::getWindowContentScale() const {
     float xscale, yscale;
     glfwGetWindowContentScale(gwin_, &xscale, &yscale);
     return {xscale, yscale};
+}
+
+bool Window::getKey(int key) const {
+    return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
 }
 
 void Window::mainloop(const std::function<void()> &callback) {
