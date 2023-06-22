@@ -1,4 +1,4 @@
-#include <Window.hpp>
+#include <master.hpp>
 
 static float f(float x) {
     return 3 * sin(x);

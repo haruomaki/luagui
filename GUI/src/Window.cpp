@@ -1,3 +1,6 @@
+#include <KeyCallback.hpp>
+#include <SizeCallback.hpp>
+#include <Update.hpp>
 #include <Window.hpp>
 
 // 画像 https://nn-hokuson.hatenablog.com/entry/2017/02/24/171230
