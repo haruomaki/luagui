@@ -16,7 +16,8 @@ int main() {
         createShader(GL_VERTEX_SHADER, loadString("assets/shaders/shader.vsh")),
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
 
-    OrthoCamera camera(world, viewport), ui_camera(ui_world, viewport);
+    MobileOrthoCamera camera(window, world, viewport);
+    OrthoCamera ui_camera(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
 
