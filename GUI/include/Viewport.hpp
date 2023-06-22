@@ -23,7 +23,13 @@ struct Viewport {
 };
 
 class MaximumViewport : public Viewport, SizeCallback {
-    using Viewport::Viewport;
+  public:
+    MaximumViewport(Window &window)
+        : Viewport(0, 0, 0, 0)
+        , SizeCallback(window) {
+        const auto fbsize = window.getFrameBufferSize();
+        sizeCallback(fbsize.first, fbsize.second);
+    }
 
     void sizeCallback(int width, int height) override {
         x_ = y_ = 0;

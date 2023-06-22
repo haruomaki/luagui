@@ -6,8 +6,7 @@ static float f(float x) {
 
 int main() {
     Window window(600, 500);
-    const auto fbsize = window.getFrameBufferSize();
-    MaximumViewport viewport(0, 0, fbsize.first, fbsize.second);
+    MaximumViewport viewport(window);
 
     World world;
 

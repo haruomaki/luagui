@@ -1,17 +1,10 @@
 #include <SizeCallback.hpp>
 
-static std::set<std::function<void(int, int)> *> global_size_callbacks;
-
-SizeCallback::SizeCallback() {
+SizeCallback::SizeCallback(Window &window)
+    : window_(window) {
     size_callback_ = [this](int width, int height) { this->sizeCallback(width, height); };
-    global_size_callbacks.insert(&size_callback_);
+    window.size_callbacks_.insert(&size_callback_);
 }
 SizeCallback::~SizeCallback() {
-    global_size_callbacks.erase(&size_callback_);
-}
-
-void masterSizeCallback(GLFWwindow * /*gwin*/, int width, int height) {
-    for (auto *size_callback : global_size_callbacks) {
-        (*size_callback)(width, height);
-    }
+    window_.size_callbacks_.erase(&size_callback_);
 }

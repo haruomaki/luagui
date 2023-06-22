@@ -40,15 +40,20 @@ Window::Window(int width, int height) {
     // 深度テストを有効化
     glEnable(GL_DEPTH_TEST);
 
+    // ユーザー領域にこのクラスのインスタンスを設定
     glfwSetWindowUserPointer(gwin_, this);
 
     // ウィンドウサイズコールバック関数を登録する
     glfwSetWindowSizeCallback(gwin_, [](GLFWwindow *gwin, int width, int height) {
         // ここで描画処理などを行う
-        // auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
         // window->setCamera({0, 0}, default_camera_zoom);
         // debug(window->getViewMatrix());
-        masterSizeCallback(gwin, width, height);
+
+        // 登録されたコールバック関数たちを実行
+        for (auto *size_callback : window->size_callbacks_) {
+            (*size_callback)(width, height);
+        }
     });
 
     glfwSetKeyCallback(gwin_, masterKeyCallback);
