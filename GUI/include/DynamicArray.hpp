@@ -17,8 +17,9 @@ class DynamicArray : public DrawableWorldObject, Update {
   public:
     vector<InterleavedVertexInfo> vertices_;
 
-    DynamicArray(World &world, const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP)
+    DynamicArray(Window &window, World &world, const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP)
         : DrawableWorldObject(world)
+        , Update(window)
         , shader_(shader)
         , draw_mode_(draw_mode)
         , n_(coords.size())

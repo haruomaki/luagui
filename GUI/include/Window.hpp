@@ -7,6 +7,7 @@ class Window {
     bool looping_ = false;
     std::set<std::function<void(int, int)> *> size_callbacks_;
     std::set<std::function<void(int, int)> *> key_callbacks_;
+    std::set<std::function<void()> *> updates_;
 
   public:
     int tick_ = 0;
@@ -20,4 +21,5 @@ class Window {
 
     friend class SizeCallback;
     friend class KeyCallback;
+    friend class Update;
 };

@@ -100,7 +100,9 @@ void Window::mainloop(const std::function<void()> &callback) {
 
         // 更新処理
         tick_++;
-        masterUpdate();
+        for (auto *update : this->updates_) {
+            (*update)();
+        }
 
         // 画面の初期化
         constexpr RGBA bg_color{0.2, 0.2, 0.2, 1};

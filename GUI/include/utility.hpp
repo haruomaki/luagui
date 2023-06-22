@@ -16,8 +16,9 @@ class StickyPointTopLeft : public WorldObject, Update {
     }
 
   public:
-    StickyPointTopLeft(World &world, const Viewport &viewport)
+    StickyPointTopLeft(Window &window, World &world, const Viewport &viewport)
         : WorldObject(world)
+        , Update(window)
         , viewport_(viewport) {}
 };
 

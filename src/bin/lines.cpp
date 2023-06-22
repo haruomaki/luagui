@@ -21,7 +21,7 @@ int main() {
     // camera.setScale(0.01F);
     // camera.setScale(100);
 
-    DynamicArray line(world, main_shader, {}, {}, GL_LINE_LOOP);
+    DynamicArray line(window, world, main_shader, {}, {}, GL_LINE_LOOP);
     line.setScale(100);
     line.draw(camera);
 
@@ -33,7 +33,7 @@ int main() {
     }
 
     // 左上に常在する点
-    StickyPointTopLeft top_left_point(world, viewport);
+    StickyPointTopLeft top_left_point(window, world, viewport);
 
     // 文字の表示
     Font migmix_font;
