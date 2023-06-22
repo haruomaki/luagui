@@ -1,6 +1,7 @@
 #pragma once
 
-#include <master.hpp>
+#include <Draw.hpp>
+#include <Shader.hpp>
 
 struct Character {
     unsigned int TextureID; // ID handle of the glyph texture

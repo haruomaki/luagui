@@ -1,8 +1,7 @@
 #pragma once
 
-#include <master.hpp>
-
-#include <Camera.hpp>
+#include <Draw.hpp>
+#include <Shader.hpp>
 
 struct InterleavedVertexInfo {
     glm::vec3 coord_;
