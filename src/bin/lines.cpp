@@ -10,13 +10,13 @@ int main() {
     Window window(width, height);
     MaximumViewport viewport(window);
 
-    World world;
+    World world, ui_world;
 
     ProgramObject main_shader = {
         createShader(GL_VERTEX_SHADER, loadString("assets/shaders/shader.vsh")),
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
 
-    OrthoCamera camera(viewport);
+    OrthoCamera camera(viewport), ui_camera(viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
 
@@ -35,8 +35,8 @@ int main() {
 
     // 文字の表示
     Font migmix_font;
-    Text sample_text(world, migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
-    Text credit_text(world, migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9, 0.4});
+    Text sample_text(ui_world, migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
+    Text credit_text(ui_world, migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9, 0.4});
     top_left_point.append(&sample_text);
     sample_text.setPosition({20, -60, 0});
 
@@ -51,5 +51,7 @@ int main() {
         sample_text.text_ = toStr(window.tick_);
 
         world.masterDraw(camera);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        ui_world.masterDraw(camera);
     });
 }
