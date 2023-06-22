@@ -44,8 +44,6 @@ Window::Window(int width, int height) {
 
     // ウィンドウサイズコールバック関数を登録する
     glfwSetWindowSizeCallback(gwin_, [](GLFWwindow *gwin, int width, int height) {
-        // OpenGLのビューポートを再設定する
-        glViewport(0, 0, width, height);
         // ここで描画処理などを行う
         // auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
         // window->setCamera({0, 0}, default_camera_zoom);

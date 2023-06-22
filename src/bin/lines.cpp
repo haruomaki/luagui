@@ -6,6 +6,7 @@ static float f(float x) {
 
 int main() {
     Window window(600, 500);
+    MaximumViewport viewport;
 
     World world;
 
@@ -24,6 +25,13 @@ int main() {
         ver.color_ = {0.5, 0.2, 0.7, 1.0};
         line.vertices_.push_back(ver);
     }
+
+    setInterval(2.F, [] {
+        array<GLint, 4> vp;
+        glGetIntegerv(GL_VIEWPORT, vp.data());
+        debug(vp);
+        return true;
+    });
 
     // レンダリングループ
     window.mainloop([&] {

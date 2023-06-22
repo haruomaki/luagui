@@ -29,6 +29,16 @@ ostream &operator<<(ostream &os, const pair<T1, T2> &input) {
     return os;
 }
 
+template <typename T, size_t N>
+ostream &operator<<(ostream &os, const array<T, N> &input) {
+    os << "[";
+    for (auto it = input.cbegin(); it != input.cend();) {
+        os << *it++ << (it == input.cend() ? "" : ", ");
+    }
+    os << "]";
+    return os;
+}
+
 template <typename T>
 ostream &operator<<(ostream &os, const vector<T> &input) {
     os << "[";

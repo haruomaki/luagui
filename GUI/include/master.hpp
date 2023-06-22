@@ -11,6 +11,7 @@
 #include <Text.hpp>
 #include <Timer.hpp>
 #include <Update.hpp>
+#include <Viewport.hpp>
 #include <Window.hpp>
 #include <World.hpp>
 #include <WorldObject.hpp>
