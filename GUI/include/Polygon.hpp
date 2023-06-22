@@ -2,11 +2,7 @@
 
 #include <Drawable.hpp>
 #include <Shader.hpp>
-
-struct InterleavedVertexInfo {
-    glm::vec3 coord_;
-    RGBA color_;
-};
+#include <core.hpp>
 
 class Polygon {
     VertexArrayObject vao_;

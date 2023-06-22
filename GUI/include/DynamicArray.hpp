@@ -3,11 +3,7 @@
 #include <Drawable.hpp>
 #include <Shader.hpp>
 #include <Update.hpp>
-
-struct InterleavedVertexInfo2 {
-    glm::vec3 coord_;
-    RGBA color_;
-};
+#include <core.hpp>
 
 class DynamicArray : public DrawableWorldObject, Update {
     VertexArrayObject vao_;
@@ -19,7 +15,7 @@ class DynamicArray : public DrawableWorldObject, Update {
     static constexpr RGBA default_color{0.8, 0.8, 0.8, 1};
 
   public:
-    vector<InterleavedVertexInfo2> vertices_;
+    vector<InterleavedVertexInfo> vertices_;
 
     DynamicArray(World &world, const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP, GLenum usage = GL_DYNAMIC_DRAW)
         : DrawableWorldObject(world)
@@ -28,7 +24,7 @@ class DynamicArray : public DrawableWorldObject, Update {
         , n_(coords.size())
         , capacity_(coords.capacity()) {
 
-        vector<InterleavedVertexInfo2> vers = {};
+        vector<InterleavedVertexInfo> vers = {};
         for (size_t i = 0; i < n_; i++) {
             glm::vec3 coord = coords[i];
             RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
@@ -45,14 +41,14 @@ class DynamicArray : public DrawableWorldObject, Update {
         vao_.bind([&] {
             if (capacity_ != vertices_.capacity()) {
                 // 空のVBOを生成
-                vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo2) * vertices_.capacity(), nullptr, GL_DYNAMIC_DRAW);
+                vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices_.capacity(), nullptr, GL_DYNAMIC_DRAW);
 
                 // VAOを作成。頂点の座標と色を関連付ける
                 vao_ = VertexArrayObject::gen();
                 vao_.bind([&] {
                     vbo_.bind([&] {
-                        shader_.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo2), nullptr);                                  // 位置
-                        shader_.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo2), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+                        shader_.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+                        shader_.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
                     });
                     getErrors();
                 });
@@ -60,7 +56,7 @@ class DynamicArray : public DrawableWorldObject, Update {
             capacity_ = vertices_.capacity();
             n_ = vertices_.size();
             vbo_.bind([&] {
-                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InterleavedVertexInfo2) * capacity_, vertices_.data());
+                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InterleavedVertexInfo) * capacity_, vertices_.data());
             });
         });
     }

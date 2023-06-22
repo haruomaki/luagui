@@ -25,7 +25,7 @@ int main() {
     line.draw(camera);
 
     for (auto &&x : linspace(-9, 9, 100)) {
-        InterleavedVertexInfo2 ver;
+        InterleavedVertexInfo ver;
         ver.coord_ = {x, f(x), 0};
         ver.color_ = {0.5, 0.2, 0.7, 1.0};
         line.vertices_.push_back(ver);
