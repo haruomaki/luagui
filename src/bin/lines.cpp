@@ -41,6 +41,17 @@ int main() {
     top_left_point.append(&sample_text);
     sample_text.setPosition({20, -60, 0});
 
+    // 三角形の表示
+    Polygon my_triangle_polygon(main_shader, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+                                {
+                                    {0.9, 0.3, 0, 1},
+                                    {0.9, 0.2, 0.7, 0.3},
+                                    {0.3, 0.7, 0.5, 0.5},
+                                });
+    Shape my_triangle(world, my_triangle_polygon);
+    my_triangle.setScale(200);
+    my_triangle.setPosition({-100, 0, 0});
+
     // レンダリングループ
     window.mainloop([&] {
         for (auto &&ver : line.vertices_) {
