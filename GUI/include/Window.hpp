@@ -99,6 +99,10 @@ class WorldObject {
         return pos_;
     }
 
+    [[nodiscard]] glm::vec3 getScale() const {
+        return scale_;
+    }
+
     [[nodiscard]] glm::mat4 getAbsoluteTransform() const {
         return abs_transform_;
     }

@@ -163,6 +163,29 @@ static string loadString(const string &path) {
     return ss.str();
 }
 
+#define ReLU(x) std::max(x, 0)
+
+// 分割数指定で等差数列を生成する
+static vector<float> linspace(float start, float stop, size_t num, bool endpoint = true) {
+    vector<float> ret = {};
+    float step = (stop - start) / float(endpoint ? num - 1 : num);
+    for (size_t i = 0; i < num; i++) {
+        ret.emplace_back(start + step * float(i));
+    }
+    return ret;
+}
+
+// 幅指定で等差数列を生成する
+static vector<float> arange(float start, float stop, float step) {
+    vector<float> ret = {};
+    float value = start;
+    while (step > 0 ? value < stop : stop < value) {
+        ret.emplace_back(value);
+        value += step;
+    }
+    return ret;
+}
+
 template <typename T>
 struct Point {
     T x_, y_;

@@ -38,3 +38,20 @@ class NormalCamera : public Camera, SizeCallback {
         // debug(projection_matrix_);
     }
 };
+
+class OrthoCamera : public Camera, SizeCallback {
+  public:
+    OrthoCamera(const Window &window)
+        : Camera(window) {
+        auto pos = window.getFrameBufferSize();
+        int width = pos.first;
+        int height = pos.second;
+        sizeCallback(width, height);
+    }
+
+    void sizeCallback(int width, int height) override {
+        const auto w = float(width);
+        const auto h = float(height);
+        projection_matrix_ = glm::ortho<float>(-w / 2, w / 2, -h / 2, h / 2, 1000.F, -1000.F);
+    }
+};
