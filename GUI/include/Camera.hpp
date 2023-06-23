@@ -19,7 +19,7 @@ class NormalCamera : public Camera, public WorldObject {
         , viewport_(viewport) {}
 
     [[nodiscard]] glm::mat4 getViewMatrix() const override {
-        return glm::inverse(getAbsoluteTransform());
+        return SCALE({-1, 1, -1}) * glm::inverse(getAbsoluteTransform());
     }
 
     [[nodiscard]] glm::mat4 getProjectionMatrix() const override {

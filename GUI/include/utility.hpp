@@ -79,10 +79,10 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
             position += getRight() * speed;
         }
         if (window_.getKey(GLFW_KEY_SPACE)) {
-            position += glm::vec3{0, speed, 0};
+            position += getUp() * speed;
         }
         if (window_.getKey(GLFW_KEY_LEFT_SHIFT)) {
-            position += glm::vec3{0, -speed, 0};
+            position += getDown() * speed;
         }
         if (window_.getKey(GLFW_KEY_RIGHT)) {
             setRotate(glm::angleAxis(-0.01F, glm::vec3{0, 1, 0}) * getRotate());
@@ -91,10 +91,10 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
             setRotate(glm::angleAxis(0.01F, glm::vec3{0, 1, 0}) * getRotate());
         }
         if (window_.getKey(GLFW_KEY_DOWN)) {
-            camera_head_.setRotate(glm::angleAxis(-0.01F, glm::vec3{1, 0, 0}) * camera_head_.getRotate());
+            camera_head_.setRotate(glm::angleAxis(0.01F, glm::vec3{1, 0, 0}) * camera_head_.getRotate());
         }
         if (window_.getKey(GLFW_KEY_UP)) {
-            camera_head_.setRotate(glm::angleAxis(0.01F, glm::vec3{1, 0, 0}) * camera_head_.getRotate());
+            camera_head_.setRotate(glm::angleAxis(-0.01F, glm::vec3{1, 0, 0}) * camera_head_.getRotate());
         }
         // if (window_.getKey(GLFW_KEY_Z)) {
         //     setScale(scale / 1.01);

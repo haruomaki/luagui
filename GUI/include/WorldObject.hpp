@@ -106,30 +106,12 @@ class WorldObject {
         return abs_transform_;
     }
 
-    // TODO: コンパクトに記述
-    [[nodiscard]] glm::vec3 getFront() const {
-        const auto v = abs_transform_ * glm::vec4{0, 0, 1, 0};
-        return {v};
-    }
-    [[nodiscard]] glm::vec3 getBack() const {
-        const auto v = abs_transform_ * glm::vec4{0, 0, -1, 0};
-        return {v};
-    }
-    [[nodiscard]] glm::vec3 getRight() const {
-        const auto v = abs_transform_ * glm::vec4{-1, 0, 0, 0};
-        return {v};
-    }
-    [[nodiscard]] glm::vec3 getLeft() const {
-        const auto v = abs_transform_ * glm::vec4{1, 0, 0, 0};
-        return {v};
-    }
-    [[nodiscard]] glm::vec3 getUp() const {
-        const auto v = abs_transform_ * glm::vec4{0, 1, 0, 0};
-        return {v};
-    }
-    [[nodiscard]] glm::vec3 getDown() const {
-        return {abs_transform_ * glm::vec4{0, -1, 0, 0}};
-    }
+    [[nodiscard]] glm::vec3 getFront() const { return abs_transform_ * glm::vec4{0, 0, 1, 0}; }
+    [[nodiscard]] glm::vec3 getBack() const { return abs_transform_ * glm::vec4{0, 0, -1, 0}; }
+    [[nodiscard]] glm::vec3 getRight() const { return abs_transform_ * glm::vec4{-1, 0, 0, 0}; }
+    [[nodiscard]] glm::vec3 getLeft() const { return abs_transform_ * glm::vec4{1, 0, 0, 0}; }
+    [[nodiscard]] glm::vec3 getUp() const { return abs_transform_ * glm::vec4{0, 1, 0, 0}; }
+    [[nodiscard]] glm::vec3 getDown() const { return abs_transform_ * glm::vec4{0, -1, 0, 0}; }
 
     void setPosition(const glm::vec3 &pos) {
         pos_ = pos;

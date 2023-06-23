@@ -36,6 +36,7 @@ int main() {
 
     MobileNormalCamera camera(window, main_world, viewport);
     camera.setPosition({0, 0, 1000});
+    camera.setRotate(glm::angleAxis(glm::pi<float>(), glm::vec3{0, 1, 0}));
     camera.setScale(1);
 
     Font migmix_font;
