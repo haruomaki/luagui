@@ -3,17 +3,16 @@
 
 class Test {
   private:
-    int _value{777};
-    int get_value() const { return _value; }
-    void set_value(const int &v) {
+    int value_{777};
+    [[nodiscard]] int getValue() const { return value_; }
+    void setValue(const int &v) {
         std::cout << "セットされた！！！: " << v << std::endl;
-        _value = v;
+        value_ = v;
     }
 
   public:
     // プロパティ型とgetterとなるconstメンバ関数、setterとなるメンバ関数をテンプレート引数に渡す。コンストラクタには自クラスの参照を渡します
-    get_set_property<int, &Test::get_value, &Test::set_value> get_set_value{
-        *this};
+    GetSetProperty<int, &Test::getValue, &Test::setValue> get_set_value{*this};
 };
 
 int main() {

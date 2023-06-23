@@ -15,12 +15,12 @@ using member_function_class_type_t = decltype(member_function_class_type_impl(Me
 
 // 読み取り専用プロパティ
 template <typename TProperty, auto Getter>
-class get_only_property {
+class GetOnlyProperty {
     using C = member_function_class_type_t<Getter>;
 
   public:
-    get_only_property(const C &ins)
-        : _instance(ins) {}
+    GetOnlyProperty(const C &ins)
+        : instance_(ins) {}
 
     // プロパティ型への変換
     operator TProperty() const { return get(); }
@@ -145,23 +145,23 @@ class get_only_property {
     TProperty operator~() const { return ~get(); }
 
   protected:
-    TProperty get() const { return (_instance.*Getter)(); }
+    TProperty get() const { return (instance_.*Getter)(); }
 
   private:
-    const C &_instance;
+    const C &instance_;
 };
 
 // 書き込み専用プロパティ
 template <typename TProperty, auto Setter>
-class set_only_property {
+class SetOnlyProperty {
     using C = member_function_class_type_t<Setter>;
 
   public:
-    set_only_property(C &ins)
-        : _instance(ins) {}
+    SetOnlyProperty(C &ins)
+        : instance_(ins) {}
 
     // 代入
-    set_only_property &operator=(const TProperty &v) {
+    SetOnlyProperty &operator=(const TProperty &v) {
         set(v);
         return *this;
     }
@@ -170,34 +170,34 @@ class set_only_property {
     void operator()(const TProperty &v) { set(v); }
 
   protected:
-    void set(const TProperty &v) { (_instance.*Setter)(v); }
+    void set(const TProperty &v) { (instance_.*Setter)(v); }
 
   private:
-    C &_instance;
+    C &instance_;
 };
 
 // 読み書き可能プロパティ
 template <typename TProperty, auto Getter, auto Setter>
-class get_set_property : public get_only_property<TProperty, Getter>,
-                         public set_only_property<TProperty, Setter> {
+class GetSetProperty : public GetOnlyProperty<TProperty, Getter>,
+                       public SetOnlyProperty<TProperty, Setter> {
     using C = member_function_class_type_t<Getter>;
     static_assert(std::is_same_v<C, member_function_class_type_t<Setter>>,
                   "The class of Getter and Setter must be same.");
-    using TGetProperty = get_only_property<TProperty, Getter>;
-    using TSetProperty = set_only_property<TProperty, Setter>;
+    using TGetProperty = GetOnlyProperty<TProperty, Getter>;
+    using TSetProperty = SetOnlyProperty<TProperty, Setter>;
 
   public:
-    get_set_property(C &ins)
+    GetSetProperty(C &ins)
         : TGetProperty(ins)
         , TSetProperty(ins) {}
     // 代入
-    get_set_property &operator=(const TProperty &v) {
+    GetSetProperty &operator=(const TProperty &v) {
         TSetProperty::operator=(v);
         return *this;
     }
 
     // 前置インクリメント
-    get_set_property &operator++() {
+    GetSetProperty &operator++() {
         auto buf = TGetProperty::get();
         TSetProperty::set(++buf);
         return *this;
@@ -212,7 +212,7 @@ class get_set_property : public get_only_property<TProperty, Getter>,
     }
 
     // 前置デクリメント
-    get_set_property &operator--() {
+    GetSetProperty &operator--() {
         auto buf = TGetProperty::get();
         TSetProperty::set(--buf);
         return *this;
@@ -228,35 +228,35 @@ class get_set_property : public get_only_property<TProperty, Getter>,
 
     // 複合代入演算子（四則演算）
     template <typename T>
-    get_set_property &operator+=(const T &other) {
+    GetSetProperty &operator+=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf += other);
         return *this;
     }
 
     template <typename T>
-    get_set_property &operator-=(const T &other) {
+    GetSetProperty &operator-=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf -= other);
         return *this;
     }
 
     template <typename T>
-    get_set_property &operator*=(const T &other) {
+    GetSetProperty &operator*=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf *= other);
         return *this;
     }
 
     template <typename T>
-    get_set_property &operator/=(const T &other) {
+    GetSetProperty &operator/=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf /= other);
         return *this;
     }
 
     template <typename T>
-    get_set_property &operator%=(const T &other) {
+    GetSetProperty &operator%=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf %= other);
         return *this;
@@ -264,21 +264,21 @@ class get_set_property : public get_only_property<TProperty, Getter>,
 
     // 複合代入演算子（ビット演算）
     template <typename T>
-    get_set_property &operator|=(const T &other) {
+    GetSetProperty &operator|=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf |= other);
         return *this;
     }
 
     template <typename T>
-    get_set_property &operator&=(const T &other) {
+    GetSetProperty &operator&=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf &= other);
         return *this;
     }
 
     template <typename T>
-    get_set_property &operator^=(const T &other) {
+    GetSetProperty &operator^=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf ^= other);
         return *this;
@@ -286,14 +286,14 @@ class get_set_property : public get_only_property<TProperty, Getter>,
 
     // 複合代入演算子（シフト演算）
     template <typename T>
-    get_set_property &operator>>=(const T &other) {
+    GetSetProperty &operator>>=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf >>= other);
         return *this;
     }
 
     template <typename T>
-    get_set_property &operator<<=(const T &other) {
+    GetSetProperty &operator<<=(const T &other) {
         auto buf = TGetProperty::get();
         TSetProperty::set(buf <<= other);
         return *this;

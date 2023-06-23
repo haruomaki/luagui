@@ -5,7 +5,44 @@ static float f(float x) {
     return 3 * sin(x);
 }
 
+// template <class Parent, class T, function<T()> getter>
+// struct Property {
+//     T value_;
+//     operator T() const { return getter(); }
+// };
+
+// class MyClass {
+//   public:
+//     Property<MyClass, int, []() {}> value;
+// };
+
+namespace mc {
+template <class T>
+struct Property {
+    T v_;
+    operator T() { return v_; }
+    void operator=(const T &v) { v_ = v; }
+    T *operator->() { return &v_; }
+    T &operator*() { return v_; }
+    friend std::ostream &operator<<(std::ostream &os, const Property &it) { return os << it.v_; }
+};
+} // namespace mc
+
+struct Person {
+    mc::Property<const char *> firstName;
+    mc::Property<std::string> lastName;
+    mc::Property<int> age;
+};
+
 int main() {
+    Person p = {"tom", "yum", 16};
+    std::cout << p.firstName << " ";
+    std::cout << p.lastName->c_str();
+    printf("(%d)\n", *p.age);
+
+    p.firstName = "O", p.lastName = "B", p.age = 1;
+    printf("%s%s(%d)\n", *p.firstName, p.lastName->data(), *p.age);
+
     constexpr int width = 600, height = 500;
     Window window(width, height);
     MaximumViewport viewport(window);

@@ -115,5 +115,9 @@ class WorldObject {
         return parent_;
     }
 
+    // struct PositionProperty {
+    //     operator glm::vec3() const { return getPosition() }
+    // }
+
     friend class Window;
 };
