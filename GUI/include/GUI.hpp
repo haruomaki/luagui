@@ -232,6 +232,9 @@ struct RGBA {
 
 #define TRANSLATE(...) glm::translate(glm::mat4(1), __VA_ARGS__)
 #define ROTATE(angle, ...) glm::rotate(glm::mat4(1), angle, __VA_ARGS__)
+#define ANGLE_X(angle) glm::angleAxis(angle, glm::vec3{1, 0, 0})
+#define ANGLE_Y(angle) glm::angleAxis(angle, glm::vec3{0, 1, 0})
+#define ANGLE_Z(angle) glm::angleAxis(angle, glm::vec3{0, 0, 1})
 #define SCALE(...) glm::scale(glm::mat4(1), __VA_ARGS__)
 
 template <class T>

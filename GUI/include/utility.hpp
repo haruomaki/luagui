@@ -85,16 +85,16 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
             position += getDown() * speed;
         }
         if (window_.getKey(GLFW_KEY_RIGHT)) {
-            rotate *= glm::angleAxis(-0.01F, glm::vec3{0, 1, 0});
+            rotate *= ANGLE_Y(-0.01F);
         }
         if (window_.getKey(GLFW_KEY_LEFT)) {
-            rotate *= glm::angleAxis(0.01F, glm::vec3{0, 1, 0});
+            rotate *= ANGLE_Y(0.01F);
         }
         if (window_.getKey(GLFW_KEY_DOWN)) {
-            camera_head_.rotate *= glm::angleAxis(0.01F, glm::vec3{1, 0, 0});
+            camera_head_.rotate *= ANGLE_X(0.01F);
         }
         if (window_.getKey(GLFW_KEY_UP)) {
-            camera_head_.rotate *= glm::angleAxis(-0.01F, glm::vec3{1, 0, 0});
+            camera_head_.rotate *= ANGLE_X(-0.01F);
         }
         // if (window_.getKey(GLFW_KEY_Z)) {
         //     setScale(scale / 1.01);
