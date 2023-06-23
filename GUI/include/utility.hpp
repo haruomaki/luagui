@@ -55,3 +55,44 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
         : OrthoCamera(world, viewport)
         , Update(window) {}
 };
+
+class MobileNormalCamera : public NormalCamera, protected Update {
+    void update() override {
+        constexpr float speed_base = 5;
+        const float scale = getScale().x;
+        const float speed = speed_base * scale;
+
+        if (window_.getKey(GLFW_KEY_W)) {
+            position += glm::vec3{0, 0, -speed};
+        }
+        if (window_.getKey(GLFW_KEY_A)) {
+            position += glm::vec3{-speed, 0, 0};
+        }
+        if (window_.getKey(GLFW_KEY_S)) {
+            position += glm::vec3{0, 0, speed};
+        }
+        if (window_.getKey(GLFW_KEY_D)) {
+            position += glm::vec3{speed, 0, 0};
+        }
+        if (window_.getKey(GLFW_KEY_SPACE)) {
+            position += glm::vec3{0, speed, 0};
+        }
+        if (window_.getKey(GLFW_KEY_LEFT_SHIFT)) {
+            position += glm::vec3{0, -speed, 0};
+        }
+        if (window_.getKey(GLFW_KEY_Z)) {
+            setScale(scale / 1.01);
+        }
+        if (window_.getKey(GLFW_KEY_X)) {
+            setScale(scale * 1.01);
+        }
+        if (window_.getKey(GLFW_KEY_Q)) {
+            exit(0);
+        }
+    }
+
+  public:
+    MobileNormalCamera(Window &window, World &world, const Viewport &viewport)
+        : NormalCamera(world, viewport)
+        , Update(window) {}
+};

@@ -1,7 +1,8 @@
 #include <master.hpp>
+#include <utility.hpp>
 
 class MovingShape : public Shape, Update {
-    static constexpr float speed = 1.5f;
+    static constexpr float speed = 1.5;
     float velocity_ = -speed;
 
     void update() override {
@@ -33,7 +34,7 @@ int main() {
 
     auto main_shader = ProgramObject{vsh_id, fsh_id};
 
-    NormalCamera camera(main_world, viewport);
+    MobileNormalCamera camera(window, main_world, viewport);
     camera.setPosition({0, 0, 1000});
     camera.setScale(1);
 
