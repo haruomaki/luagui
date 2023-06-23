@@ -64,6 +64,7 @@ class WorldObject {
         }
     }
 
+    // TODO: ポインタでなく参照を受け取る
     void append(WorldObject *child) {
         child->parent_ = this;
         this->children_.insert(child);

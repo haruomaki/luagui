@@ -56,7 +56,13 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
         , Update(window) {}
 };
 
-class MobileNormalCamera : public NormalCamera, protected Update {
+class MobileNormalCamera : public Camera, public WorldObject, protected Update {
+    // class MobileNormalCameraHead : public NormalCamera {
+    //     using NormalCamera::NormalCamera;
+    // } camera_head_;
+    NormalCamera camera_head_;
+    WorldObject camera_base_;
+
     void update() override {
         constexpr float speed_base = 5;
         const float scale = getScale().x;
@@ -87,10 +93,10 @@ class MobileNormalCamera : public NormalCamera, protected Update {
             setRotate(glm::angleAxis(0.01F, glm::vec3{0, 1, 0}) * getRotate());
         }
         if (window_.getKey(GLFW_KEY_DOWN)) {
-            setRotate(glm::angleAxis(-0.01F, glm::vec3{1, 0, 0}) * getRotate());
+            camera_head_.setRotate(glm::angleAxis(-0.01F, glm::vec3{1, 0, 0}) * camera_head_.getRotate());
         }
         if (window_.getKey(GLFW_KEY_UP)) {
-            setRotate(glm::angleAxis(0.01F, glm::vec3{1, 0, 0}) * getRotate());
+            camera_head_.setRotate(glm::angleAxis(0.01F, glm::vec3{1, 0, 0}) * camera_head_.getRotate());
         }
         if (window_.getKey(GLFW_KEY_Z)) {
             setScale(scale / 1.01);
@@ -105,6 +111,19 @@ class MobileNormalCamera : public NormalCamera, protected Update {
 
   public:
     MobileNormalCamera(Window &window, World &world, const Viewport &viewport)
-        : NormalCamera(world, viewport)
-        , Update(window) {}
+        : WorldObject(world)
+        , Update(window)
+        , camera_head_(world, viewport)
+        , camera_base_(world) {
+        this->append(&camera_base_);
+        camera_base_.append(&camera_head_);
+    }
+
+    [[nodiscard]] glm::mat4 getViewMatrix() const override {
+        return camera_head_.getViewMatrix();
+    }
+
+    [[nodiscard]] glm::mat4 getProjectionMatrix() const override {
+        return camera_head_.getProjectionMatrix();
+    }
 };
