@@ -14,29 +14,6 @@ class DynamicArray : public DrawableWorldObject, Update {
     size_t capacity_;
     static constexpr RGBA default_color{0.8, 0.8, 0.8, 1};
 
-  public:
-    vector<InterleavedVertexInfo> vertices_;
-
-    DynamicArray(Window &window, World &world, const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP)
-        : DrawableWorldObject(world)
-        , Update(window)
-        , shader_(shader)
-        , draw_mode_(draw_mode)
-        , n_(coords.size())
-        , capacity_(coords.capacity()) {
-
-        vector<InterleavedVertexInfo> vers = {};
-        for (size_t i = 0; i < n_; i++) {
-            glm::vec3 coord = coords[i];
-            RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
-            vers.push_back({coord, color});
-        }
-        vertices_ = vers;
-
-        // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
-    }
-
-    // TODO: privateに
     void update() override {
         // VBOの更新
         vao_.bind([&] {
@@ -62,7 +39,6 @@ class DynamicArray : public DrawableWorldObject, Update {
         });
     }
 
-    // TODO: privateに
     void draw(const Camera &camera) const override {
         // シェーダを有効化
         const auto &shader = shader_;
@@ -87,5 +63,27 @@ class DynamicArray : public DrawableWorldObject, Update {
         vao_.bind([&] {
             glDrawArrays(draw_mode_, 0, GLsizei(n_));
         });
+    }
+
+  public:
+    vector<InterleavedVertexInfo> vertices_;
+
+    DynamicArray(Window &window, World &world, const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLenum draw_mode = GL_LINE_STRIP)
+        : DrawableWorldObject(world)
+        , Update(window)
+        , shader_(shader)
+        , draw_mode_(draw_mode)
+        , n_(coords.size())
+        , capacity_(coords.capacity()) {
+
+        vector<InterleavedVertexInfo> vers = {};
+        for (size_t i = 0; i < n_; i++) {
+            glm::vec3 coord = coords[i];
+            RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
+            vers.push_back({coord, color});
+        }
+        vertices_ = vers;
+
+        // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
     }
 };

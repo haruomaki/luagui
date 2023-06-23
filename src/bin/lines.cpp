@@ -23,7 +23,6 @@ int main() {
 
     DynamicArray line(window, world, main_shader, {}, {}, GL_LINE_LOOP);
     line.setScale(100);
-    line.draw(camera);
 
     for (auto &&x : linspace(-9, 9, 100)) {
         InterleavedVertexInfo ver;
@@ -65,6 +64,6 @@ int main() {
 
         world.masterDraw(camera);
         glClear(GL_DEPTH_BUFFER_BIT);
-        ui_world.masterDraw(camera);
+        ui_world.masterDraw(ui_camera);
     });
 }

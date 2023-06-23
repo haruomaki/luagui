@@ -23,17 +23,30 @@ class StickyPointTopLeft : public WorldObject, Update {
 
 class MobileOrthoCamera : public OrthoCamera, protected Update {
     void update() override {
+        constexpr float speed_base = 5;
+        const float scale = getScale().x;
+        const float speed = speed_base * scale;
+
         if (window_.getKey(GLFW_KEY_RIGHT)) {
-            debug("RIGHT");
+            position += glm::vec3{speed, 0, 0};
         }
         if (window_.getKey(GLFW_KEY_LEFT)) {
-            debug("LEFT");
+            position += glm::vec3{-speed, 0, 0};
         }
         if (window_.getKey(GLFW_KEY_DOWN)) {
-            debug("DOWN");
+            position += glm::vec3{0, -speed, 0};
         }
         if (window_.getKey(GLFW_KEY_UP)) {
-            debug("UP");
+            position += glm::vec3{0, speed, 0};
+        }
+        if (window_.getKey(GLFW_KEY_Z)) {
+            setScale(scale / 1.01);
+        }
+        if (window_.getKey(GLFW_KEY_X)) {
+            setScale(scale * 1.01);
+        }
+        if (window_.getKey(GLFW_KEY_Q)) {
+            exit(0);
         }
     }
 
