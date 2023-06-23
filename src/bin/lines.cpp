@@ -38,7 +38,7 @@ int main() {
     Font migmix_font;
     Text sample_text(ui_world, migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
     Text credit_text(ui_world, migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9, 0.4});
-    top_left_point.append(&sample_text);
+    top_left_point.append(sample_text);
     sample_text.position = {20, -60, 0};
 
     // 三角形の表示

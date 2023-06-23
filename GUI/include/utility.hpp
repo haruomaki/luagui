@@ -113,8 +113,8 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
         , Update(window)
         , camera_head_(world, viewport)
         , camera_base_(world) {
-        this->append(&camera_base_);
-        camera_base_.append(&camera_head_);
+        this->append(camera_base_);
+        camera_base_.append(camera_head_);
     }
 
     [[nodiscard]] glm::mat4 getViewMatrix() const override {

@@ -77,7 +77,7 @@ int main() {
 
     MovingShape ins3(window, main_world, gon3);
     Shape ins(main_world, gon), ins2(main_world, gon2), inspoly(main_world, poly);
-    ins3.append(&ins);
+    ins3.append(ins);
     ins3.setScale(1000);
     ins2.setScale(1500);
     inspoly.setPosition({0, 100, 100});
