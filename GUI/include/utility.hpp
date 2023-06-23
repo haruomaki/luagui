@@ -64,21 +64,19 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
     WorldObject camera_base_;
 
     void update() override {
-        constexpr float speed_base = 5;
-        const float scale = getScale().x;
-        const float speed = speed_base * scale;
+        constexpr float speed = 5;
 
         if (window_.getKey(GLFW_KEY_W)) {
-            position += glm::vec3{0, 0, -speed};
+            position += getFront() * speed;
         }
         if (window_.getKey(GLFW_KEY_A)) {
-            position += glm::vec3{-speed, 0, 0};
+            position += getLeft() * speed;
         }
         if (window_.getKey(GLFW_KEY_S)) {
-            position += glm::vec3{0, 0, speed};
+            position += getBack() * speed;
         }
         if (window_.getKey(GLFW_KEY_D)) {
-            position += glm::vec3{speed, 0, 0};
+            position += getRight() * speed;
         }
         if (window_.getKey(GLFW_KEY_SPACE)) {
             position += glm::vec3{0, speed, 0};
@@ -98,12 +96,12 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
         if (window_.getKey(GLFW_KEY_UP)) {
             camera_head_.setRotate(glm::angleAxis(0.01F, glm::vec3{1, 0, 0}) * camera_head_.getRotate());
         }
-        if (window_.getKey(GLFW_KEY_Z)) {
-            setScale(scale / 1.01);
-        }
-        if (window_.getKey(GLFW_KEY_X)) {
-            setScale(scale * 1.01);
-        }
+        // if (window_.getKey(GLFW_KEY_Z)) {
+        //     setScale(scale / 1.01);
+        // }
+        // if (window_.getKey(GLFW_KEY_X)) {
+        //     setScale(scale * 1.01);
+        // }
         if (window_.getKey(GLFW_KEY_Q)) {
             exit(0);
         }
