@@ -12,7 +12,7 @@ class ValueAndHistory {
 
   public:
     // プロパティ型とgetterとなるconstメンバ関数、setterとなるメンバ関数をテンプレート引数に渡す。コンストラクタには自クラスの参照を渡します
-    GetSetProperty<int, &ValueAndHistory::getValue, &ValueAndHistory::setValue> get_set_value{*this};
+    PropertyGetSet<int, &ValueAndHistory::getValue, &ValueAndHistory::setValue> get_set_value{this};
 };
 
 int main() {

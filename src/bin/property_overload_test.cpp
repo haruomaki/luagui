@@ -9,12 +9,12 @@ template <class C, typename TReturn, typename... TArgs>
 auto member_function_class_type_impl(TReturn (C::*member_function)(TArgs...)) -> C;
 
 template <auto MemberFunctionPointer>
-using member_function_class_type_t = decltype(member_function_class_type_impl(MemberFunctionPointer));
+using getClassType = decltype(member_function_class_type_impl(MemberFunctionPointer));
 
 // 書き込み専用プロパティ
 template <typename TProperty, auto Setter>
 class PropertySet {
-    using C = member_function_class_type_t<Setter>;
+    using C = getClassType<Setter>;
 
   public:
     PropertySet(C *ins)
