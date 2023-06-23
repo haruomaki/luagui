@@ -80,6 +80,18 @@ class MobileNormalCamera : public NormalCamera, protected Update {
         if (window_.getKey(GLFW_KEY_LEFT_SHIFT)) {
             position += glm::vec3{0, -speed, 0};
         }
+        if (window_.getKey(GLFW_KEY_RIGHT)) {
+            setRotate(glm::angleAxis(-0.01F, glm::vec3{0, 1, 0}) * getRotate());
+        }
+        if (window_.getKey(GLFW_KEY_LEFT)) {
+            setRotate(glm::angleAxis(0.01F, glm::vec3{0, 1, 0}) * getRotate());
+        }
+        if (window_.getKey(GLFW_KEY_DOWN)) {
+            setRotate(glm::angleAxis(-0.01F, glm::vec3{1, 0, 0}) * getRotate());
+        }
+        if (window_.getKey(GLFW_KEY_UP)) {
+            setRotate(glm::angleAxis(0.01F, glm::vec3{1, 0, 0}) * getRotate());
+        }
         if (window_.getKey(GLFW_KEY_Z)) {
             setScale(scale / 1.01);
         }

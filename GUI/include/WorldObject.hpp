@@ -8,6 +8,7 @@ class World;
 class WorldObject {
     World *const world_;
     glm::vec3 pos_;
+    glm::quat rotate_;
     glm::vec3 scale_;
     glm::mat4 abs_transform_;
     WorldObject *parent_ = nullptr;
@@ -15,7 +16,7 @@ class WorldObject {
 
     void refreshAbsoluteTransform() {
         const auto &parent_abs_transform = (parent_ != nullptr ? parent_->abs_transform_ : glm::mat4(1));
-        abs_transform_ = parent_abs_transform * TRANSLATE(pos_) * SCALE(scale_);
+        abs_transform_ = parent_abs_transform * TRANSLATE(pos_) * glm::mat4_cast(rotate_) * SCALE(scale_);
         for (auto *child : children_) {
             child->refreshAbsoluteTransform();
         }
@@ -25,6 +26,7 @@ class WorldObject {
     WorldObject(World &world)
         : world_(&world)
         , pos_(glm::vec3(0))
+        , rotate_(glm::quat(1, 0, 0, 0))
         , scale_(glm::vec3(1))
         , abs_transform_(glm::mat4(1)) {}
 
@@ -87,24 +89,33 @@ class WorldObject {
         return world_;
     }
 
-    [[nodiscard]] glm::vec3 getPosition() const {
+    [[nodiscard]] const glm::vec3 &getPosition() const {
         return pos_;
     }
 
-    [[nodiscard]] glm::vec3 getScale() const {
+    [[nodiscard]] const glm::quat &getRotate() const {
+        return rotate_;
+    }
+
+    [[nodiscard]] const glm::vec3 &getScale() const {
         return scale_;
     }
 
-    [[nodiscard]] glm::mat4 getAbsoluteTransform() const {
+    [[nodiscard]] const glm::mat4 &getAbsoluteTransform() const {
         return abs_transform_;
     }
 
-    void setPosition(glm::vec3 pos) {
+    void setPosition(const glm::vec3 &pos) {
         pos_ = pos;
         this->refreshAbsoluteTransform();
     }
 
-    void setScale(glm::vec3 scale) {
+    void setRotate(const glm::quat &rotate) {
+        rotate_ = rotate;
+        this->refreshAbsoluteTransform();
+    }
+
+    void setScale(const glm::vec3 &scale) {
         scale_ = scale;
         this->refreshAbsoluteTransform();
     }

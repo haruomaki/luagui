@@ -230,8 +230,9 @@ struct RGBA {
     }
 };
 
-#define TRANSLATE(v) glm::translate(glm::mat4(1), v)
-#define SCALE(v) glm::scale(glm::mat4(1), v)
+#define TRANSLATE(...) glm::translate(glm::mat4(1), __VA_ARGS__)
+#define ROTATE(angle, ...) glm::rotate(glm::mat4(1), angle, __VA_ARGS__)
+#define SCALE(...) glm::scale(glm::mat4(1), __VA_ARGS__)
 
 template <class T>
 class MemoryView {
