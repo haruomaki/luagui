@@ -5,44 +5,7 @@ static float f(float x) {
     return 3 * sin(x);
 }
 
-// template <class Parent, class T, function<T()> getter>
-// struct Property {
-//     T value_;
-//     operator T() const { return getter(); }
-// };
-
-// class MyClass {
-//   public:
-//     Property<MyClass, int, []() {}> value;
-// };
-
-namespace mc {
-template <class T>
-struct Property {
-    T v_;
-    operator T() { return v_; }
-    void operator=(const T &v) { v_ = v; }
-    T *operator->() { return &v_; }
-    T &operator*() { return v_; }
-    friend std::ostream &operator<<(std::ostream &os, const Property &it) { return os << it.v_; }
-};
-} // namespace mc
-
-struct Person {
-    mc::Property<const char *> firstName;
-    mc::Property<std::string> lastName;
-    mc::Property<int> age;
-};
-
 int main() {
-    Person p = {"tom", "yum", 16};
-    std::cout << p.firstName << " ";
-    std::cout << p.lastName->c_str();
-    printf("(%d)\n", *p.age);
-
-    p.firstName = "O", p.lastName = "B", p.age = 1;
-    printf("%s%s(%d)\n", *p.firstName, p.lastName->data(), *p.age);
-
     constexpr int width = 600, height = 500;
     Window window(width, height);
     MaximumViewport viewport(window);
@@ -77,7 +40,7 @@ int main() {
     Text sample_text(ui_world, migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
     Text credit_text(ui_world, migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9, 0.4});
     top_left_point.append(&sample_text);
-    sample_text.setPosition({20, -60, 0});
+    sample_text.position = {20, -60, 0};
 
     // 三角形の表示
     Polygon my_triangle_polygon(main_shader, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
@@ -88,7 +51,7 @@ int main() {
                                 });
     Shape my_triangle(world, my_triangle_polygon);
     my_triangle.setScale(200);
-    my_triangle.setPosition({-100, 0, 0});
+    my_triangle.position = {-100, 0, 0};
 
     // レンダリングループ
     window.mainloop([&] {

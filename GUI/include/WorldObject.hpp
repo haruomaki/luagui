@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GUI.hpp>
+#include <Property.hpp>
 
 class World;
 
@@ -118,6 +119,10 @@ class WorldObject {
     // struct PositionProperty {
     //     operator glm::vec3() const { return getPosition() }
     // }
+
+    // プロパティ
+    GetSetProperty<glm::vec3, &WorldObject::getPosition, &WorldObject::setPosition> position{*this};
+    // GetSetProperty<glm::vec3, &WorldObject::getScale, &WorldObject::setScale> scale{*this}; TODO: getter/setterをオーバーロード
 
     friend class Window;
 };
