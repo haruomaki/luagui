@@ -3,30 +3,24 @@
 #include <Viewport.hpp>
 #include <WorldObject.hpp>
 
-class Camera : public WorldObject {
-  protected:
-    const Viewport &viewport_;
-    float aspect_ratio_ = 1;
-
+// ビュー行列と射影行列を与える機能を持つ抽象クラス
+class Camera {
   public:
-    Camera(World &world, const Viewport &viewport)
-        : WorldObject(world)
-        , viewport_(viewport) {}
-    // glm::mat4 view_matrix_ = glm::mat4(1);
-    // glm::mat4 projection_matrix_ = glm::perspective(glm::radians(90.0F), 1.f, 0.1F, 1000.f);
-    // glm::mat4 projection_matrix_ = glm::ortho(-1, 1, -1, 1, 1, -1);
-
-    [[nodiscard]] glm::mat4 getViewMatrix() const {
-        return glm::inverse(getAbsoluteTransform());
-    }
-
+    [[nodiscard]] virtual glm::mat4 getViewMatrix() const = 0;
     [[nodiscard]] virtual glm::mat4 getProjectionMatrix() const = 0;
 };
 
-class NormalCamera : public Camera {
+class NormalCamera : public Camera, public WorldObject {
+    const Viewport &viewport_;
+
   public:
     NormalCamera(World &world, const Viewport &viewport)
-        : Camera(world, viewport) {}
+        : WorldObject(world)
+        , viewport_(viewport) {}
+
+    [[nodiscard]] glm::mat4 getViewMatrix() const override {
+        return glm::inverse(getAbsoluteTransform());
+    }
 
     [[nodiscard]] glm::mat4 getProjectionMatrix() const override {
         auto size = viewport_.getSize();
@@ -42,10 +36,17 @@ class NormalCamera : public Camera {
 };
 
 // 1ピクセルがfloat値1のスケールの正射影カメラ
-class OrthoCamera : public Camera {
+class OrthoCamera : public Camera, public WorldObject {
+    const Viewport &viewport_;
+
   public:
     OrthoCamera(World &world, const Viewport &viewport)
-        : Camera(world, viewport) {}
+        : WorldObject(world)
+        , viewport_(viewport) {}
+
+    [[nodiscard]] glm::mat4 getViewMatrix() const override {
+        return glm::inverse(getAbsoluteTransform());
+    }
 
     [[nodiscard]] glm::mat4 getProjectionMatrix() const override {
         auto size = viewport_.getSize();
