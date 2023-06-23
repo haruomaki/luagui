@@ -9,6 +9,7 @@
 #include <Shader.hpp>
 #include <SizeCallback.hpp>
 #include <Text.hpp>
+#include <Texture.hpp>
 #include <Timer.hpp>
 #include <Update.hpp>
 #include <Viewport.hpp>
