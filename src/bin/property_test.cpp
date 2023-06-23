@@ -1,7 +1,7 @@
 #include <Property.hpp>
 #include <iostream>
 
-class Test {
+class ValueAndHistory {
   private:
     int value_{777};
     [[nodiscard]] int getValue() const { return value_; }
@@ -12,11 +12,11 @@ class Test {
 
   public:
     // プロパティ型とgetterとなるconstメンバ関数、setterとなるメンバ関数をテンプレート引数に渡す。コンストラクタには自クラスの参照を渡します
-    GetSetProperty<int, &Test::getValue, &Test::setValue> get_set_value{*this};
+    GetSetProperty<int, &ValueAndHistory::getValue, &ValueAndHistory::setValue> get_set_value{*this};
 };
 
 int main() {
-    Test test;
+    ValueAndHistory test;
     // set_only_propertyのように値の設定ができて
     test.get_set_value = 4946;
     // get_only_propertyのように値の参照ができるだけでなく

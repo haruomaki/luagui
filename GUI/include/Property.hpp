@@ -153,15 +153,15 @@ class GetOnlyProperty {
 
 // 書き込み専用プロパティ
 template <typename TProperty, auto Setter>
-class SetOnlyProperty {
+class PropertySet {
     using C = member_function_class_type_t<Setter>;
 
   public:
-    SetOnlyProperty(C &ins)
+    PropertySet(C &ins)
         : instance_(ins) {}
 
     // 代入
-    SetOnlyProperty &operator=(const TProperty &v) {
+    PropertySet &operator=(const TProperty &v) {
         set(v);
         return *this;
     }
@@ -179,12 +179,12 @@ class SetOnlyProperty {
 // 読み書き可能プロパティ
 template <typename TProperty, auto Getter, auto Setter>
 class GetSetProperty : public GetOnlyProperty<TProperty, Getter>,
-                       public SetOnlyProperty<TProperty, Setter> {
+                       public PropertySet<TProperty, Setter> {
     using C = member_function_class_type_t<Getter>;
     static_assert(std::is_same_v<C, member_function_class_type_t<Setter>>,
                   "The class of Getter and Setter must be same.");
     using TGetProperty = GetOnlyProperty<TProperty, Getter>;
-    using TSetProperty = SetOnlyProperty<TProperty, Setter>;
+    using TSetProperty = PropertySet<TProperty, Setter>;
 
   public:
     GetSetProperty(C &ins)
