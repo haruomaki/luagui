@@ -54,24 +54,41 @@ class PropertyGet {
 // 書き込み専用プロパティ
 template <auto setter>
 class PropertySet {
+  protected:
     using C = getClassType<setter>;
     using A = getArgType<setter>;
 
+    C *const p_;
+
   public:
+    PropertySet() = delete;
     PropertySet(C *p)
         : p_(p) {}
+
+    void set(const A &v) { (p_->*setter)(v); }
 
     // 代入
     PropertySet &operator=(const A &x) {
         set(x);
         return *this;
     }
+};
 
-  protected:
-    void set(const A &v) { (p_->*setter)(v); }
+// 書き込み専用プロパティ
+template <auto setter1, auto setter2>
+class PropertySet2 : public PropertySet<setter1>, public PropertySet<setter2> {
+    using C = typename PropertySet<setter1>::C;
+    using C_same = typename PropertySet<setter2>::C;
+    static_assert(std::is_same_v<C, C_same>, "同じクラスのメンバ関数でないといけません");
+    // using A = getArgType<setter>;
 
-  private:
-    C *const p_;
+  public:
+    PropertySet2(C *p)
+        : PropertySet<setter1>(p)
+        , PropertySet<setter2>(p) {}
+
+    using PropertySet<setter1>::operator=;
+    using PropertySet<setter2>::operator=;
 };
 
 // 読み書き可能プロパティ

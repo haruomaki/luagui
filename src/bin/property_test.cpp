@@ -22,9 +22,9 @@ class ValueAndHistory {
         value_ = value;
         set_history_.push_back(value);
     }
-    // void setValue(double value) {
-    //     setValue(int(value));
-    // }
+    void setValueDouble(double value) {
+        setValue(int(value) * 10);
+    }
     // void setValue(initializer_list<int> list) {
     //     for (auto &&value : list) {
     //         setValue(value);
@@ -47,7 +47,7 @@ class ValueAndHistory {
 
     PropertyGet<&ValueAndHistory::getSetHistory> set_history{this};
     PropertyGetSet<&ValueAndHistory::getValue, &ValueAndHistory::setValue> value{this};
-    // PropertySet<&ValueAndHistory::setValue> value_get_set{this};
+    PropertySet2<&ValueAndHistory::setValue, &ValueAndHistory::setValueDouble> value_setonly{this};
 };
 
 int main() {
@@ -58,8 +58,36 @@ int main() {
     // t.value = 3.14;
     // t.value = {3, 6, 4};
 
+    t.value_setonly = 3.14;
+    t.value_setonly = 9;
+
     t.show();
 
     string s = (t.set_history + "aaa") + ("bbb" + t.set_history);
     cout << s << endl;
 }
+
+// class kihon {
+//   public:
+//     void show(int data1) {
+//         cout << "data1 = " << data1 << '\n';
+//     }
+// };
+
+// /********** 派生クラス **********/
+// class hasei : public kihon {
+
+//   public:
+//     using kihon::show;
+//     void show(int data1, int data2) {
+//         cout << "data1 = " << data1 << '\n';
+//         cout << "data2 = " << data2 << '\n';
+//     }
+// };
+
+// int main() {
+
+//     hasei b;
+//     b.show(10);     // 基本クラスのshow関数が呼ばれる
+//     b.show(10, 20); // 派生クラスのshow関数が呼ばれる
+// }
