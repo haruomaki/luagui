@@ -60,7 +60,7 @@ class ValueAndHistory {
     }
 
     PropertyGet<&ValueAndHistory::getSetHistory> set_history{this};
-    PropertyGetSet<&ValueAndHistory::getValue, &ValueAndHistory::setValue> value{this};
+    PropertyGetSet<&ValueAndHistory::getValue, &ValueAndHistory::setValue, &ValueAndHistory::setValueDouble> value{this};
     PropertySet<&ValueAndHistory::setValue, &ValueAndHistory::setValueDouble, &ValueAndHistory::setValueList> value_setonly{this};
 };
 
@@ -69,10 +69,10 @@ int main() {
     t.value = 7;
     int x = (t.value = 5) = 3;
     t.value = t.value + t.value();
-    // t.value = 3.14;
+    t.value = 2.71;
 
     t.value_setonly = 3.14;
-    (t.value_setonly = 9) = {3, 6, 4};
+    (t.value_setonly = x * 3) = {3, 6, 4};
 
     t.show();
 

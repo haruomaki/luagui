@@ -3,7 +3,8 @@
 // 可変長のis_same
 template <class T, class... Ts>
 using are_same = std::conjunction<std::is_same<T, Ts>...>;
-// struct are_same : std::conjunction<std::is_same<T, Ts>...> {};
+template <class T, class... Ts>
+constexpr bool are_same_v = std::conjunction<std::is_same<T, Ts>...>::value;
 
 template <typename T = void, typename... Rest>
 struct FirstType {

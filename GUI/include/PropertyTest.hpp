@@ -26,7 +26,6 @@ class PropertyGet {
     R operator*(const R &x) const { return get() * x; }
     friend R operator*(const R &x, const PropertyGet &self) { return x * self.get(); }
 
-  protected:
     R get() const { return (p_->*getter)(); }
 
   private:
@@ -52,7 +51,7 @@ class SetterUnit {
 
     // PropertySet -> A -> PropertySet
     // where Aはセッターの引数型
-    Property &operator=(const A &x) {
+    Property &operator=(const A &x) { // NOLINT(misc-unconventional-assign-operator) 継承先でusingされることが前提だから
         set(x);
         return static_cast<Property &>(*this);
     }
@@ -61,8 +60,9 @@ class SetterUnit {
 // 書き込み専用プロパティ
 template <auto... setters>
 class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
+    // すべてのセッターは同一のクラスCのメンバ関数である必要がある
+    static_assert(are_same_v<typename SetterUnit<PropertySet, setters>::C...>, "同じクラスのメンバ関数でないといけません");
     using C = getMemberFunctionClass<getFirstArgType<setters...>>;
-    static_assert(are_same<C, typename SetterUnit<PropertySet, setters>::C...>::value, "同じクラスのメンバ関数でないといけません");
 
   public:
     PropertySet(C *p)
@@ -72,23 +72,17 @@ class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
 };
 
 // 読み書き可能プロパティ
-template <auto getter, auto setter>
+template <auto getter, auto... setters>
 class PropertyGetSet : public PropertyGet<getter>,
-                       public SetterUnit<PropertyGetSet<getter, setter>, setter> {
+                       public SetterUnit<PropertyGetSet<getter, setters...>, setters>... {
     using C = getMemberFunctionClass<decltype(getter)>;
-    using A = getMemberFunctionArg<decltype(setter)>;
-    using R = getMemberFunctionRet<decltype(getter)>;
-    // static_assert(std::is_same_v<C, getClassType<setter>>,
-    // "The class of Getter and Setter must be same.");
-    // using TGetProperty = PropertyGet<getter>;
-    // using TSetProperty = PropertySet<setter>;
 
   public:
     PropertyGetSet(C *p)
         : PropertyGet<getter>(p)
-        , SetterUnit<PropertyGetSet, setter>(p) {}
+        , SetterUnit<PropertyGetSet, setters>(p)... {}
     // 代入
-    using SetterUnit<PropertyGetSet, setter>::operator=;
+    using SetterUnit<PropertyGetSet, setters>::operator=...;
 
     // // 前置インクリメント
     // PropertyGetSet &operator++() {
