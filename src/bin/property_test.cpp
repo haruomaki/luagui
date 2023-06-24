@@ -1,5 +1,5 @@
 #include <GUI.hpp>
-#include <PropertyTest.hpp>
+#include <Property.hpp>
 #include <iostream>
 
 using namespace std;

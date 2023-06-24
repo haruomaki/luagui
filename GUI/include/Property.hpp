@@ -114,13 +114,13 @@ class PropertyGetSet : public PropertyGet<getter>,
     //     return ret;
     // }
 
-    // // 複合代入演算子（四則演算）
-    // template <typename T>
-    // PropertyGetSet &operator+=(const T &other) {
-    //     auto buf = TGetProperty::get();
-    //     TSetProperty::set(buf += other);
-    //     return *this;
-    // }
+    // 複合代入演算子（四則演算）
+    template <typename T>
+    PropertyGetSet &operator+=(const T &other) {
+        auto buf = this->get();
+        this->set(buf += other);
+        return *this;
+    }
 
     // template <typename T>
     // PropertyGetSet &operator-=(const T &other) {
@@ -129,12 +129,12 @@ class PropertyGetSet : public PropertyGet<getter>,
     //     return *this;
     // }
 
-    // template <typename T>
-    // PropertyGetSet &operator*=(const T &other) {
-    //     auto buf = TGetProperty::get();
-    //     TSetProperty::set(buf *= other);
-    //     return *this;
-    // }
+    template <typename T>
+    PropertyGetSet &operator*=(const T &other) {
+        auto buf = this->get();
+        this->set(buf *= other);
+        return *this;
+    }
 
     // template <typename T>
     // PropertyGetSet &operator/=(const T &other) {
