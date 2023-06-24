@@ -38,6 +38,12 @@ struct MemberFunctionPointerTypeFilter<R (C::*)(Args...)> {
     using FirstArgType = getFirstType<Args...>;
     using ReturnType = R;
 };
+template <typename C, typename R, typename... Args>
+struct MemberFunctionPointerTypeFilter<R (C::*)(Args...) const> {
+    using ClassType = C;
+    using FirstArgType = getFirstType<Args...>;
+    using ReturnType = R;
+};
 // メンバ関数ポインタ型から所属クラスを取得
 template <typename Pointer>
 using getMemberFunctionClass = typename MemberFunctionPointerTypeFilter<Pointer>::ClassType;

@@ -24,11 +24,14 @@ class ValueAndHistory {
     vector<int> set_history_ = {};
 
   public:
-    [[nodiscard]] int getValue() {
+    int getValue() {
         get_history_.push_back(value_);
         return value_;
     }
-    [[nodiscard]] string getSetHistory() {
+    [[nodiscard]] int getValueSecretly() const {
+        return value_;
+    }
+    string getSetHistory() {
         return toStr(set_history_);
     }
 
@@ -62,6 +65,7 @@ class ValueAndHistory {
     PropertyGet<&ValueAndHistory::getSetHistory> set_history{this};
     PropertyGetSet<&ValueAndHistory::getValue, &ValueAndHistory::setValue, &ValueAndHistory::setValueDouble> value{this};
     PropertySet<&ValueAndHistory::setValue, &ValueAndHistory::setValueDouble, &ValueAndHistory::setValueList> value_setonly{this};
+    PropertyGet<&ValueAndHistory::getValueSecretly> ninja_value{this};
 };
 
 int main() {
@@ -71,6 +75,8 @@ int main() {
     t.value = t.value + t.value();
     t.value = 2.71;
 
+    debug(t.ninja_value);
+
     t.value_setonly = 3.14;
     (t.value_setonly = x * 3) = {3, 6, 4};
 
@@ -79,28 +85,3 @@ int main() {
     string s = (t.set_history + "aaa") + ("bbb" + t.set_history);
     cout << s << endl;
 }
-
-// class kihon {
-//   public:
-//     void show(int data1) {
-//         cout << "data1 = " << data1 << '\n';
-//     }
-// };
-
-// /********** 派生クラス **********/
-// class hasei : public kihon {
-
-//   public:
-//     using kihon::show;
-//     void show(int data1, int data2) {
-//         cout << "data1 = " << data1 << '\n';
-//         cout << "data2 = " << data2 << '\n';
-//     }
-// };
-
-// int main() {
-
-//     hasei b;
-//     b.show(10);     // 基本クラスのshow関数が呼ばれる
-//     b.show(10, 20); // 派生クラスのshow関数が呼ばれる
-// }
