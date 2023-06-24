@@ -1,84 +1,13 @@
 // C#のプロパティを再現する
 // https://qiita.com/CdecPGL/items/ef9c93458b0841001977
 
-#include <utility>
-
-// 可変長のis_same
-template <class T, class... Ts>
-using are_same = std::conjunction<std::is_same<T, Ts>...>;
-// struct are_same : std::conjunction<std::is_same<T, Ts>...> {};
-
-template <typename T = void, typename... Rest>
-struct FirstType {
-    using type = T;
-};
-
-// 型パラメータパックから先頭要素を取得
-template <typename... Args>
-using getFirstType = typename FirstType<Args...>::type;
-
-// TODO: 引数が空のときvoidを返す
-template <auto x, auto... rest>
-struct FirstArgType {
-    using type = decltype(x);
-};
-
-// 値パラメータパックから先頭要素の型を取得
-template <auto... args>
-using getFirstArgType = typename FirstArgType<args...>::type;
-
-static_assert(std::is_same_v<getFirstArgType<1, 2, 3>, int>);
-static_assert(std::is_same_v<getFirstArgType<true, 'a'>, bool>);
-// static_assert(std::is_same_v<getFirstArgType<>, void>);
-
-// メンバ関数ポインタ型から各型名を抽出する、特殊化フィルタ
-template <typename T>
-struct MemberFunctionPointerTypeFilter;
-template <typename C, typename R, typename... Args>
-struct MemberFunctionPointerTypeFilter<R (C::*)(Args...)> {
-    using ClassType = C;
-    using FirstArgType = getFirstType<Args...>;
-    using ReturnType = R;
-};
-// メンバ関数ポインタ型から所属クラスを取得
-template <typename Pointer>
-using getMemberFunctionClass = typename MemberFunctionPointerTypeFilter<Pointer>::ClassType;
-// メンバ関数ポインタ型から（第1引数の）引数型を取得
-template <typename Pointer>
-using getMemberFunctionArg = typename MemberFunctionPointerTypeFilter<Pointer>::FirstArgType;
-// メンバ関数ポインタ型から戻り値型を取得
-template <typename Pointer>
-using getMemberFunctionRet = typename MemberFunctionPointerTypeFilter<Pointer>::ReturnType;
-
-// メンバ関数ポインタからクラスの型を取得するエイリアステンプレート
-template <class C, typename TReturn, typename... TArgs>
-auto getClassTypeImpl(TReturn (C::*member_function)(TArgs...)) -> C;
-template <auto member_function_pointer>
-using getClassType = decltype(getClassTypeImpl(member_function_pointer));
-
-// メンバ関数から引数の型を取得する
-template <class C, typename TReturn, typename TArg>
-auto getArgTypeImpl(TReturn (C::*member_function)(TArg)) -> TArg;
-template <auto member_function_pointer>
-using getArgType = decltype(getArgTypeImpl(member_function_pointer));
-
-// メンバ関数から戻り値の型を取得する
-template <class C, typename R, class... A>
-auto getReturnTypeImpl(R (C::*member_function)(A...)) -> R;
-template <auto member_function_pointer>
-using getReturnType = decltype(getReturnTypeImpl(member_function_pointer));
-
-// メンバ関数ポインタ型の可変テンプレート引数を受け取り、先頭の関数が属するクラスを返す
-template <typename C, typename R, class A, typename... Rest>
-auto getFirstElementClassImpl(R (C::*member_function)(A), Rest... rest) -> C;
-template <auto... vars>
-using getFirstElementClass = decltype(getFirstElementClassImpl(vars...));
+#include <meta.hpp>
 
 // 読み取り専用プロパティ
 template <auto getter>
 class PropertyGet {
-    using C = getClassType<getter>;
-    using R = getReturnType<getter>;
+    using C = getMemberFunctionClass<decltype(getter)>;
+    using R = getMemberFunctionRet<decltype(getter)>;
 
   public:
     PropertyGet(C *p)
