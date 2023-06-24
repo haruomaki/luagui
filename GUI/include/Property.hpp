@@ -23,8 +23,16 @@ class PropertyGet {
     R operator+(const R &x) const { return get() + x; }
     friend R operator+(const R &x, const PropertyGet &self) { return x + self.get(); }
 
-    R operator*(const R &x) const { return get() * x; }
-    friend R operator*(const R &x, const PropertyGet &self) { return x * self.get(); }
+    auto operator*(const auto &x) const { return get() * x; }
+    friend auto operator*(const auto &x, const PropertyGet &self) { return x * self.get(); }
+
+    auto operator/(const auto &x) const { return get() / x; }
+    friend auto operator/(const auto &x, const PropertyGet &self) { return x / self.get(); }
+
+    // template <typename T>
+    // auto operator/(const T &x) const { return get() / x; }
+    // template <typename T>
+    // friend auto operator/(const T &x, const PropertyGet &self) { return x / self.get(); }
 
     R get() const { return (p_->*getter)(); }
 
@@ -81,8 +89,13 @@ class PropertyGetSet : public PropertyGet<getter>,
     PropertyGetSet(C *p)
         : PropertyGet<getter>(p)
         , SetterUnit<PropertyGetSet, setters>(p)... {}
+
     // 代入
+    // 代入演算子はオーバーロードするために、usingしてこのクラスの直接のメンバとする
     using SetterUnit<PropertyGetSet, setters>::operator=...;
+
+    // なお、ゲッターはusingしない。親クラスのメソッドのままであり、this->get()でアクセスする
+    // set()関数もusingしない
 
     // // 前置インクリメント
     // PropertyGetSet &operator++() {
@@ -117,9 +130,7 @@ class PropertyGetSet : public PropertyGet<getter>,
     // 複合代入演算子（四則演算）
     template <typename T>
     PropertyGetSet &operator+=(const T &other) {
-        auto buf = this->get();
-        this->set(buf += other);
-        return *this;
+        return *this = this->get() + other;
     }
 
     // template <typename T>
@@ -131,17 +142,13 @@ class PropertyGetSet : public PropertyGet<getter>,
 
     template <typename T>
     PropertyGetSet &operator*=(const T &other) {
-        auto buf = this->get();
-        this->set(buf *= other);
-        return *this;
+        return *this = this->get() * other;
     }
 
-    // template <typename T>
-    // PropertyGetSet &operator/=(const T &other) {
-    //     auto buf = TGetProperty::get();
-    //     TSetProperty::set(buf /= other);
-    //     return *this;
-    // }
+    template <typename T>
+    PropertyGetSet &operator/=(const T &other) {
+        return *this = this->get() / other;
+    }
 
     // template <typename T>
     // PropertyGetSet &operator%=(const T &other) {

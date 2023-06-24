@@ -21,33 +21,38 @@ class StickyPointTopLeft : public WorldObject, Update {
         , viewport_(viewport) {}
 };
 
+// glm::vec3 operator*(const glm::vec3 &v, const float a) {
+//     return v * a;
+// }
+
 class MobileOrthoCamera : public OrthoCamera, protected Update {
     void update() override {
-        constexpr float speed_base = 5;
-        const float scale = getScale().x;
-        const float speed = speed_base * scale;
+        constexpr float speed = 5;
 
         if (window_.getKey(GLFW_KEY_RIGHT)) {
-            position += glm::vec3{speed, 0, 0};
+            position += getLeft() * speed;
         }
         if (window_.getKey(GLFW_KEY_LEFT)) {
-            position += glm::vec3{-speed, 0, 0};
+            position += getRight() * speed;
         }
         if (window_.getKey(GLFW_KEY_DOWN)) {
-            position += glm::vec3{0, -speed, 0};
+            position += getDown() * speed;
         }
         if (window_.getKey(GLFW_KEY_UP)) {
-            position += glm::vec3{0, speed, 0};
+            position += getUp() * speed;
         }
         if (window_.getKey(GLFW_KEY_Z)) {
-            setScale(scale / 1.01);
+            scale /= 1.01F;
         }
         if (window_.getKey(GLFW_KEY_X)) {
-            setScale(scale * 1.01);
+            scale *= 1.01F;
         }
         if (window_.getKey(GLFW_KEY_Q)) {
             exit(0);
         }
+
+        scale *= 1.002F;
+        // scale *= "a"; TODO: 複合代入演算子の型チェックが動かない
     }
 
   public:

@@ -126,7 +126,7 @@ class WorldObject {
         scale_ = scale;
         this->refreshAbsoluteTransform();
     }
-    void setScale(float scale) {
+    void setScaleOne(float scale) {
         setScale({scale, scale, scale});
     }
 
@@ -140,7 +140,7 @@ class WorldObject {
 
     // プロパティ
     PropertyGetSet<&WorldObject::getPosition, &WorldObject::setPosition> position{this};
-    // GetSetProperty<glm::vec3, &WorldObject::getScale, &WorldObject::setScale> scale{*this}; TODO: getter/setterをオーバーロード
+    PropertyGetSet<&WorldObject::getScale, &WorldObject::setScale, &WorldObject::setScaleOne> scale{this};
     PropertyGetSet<&WorldObject::getRotate, &WorldObject::setRotate> rotate{this};
 
     friend class Window;

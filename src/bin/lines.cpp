@@ -22,7 +22,7 @@ int main() {
     // camera.setScale(100);
 
     DynamicArray line(window, world, main_shader, {}, {}, GL_LINE_LOOP);
-    line.setScale(100);
+    line.scale = 100;
 
     for (auto &&x : linspace(-9, 9, 100)) {
         InterleavedVertexInfo ver;
@@ -49,7 +49,7 @@ int main() {
                                     {0.3, 0.7, 0.5, 0.5},
                                 });
     Shape my_triangle(world, my_triangle_polygon);
-    my_triangle.setScale(200);
+    my_triangle.scale = 200;
     my_triangle.position = {-100, 0, 0};
 
     // レンダリングループ

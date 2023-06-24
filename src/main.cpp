@@ -37,7 +37,7 @@ int main() {
     MobileNormalCamera camera(window, main_world, viewport);
     camera.position = {0, 0, 1000};
     camera.rotate = ANGLE_Y(M_PIf);
-    camera.setScale(1);
+    camera.scale = 1;
 
     Font migmix_font;
     Text sample_text(main_world, migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
@@ -78,8 +78,8 @@ int main() {
     MovingShape ins3(window, main_world, gon3);
     Shape ins(main_world, gon), ins2(main_world, gon2), inspoly(main_world, poly);
     ins3.append(ins);
-    ins3.setScale(1000);
-    ins2.setScale(1500);
+    ins3.scale = 1000;
+    ins2.scale = 1500;
     inspoly.setPosition({0, 100, 100});
 
     vector<unique_ptr<Shape>> poly_instances;
