@@ -3,6 +3,11 @@
 
 #include <utility>
 
+// 可変長のis_same
+template <class T, class... Ts>
+using are_same = std::conjunction<std::is_same<T, Ts>...>;
+// struct are_same : std::conjunction<std::is_same<T, Ts>...> {};
+
 // メンバ関数ポインタからクラスの型を取得するエイリアステンプレート
 template <class C, typename TReturn, typename... TArgs>
 auto getClassTypeImpl(TReturn (C::*member_function)(TArgs...)) -> C;
@@ -53,7 +58,7 @@ class PropertyGet {
 
 // 書き込み専用プロパティ
 template <auto setter>
-class PropertySet {
+class PropertySetOne {
   protected:
     using C = getClassType<setter>;
     using A = getArgType<setter>;
@@ -61,40 +66,41 @@ class PropertySet {
     C *const p_;
 
   public:
-    PropertySet() = delete;
-    PropertySet(C *p)
+    PropertySetOne() = delete;
+    PropertySetOne(C *p)
         : p_(p) {}
 
     void set(const A &v) { (p_->*setter)(v); }
 
     // 代入
-    PropertySet &operator=(const A &x) {
+    PropertySetOne &operator=(const A &x) {
         set(x);
         return *this;
     }
 };
 
 // 書き込み専用プロパティ
-template <auto setter1, auto setter2>
-class PropertySet2 : public PropertySet<setter1>, public PropertySet<setter2> {
-    using C = typename PropertySet<setter1>::C;
-    using C_same = typename PropertySet<setter2>::C;
-    static_assert(std::is_same_v<C, C_same>, "同じクラスのメンバ関数でないといけません");
-    // using A = getArgType<setter>;
+template <auto setter, auto... overload_setters>
+class PropertySet : public PropertySetOne<setter>, public PropertySetOne<overload_setters>... {
+    using C = typename PropertySetOne<setter>::C;
+    // using C_same = typename PropertySet<setter2>::C;
+    static_assert(are_same<typename PropertySetOne<setter>::C, typename PropertySetOne<overload_setters>::C...>::value, "同じクラスのメンバ関数でないといけません");
+    // // using A = getArgType<setter>;
 
   public:
-    PropertySet2(C *p)
-        : PropertySet<setter1>(p)
-        , PropertySet<setter2>(p) {}
+    PropertySet(C *p)
+        : PropertySetOne<setter>(p)
+        , PropertySetOne<overload_setters>(p)... {}
 
-    using PropertySet<setter1>::operator=;
-    using PropertySet<setter2>::operator=;
+    using PropertySetOne<setter>::operator=;
+    using PropertySetOne<overload_setters>::operator=...;
+    // using PropertySet<setter2>::operator=;
 };
 
 // 読み書き可能プロパティ
 template <auto getter, auto setter>
 class PropertyGetSet : public PropertyGet<getter>,
-                       public PropertySet<setter> {
+                       public PropertySetOne<setter> {
     using C = getClassType<getter>;
     using A = getArgType<setter>;
     using R = getReturnType<getter>;
@@ -106,7 +112,7 @@ class PropertyGetSet : public PropertyGet<getter>,
   public:
     PropertyGetSet(C *p)
         : PropertyGet<getter>(p)
-        , PropertySet<setter>(p) {}
+        , PropertySetOne<setter>(p) {}
     // 代入
     PropertyGetSet &operator=(const A &x) {
         this->set(x);

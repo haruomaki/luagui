@@ -4,6 +4,20 @@
 
 using namespace std;
 
+void dummySet(int value) {
+    debug(value);
+}
+
+class AnotherClass {
+    int value_ = 0;
+
+  public:
+    void setValue(int value) {
+        value_ = value;
+        debug(value);
+    }
+};
+
 class ValueAndHistory {
     int value_ = 0;
     vector<int> get_history_ = {};
@@ -25,11 +39,11 @@ class ValueAndHistory {
     void setValueDouble(double value) {
         setValue(int(value) * 10);
     }
-    // void setValue(initializer_list<int> list) {
-    //     for (auto &&value : list) {
-    //         setValue(value);
-    //     }
-    // }
+    void setValueList(initializer_list<int> list) {
+        for (auto &&value : list) {
+            setValue(value);
+        }
+    }
 
     void show() {
         cout << "current value: " << value_ << endl;
@@ -47,7 +61,7 @@ class ValueAndHistory {
 
     PropertyGet<&ValueAndHistory::getSetHistory> set_history{this};
     PropertyGetSet<&ValueAndHistory::getValue, &ValueAndHistory::setValue> value{this};
-    PropertySet2<&ValueAndHistory::setValue, &ValueAndHistory::setValueDouble> value_setonly{this};
+    PropertySet<&ValueAndHistory::setValue, &ValueAndHistory::setValueDouble, &ValueAndHistory::setValueList> value_setonly{this};
 };
 
 int main() {
@@ -56,10 +70,10 @@ int main() {
     int x = (t.value = 5) = 3;
     t.value = t.value + t.value();
     // t.value = 3.14;
-    // t.value = {3, 6, 4};
 
     t.value_setonly = 3.14;
     t.value_setonly = 9;
+    t.value_setonly = {3, 6, 4};
 
     t.show();
 
