@@ -37,7 +37,7 @@ class ValueAndHistory {
         set_history_.push_back(value);
     }
     void setValueDouble(double value) {
-        setValue(int(value) * 10);
+        setValue(int(value * 10));
     }
     void setValueList(initializer_list<int> list) {
         for (auto &&value : list) {
@@ -72,8 +72,7 @@ int main() {
     // t.value = 3.14;
 
     t.value_setonly = 3.14;
-    t.value_setonly = 9;
-    t.value_setonly = {3, 6, 4};
+    (t.value_setonly = 9) = {3, 6, 4};
 
     t.show();
 
