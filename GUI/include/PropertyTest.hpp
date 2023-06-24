@@ -8,6 +8,48 @@ template <class T, class... Ts>
 using are_same = std::conjunction<std::is_same<T, Ts>...>;
 // struct are_same : std::conjunction<std::is_same<T, Ts>...> {};
 
+template <typename T = void, typename... Rest>
+struct FirstType {
+    using type = T;
+};
+
+// 型パラメータパックから先頭要素を取得
+template <typename... Args>
+using getFirstType = typename FirstType<Args...>::type;
+
+// TODO: 引数が空のときvoidを返す
+template <auto x, auto... rest>
+struct FirstArgType {
+    using type = decltype(x);
+};
+
+// 値パラメータパックから先頭要素の型を取得
+template <auto... args>
+using getFirstArgType = typename FirstArgType<args...>::type;
+
+static_assert(std::is_same_v<getFirstArgType<1, 2, 3>, int>);
+static_assert(std::is_same_v<getFirstArgType<true, 'a'>, bool>);
+// static_assert(std::is_same_v<getFirstArgType<>, void>);
+
+// メンバ関数ポインタ型から各型名を抽出する、特殊化フィルタ
+template <typename T>
+struct MemberFunctionPointerTypeFilter;
+template <typename C, typename R, typename... Args>
+struct MemberFunctionPointerTypeFilter<R (C::*)(Args...)> {
+    using ClassType = C;
+    using FirstArgType = getFirstType<Args...>;
+    using ReturnType = R;
+};
+// メンバ関数ポインタ型から所属クラスを取得
+template <typename Pointer>
+using getMemberFunctionClass = typename MemberFunctionPointerTypeFilter<Pointer>::ClassType;
+// メンバ関数ポインタ型から（第1引数の）引数型を取得
+template <typename Pointer>
+using getMemberFunctionArg = typename MemberFunctionPointerTypeFilter<Pointer>::FirstArgType;
+// メンバ関数ポインタ型から戻り値型を取得
+template <typename Pointer>
+using getMemberFunctionRet = typename MemberFunctionPointerTypeFilter<Pointer>::ReturnType;
+
 // メンバ関数ポインタからクラスの型を取得するエイリアステンプレート
 template <class C, typename TReturn, typename... TArgs>
 auto getClassTypeImpl(TReturn (C::*member_function)(TArgs...)) -> C;
@@ -64,11 +106,11 @@ class PropertyGet {
 
 // 個々のセッターを表す
 // セッターのオーバーロードの個数だけ、このクラスを継承する
-template <typename SelfType, auto setter>
+template <typename Property, auto setter>
 class SetterUnit {
   protected:
-    using C = getClassType<setter>;
-    using A = getArgType<setter>;
+    using C = getMemberFunctionClass<decltype(setter)>;
+    using A = getMemberFunctionArg<decltype(setter)>;
 
     C *const p_;
 
@@ -81,16 +123,16 @@ class SetterUnit {
 
     // PropertySet -> A -> PropertySet
     // where Aはセッターの引数型
-    SelfType &operator=(const A &x) {
+    Property &operator=(const A &x) {
         set(x);
-        return static_cast<SelfType &>(*this);
+        return static_cast<Property &>(*this);
     }
 };
 
 // 書き込み専用プロパティ
 template <auto... setters>
 class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
-    using C = getFirstElementClass<setters...>;
+    using C = getMemberFunctionClass<getFirstArgType<setters...>>;
     static_assert(are_same<C, typename SetterUnit<PropertySet, setters>::C...>::value, "同じクラスのメンバ関数でないといけません");
 
   public:
@@ -104,11 +146,11 @@ class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
 template <auto getter, auto setter>
 class PropertyGetSet : public PropertyGet<getter>,
                        public SetterUnit<PropertyGetSet<getter, setter>, setter> {
-    using C = getClassType<getter>;
-    using A = getArgType<setter>;
-    using R = getReturnType<getter>;
-    static_assert(std::is_same_v<C, getClassType<setter>>,
-                  "The class of Getter and Setter must be same.");
+    using C = getMemberFunctionClass<decltype(getter)>;
+    using A = getMemberFunctionArg<decltype(setter)>;
+    using R = getMemberFunctionRet<decltype(getter)>;
+    // static_assert(std::is_same_v<C, getClassType<setter>>,
+    // "The class of Getter and Setter must be same.");
     // using TGetProperty = PropertyGet<getter>;
     // using TSetProperty = PropertySet<setter>;
 
