@@ -84,12 +84,12 @@ struct Property {
 
 class ValueAndHistory {
     int value_ = 0;
-    vector<int> history_ = {};
+    vector<int> set_history_ = {};
 
   public:
     void setValue(int value) {
         value_ = value;
-        history_.push_back(value);
+        set_history_.push_back(value);
     }
     void setValue(double value) {
         setValue(int(value));
@@ -103,7 +103,7 @@ class ValueAndHistory {
     void show() {
         cout << "current value: " << value_ << endl;
         cout << "history: ";
-        for (auto &&record : history_) {
+        for (auto &&record : set_history_) {
             cout << record << " ";
         }
         cout << endl;

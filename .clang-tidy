@@ -3,7 +3,7 @@ Checks: "-*,\
   cert-*,\
   clang-analyzer-*,\
   concurrency-*,\
-  # cppcoreguidelines-*,\
+  cppcoreguidelines-*,\
   linuxkernel-*,\
   llvm-*,\
   -llvm-include-order,\ #マクロによるインクルード時、見かけの順序を保つ

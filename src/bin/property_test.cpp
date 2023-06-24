@@ -6,16 +6,21 @@ using namespace std;
 
 class ValueAndHistory {
     int value_ = 0;
-    vector<int> history_ = {};
+    vector<int> get_history_ = {};
+    vector<int> set_history_ = {};
 
   public:
-    [[nodiscard]] string getHistory() {
-        return toStr(history_);
+    [[nodiscard]] int getValue() {
+        get_history_.push_back(value_);
+        return value_;
+    }
+    [[nodiscard]] string getSetHistory() {
+        return toStr(set_history_);
     }
 
     void setValue(int value) {
         value_ = value;
-        history_.push_back(value);
+        set_history_.push_back(value);
     }
     // void setValue(double value) {
     //     setValue(int(value));
@@ -28,26 +33,33 @@ class ValueAndHistory {
 
     void show() {
         cout << "current value: " << value_ << endl;
-        cout << "history: ";
-        for (auto &&record : history_) {
+        cout << "get history: ";
+        for (auto &&record : get_history_) {
+            cout << record << " ";
+        }
+        cout << endl;
+        cout << "set history: ";
+        for (auto &&record : set_history_) {
             cout << record << " ";
         }
         cout << endl;
     }
 
-    PropertyGet<&ValueAndHistory::getHistory> history{this};
-    PropertySet<&ValueAndHistory::setValue> value{this};
+    PropertyGet<&ValueAndHistory::getSetHistory> set_history{this};
+    PropertyGetSet<&ValueAndHistory::getValue, &ValueAndHistory::setValue> value{this};
+    // PropertySet<&ValueAndHistory::setValue> value_get_set{this};
 };
 
 int main() {
     ValueAndHistory t;
     t.value = 7;
-    (t.value = 5) = 3;
+    int x = (t.value = 5) = 3;
+    t.value = t.value + t.value();
     // t.value = 3.14;
     // t.value = {3, 6, 4};
 
     t.show();
 
-    string s = (t.history + "aaa") + ("bbb" + t.history);
+    string s = (t.set_history + "aaa") + ("bbb" + t.set_history);
     cout << s << endl;
 }

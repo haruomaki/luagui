@@ -5,25 +5,19 @@
 
 // メンバ関数ポインタからクラスの型を取得するエイリアステンプレート
 template <class C, typename TReturn, typename... TArgs>
-auto getClassTypeImpl(TReturn (C::*member_function)(TArgs...) const) -> C;
-
-template <class C, typename TReturn, typename... TArgs>
 auto getClassTypeImpl(TReturn (C::*member_function)(TArgs...)) -> C;
-
 template <auto member_function_pointer>
 using getClassType = decltype(getClassTypeImpl(member_function_pointer));
 
 // メンバ関数から引数の型を取得する
 template <class C, typename TReturn, typename TArg>
 auto getArgTypeImpl(TReturn (C::*member_function)(TArg)) -> TArg;
-
 template <auto member_function_pointer>
 using getArgType = decltype(getArgTypeImpl(member_function_pointer));
 
 // メンバ関数から戻り値の型を取得する
 template <class C, typename R, class... A>
 auto getReturnTypeImpl(R (C::*member_function)(A...)) -> R;
-
 template <auto member_function_pointer>
 using getReturnType = decltype(getReturnTypeImpl(member_function_pointer));
 
@@ -34,7 +28,7 @@ class PropertyGet {
     using R = getReturnType<getter>;
 
   public:
-    PropertyGet(C *const p)
+    PropertyGet(C *p)
         : p_(p) {}
 
     // プロパティ型への変換
@@ -77,129 +71,131 @@ class PropertySet {
     void set(const A &v) { (p_->*setter)(v); }
 
   private:
-    C *p_;
+    C *const p_;
 };
 
-// // 読み書き可能プロパティ
-// template <typename TProperty, auto getter, auto setter>
-// class PropertyGetSet : public PropertyGet<TProperty, getter>,
-//                        public PropertySet<TProperty, setter> {
-//     using C = getClassType<getter>;
-//     static_assert(std::is_same_v<C, getClassType<setter>>,
-//                   "The class of Getter and Setter must be same.");
-//     using TGetProperty = PropertyGet<TProperty, getter>;
-//     using TSetProperty = PropertySet<TProperty, setter>;
+// 読み書き可能プロパティ
+template <auto getter, auto setter>
+class PropertyGetSet : public PropertyGet<getter>,
+                       public PropertySet<setter> {
+    using C = getClassType<getter>;
+    using A = getArgType<setter>;
+    using R = getReturnType<getter>;
+    static_assert(std::is_same_v<C, getClassType<setter>>,
+                  "The class of Getter and Setter must be same.");
+    // using TGetProperty = PropertyGet<getter>;
+    // using TSetProperty = PropertySet<setter>;
 
-//   public:
-//     PropertyGetSet(C *ins)
-//         : TGetProperty(ins)
-//         , TSetProperty(ins) {}
-//     // 代入
-//     PropertyGetSet &operator=(const TProperty &v) {
-//         TSetProperty::operator=(v);
-//         return *this;
-//     }
+  public:
+    PropertyGetSet(C *p)
+        : PropertyGet<getter>(p)
+        , PropertySet<setter>(p) {}
+    // 代入
+    PropertyGetSet &operator=(const A &x) {
+        this->set(x);
+        return *this;
+    }
 
-//     // 前置インクリメント
-//     PropertyGetSet &operator++() {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(++buf);
-//         return *this;
-//     }
+    // // 前置インクリメント
+    // PropertyGetSet &operator++() {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(++buf);
+    //     return *this;
+    // }
 
-//     // 後置インクリメント
-//     TProperty operator++(int) {
-//         auto buf = TGetProperty::get();
-//         auto ret = buf++;
-//         TSetProperty::set(buf);
-//         return ret;
-//     }
+    // // 後置インクリメント
+    // TProperty operator++(int) {
+    //     auto buf = TGetProperty::get();
+    //     auto ret = buf++;
+    //     TSetProperty::set(buf);
+    //     return ret;
+    // }
 
-//     // 前置デクリメント
-//     PropertyGetSet &operator--() {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(--buf);
-//         return *this;
-//     }
+    // // 前置デクリメント
+    // PropertyGetSet &operator--() {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(--buf);
+    //     return *this;
+    // }
 
-//     // 後置デクリメント
-//     TProperty operator--(int) {
-//         auto buf = TGetProperty::get();
-//         auto ret = buf--;
-//         TSetProperty::set(buf);
-//         return ret;
-//     }
+    // // 後置デクリメント
+    // TProperty operator--(int) {
+    //     auto buf = TGetProperty::get();
+    //     auto ret = buf--;
+    //     TSetProperty::set(buf);
+    //     return ret;
+    // }
 
-//     // 複合代入演算子（四則演算）
-//     template <typename T>
-//     PropertyGetSet &operator+=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf += other);
-//         return *this;
-//     }
+    // // 複合代入演算子（四則演算）
+    // template <typename T>
+    // PropertyGetSet &operator+=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf += other);
+    //     return *this;
+    // }
 
-//     template <typename T>
-//     PropertyGetSet &operator-=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf -= other);
-//         return *this;
-//     }
+    // template <typename T>
+    // PropertyGetSet &operator-=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf -= other);
+    //     return *this;
+    // }
 
-//     template <typename T>
-//     PropertyGetSet &operator*=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf *= other);
-//         return *this;
-//     }
+    // template <typename T>
+    // PropertyGetSet &operator*=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf *= other);
+    //     return *this;
+    // }
 
-//     template <typename T>
-//     PropertyGetSet &operator/=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf /= other);
-//         return *this;
-//     }
+    // template <typename T>
+    // PropertyGetSet &operator/=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf /= other);
+    //     return *this;
+    // }
 
-//     template <typename T>
-//     PropertyGetSet &operator%=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf %= other);
-//         return *this;
-//     }
+    // template <typename T>
+    // PropertyGetSet &operator%=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf %= other);
+    //     return *this;
+    // }
 
-//     // 複合代入演算子（ビット演算）
-//     template <typename T>
-//     PropertyGetSet &operator|=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf |= other);
-//         return *this;
-//     }
+    // // 複合代入演算子（ビット演算）
+    // template <typename T>
+    // PropertyGetSet &operator|=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf |= other);
+    //     return *this;
+    // }
 
-//     template <typename T>
-//     PropertyGetSet &operator&=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf &= other);
-//         return *this;
-//     }
+    // template <typename T>
+    // PropertyGetSet &operator&=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf &= other);
+    //     return *this;
+    // }
 
-//     template <typename T>
-//     PropertyGetSet &operator^=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf ^= other);
-//         return *this;
-//     }
+    // template <typename T>
+    // PropertyGetSet &operator^=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf ^= other);
+    //     return *this;
+    // }
 
-//     // 複合代入演算子（シフト演算）
-//     template <typename T>
-//     PropertyGetSet &operator>>=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf >>= other);
-//         return *this;
-//     }
+    // // 複合代入演算子（シフト演算）
+    // template <typename T>
+    // PropertyGetSet &operator>>=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf >>= other);
+    //     return *this;
+    // }
 
-//     template <typename T>
-//     PropertyGetSet &operator<<=(const T &other) {
-//         auto buf = TGetProperty::get();
-//         TSetProperty::set(buf <<= other);
-//         return *this;
-//     }
-// };
+    // template <typename T>
+    // PropertyGetSet &operator<<=(const T &other) {
+    //     auto buf = TGetProperty::get();
+    //     TSetProperty::set(buf <<= other);
+    //     return *this;
+    // }
+};
