@@ -1,29 +1,53 @@
-#include <Property.hpp>
+#include <GUI.hpp>
+#include <PropertyTest.hpp>
 #include <iostream>
 
+using namespace std;
+
 class ValueAndHistory {
-  private:
-    int value_{777};
-    [[nodiscard]] int getValue() const { return value_; }
-    void setValue(const int &v) {
-        std::cout << "セットされた！！！: " << v << std::endl;
-        value_ = v;
-    }
+    int value_ = 0;
+    vector<int> history_ = {};
 
   public:
-    // プロパティ型とgetterとなるconstメンバ関数、setterとなるメンバ関数をテンプレート引数に渡す。コンストラクタには自クラスの参照を渡します
-    PropertyGetSet<int, &ValueAndHistory::getValue, &ValueAndHistory::setValue> get_set_value{this};
+    [[nodiscard]] string getHistory() {
+        return toStr(history_);
+    }
+
+    void setValue(int value) {
+        value_ = value;
+        history_.push_back(value);
+    }
+    // void setValue(double value) {
+    //     setValue(int(value));
+    // }
+    // void setValue(initializer_list<int> list) {
+    //     for (auto &&value : list) {
+    //         setValue(value);
+    //     }
+    // }
+
+    void show() {
+        cout << "current value: " << value_ << endl;
+        cout << "history: ";
+        for (auto &&record : history_) {
+            cout << record << " ";
+        }
+        cout << endl;
+    }
+
+    PropertyGet<&ValueAndHistory::getHistory> history{this};
+    PropertySet<&ValueAndHistory::setValue> value{this};
 };
 
 int main() {
-    ValueAndHistory test;
-    // set_only_propertyのように値の設定ができて
-    test.get_set_value = 4946;
-    // get_only_propertyのように値の参照ができるだけでなく
-    std::cout << test.get_set_value << std::endl;
-    // 加算代入やシフト代入などもできてしまう
-    test.get_set_value += 3;
-    std::cout << test.get_set_value << std::endl;
-    test.get_set_value <<= 10;
-    std::cout << test.get_set_value << std::endl;
+    ValueAndHistory t;
+    t.value = 7;
+    (t.value = 5) = 3;
+    // t.value = 3.14;
+    // t.value = {3, 6, 4};
+
+    t.show();
+
+    string s = (t.history + "aaa") + ("bbb" + t.history);
+    cout << s << endl;
 }
