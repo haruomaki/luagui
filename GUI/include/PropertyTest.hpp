@@ -26,6 +26,12 @@ auto getReturnTypeImpl(R (C::*member_function)(A...)) -> R;
 template <auto member_function_pointer>
 using getReturnType = decltype(getReturnTypeImpl(member_function_pointer));
 
+// メンバ関数ポインタ型の可変テンプレート引数を受け取り、先頭の関数が属するクラスを返す
+template <typename C, typename R, class A, typename... Rest>
+auto getFirstElementClassImpl(R (C::*member_function)(A), Rest... rest) -> C;
+template <auto... vars>
+using getFirstElementClass = decltype(getFirstElementClassImpl(vars...));
+
 // 読み取り専用プロパティ
 template <auto getter>
 class PropertyGet {
@@ -82,18 +88,16 @@ class SetterUnit {
 };
 
 // 書き込み専用プロパティ
-template <auto setter, auto... overload_setters>
-class PropertySet : public SetterUnit<PropertySet<setter, overload_setters...>, setter>, public SetterUnit<PropertySet<setter, overload_setters...>, overload_setters>... {
-    using C = typename SetterUnit<PropertySet, setter>::C;
-    static_assert(are_same<C, typename SetterUnit<PropertySet, overload_setters>::C...>::value, "同じクラスのメンバ関数でないといけません");
+template <auto... setters>
+class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
+    using C = getFirstElementClass<setters...>;
+    static_assert(are_same<C, typename SetterUnit<PropertySet, setters>::C...>::value, "同じクラスのメンバ関数でないといけません");
 
   public:
     PropertySet(C *p)
-        : SetterUnit<PropertySet, setter>(p)
-        , SetterUnit<PropertySet, overload_setters>(p)... {}
+        : SetterUnit<PropertySet, setters>(p)... {}
 
-    using SetterUnit<PropertySet, setter>::operator=;
-    using SetterUnit<PropertySet, overload_setters>::operator=...;
+    using SetterUnit<PropertySet, setters>::operator=...;
 };
 
 // 読み書き可能プロパティ
