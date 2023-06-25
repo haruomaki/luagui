@@ -93,7 +93,7 @@ inline std::vector<std::string> split(const std::string &str, const std::string 
 }
 
 // 再帰の終端。引数が0個の場合を担当。改行を出力。
-static void debugImpl(bool /*unused*/) {}
+inline void debugImpl(bool /*unused*/) {}
 
 // 可変長引数。引数が1つ以上存在する場合を担当。
 // 最初の引数をHead、残りをTailとして切り離すことを再帰的に行う。

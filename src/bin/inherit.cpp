@@ -1,17 +1,18 @@
 #include <base.hpp>
 
-template <auto x>
 class Base {
-    using PrivateType = float;
-
-  protected:
-    using MyType = decltype(x);
+  public:
+    int x_ = 0;
 };
 
-template <auto x>
-class Derived : Base<334> {
-    MyType y;
+class DerivedA : virtual Base {
+};
+
+class DerivedX : public virtual Base, DerivedA {
 };
 
 int main() {
+    DerivedX x;
+
+    debug(x.x_);
 }

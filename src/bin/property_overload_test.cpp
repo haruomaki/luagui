@@ -14,7 +14,7 @@ class ValueAndHistory {
         set_history_.push_back(value);
     }
     void setValue(double value) {
-        setValue(int(value));
+        setValue(int(value * 10));
     }
     void setValue(initializer_list<int> list) {
         for (auto &&value : list) {
@@ -36,12 +36,17 @@ class ValueAndHistory {
 
 int main() {
     ValueAndHistory t;
+    t.value.set(8);
+    t.value.set(2.1);
+    debug(t.value + 15);
     t.value = 7;
+    debug(t.value.get());
     t.value += 5;
-    t.value = 3.14;
-    t.value = {3, 6, 4};
+    (t.value += 8.8);
+    // t.value + {3, 6, 4};
 
-    t.value += false;
+    string s = t.value.get() + "aaa";
+    debug(s);
 
     t.show();
 }
