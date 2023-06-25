@@ -107,8 +107,8 @@ concept compound_invocable = std::is_invocable_v<decltype(setter), C, OpRet<Op, 
 template <typename T, typename C, typename R, auto setter>
 concept compound_invocable_add = compound_invocable<T, C, R, setter, std::plus<>>;
 
-template <typename T, typename C, typename R, auto... setters>
-concept any_compound_invocable_add = (compound_invocable_add<T, C, R, setters> || ...);
+template <typename T, typename C, typename R, typename Op, auto... setters>
+concept any_compound_invocable = (compound_invocable<T, C, R, setters, Op> || ...);
 
 static_assert(std::plus<>()(3, 5) == 8, "std::plusです");
 
@@ -163,7 +163,7 @@ class PropertyGetSet : public PropertyGet<getter>,
 
     // 複合代入演算子（四則演算）
     template <typename T>
-        requires any_compound_invocable_add<T, C, R, setters...>
+        requires any_compound_invocable<T, C, R, std::plus<>, setters...>
     PropertyGetSet &operator+=(const T &other) {
         return *this = this->get() + other;
     }
@@ -176,6 +176,7 @@ class PropertyGetSet : public PropertyGet<getter>,
     // }
 
     template <typename T>
+        requires any_compound_invocable<T, C, R, std::multiplies<>, setters...>
     PropertyGetSet &operator*=(const T &other) {
         return *this = this->get() * other;
     }
