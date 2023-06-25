@@ -53,3 +53,11 @@ using getMemberFunctionArg = typename MemberFunctionPointerTypeFilter<Pointer>::
 // メンバ関数ポインタ型から戻り値型を取得
 template <typename Pointer>
 using getMemberFunctionRet = typename MemberFunctionPointerTypeFilter<Pointer>::ReturnType;
+
+// T型とS型の値に二項演算子Opを適用した際の型を取得する
+template <typename Op, typename T, typename S>
+struct OperatorReturnTypeChecker {
+    using type = decltype(Op()(std::declval<T>(), std::declval<S>()));
+};
+template <typename Op, typename T, typename S>
+using getOperatorResult = typename OperatorReturnTypeChecker<Op, T, S>::type;

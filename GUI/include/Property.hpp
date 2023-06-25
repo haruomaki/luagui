@@ -86,29 +86,19 @@ class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
 // };
 //
 
-// T型とS型の値に二項演算子Opを適用した際の型を取得する
-template <typename Op, typename T, typename S>
-struct OpRetImpl {
-    using type = decltype(Op()(std::declval<T>(), std::declval<S>()));
-};
-template <typename Op, typename T, typename S>
-using OpRet = typename OpRetImpl<Op, T, S>::type;
-
 // setter(getter() ⊕ t) がコンパイル可能かどうかチェックする
 // getter()はクラスCのメンバ関数で、R型を返す
 // setter()も同じくCのメンバ関数。戻り値型は任意(普通はvoid)
 // tはT型の変数
 // ⊕は一例。演算子Opはstd::plus<>などを指定する
 template <typename T, typename Op, typename C, typename R, auto setter>
-concept CompoundInvocableUnit = std::is_invocable_v<decltype(setter), C, OpRet<Op, R, T>>;
+concept CompoundInvocableUnit = std::is_invocable_v<decltype(setter), C, getOperatorResult<Op, R, T>>;
 
 // 可変n個のsetterに対して、setter(getter() ⊕ t) が一つでもコンパイル可能かどうかチェックする
 // ①getterからCとRを抽出する
 // ②パックを展開して各setterをCompoundInvacableOneに渡し、判定のorを取る
 template <typename T, typename Op, auto getter, auto... setters>
 concept CompoundInvocable = (CompoundInvocableUnit<T, Op, getMemberFunctionClass<decltype(getter)>, getMemberFunctionRet<decltype(getter)>, setters> || ...);
-
-static_assert(std::plus<>()(3, 5) == 8, "std::plusです");
 
 // 読み書き可能プロパティ
 template <auto getter, auto... setters>
