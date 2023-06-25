@@ -21,8 +21,8 @@ class PropertyGet {
     R operator()() const { return get(); }
 
     // 算術演算子
-    R operator+(const R &x) const { return get() + x; }
-    friend R operator+(const R &x, const PropertyGet &self) { return x + self.get(); }
+    auto operator+(const auto &x) const { return get() + x; }
+    friend auto operator+(const auto &x, const PropertyGet &self) { return x + self.get(); }
 
     auto operator*(const auto &x) const { return get() * x; }
     friend auto operator*(const auto &x, const PropertyGet &self) { return x * self.get(); }
@@ -94,26 +94,19 @@ struct OpRetImpl {
 template <typename Op, typename T, typename S>
 using OpRet = typename OpRetImpl<Op, T, S>::type;
 
-static_assert(std::is_same_v<OpRet<std::plus<>, char, long>, long>, "aaa");
-
-// template <typename T, typename Property, typename C, typename R, auto setter>
-// concept compound_invocable_add = requires(C *c, R r, T t) {
-//                                      { setter(c, r + t) } -> std::same_as<Property &>;
-//                                  };
-
 // setter(getter() ⊕ t) がコンパイル可能かどうかチェックする
 // getter()はクラスCのメンバ関数で、R型を返す
-// setter()も同じくCのメンバ関数
+// setter()も同じくCのメンバ関数。戻り値型は任意(普通はvoid)
 // tはT型の変数
 // ⊕は一例。演算子Opはstd::plus<>などを指定する
 template <typename T, typename Op, typename C, typename R, auto setter>
-concept compound_invocable = std::is_invocable_v<decltype(setter), C, OpRet<Op, R, T>>;
+concept CompoundInvocableUnit = std::is_invocable_v<decltype(setter), C, OpRet<Op, R, T>>;
 
 // 可変n個のsetterに対して、setter(getter() ⊕ t) が一つでもコンパイル可能かどうかチェックする
 // ①getterからCとRを抽出する
-// ②パックを展開して各setterをcompound_invacableに渡し、判定のorを取る
+// ②パックを展開して各setterをCompoundInvacableOneに渡し、判定のorを取る
 template <typename T, typename Op, auto getter, auto... setters>
-concept any_compound_invocable = (compound_invocable<T, Op, getMemberFunctionClass<decltype(getter)>, getMemberFunctionRet<decltype(getter)>, setters> || ...);
+concept CompoundInvocable = (CompoundInvocableUnit<T, Op, getMemberFunctionClass<decltype(getter)>, getMemberFunctionRet<decltype(getter)>, setters> || ...);
 
 static_assert(std::plus<>()(3, 5) == 8, "std::plusです");
 
@@ -167,10 +160,11 @@ class PropertyGetSet : public PropertyGet<getter>,
     // }
 
     // 複合代入演算子（四則演算）
-    template <typename T>
-        requires any_compound_invocable<T, std::plus<>, getter, setters...>
-    PropertyGetSet &operator+=(const T &other) {
-        return *this = this->get() + other;
+    PropertyGetSet &operator+=(const CompoundInvocable<std::plus<>, getter, setters...> auto &other) {
+        return *this = *this + other;
+        // NOTE: 以下と等価
+        // this->set(this->get() + other); ←これがコンパイル可能かどうかをCompoundInvocableで調べている
+        // return *this;
     }
 
     // template <typename T>
@@ -180,14 +174,12 @@ class PropertyGetSet : public PropertyGet<getter>,
     //     return *this;
     // }
 
-    template <typename T>
-        requires any_compound_invocable<T, std::multiplies<>, getter, setters...>
-    PropertyGetSet &operator*=(const T &other) {
-        return *this = this->get() * other;
+    PropertyGetSet &operator*=(const CompoundInvocable<std::multiplies<>, getter, setters...> auto &other) {
+        return *this = *this * other;
     }
 
-    PropertyGetSet &operator/=(const any_compound_invocable<std::multiplies<>, getter, setters...> auto &other) {
-        return *this = this->get() / other;
+    PropertyGetSet &operator/=(const CompoundInvocable<std::divides<>, getter, setters...> auto &other) {
+        return *this = *this / other;
     }
 
     // template <typename T>
