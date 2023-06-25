@@ -80,19 +80,32 @@ class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
     using SetterUnit<PropertySet, setters>::operator=...;
 };
 
+// template <typename op, typename T, typename S>
+// struct OpRet {
+//     using type = decltype(op<>()(std::declval<T>() + std::declval<S>()))
+// };
+//
+
+// T型とS型の値に二項演算子Opを適用した際の型を取得する
+template <typename Op, typename T, typename S>
+struct OpRetImpl {
+    using type = decltype(Op()(std::declval<T>(), std::declval<S>()));
+};
+template <typename Op, typename T, typename S>
+using OpRet = typename OpRetImpl<Op, T, S>::type;
+
+static_assert(std::is_same_v<OpRet<std::plus<>, char, long>, long>, "aaa");
+
 // template <typename T, typename Property, typename C, typename R, auto setter>
 // concept compound_invocable_add = requires(C *c, R r, T t) {
 //                                      { setter(c, r + t) } -> std::same_as<Property &>;
 //                                  };
 
-template <typename T, typename C, typename R, auto setter, auto right>
-concept compound_invocable = std::is_invocable_v<decltype(setter), C, decltype(right(std::declval<R>(), std::declval<T>()))>;
+template <typename T, typename C, typename R, auto setter, typename Op>
+concept compound_invocable = std::is_invocable_v<decltype(setter), C, OpRet<Op, R, T>>;
 
 template <typename T, typename C, typename R, auto setter>
-concept compound_invocable_add = compound_invocable<T,
-                                                    C, R, setter, [](auto x, auto y) {
-                                                        return x + y;
-                                                    }>;
+concept compound_invocable_add = compound_invocable<T, C, R, setter, std::plus<>>;
 
 template <typename T, typename C, typename R, auto... setters>
 concept any_compound_invocable_add = (compound_invocable_add<T, C, R, setters> || ...);

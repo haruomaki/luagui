@@ -51,7 +51,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
             exit(0);
         }
 
-        // scale *= 1.002F;
+        scale *= 1.002F;
         // scale *= "a"; TODO: 複合代入演算子の型チェックが動かない
         // scale + "a";
     }
