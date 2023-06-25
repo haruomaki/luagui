@@ -97,10 +97,10 @@ inline void debugImpl(bool /*unused*/) {}
 
 // 可変長引数。引数が1つ以上存在する場合を担当。
 // 最初の引数をHead、残りをTailとして切り離すことを再帰的に行う。
-template <class Head, class... Tail>
-inline void debugImpl(bool brace, Head &&head, Tail &&...tail) {
+template <bool brace, class Head, class... Tail>
+inline void debugImpl(Head &&head, Tail &&...tail) {
     cerr << head;
-    if (sizeof...(Tail) == 0) {
+    if constexpr (sizeof...(Tail) == 0) {
         cerr << (brace ? "]" : "");
     } else {
         cerr << ", ";
@@ -113,12 +113,12 @@ inline void debugPre(const char *file, int line, const char *argnames, T &&...ar
     cerr << "🐝(" << file << ":" << line << ")";
     // argsの要素数 0 or 1 or それ以上
     constexpr size_t len = sizeof...(args);
-    if (len >= 2) {
+    if constexpr (len >= 2) {
         cerr << " [" << argnames << "] = [";
-        debugImpl(true, args...);
-    } else if (len == 1) {
+        debugImpl<true>(args...);
+    } else if constexpr (len == 1) {
         cerr << " " << argnames << " = ";
-        debugImpl(false, args...);
+        debugImpl<false>(args...);
     }
     cerr << endl;
 }
