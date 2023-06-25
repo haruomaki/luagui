@@ -98,7 +98,7 @@ inline void debugImpl(bool /*unused*/) {}
 // 可変長引数。引数が1つ以上存在する場合を担当。
 // 最初の引数をHead、残りをTailとして切り離すことを再帰的に行う。
 template <class Head, class... Tail>
-void debugImpl(bool brace, Head &&head, Tail &&...tail) {
+inline void debugImpl(bool brace, Head &&head, Tail &&...tail) {
     cerr << head;
     if (sizeof...(Tail) == 0) {
         cerr << (brace ? "]" : "");
@@ -109,7 +109,7 @@ void debugImpl(bool brace, Head &&head, Tail &&...tail) {
 }
 
 template <class... T>
-void debugPre(const char *file, int line, const char *argnames, T &&...args) {
+inline void debugPre(const char *file, int line, const char *argnames, T &&...args) {
     cerr << "🐝(" << file << ":" << line << ")";
     // argsの要素数 0 or 1 or それ以上
     constexpr size_t len = sizeof...(args);

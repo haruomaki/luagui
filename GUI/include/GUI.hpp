@@ -1,13 +1,16 @@
 #pragma once
 
-#include <base.hpp>
-
 #include <GL/glew.h> // glとglfw3より早く
 
 #include <GL/gl.h> // glGetString()のため
 #include <GLFW/glfw3.h>
 #include <glm/ext.hpp>
 #include <glm/gtx/string_cast.hpp>
+
+#include <iostream>
+
+// base.hppのインクルードより先に書かないといけない処理
+using namespace std;
 
 namespace base {
 
@@ -22,6 +25,14 @@ ostream &operator<<(ostream &os, const glm::mat<C, R, T, Q> input_mat) {
     os << glm::to_string(input_mat);
     return os;
 }
+
+} // namespace base
+
+// これより上に書かないと動かない
+#include <base.hpp>
+
+// base.hppのインクルードのあとでも問題無い処理
+namespace base {
 
 inline void getErrors() {
     GLenum err;
