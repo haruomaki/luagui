@@ -42,16 +42,16 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
             position += getUp() * speed;
         }
         if (window_.getKey(GLFW_KEY_Z)) {
-            scale /= 1.01F;
+            scale = scale / 1.01F;
         }
         if (window_.getKey(GLFW_KEY_X)) {
-            scale *= 1.01F;
+            scale = scale * 1.01F;
         }
         if (window_.getKey(GLFW_KEY_Q)) {
             exit(0);
         }
 
-        scale *= 1.002F;
+        // scale *= 1.002F;
         // scale *= "a"; TODO: 複合代入演算子の型チェックが動かない
         // scale + "a";
     }

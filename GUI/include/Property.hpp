@@ -94,15 +94,9 @@ class GetterSetterUnit : virtual PropertyGet<getter>, public SetterUnit<Property
         , SetterUnit<Property, setter>(p) {}
 
     // 複合代入演算子
-    Property &operator+=(const A &x) { // NOLINT(misc-unconventional-assign-operator) 継承先でusingされることが前提だから
-        // return *this = this->get() + x;
-        return *this = *this + x;
-        // return *this = this->operator+(x);
-        // return this->operator=(this->operator+(x));
-        // return this->operator=(*this + x);
-        // this->set(this->operator+(x));
-        // return static_cast<Property &>(*this);
-    }
+    Property &operator+=(const A &x) { return *this = *this + x; }
+    Property &operator*=(const A &x) { return *this = *this * x; }
+    Property &operator/=(const A &x) { return *this = *this / x; }
 };
 
 // 読み書き可能プロパティ
@@ -122,7 +116,10 @@ class PropertyGetSet : public virtual PropertyGet<getter>,
     // using GetterSetterUnit<PropertyGetSet, getter, setters>::operator=...;
     using SetterUnit<PropertyGetSet, setters>::set...;
     using SetterUnit<PropertyGetSet, setters>::operator=...;
-    // using GetterSetterUnit<PropertyGetSet, getter, setters>::operator+=...; 複合代入演算子は自動的に継承される。
+    using GetterSetterUnit<PropertyGetSet, getter, setters>::operator+=...;
+    using GetterSetterUnit<PropertyGetSet, getter, setters>::operator*=...;
+    using GetterSetterUnit<PropertyGetSet, getter, setters>::operator/=...;
+    // 複合代入演算子は自動的に継承される。
 
     // なお、ゲッターはusingしない。親クラスのメソッドのままであり、this->get()でアクセスする
     // using PropertyGet<getter>::get;

@@ -34,16 +34,24 @@ class ValueAndHistory {
     PropertyGetSet<&ValueAndHistory::getValue, static_cast<void (ValueAndHistory::*)(int)>(&ValueAndHistory::setValue), static_cast<void (ValueAndHistory::*)(double)>(&ValueAndHistory::setValue), static_cast<void (ValueAndHistory::*)(initializer_list<int>)>(&ValueAndHistory::setValue)> value{this};
 };
 
+struct MyStruct {};
+
 int main() {
     ValueAndHistory t;
     t.value.set(8);
     t.value.set(2.1);
     debug(t.value + 15);
+    debug(t.value * 15);
+    debug(t.value / 15);
     t.value = 7;
     debug(t.value.get());
     t.value += 5;
     (t.value += 8.8);
+    (t.value *= 1.2);
     // t.value + {3, 6, 4};
+
+    MyStruct a;
+    // t.value += a;
 
     string s = t.value.get() + "aaa";
     debug(s);
