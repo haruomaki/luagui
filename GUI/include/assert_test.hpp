@@ -34,3 +34,9 @@ class Derived : public Property {
         std::cout << "値は" << value_ << "だよ" << std::endl;
     }
 };
+
+template <typename T>
+    requires std::is_arithmetic_v<T>
+void f() {
+    std::cout << "処理は型に関係ないけどね" << std::endl;
+}

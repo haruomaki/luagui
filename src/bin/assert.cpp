@@ -16,4 +16,7 @@ int main() {
     Derived q;
     q.showPrettily();
     // (q += 2).showPrettily(); エラーになる
+
+    f<int>();
+    f<std::pair<int, int>>();
 }
