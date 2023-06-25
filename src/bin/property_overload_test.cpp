@@ -6,6 +6,9 @@ class ValueAndHistory {
     vector<int> set_history_ = {};
 
   public:
+    [[nodiscard]] int getValue() const {
+        return value_;
+    }
     void setValue(int value) {
         value_ = value;
         set_history_.push_back(value);
@@ -28,15 +31,17 @@ class ValueAndHistory {
         cout << endl;
     }
 
-    PropertySet<static_cast<void (ValueAndHistory::*)(int)>(&ValueAndHistory::setValue), static_cast<void (ValueAndHistory::*)(double)>(&ValueAndHistory::setValue), static_cast<void (ValueAndHistory::*)(initializer_list<int>)>(&ValueAndHistory::setValue)> value{this};
+    PropertyGetSet<&ValueAndHistory::getValue, static_cast<void (ValueAndHistory::*)(int)>(&ValueAndHistory::setValue), static_cast<void (ValueAndHistory::*)(double)>(&ValueAndHistory::setValue), static_cast<void (ValueAndHistory::*)(initializer_list<int>)>(&ValueAndHistory::setValue)> value{this};
 };
 
 int main() {
     ValueAndHistory t;
     t.value = 7;
-    t.value = 5;
+    t.value += 5;
     t.value = 3.14;
     t.value = {3, 6, 4};
+
+    t.value += false;
 
     t.show();
 }
