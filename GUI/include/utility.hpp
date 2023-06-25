@@ -42,10 +42,10 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
             position += getUp() * speed;
         }
         if (window_.getKey(GLFW_KEY_Z)) {
-            scale = scale / 1.01F;
+            scale /= 1.01F;
         }
         if (window_.getKey(GLFW_KEY_X)) {
-            scale = scale * 1.01F;
+            scale *= 1.01F;
         }
         if (window_.getKey(GLFW_KEY_Q)) {
             exit(0);

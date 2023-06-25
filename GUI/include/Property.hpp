@@ -77,6 +77,7 @@ class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
     PropertySet(C *p)
         : SetterUnit<PropertySet, setters>(p)... {}
 
+    using SetterUnit<PropertySet, setters>::set...;
     using SetterUnit<PropertySet, setters>::operator=...;
 };
 
@@ -113,11 +114,11 @@ class PropertyGetSet : public PropertyGet<getter>,
         , SetterUnit<PropertyGetSet, setters>(p)... {}
 
     // 代入
-    // 代入演算子はオーバーロードするために、usingしてこのクラスの直接のメンバとする
+    // set()と代入演算子はオーバーロードするために、usingしてこのクラスの直接のメンバとする
+    using SetterUnit<PropertyGetSet, setters>::set...;
     using SetterUnit<PropertyGetSet, setters>::operator=...;
 
     // なお、ゲッターはusingしない。親クラスのメソッドのままであり、this->get()でアクセスする
-    // set()関数もusingしない
 
     // // 前置インクリメント
     // PropertyGetSet &operator++() {
