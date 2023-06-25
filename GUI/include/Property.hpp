@@ -101,14 +101,19 @@ static_assert(std::is_same_v<OpRet<std::plus<>, char, long>, long>, "aaa");
 //                                      { setter(c, r + t) } -> std::same_as<Property &>;
 //                                  };
 
-template <typename T, typename C, typename R, auto setter, typename Op>
+// setter(getter() ⊕ t) がコンパイル可能かどうかチェックする
+// getter()はクラスCのメンバ関数で、R型を返す
+// setter()も同じくCのメンバ関数
+// tはT型の変数
+// ⊕は一例。演算子Opはstd::plus<>などを指定する
+template <typename T, typename Op, typename C, typename R, auto setter>
 concept compound_invocable = std::is_invocable_v<decltype(setter), C, OpRet<Op, R, T>>;
 
-template <typename T, typename C, typename R, auto setter>
-concept compound_invocable_add = compound_invocable<T, C, R, setter, std::plus<>>;
-
-template <typename T, typename C, typename R, typename Op, auto... setters>
-concept any_compound_invocable = (compound_invocable<T, C, R, setters, Op> || ...);
+// 可変n個のsetterに対して、setter(getter() ⊕ t) が一つでもコンパイル可能かどうかチェックする
+// ①getterからCとRを抽出する
+// ②パックを展開して各setterをcompound_invacableに渡し、判定のorを取る
+template <typename T, typename Op, auto getter, auto... setters>
+concept any_compound_invocable = (compound_invocable<T, Op, getMemberFunctionClass<decltype(getter)>, getMemberFunctionRet<decltype(getter)>, setters> || ...);
 
 static_assert(std::plus<>()(3, 5) == 8, "std::plusです");
 
@@ -163,7 +168,7 @@ class PropertyGetSet : public PropertyGet<getter>,
 
     // 複合代入演算子（四則演算）
     template <typename T>
-        requires any_compound_invocable<T, C, R, std::plus<>, setters...>
+        requires any_compound_invocable<T, std::plus<>, getter, setters...>
     PropertyGetSet &operator+=(const T &other) {
         return *this = this->get() + other;
     }
@@ -176,13 +181,12 @@ class PropertyGetSet : public PropertyGet<getter>,
     // }
 
     template <typename T>
-        requires any_compound_invocable<T, C, R, std::multiplies<>, setters...>
+        requires any_compound_invocable<T, std::multiplies<>, getter, setters...>
     PropertyGetSet &operator*=(const T &other) {
         return *this = this->get() * other;
     }
 
-    template <typename T>
-    PropertyGetSet &operator/=(const T &other) {
+    PropertyGetSet &operator/=(const any_compound_invocable<std::multiplies<>, getter, setters...> auto &other) {
         return *this = this->get() / other;
     }
 
