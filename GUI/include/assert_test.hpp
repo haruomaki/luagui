@@ -1,20 +1,15 @@
 #include <functional>
 #include <iostream>
 
-template <class T>
-void f1(T x) {
-    std::cout << x * 2 << std::endl;
-}
-
-template <class T>
-void f2(T x) {
-    f1(x);
-}
-
 class Property {
+  protected:
     int value_ = 0;
 
   public:
+    void show() const {
+        std::cout << value_ << std::endl;
+    }
+
     void setValue(int value) {
         value_ = value;
     }
@@ -24,11 +19,18 @@ class Property {
     }
 
     Property &operator=(const auto &x) {
-        setValue(x + 1);
+        setValue(x);
         return *this;
     }
 
     Property &operator+=(const auto &x) {
         return *this = *this + x;
+    }
+};
+
+class Derived : public Property {
+  public:
+    void showPrettily() {
+        std::cout << "値は" << value_ << "だよ" << std::endl;
     }
 };
