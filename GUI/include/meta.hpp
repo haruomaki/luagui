@@ -1,3 +1,4 @@
+#include <functional>
 #include <utility>
 
 // 可変長のis_same
@@ -55,9 +56,15 @@ template <typename Pointer>
 using getMemberFunctionRet = typename MemberFunctionPointerTypeFilter<Pointer>::ReturnType;
 
 // T型とS型の値に二項演算子Opを適用した際の型を取得する
-template <typename Op, typename T, typename S>
+template <template <class = void> typename Op, typename T, typename S>
 struct OperatorReturnTypeChecker {
     using type = decltype(Op()(std::declval<T>(), std::declval<S>()));
 };
-template <typename Op, typename T, typename S>
+template <template <class> typename Op, typename T, typename S>
 using getOperatorResult = typename OperatorReturnTypeChecker<Op, T, S>::type;
+
+// xとyに二項演算子Opを適用した結果を返す
+template <template <class = void> typename Op, auto x, auto y>
+constexpr auto applyOperator = Op()(x, y); // NOLINT(readability-identifier-naming)
+
+static_assert(applyOperator<std::plus, 8, 5> == 13); // 8 + 5 = 13 をコンパイル時に計算
