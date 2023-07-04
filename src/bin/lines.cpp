@@ -31,6 +31,14 @@ int main() {
         ver.color_ = {0.5, 0.2, 0.7, 1.0};
         line.vertices.push_back(ver);
     }
+    setInterval(1. / 60, [&] {
+        for (auto &&ver : line.vertices) {
+            const float x = ver.coord_.x;
+            const float y = f(x + float(window.tick_) / 100);
+            ver.coord_ = {x, y, 0};
+        }
+        return true;
+    });
 
     // 左上に常在する点
     StickyPointTopLeft top_left_point(window, world, viewport);
@@ -55,12 +63,6 @@ int main() {
 
     // レンダリングループ
     window.mainloop([&] {
-        for (auto &&ver : line.vertices) {
-            const float x = ver.coord_.x;
-            const float y = f(x + float(window.tick_) / 100);
-            ver.coord_ = {x, y, 0};
-        }
-
         sample_text.text_ = toStr(window.tick_);
 
         world.masterDraw(camera);
