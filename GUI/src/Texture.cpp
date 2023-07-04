@@ -8,8 +8,8 @@ GLuint loadTexture(const string &filename) {
 
     // ファイルの読み込み
     std::ifstream fstr(filename, std::ios::binary);
-    const size_t file_size = static_cast<size_t>(fstr.seekg(0, ifstream::end).tellg());
-    fstr.seekg(0, ifstream::beg);
+    const size_t file_size = static_cast<size_t>(fstr.seekg(0, std::ifstream::end).tellg());
+    fstr.seekg(0, std::ifstream::beg);
     char *texture_buffer = new char[file_size];
     fstr.read(texture_buffer, file_size);
 

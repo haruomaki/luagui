@@ -2,12 +2,12 @@
 #include <utility.hpp>
 
 static float f(float x) {
-    return 3 * sin(x);
+    return 3 * std::sin(x);
 }
 
 template <typename T, typename Fn>
-decltype(auto) mymap(const vector<T> &vec, Fn &&f) {
-    vector<invoke_result_t<Fn, T>> result;
+decltype(auto) map(const vector<T> &vec, Fn &&f) {
+    vector<std::invoke_result_t<Fn, T>> result;
     result.reserve(vec.size()); // 処理前に予めメモリを確保しておくと効率的です
     for (const T &element : vec) {
         result.emplace_back(f(element)); // 関数を適用して結果を新たなベクターに追加
@@ -17,7 +17,7 @@ decltype(auto) mymap(const vector<T> &vec, Fn &&f) {
 
 int main() {
     vector<int> vvv = {1, 3, 5};
-    vector<int> www = mymap(vvv, [](auto x) { return 2 * x; });
+    vector<int> www = map(vvv, [](auto x) { return 2 * x; });
     // vector<float> www = lapply(vvv, f);
     debug(www);
     // float ppp = 3.14;

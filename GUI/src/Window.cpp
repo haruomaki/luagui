@@ -26,7 +26,7 @@ Window::Window(int width, int height) {
     // GLEWの初期化
     if (glewInit() != GLEW_OK) {
         glfwTerminate();
-        throw runtime_error("Failed to initialize GLEW");
+        throw std::runtime_error("Failed to initialize GLEW");
     }
 
     debug(glGetString(GL_VERSION));
@@ -97,7 +97,7 @@ bool Window::getKey(int key) const {
 
 void Window::mainloop(const std::function<void()> &callback) {
     if (looping_) {
-        throw runtime_error("すでにメインループが始まっています");
+        throw std::runtime_error("すでにメインループが始まっています");
     }
     looping_ = true;
 
@@ -114,7 +114,7 @@ void Window::mainloop(const std::function<void()> &callback) {
 
         // 画面の初期化
         constexpr RGBA bg_color{0.2, 0.2, 0.2, 1};
-        glClearColor(bg_color.r_, bg_color.g_, bg_color.b_, bg_color.a_);
+        glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // ユーザの描画関数

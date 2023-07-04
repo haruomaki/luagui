@@ -12,7 +12,7 @@
 #include <stdexcept> // 例外はとりあえずこれ std::runime_error
 #include <vector>
 
-using namespace std;
+using std::ostream, std::stringstream, std::vector, std::pair, std::array, std::set, std::string, std::cout, std::cerr, std::endl, std::function;
 
 namespace base {
 
@@ -22,8 +22,8 @@ ostream &operator<<(ostream &os, const pair<T1, T2> &input) {
     return os;
 }
 
-template <typename T, size_t N>
-ostream &operator<<(ostream &os, const array<T, N> &input) {
+template <typename T, size_t n>
+ostream &operator<<(ostream &os, const array<T, n> &input) {
     os << "[";
     for (auto it = input.cbegin(); it != input.cend();) {
         os << *it++ << (it == input.cend() ? "" : ", ");
@@ -42,8 +42,8 @@ ostream &operator<<(ostream &os, const vector<T> &input) {
     return os;
 }
 
-template <typename T, size_t Extent>
-ostream &operator<<(ostream &os, const std::span<T, Extent> &input) {
+template <typename T, size_t extent>
+ostream &operator<<(ostream &os, const std::span<T, extent> &input) {
     os << "[";
     for (auto it = input.begin(); it != input.end();) {
         os << *it++ << (it == input.end() ? "" : ", ");
@@ -129,14 +129,14 @@ inline void debugPre(const char *file, int line, const char *argnames, T &&...ar
 #define debug(...)
 #endif
 
-#define DEFINE_RUNTIME_ERROR(name)          \
-    class name : public runtime_error {     \
-        using runtime_error::runtime_error; \
+#define DEFINE_RUNTIME_ERROR(name)           \
+    class name : public std::runtime_error { \
+        using runtime_error::runtime_error;  \
     }
 
 // ファイルから文字列を読み込む
 inline string loadString(const string &path) {
-    ifstream file(path);
+    std::ifstream file(path);
     if (!file.is_open()) {
         cerr << "Failed to open shader file: " << path << endl;
         return "";
@@ -172,18 +172,18 @@ inline vector<float> arange(float start, float stop, float step) {
 
 template <typename T>
 struct Point {
-    T x_, y_;
+    T x, y;
 
     // Point(T x, T y)
     //     : x_(x)
     //     , y_(y) {}
 
     Point operator+(Point point) const {
-        return Point{x_ + point.x_, y_ + point.y_};
+        return Point{x + point.x, y + point.y};
     }
 
     operator pair<T, T>() const {
-        return pair<T, T>(x_, y_);
+        return pair<T, T>(x, y);
     }
 
     friend ostream &operator<<(ostream &os, const Point &point) {

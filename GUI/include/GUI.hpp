@@ -10,18 +10,16 @@
 #include <iostream>
 
 // base.hppのインクルードより先に書かないといけない処理
-using namespace std;
-
 namespace base {
 
-template <glm::length_t L, class T, glm::qualifier Q>
-ostream &operator<<(ostream &os, const glm::vec<L, T, Q> input_vec) {
+template <glm::length_t l, class T, glm::qualifier q>
+std::ostream &operator<<(std::ostream &os, const glm::vec<l, T, q> input_vec) {
     os << glm::to_string(input_vec);
     return os;
 }
 
-template <glm::length_t C, glm::length_t R, class T, glm::qualifier Q>
-ostream &operator<<(ostream &os, const glm::mat<C, R, T, Q> input_mat) {
+template <glm::length_t c, glm::length_t r, class T, glm::qualifier q>
+std::ostream &operator<<(std::ostream &os, const glm::mat<c, r, T, q> input_mat) {
     os << glm::to_string(input_mat);
     return os;
 }
@@ -42,14 +40,14 @@ inline void getErrors() {
 }
 
 struct RGB {
-    unsigned char r_, g_, b_;
+    unsigned char r, g, b;
 };
 
 struct RGBA {
-    float r_, g_, b_, a_;
+    float r, g, b, a;
 
     operator glm::vec4() const {
-        return {r_, g_, b_, a_};
+        return {r, g, b, a};
     }
 };
 
