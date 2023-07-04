@@ -21,14 +21,15 @@ int main() {
     // camera.setScale(0.01F);
     // camera.setScale(100);
 
-    DynamicArray line(window, world, main_shader, {}, {}, GL_LINE_LOOP);
+    DynamicArray line(window, world, main_shader, {}, {});
+    line.draw_mode = GL_POINTS;
     line.scale = 100;
 
     for (auto &&x : linspace(-9, 9, 100)) {
         InterleavedVertexInfo ver;
         ver.coord_ = {x, f(x), 0};
         ver.color_ = {0.5, 0.2, 0.7, 1.0};
-        line.vertices_.push_back(ver);
+        line.vertices.push_back(ver);
     }
 
     // 左上に常在する点
@@ -54,7 +55,7 @@ int main() {
 
     // レンダリングループ
     window.mainloop([&] {
-        for (auto &&ver : line.vertices_) {
+        for (auto &&ver : line.vertices) {
             const float x = ver.coord_.x;
             const float y = f(x + float(window.tick_) / 100);
             ver.coord_ = {x, y, 0};
