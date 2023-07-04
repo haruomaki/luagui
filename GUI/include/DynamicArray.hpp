@@ -70,7 +70,7 @@ class DynamicArray : public DrawableWorldObject, Update {
     }
 
   public:
-    vector<InterleavedVertexInfo> vertices;
+    InterleavedVertexInfoVector vertices;
     GLenum draw_mode = GL_LINE_STRIP;
     int point_size = 4;
 

@@ -27,15 +27,15 @@ int main() {
 
     for (auto &&x : linspace(-9, 9, 100)) {
         InterleavedVertexInfo ver;
-        ver.coord_ = {x, f(x), 0};
-        ver.color_ = {0.5, 0.2, 0.7, 1.0};
+        ver.coord = {x, f(x), 0};
+        ver.color = {0.5, 0.2, 0.7, 1.0};
         line.vertices.push_back(ver);
     }
     setInterval(1. / 60, [&] {
         for (auto &&ver : line.vertices) {
-            const float x = ver.coord_.x;
+            const float x = ver.coord.x;
             const float y = f(x + float(window.tick_) / 100);
-            ver.coord_ = {x, y, 0};
+            ver.coord = {x, y, 0};
         }
         return true;
     });
