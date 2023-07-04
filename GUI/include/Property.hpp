@@ -1,6 +1,8 @@
 // C#のプロパティを再現する
 // https://qiita.com/CdecPGL/items/ef9c93458b0841001977
 
+#pragma once
+
 #include <functional>
 #include <meta.hpp>
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GUI.hpp>
+#include <Property.hpp>
 
 struct InterleavedVertexInfo {
     glm::vec3 coord = {0, 0, 0};
@@ -51,4 +52,7 @@ struct InterleavedVertexInfoVector : public vector<InterleavedVertexInfo> {
             this->at(i).color = colors[i];
         }
     }
+
+    PropertyGetSet<&InterleavedVertexInfoVector::getCoords, &InterleavedVertexInfoVector::setCoords> coords{this};
+    PropertyGetSet<&InterleavedVertexInfoVector::getColors, &InterleavedVertexInfoVector::setColors> colors{this};
 };

@@ -26,14 +26,14 @@ int main() {
     line.scale = 100;
 
     constexpr int points_num = 100;
-    line.vertices.setColors(vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0}));
+    line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
     setInterval(1. / 60, [&] {
         vector<glm::vec3> coords;
         for (const float x : linspace(-9, 9, points_num)) {
             const float y = f(x + float(window.tick_) / 100);
             coords.emplace_back(x, y, 0);
         }
-        line.vertices.setCoords(coords);
+        line.vertices.coords = coords;
         return true;
     });
 
