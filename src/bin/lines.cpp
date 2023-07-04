@@ -25,18 +25,15 @@ int main() {
     line.draw_mode = GL_POINTS;
     line.scale = 100;
 
-    for (auto &&x : linspace(-9, 9, 100)) {
-        InterleavedVertexInfo ver;
-        ver.coord = {x, f(x), 0};
-        ver.color = {0.5, 0.2, 0.7, 1.0};
-        line.vertices.push_back(ver);
-    }
+    constexpr int points_num = 100;
+    line.vertices.setColors(vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0}));
     setInterval(1. / 60, [&] {
-        for (auto &&ver : line.vertices) {
-            const float x = ver.coord.x;
+        vector<glm::vec3> coords;
+        for (const float x : linspace(-9, 9, points_num)) {
             const float y = f(x + float(window.tick_) / 100);
-            ver.coord = {x, y, 0};
+            coords.emplace_back(x, y, 0);
         }
+        line.vertices.setCoords(coords);
         return true;
     });
 
