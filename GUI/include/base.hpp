@@ -218,6 +218,16 @@ class MemoryView {
     }
 };
 
+template <typename T, typename Fn>
+decltype(auto) map(const vector<T> &vec, Fn &&f) {
+    vector<std::invoke_result_t<Fn, T>> result;
+    result.reserve(vec.size()); // 処理前に予めメモリを確保しておくと効率的です
+    for (const T &element : vec) {
+        result.emplace_back(f(element)); // 関数を適用して結果を新たなベクターに追加
+    }
+    return result;
+}
+
 } // namespace base
 
 using namespace base;

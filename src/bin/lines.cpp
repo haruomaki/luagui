@@ -5,24 +5,7 @@ static float f(float x) {
     return 3 * std::sin(x);
 }
 
-template <typename T, typename Fn>
-decltype(auto) map(const vector<T> &vec, Fn &&f) {
-    vector<std::invoke_result_t<Fn, T>> result;
-    result.reserve(vec.size()); // 処理前に予めメモリを確保しておくと効率的です
-    for (const T &element : vec) {
-        result.emplace_back(f(element)); // 関数を適用して結果を新たなベクターに追加
-    }
-    return result;
-}
-
 int main() {
-    vector<int> vvv = {1, 3, 5};
-    vector<int> www = map(vvv, [](auto x) { return 2 * x; });
-    // vector<float> www = lapply(vvv, f);
-    debug(www);
-    // float ppp = 3.14;
-    // auto qqq = app(ppp, f);
-
     constexpr int width = 600, height = 500;
     Window window(width, height);
     MaximumViewport viewport(window);
@@ -45,14 +28,9 @@ int main() {
     constexpr int points_num = 100;
     line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
     setInterval(1. / 60, [&] {
-        vector<float> xs = linspace(-9, 9, points_num);
-        vector<float> ys;
-        for (const float x : xs) {
-            const float y = f(x + float(window.tick_) / 100);
-            ys.emplace_back(y);
-        }
+        const auto xs = linspace(-9, 9, points_num);
         line.vertices.xs = xs;
-        line.vertices.ys = ys;
+        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(window.tick_) / 100); });
         return true;
     });
 
