@@ -22,6 +22,9 @@ class PropertyGet {
     /*()を用いたアクセス*/
     R operator()() const { return get(); }
 
+    // 配列添え字演算子
+    auto &operator[](const auto &index) const { return get()[index]; }
+
     // 算術演算子
     auto operator+(const auto &x) const { return get() + x; }
     friend auto operator+(const auto &x, const PropertyGet &self) { return x + self.get(); }

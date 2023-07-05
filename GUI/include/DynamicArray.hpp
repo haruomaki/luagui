@@ -43,9 +43,15 @@ class DynamicArray : public DrawableWorldObject, Update {
         const auto &shader = shader_;
         shader.use();
 
-        // 点の大きさを設定
-        if (draw_mode == GL_POINTS) {
+        // 点の大きさ・線の太さを設定
+        switch (draw_mode) {
+        case GL_POINTS:
             glPointSize(point_size);
+            break;
+        case GL_LINE_STRIP:
+        case GL_LINE_LOOP:
+            glLineWidth(line_width);
+            break;
         }
 
         // ワールド座標変換
@@ -73,8 +79,9 @@ class DynamicArray : public DrawableWorldObject, Update {
     InterleavedVertexInfoVector vertices;
     GLenum draw_mode = GL_LINE_STRIP;
     int point_size = 4;
+    int line_width = 4;
 
-    DynamicArray(Window &window, World &world, const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {})
+    DynamicArray(Window &window, World &world, const ProgramObject &shader, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
         : DrawableWorldObject(world)
         , Update(window)
         , shader_(shader)
