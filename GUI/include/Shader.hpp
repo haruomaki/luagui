@@ -29,9 +29,10 @@ class ProgramObject {
     void setUniform(const string &name, const glm::mat4 &mat4_value) const;
 };
 
-struct VertexArrayObject {
-    GLuint array_;
+class VertexArrayObject {
+    GLuint array_{};
 
+  public:
     static inline VertexArrayObject gen() {
         VertexArrayObject vao;
         glGenVertexArrays(1, &vao.array_); // VAOの生成
@@ -45,24 +46,25 @@ struct VertexArrayObject {
     }
 };
 
-template <GLenum TARGET>
-struct BufferObject {
-    GLuint buffer_;
+template <GLenum target>
+class BufferObject {
+    GLuint buffer_{};
 
+  public:
     // glGenBuffers() + glBufferData()
-    static inline BufferObject gen(GLsizeiptr size, const void *data, GLenum usage) {
+    static inline BufferObject gen(size_t size, const void *data, GLenum usage) {
         BufferObject xbo;
         glGenBuffers(1, &xbo.buffer_); // BOの生成
-        glBindBuffer(TARGET, xbo.buffer_);
-        glBufferData(TARGET, size, data, usage); // バインド中にデータを設定
-        glBindBuffer(TARGET, 0);
+        glBindBuffer(target, xbo.buffer_);
+        glBufferData(target, GLsizeiptr(size), data, usage); // バインド中にデータを設定
+        glBindBuffer(target, 0);
         return xbo;
     }
 
     inline void bind(const function<void()> &proc_in_bind) const {
-        glBindBuffer(TARGET, buffer_);
+        glBindBuffer(target, buffer_);
         proc_in_bind();
-        glBindBuffer(TARGET, 0);
+        glBindBuffer(target, 0);
     }
 };
 

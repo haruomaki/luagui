@@ -1,22 +1,20 @@
-#include <assert_test.hpp>
+#include <iostream>
+
+template <typename T>
+void show(const T &x) {
+    std::cout << x << std::endl;
+}
 
 int main() {
-    int x = 334;
-    std::string str = "hello";
-
-    Property p;
-
-    p + 9;
-    // p + str;
-
-    (p = 9.5).show();
-    // p = str;
-    // p += str;
-
-    Derived q;
-    q.showPrettily();
-    // (q += 2).showPrettily(); エラーになる
-
-    f<int>();
-    f<std::pair<int, int>>();
+    int x;
+    show(x);
 }
+
+// template <typename T>
+// void show(T &&x) {
+//     std::cout << std::forward<T>(x) << std::endl;
+// }
+
+// inline void show(const int *x) {
+//     std::cout << *x << std::endl;
+// }

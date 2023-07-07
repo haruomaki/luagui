@@ -91,6 +91,10 @@ pair<float, float> Window::getWindowContentScale() const {
     return {xscale, yscale};
 }
 
+void Window::close() const {
+    glfwSetWindowShouldClose(gwin_, GL_TRUE);
+}
+
 bool Window::getKey(int key) const {
     return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
 }
@@ -107,7 +111,7 @@ void Window::mainloop(const std::function<void()> &callback) {
         // world_object_root_.refreshAbsolutePosition();
 
         // 更新処理
-        tick_++;
+        tick++;
         for (auto *update : this->updates_) {
             (*update)();
         }

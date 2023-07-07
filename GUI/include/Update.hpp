@@ -5,11 +5,10 @@
 class Update {
     std::function<void()> update_;
 
-  protected:
-    Window &window_;
-
   public:
+    Window &window;
+
     virtual void update() = 0;
     Update(Window &window);
-    ~Update();
+    virtual ~Update();
 };

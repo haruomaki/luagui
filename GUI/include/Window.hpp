@@ -10,7 +10,7 @@ class Window {
     std::set<std::function<void()> *> updates_;
 
   public:
-    int tick_ = 0;
+    int tick = 0;
 
     Window(int width, int height);
     ~Window();
@@ -19,6 +19,7 @@ class Window {
     [[nodiscard]] pair<int, int> getWindowSize() const;
     [[nodiscard]] pair<int, int> getFrameBufferSize() const;
     [[nodiscard]] pair<float, float> getWindowContentScale() const;
+    void close() const;
 
     // glfwGetKeyのラッパー。GLFW_PRESSのときtrue、GLFW_RELEASEのときfalse
     [[nodiscard]] bool getKey(int key) const;

@@ -11,7 +11,7 @@ class Polygon {
     GLuint tex_id_ = 0;
     const size_t n_;
     static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}}; // TODO: std::arrayを用いる
-    static constexpr RGBA default_color{0.8, 0.8, 0.8, 1};
+    static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
 
     friend class Shape;
 
@@ -74,7 +74,7 @@ class Shape : public DrawableWorldObject {
         shader.setUniform("is_tex", (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
         polygon_.vao_.bind([&] {
             glBindTexture(GL_TEXTURE_2D, polygon_.tex_id_);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, polygon_.n_);
+            glDrawArrays(GL_TRIANGLE_FAN, 0, GLsizei(polygon_.n_));
             glBindTexture(GL_TEXTURE_2D, 0);
         });
     }

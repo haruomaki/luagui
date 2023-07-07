@@ -11,14 +11,14 @@ class DynamicArray : public DrawableWorldObject, Update {
     const ProgramObject &shader_;
     size_t n_;
     size_t capacity_;
-    static constexpr RGBA default_color{0.8, 0.8, 0.8, 1};
+    static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
 
     void update() override {
         // VBOの更新
         vao_.bind([&] {
             if (capacity_ != vertices.capacity()) {
                 // 空のVBOを生成
-                vbo_ = VertexBufferObject::gen(GLsizeiptr(sizeof(InterleavedVertexInfo) * vertices.capacity()), nullptr, GL_DYNAMIC_DRAW);
+                vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, GL_DYNAMIC_DRAW);
 
                 // VAOを作成。頂点の座標と色を関連付ける
                 vao_ = VertexArrayObject::gen();
