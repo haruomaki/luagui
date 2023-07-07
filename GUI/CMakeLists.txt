@@ -9,6 +9,7 @@ add_library(GUI STATIC
     src/Shader.cpp
     src/Text.cpp
     src/Texture.cpp
+    src/Camera.cpp
 )
 
 target_include_directories(GUI PUBLIC include)

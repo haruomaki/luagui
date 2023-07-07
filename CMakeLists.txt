@@ -18,6 +18,7 @@ add_compile_options(
     -Wno-padded # 構造体にパディングが挿入されるとき
     -Wno-ctad-maybe-unsupported # 型推論によってテンプレート引数を省略
     -Wno-shadow-field-in-constructor # メンバ変数と同名のコンストラクタ引数
+    -Wno-unused-macros # ヘッダで定義するマクロ
 )
 set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1 -fcolor-diagnostics")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")

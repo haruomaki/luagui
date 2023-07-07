@@ -1,7 +1,7 @@
 #include <master.hpp>
 #include <utility.hpp>
 
-float f(float x) {
+inline float f(float x) {
     return 3 * std::sin(x);
 }
 
@@ -30,7 +30,7 @@ int main() {
     setInterval(1. / 60, [&] {
         const auto xs = linspace(-9, 9, points_num);
         line.vertices.xs = xs;
-        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(window.tick_) / 100); });
+        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(window.tick) / 100); });
         return true;
     });
 
@@ -57,7 +57,7 @@ int main() {
 
     // レンダリングループ
     window.mainloop([&] {
-        sample_text.text_ = toStr(window.tick_);
+        sample_text.text_ = toStr(window.tick);
 
         world.masterDraw(camera);
         glClear(GL_DEPTH_BUFFER_BIT);
