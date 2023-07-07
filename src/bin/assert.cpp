@@ -1,20 +1,6 @@
-#include <iostream>
-
-template <typename T>
-void show(const T &x) {
-    std::cout << x << std::endl;
-}
+#include <base.hpp>
 
 int main() {
     int x;
-    show(x);
+    debug(x); // ちゃんと警告が出る
 }
-
-// template <typename T>
-// void show(T &&x) {
-//     std::cout << std::forward<T>(x) << std::endl;
-// }
-
-// inline void show(const int *x) {
-//     std::cout << *x << std::endl;
-// }

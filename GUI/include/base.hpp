@@ -109,8 +109,8 @@ inline void debugImpl(Head &&head, Tail &&...tail) {
     debugImpl<brace>(std::forward<Tail>(tail)...);
 }
 
-template <class... T>
-inline void debugPre(const char *file, int line, const char *argnames, T &&...args) {
+template <class... T> // NOTE: 未初期化変数の警告に対応するため、とりあえずdebugPreだけconst T&を受け取るように
+inline void debugPre(const char *file, int line, const char *argnames, const T &...args) {
     cerr << "🐝(" << file << ":" << line << ")";
     // argsの要素数 0 or 1 or それ以上
     constexpr size_t len = sizeof...(args);
@@ -119,7 +119,7 @@ inline void debugPre(const char *file, int line, const char *argnames, T &&...ar
         debugImpl<true>(args...);
     } else if constexpr (len == 1) {
         cerr << " " << argnames << " = ";
-        debugImpl<false>(std::forward<T>(args)...);
+        debugImpl<false>(args...);
     }
     cerr << '\n';
 }
