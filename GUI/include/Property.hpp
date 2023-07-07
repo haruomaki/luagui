@@ -156,8 +156,7 @@ class PropertyGetSet : public PropertyGet<getter>,
     // }
 
     // 複合代入演算子（四則演算）
-    template <CompoundInvocable<std::plus, getter, setters...> T>
-    PropertyGetSet &operator+=(const T &other) {
+    PropertyGetSet &operator+=(const CompoundInvocable<std::plus, getter, setters...> auto &other) {
         return *this = *this + other;
         // NOTE: 以下と等価
         // this->set(this->get() + other); ←これがコンパイル可能かどうかをCompoundInvocableで調べている
@@ -171,13 +170,11 @@ class PropertyGetSet : public PropertyGet<getter>,
     //     return *this;
     // }
 
-    template <CompoundInvocable<std::multiplies, getter, setters...> T>
-    PropertyGetSet &operator*=(const T &other) {
+    PropertyGetSet &operator*=(const CompoundInvocable<std::multiplies, getter, setters...> auto &other) {
         return *this = *this * other;
     }
 
-    template <CompoundInvocable<std::multiplies, getter, setters...> T>
-    PropertyGetSet &operator/=(const T &other) {
+    PropertyGetSet &operator/=(const CompoundInvocable<std::divides, getter, setters...> auto &other) {
         return *this = *this / other;
     }
 

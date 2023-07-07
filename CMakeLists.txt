@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 project(cppgui CXX)
 
+# CMakeLists.txt内でコンパイラを指定する
+# set(CMAKE_CXX_COMPILER "clang++17")
+# もしくは`cmake -DCMAKE_CXX_COMPILER=***`とする
+# vscodeのkit設定: ~/.local/share/CMakeTools/cmake-tools-kits.jsonを編集 https://qiita.com/kilo/items/05e48d22ceff55049b29
+
 # コンパイルオプション
 # すべてのサブディレクトリにも適用される
 add_compile_options(
@@ -12,7 +17,7 @@ add_compile_options(
     # -Wno-padded # 構造体にパディングが挿入されるとき
     # -Wno-ctad-maybe-unsupported # 型推論によってテンプレート引数を省略
 )
-set(CMAKE_CXX_FLAGS "-std=c++20 -fPIC -msse4.1 -fcolor-diagnostics")
+set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1 -fcolor-diagnostics")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -march=x86-64 -mtune=generic")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")
