@@ -80,8 +80,8 @@ static std::string strip(const std::string &str, const std::string &chars = " \t
 
 inline std::vector<std::string> split(const std::string &str, const std::string &delimiter = ",", const std::string &strip_chars = " \t\r\n") {
     std::vector<std::string> list = {};
-    size_t head = 0, tail;
-    do {
+    size_t head = 0, tail = 0;
+    do { // TODO: while文に
         tail = str.find(delimiter, head);
         // cout << head << "~" << tail << endl;
         // cout << "progress: " << list << " + " << str.substr(head, tail - head) << endl;
@@ -100,13 +100,13 @@ inline void debugImpl() {}
 // 最初の引数をHead、残りをTailとして切り離すことを再帰的に行う。
 template <bool brace, class Head, class... Tail>
 inline void debugImpl(Head &&head, Tail &&...tail) {
-    cerr << head;
+    cerr << std::forward<Head>(head);
     if constexpr (sizeof...(Tail) == 0) {
         cerr << (brace ? "]" : "");
     } else {
         cerr << ", ";
     }
-    debugImpl<brace>(std::move(tail)...);
+    debugImpl<brace>(std::forward<Tail>(tail)...);
 }
 
 template <class... T>
@@ -119,17 +119,18 @@ inline void debugPre(const char *file, int line, const char *argnames, T &&...ar
         debugImpl<true>(args...);
     } else if constexpr (len == 1) {
         cerr << " " << argnames << " = ";
-        debugImpl<false>(args...);
+        debugImpl<false>(std::forward<T>(args)...);
     }
-    cerr << endl;
+    cerr << '\n';
 }
 
 #ifdef DEBUG
-#define debug(...) debugPre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__))
+#define debug(...) debugPre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
 #else
 #define debug(...)
 #endif
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define DEFINE_RUNTIME_ERROR(name)           \
     class name : public std::runtime_error { \
         using runtime_error::runtime_error;  \
@@ -139,7 +140,7 @@ inline void debugPre(const char *file, int line, const char *argnames, T &&...ar
 inline string loadString(const string &path) {
     std::ifstream file(path);
     if (!file.is_open()) {
-        cerr << "Failed to open shader file: " << path << endl;
+        cerr << "Failed to open shader file: " << path << '\n';
         return "";
     }
     stringstream ss;
@@ -148,7 +149,7 @@ inline string loadString(const string &path) {
     return ss.str();
 }
 
-#define ReLU(x) std::max(x, 0)
+auto relu(const auto &x) { return std::max(x, 0); }
 
 // 分割数指定で等差数列を生成する
 inline vector<float> linspace(float start, float stop, size_t num, bool endpoint = true) {
@@ -193,6 +194,7 @@ struct Point {
     }
 };
 
+// TODO: C++20のviewsを使う
 template <class T>
 class MemoryView {
     const T *data_;
@@ -206,6 +208,7 @@ class MemoryView {
     T *data() const { return data_; }
     [[nodiscard]] size_t size() const { return size_; }
 
+    // TODO: ポインタ演算を避ける？
     T &operator[](size_t index) { return data_[index]; }
     const T &operator[](size_t index) const { return data_[index]; }
 
@@ -224,7 +227,7 @@ decltype(auto) map(const vector<T> &vec, Fn &&f) {
     vector<std::invoke_result_t<Fn, T>> result;
     result.reserve(vec.size()); // 処理前に予めメモリを確保しておくと効率的です
     for (const T &element : vec) {
-        result.emplace_back(f(element)); // 関数を適用して結果を新たなベクターに追加
+        result.emplace_back(std::forward<Fn>(f)(element)); // 関数を適用して結果を新たなベクターに追加
     }
     return result;
 }

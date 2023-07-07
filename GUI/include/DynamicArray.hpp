@@ -18,7 +18,7 @@ class DynamicArray : public DrawableWorldObject, Update {
         vao_.bind([&] {
             if (capacity_ != vertices.capacity()) {
                 // 空のVBOを生成
-                vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, GL_DYNAMIC_DRAW);
+                vbo_ = VertexBufferObject::gen(GLsizeiptr(sizeof(InterleavedVertexInfo) * vertices.capacity()), nullptr, GL_DYNAMIC_DRAW);
 
                 // VAOを作成。頂点の座標と色を関連付ける
                 vao_ = VertexArrayObject::gen();
@@ -33,7 +33,7 @@ class DynamicArray : public DrawableWorldObject, Update {
             capacity_ = vertices.capacity();
             n_ = vertices.size();
             vbo_.bind([&] {
-                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(InterleavedVertexInfo) * capacity_, vertices.data());
+                glBufferSubData(GL_ARRAY_BUFFER, 0, GLsizeiptr(sizeof(InterleavedVertexInfo) * capacity_), vertices.data());
             });
         });
     }
@@ -78,8 +78,8 @@ class DynamicArray : public DrawableWorldObject, Update {
   public:
     InterleavedVertexInfoVector vertices;
     GLenum draw_mode = GL_LINE_STRIP;
-    int point_size = 4;
-    int line_width = 4;
+    GLfloat point_size = 4;
+    GLfloat line_width = 4;
 
     DynamicArray(Window &window, World &world, const ProgramObject &shader, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
         : DrawableWorldObject(world)

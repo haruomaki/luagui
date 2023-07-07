@@ -9,13 +9,13 @@ project(cppgui CXX)
 # コンパイルオプション
 # すべてのサブディレクトリにも適用される
 add_compile_options(
-    -Wall
-    -Wextra
+    # -Wall
+    # -Wextra
 
-    # -Weverything
-    # -Wno-c++98-compat
-    # -Wno-padded # 構造体にパディングが挿入されるとき
-    # -Wno-ctad-maybe-unsupported # 型推論によってテンプレート引数を省略
+    -Weverything
+    -Wno-c++98-compat
+    -Wno-padded # 構造体にパディングが挿入されるとき
+    -Wno-ctad-maybe-unsupported # 型推論によってテンプレート引数を省略
 )
 set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1 -fcolor-diagnostics")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")

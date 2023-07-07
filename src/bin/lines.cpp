@@ -1,7 +1,7 @@
 #include <master.hpp>
 #include <utility.hpp>
 
-static float f(float x) {
+float f(float x) {
     return 3 * std::sin(x);
 }
 

@@ -10,7 +10,7 @@ class Polygon {
     const ProgramObject &shader_;
     GLuint tex_id_ = 0;
     const size_t n_;
-    static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}};
+    static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}}; // TODO: std::arrayを用いる
     static constexpr RGBA default_color{0.8, 0.8, 0.8, 1};
 
     friend class Shape;

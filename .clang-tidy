@@ -3,7 +3,10 @@ Checks: "-*,\
   cert-*,\
   clang-analyzer-*,\
   concurrency-*,\
-  # cppcoreguidelines-*,\
+  cppcoreguidelines-*,\
+  -cppcoreguidelines-avoid-magic-numbers,\ # マジックナンバー
+  -cppcoreguidelines-pro-type-union-access,\ # TODO: vec3の要素にアクセスできるように？
+  -cppcoreguidelines-avoid-const-or-ref-data-members,\ # TODO: 参照型のメンバ変数を許容
   linuxkernel-*,\
   llvm-*,\
   -llvm-include-order,\ #マクロによるインクルード時、見かけの順序を保つ
@@ -12,18 +15,20 @@ Checks: "-*,\
   -misc-non-private-member-variables-in-classes,\
   modernize-*,\
   -modernize-use-trailing-return-type,\
-  -modernize-avoid-c-arrays,\
   performance-*,\
   portability-*,\
   readability-*,\
   -readability-isolate-declaration,\
   -readability-magic-numbers,\ #マジックナンバー
+  -readability-uppercase-literal-suffix,\ # リテラルの小文字サフィックス
   "
 WarningsAsErrors: ""
 HeaderFilterRegex: 'source.*\.(hpp|h)'
 AnalyzeTemporaryDtors: false
 FormatStyle: file
 CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
+  cppcoreguidelines-non-private-member-variables-in-classes.IgnorePublicMemberVariables: true # 一部にpublicなメンバ変数を持つのを許容
+  cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true # デストラクタをデフォルトのままvirtual指定したとき、その他の暗黙の関数の警告を出さない
   readability-identifier-naming.ClassCase: CamelCase
   readability-identifier-naming.EnumCase: CamelCase
   readability-identifier-naming.FunctionCase: camelBack

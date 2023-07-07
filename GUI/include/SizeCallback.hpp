@@ -9,5 +9,5 @@ class SizeCallback {
   public:
     virtual void sizeCallback(int width, int height) = 0;
     SizeCallback(Window &window);
-    ~SizeCallback();
+    virtual ~SizeCallback();
 };

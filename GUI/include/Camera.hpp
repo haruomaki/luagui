@@ -6,6 +6,7 @@
 // ビュー行列と射影行列を与える機能を持つ抽象クラス
 class Camera {
   public:
+    virtual ~Camera() = default;
     [[nodiscard]] virtual glm::mat4 getViewMatrix() const = 0;
     [[nodiscard]] virtual glm::mat4 getProjectionMatrix() const = 0;
 };
@@ -24,10 +25,10 @@ class NormalCamera : public Camera, public WorldObject {
 
     [[nodiscard]] glm::mat4 getProjectionMatrix() const override {
         auto size = viewport_.getSize();
-        int width = size.x;
-        int height = size.y;
+        auto width = float(size.x);
+        auto height = float(size.y);
 
-        const auto aspect_ratio = (float)width / height;
+        const auto aspect_ratio = width / height;
         // projection_matrix_ = glm::ortho<float>(-width / 2, width / 2, -height / 2, height / 2, 1000, 0);
         const auto projection_matrix = glm::perspective(glm::radians(60.0F), aspect_ratio, 0.1F, 3000.F);
         // debug(projection_matrix_);

@@ -33,7 +33,7 @@ std::ostream &operator<<(std::ostream &os, const glm::mat<c, r, T, q> input_mat)
 namespace base {
 
 inline void getErrors() {
-    GLenum err;
+    GLenum err = 0;
     while ((err = glGetError()) != GL_NO_ERROR) {
         debug(err);
     }
@@ -51,6 +51,7 @@ struct RGBA {
     }
 };
 
+// TODO: 可変長テンプレート関数化する
 #define TRANSLATE(...) glm::translate(glm::mat4(1), __VA_ARGS__)
 #define ROTATE(angle, ...) glm::rotate(glm::mat4(1), angle, __VA_ARGS__)
 #define ANGLE_X(angle) glm::angleAxis(angle, glm::vec3{1, 0, 0})

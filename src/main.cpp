@@ -82,14 +82,14 @@ int main() {
     ins2.scale = 1500;
     inspoly.setPosition({0, 100, 100});
 
-    vector<unique_ptr<Shape>> poly_instances;
+    vector<std::unique_ptr<Shape>> poly_instances;
     for (int i = -500; i <= 500; i += 100) {
-        auto instance = make_unique<Shape>(main_world, poly);
+        auto instance = std::make_unique<Shape>(main_world, poly);
         instance->setPosition({-200, -50, i});
         poly_instances.push_back(std::move(instance));
     }
     for (int i = -300; i <= 300; i += 100) {
-        auto instance = make_unique<Shape>(main_world, poly);
+        auto instance = std::make_unique<Shape>(main_world, poly);
         instance->setPosition({-0, 300, i});
         poly_instances.push_back(std::move(instance));
     }

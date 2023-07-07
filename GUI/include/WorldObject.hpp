@@ -31,7 +31,7 @@ class WorldObject {
         , abs_transform_(glm::mat4(1)) {}
 
     ~WorldObject() {
-        cout << "フリー！ " << this << endl;
+        cout << "フリー！ " << this << '\n';
         if (parent_ != nullptr) {
             parent_->children_.erase(this);
         }
@@ -45,12 +45,13 @@ class WorldObject {
 
     // ムーブは可能
     WorldObject(WorldObject &&other) noexcept
-        : world_(other.world_) {
-        pos_ = other.pos_;
-        scale_ = other.scale_;
-        abs_transform_ = other.abs_transform_;
-        parent_ = other.parent_;
-        children_ = other.children_;
+        : world_(other.world_)
+        , pos_(other.pos_)
+        , rotate_(other.rotate_)
+        , scale_(other.scale_)
+        , abs_transform_(other.abs_transform_)
+        , parent_(other.parent_)
+        , children_(other.children_) {
 
         // 親の子情報を更新
         if (parent_ != nullptr) {
