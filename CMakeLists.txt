@@ -17,6 +17,7 @@ add_compile_options(
     -Wno-c++98-compat-pedantic # 列挙体のtrailingコンマ
     -Wno-padded # 構造体にパディングが挿入されるとき
     -Wno-ctad-maybe-unsupported # 型推論によってテンプレート引数を省略
+    -Wno-shadow-field # メンバ変数と同名の引数
     -Wno-shadow-field-in-constructor # メンバ変数と同名のコンストラクタ引数
     -Wno-unused-macros # ヘッダで定義するマクロ
 )

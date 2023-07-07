@@ -1,16 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
-add_library(GUI STATIC
-    src/Window.cpp
-    src/KeyCallback.cpp
-    src/SizeCallback.cpp
-    src/Update.cpp
-    src/Drawable.cpp
-    src/Shader.cpp
-    src/Text.cpp
-    src/Texture.cpp
-    src/Camera.cpp
-)
+# src/binディレクトリ内の.cppファイルを取得
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+add_library(GUI STATIC ${SOURCES})
 
 target_include_directories(GUI PUBLIC include)
 

@@ -117,7 +117,7 @@ void Window::mainloop(const std::function<void()> &callback) {
         }
 
         // 画面の初期化
-        constexpr RGBA bg_color{0.2, 0.2, 0.2, 1};
+        constexpr RGBA bg_color{0.2f, 0.2f, 0.2f, 1};
         glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

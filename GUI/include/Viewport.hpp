@@ -31,10 +31,5 @@ class MaximumViewport : public Viewport, SizeCallback {
         sizeCallback(fbsize.first, fbsize.second);
     }
 
-    void sizeCallback(int width, int height) override {
-        x = y = 0;
-        width = width;
-        height = height;
-        set();
-    }
+    void sizeCallback(int width, int height) override;
 };
