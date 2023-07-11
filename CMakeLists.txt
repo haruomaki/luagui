@@ -17,6 +17,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -march=x86-64 -mtune=generic")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG -march=x86-64 -mtune=generic")
+add_link_options("-Wl,-rpath=/home/haruo/apps/llvm-project/build/lib/x86_64-unknown-linux-gnu")
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
