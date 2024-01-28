@@ -9,7 +9,7 @@ class Polygon {
     VertexBufferObject vbo_;
     const ProgramObject &shader_;
     GLuint tex_id_ = 0;
-    const size_t n_;
+    const size_t n_; // TODO: GLsizeiにすればキャストを減らせる？
     static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}};
     static constexpr RGBA default_color{0.8, 0.8, 0.8, 1};
 
@@ -74,7 +74,7 @@ class Shape : public DrawableWorldObject {
         shader.setUniform("is_tex", (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
         polygon_.vao_.bind([&] {
             glBindTexture(GL_TEXTURE_2D, polygon_.tex_id_);
-            glDrawArrays(GL_TRIANGLE_FAN, 0, polygon_.n_);
+            glDrawArrays(GL_TRIANGLE_FAN, 0, static_cast<int>(polygon_.n_));
             glBindTexture(GL_TEXTURE_2D, 0);
         });
     }

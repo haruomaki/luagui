@@ -63,8 +63,8 @@ struct OperatorReturnTypeChecker {
 template <template <class> typename Op, typename T, typename S>
 using getOperatorResult = typename OperatorReturnTypeChecker<Op, T, S>::type;
 
-// xとyに二項演算子Opを適用した結果を返す
+// xとyに二項演算子Opを適用した結果を返す  INFO: staticは不要？
 template <template <class = void> typename Op, auto x, auto y>
-constexpr auto applyOperator = Op()(x, y); // NOLINT(readability-identifier-naming)
+static constexpr auto applyOperator = Op()(x, y); // NOLINT(readability-identifier-naming)
 
 static_assert(applyOperator<std::plus, 8, 5> == 13); // 8 + 5 = 13 をコンパイル時に計算
