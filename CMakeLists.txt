@@ -4,9 +4,9 @@ project(cppgui CXX)
 # コンパイルオプション
 # すべてのサブディレクトリにも適用される
 add_compile_options(
-    # -Wall
-    # -Wextra
-    -Weverything
+    -Wall
+    -Wextra
+    # -Weverything
     -Wno-c++98-compat
     -Wno-c++98-compat-pedantic # 列挙体のtrailingコンマ
     -Wno-padded # 構造体にパディングが挿入されるとき

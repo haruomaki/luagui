@@ -9,5 +9,5 @@ class DrawableWorldObject : public WorldObject {
 
   public:
     DrawableWorldObject(World &world);
-    ~DrawableWorldObject();
+    virtual ~DrawableWorldObject();
 };
