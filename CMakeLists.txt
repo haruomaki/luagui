@@ -15,18 +15,13 @@ add_compile_options(
     -Wno-shadow-field-in-constructor # メンバ変数と同名のコンストラクタ引数
     -Wno-unused-macros # ヘッダで定義するマクロ
 )
-set(CMAKE_CXX_FLAGS "-std=c++20 -fPIC -msse4.1 -fcolor-diagnostics")
+set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1 -fcolor-diagnostics")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -march=x86-64 -mtune=generic")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG -march=x86-64 -mtune=generic")
 
-add_executable(${PROJECT_NAME}
-    src/main.cpp
-)
-
 add_subdirectory(GUI)
-target_link_libraries(${PROJECT_NAME} PRIVATE GUI)
 
 # src/binディレクトリ内の.cppファイルを取得
 file(GLOB_RECURSE SOURCES "src/bin/*.cpp")
