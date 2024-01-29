@@ -57,6 +57,7 @@ Window::Window(int width, int height) {
     });
 
     // キーコールバック
+    // INFO: キャラを一定速度で動かしたいなどの際は、1フレームごとにgetKeyメソッドを呼び出す方がいい
     glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int /*scancode*/, int action, int /*mods*/) {
         auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
         for (auto *key_callback : window->key_callbacks_) {

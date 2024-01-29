@@ -55,13 +55,13 @@ class DynamicArray : public DrawableWorldObject, Update {
         }
 
         // ワールド座標変換
-        glm::mat4 model_matrix = this->getAbsoluteTransform();
+        const glm::mat4 &model_matrix = this->getAbsoluteTransform();
 
         // ビュー座標変換
         const glm::mat4 &view_matrix = camera.getViewMatrix();
 
         // 合成して、モデルビュー行列を得る
-        glm::mat4 model_view_matrix = view_matrix * model_matrix;
+        const auto &model_view_matrix = view_matrix * model_matrix;
         shader.setUniform("modelViewMatrix", model_view_matrix);
 
         // 射影変換行列
