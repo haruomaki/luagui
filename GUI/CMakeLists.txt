@@ -11,5 +11,5 @@ target_link_libraries(GUI PUBLIC GL glfw GLEW)
 
 # FreeType
 find_package(Freetype REQUIRED)
-target_include_directories(GUI PUBLIC ${FREETYPE_INCLUDE_DIRS})
+target_include_directories(GUI SYSTEM PUBLIC ${FREETYPE_INCLUDE_DIRS}) # SYSTEMを指定して警告対象から除外
 target_link_libraries(GUI PRIVATE ${FREETYPE_LIBRARIES})
