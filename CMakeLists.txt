@@ -29,7 +29,6 @@ add_compile_options(
     # 重要さが未知数で、オンにしたほうがいいかもしれない警告
     -Wno-weak-vtables # TODO: 知識不足
     -Wno-header-hygiene # ヘッダファイルでusing namespaceしてはいけないという警告。TODO: これはONでもよさそう
-    -Wno-non-virtual-dtor # virtualでないデストラクタへの警告なのだが、「ポリモーフィズムを想定した親クラス」以外にはvirtualは不要であるにも関わらず警告を出してしまうためOFFにする
 )
 set(CMAKE_CXX_FLAGS "-std=c++20 -fPIC -msse4.1 -fcolor-diagnostics")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
