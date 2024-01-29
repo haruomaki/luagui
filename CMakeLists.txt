@@ -21,14 +21,12 @@ add_compile_options(
     -Wno-old-style-cast # Cスタイルのキャスト記法を許可
     -Wno-shadow # 変数などのシャドーイングを許可
 
-    # TODO: 重要さが未知数で、オンにしたほうがいいかもしれない警告
-    # -Wno-documentation-unknown-command # doxygenのコマンドチェック無効化。FreeTypeなど外部ライブラリのヘッダファイルで出てくるためOFFにするしかない
-    # -Wno-documentation # ドキュメントコメントでない箇所でのdoxygen表記に警告？これもfreetype.hで出てくる
+    # 重要さが未知数で、オンにしたほうがいいかもしれない警告
     -Wno-weak-vtables # TODO: 知識不足
-    -Wno-header-hygiene # ヘッダファイルでusing namespaceしてはいけないという警告。これはONでもよさそう
+    -Wno-header-hygiene # ヘッダファイルでusing namespaceしてはいけないという警告。TODO: これはONでもよさそう
     -Wno-non-virtual-dtor # virtualでないデストラクタへの警告なのだが、「ポリモーフィズムを想定した親クラス」以外にはvirtualは不要であるにも関わらず警告を出してしまうためOFFにする
 )
-set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1 -fcolor-diagnostics")
+set(CMAKE_CXX_FLAGS "-std=c++20 -fPIC -msse4.1 -fcolor-diagnostics")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -march=x86-64 -mtune=generic")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")
