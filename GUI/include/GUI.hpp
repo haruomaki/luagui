@@ -32,12 +32,19 @@ std::ostream &operator<<(std::ostream &os, const glm::mat<c, r, T, q> input_mat)
 // base.hppのインクルードのあとでも問題無い処理
 namespace base {
 
-inline void getErrors() {
+inline void getErrorsPre(const char *file, int line) {
     GLenum err = 0;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        debug(err);
+        printHeadline("❎", file, line);
+        std::cerr << " " << err << std::endl;
     }
 }
+
+#ifdef DEBUG
+#define getErrors() getErrorsPre(__FILE__, __LINE__) // NOLINT(cppcoreguidelines-macro-usage)
+#else
+#defile getErrors()
+#endif
 
 struct RGB {
     unsigned char r, g, b;

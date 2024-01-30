@@ -131,7 +131,7 @@ void Window::mainloop(const std::function<void()> &callback) {
         // glEnable(GL_DEPTH_TEST);
 
         // 上記描画した図形を表画面のバッファにスワップする
-        time(glfwSwapBuffers(gwin_));
+        glfwSwapBuffers(gwin_);
 
         // 受け取ったイベント（キーボードやマウス入力）を処理する
         glfwPollEvents();
