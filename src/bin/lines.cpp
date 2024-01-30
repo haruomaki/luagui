@@ -63,4 +63,9 @@ int main() {
         glClear(GL_DEPTH_BUFFER_BIT);
         ui_world.masterDraw(ui_camera);
     });
+
+    print("dayo", 45, "と", atan2(4, 4));
+    print();
+
+    return 0;
 }

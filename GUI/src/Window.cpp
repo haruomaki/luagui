@@ -2,8 +2,6 @@
 #include <SizeCallback.hpp>
 #include <Update.hpp>
 #include <Window.hpp>
-#include <chrono>
-#include <thread>
 
 using namespace std::chrono_literals;
 
@@ -133,11 +131,7 @@ void Window::mainloop(const std::function<void()> &callback) {
         // glEnable(GL_DEPTH_TEST);
 
         // 上記描画した図形を表画面のバッファにスワップする
-        time({debug("a"); glfwSwapBuffers(gwin_); });
-        // measureTime([&] {
-        //     glfwSwapBuffers(gwin_);
-        // });
-        // std::this_thread::sleep_for(17ms);
+        time(glfwSwapBuffers(gwin_));
 
         // 受け取ったイベント（キーボードやマウス入力）を処理する
         glfwPollEvents();

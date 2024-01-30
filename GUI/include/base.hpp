@@ -102,6 +102,28 @@ inline void printHeadline(const char *icon, const char *file, int line) {
     std::cerr << icon << "(" << file << ":" << line << ")";
 }
 
+// 終了条件
+inline void printImpl() {
+    std::cerr << std::endl;
+}
+
+// 可変長テンプレートを使用して引数を順番に出力
+template <typename T, typename... Args>
+inline void printImpl(const T &arg, const Args &...args) {
+    std::cerr << arg;
+    printImpl(args...);
+}
+
+template <typename... Args>
+inline void printPre(const char *file, int line, const Args &...args) {
+    printHeadline("🐝", file, line);
+    constexpr size_t len = sizeof...(args);
+    if constexpr (len > 0) {
+        std::cerr << " ";
+    }
+    printImpl(args...);
+}
+
 // 再帰の終端。引数が0個の場合を担当。改行を出力。
 template <bool brace>
 inline void debugImpl() {}
@@ -119,9 +141,9 @@ inline void debugImpl(Head &&head, Tail &&...tail) {
     debugImpl<brace>(std::forward<Tail>(tail)...);
 }
 
-template <class... T> // NOTE: 未初期化変数の警告に対応するため、とりあえずdebugPreだけconst T&を受け取るように
-inline void debugPre(const char *file, int line, const char *argnames, const T &...args) {
-    printHeadline("🐝", file, line);
+template <class... Args> // NOTE: 未初期化変数の警告に対応するため、とりあえずdebugPreだけconst T&を受け取るように
+inline void debugPre(const char *file, int line, const char *argnames, const Args &...args) {
+    printHeadline("📦", file, line);
     // argsの要素数 0 or 1 or それ以上
     constexpr size_t len = sizeof...(args);
     if constexpr (len >= 2) {
@@ -136,7 +158,7 @@ inline void debugPre(const char *file, int line, const char *argnames, const T &
 
 // ラムダ式を受け取り、実行時間を返す
 template <typename Func>
-inline std::chrono::duration<double> timeImpl(Func func) {
+inline std::chrono::duration<double> timeImpl(Func &&func) {
     // 時間計測しつつ実行
     auto start = std::chrono::high_resolution_clock::now();
     func();
@@ -147,13 +169,14 @@ inline std::chrono::duration<double> timeImpl(Func func) {
 
 // ***Pre関数は複文マクロを避ける意味もある
 template <typename Func>
-inline void timePre(const char *file, int line, Func func) {
+inline void timePre(const char *file, int line, Func &&func) {
     auto duration = timeImpl(func);
     printHeadline("⏱️", file, line);
     std::cerr << " " << duration << std::endl;
 }
 
 #ifdef DEBUG
+#define print(...) printPre(__FILE__, __LINE__ __VA_OPT__(, __VA_ARGS__))               // NOLINT(cppcoreguidelines-macro-usage)
 #define debug(...) debugPre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
 #define time(...) timePre(__FILE__, __LINE__, [&] { __VA_ARGS__; })                     // NOLINT(cppcoreguidelines-macro-usage)
 #else
