@@ -2,6 +2,10 @@
 #include <SizeCallback.hpp>
 #include <Update.hpp>
 #include <Window.hpp>
+#include <chrono>
+#include <thread>
+
+using namespace std::chrono_literals;
 
 Window::Window(int width, int height) {
     // ライブラリglfw の初期化
@@ -129,7 +133,11 @@ void Window::mainloop(const std::function<void()> &callback) {
         // glEnable(GL_DEPTH_TEST);
 
         // 上記描画した図形を表画面のバッファにスワップする
-        glfwSwapBuffers(gwin_);
+        time({debug("a"); glfwSwapBuffers(gwin_); });
+        // measureTime([&] {
+        //     glfwSwapBuffers(gwin_);
+        // });
+        // std::this_thread::sleep_for(17ms);
 
         // 受け取ったイベント（キーボードやマウス入力）を処理する
         glfwPollEvents();
