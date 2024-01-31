@@ -27,12 +27,6 @@ int main() {
 
     constexpr int points_num = 100;
     line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
-    setInterval(1. / 60, [&] {
-        const auto xs = linspace(-9, 9, points_num);
-        line.vertices.xs = xs;
-        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(window.tick) / 100); });
-        return true;
-    });
 
     // 左上に常在する点
     StickyPointTopLeft top_left_point(window, world, viewport);
@@ -58,6 +52,10 @@ int main() {
     // レンダリングループ
     window.mainloop([&] {
         sample_text.text_ = toStr(window.tick);
+
+        const auto xs = linspace(-9, 9, points_num);
+        line.vertices.xs = xs;
+        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(window.tick) / 100); });
 
         world.masterDraw(camera);
         glClear(GL_DEPTH_BUFFER_BIT);

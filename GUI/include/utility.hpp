@@ -54,7 +54,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
             window.close();
         }
 
-        scale *= 1.002F;
+        // scale *= 1.002F;
         // scale *= "a";
         // scale + "a";
     }

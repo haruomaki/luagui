@@ -29,3 +29,5 @@ WorldObjectやDrawableを継承するのではなく、WorldObjectにユーザ�
 
 これからやること
 - line.cppの実行時、プログラムの終了時に "malloc(): unsorted double linked list corrupted" などのメモリ関連のエラーが出る問題を修正していく。おそらくsetIntervalで立てた別スレッドの寿命が長すぎて、main関数側の変数が解放されたあとにアクセスしようとするのが原因。マルチスレッドをそもそもやめてglfwのメインループ内で動作するタイマー機構を作る。
+- タイマー処理をメインループ内に移したところ、やはりメモリエラーは起こらなくなった。Timer.cppは一度白紙にする。
+
