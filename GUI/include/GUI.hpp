@@ -33,7 +33,7 @@ std::ostream &operator<<(std::ostream &os, const glm::mat<c, r, T, q> input_mat)
 namespace base {
 
 inline void getErrorsPre(const char *file, int line) {
-    GLenum err = 0;
+    GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
         printHeadline("❎", file, line);
         std::cerr << " " << err << std::endl;

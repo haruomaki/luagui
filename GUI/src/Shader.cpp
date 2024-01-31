@@ -64,7 +64,6 @@ void ProgramObject::setAttribute(const string &name, GLint size, GLenum type, GL
     GLint location = getLocation<Attribute>(name);
     glVertexAttribPointer(location, size, type, normalized, stride, pointer);
     glEnableVertexAttribArray(location);
-    getErrors();
 }
 
 void ProgramObject::setUniform(const string &name, GLint int_value) const {

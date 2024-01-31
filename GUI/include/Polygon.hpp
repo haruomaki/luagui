@@ -39,10 +39,10 @@ class Polygon {
             vbo_.bind([&] {
                 shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
                 shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+                getErrors();
+                shader.setAttribute("uv", 2, GL_FLOAT, GL_FALSE, 0, nullptr); // FIXME: uv座標をvbo経由で設定できるようにする
+                getErrors();
             });
-            getErrors();
-            // uvの設定
-            shader.setAttribute("uv", 2, GL_FLOAT, GL_FALSE, 0, vertex_uv);
         });
     }
 };
