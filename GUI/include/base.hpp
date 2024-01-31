@@ -102,58 +102,38 @@ inline void printHeadline(const char *icon, const char *file, int line) {
     std::cerr << icon << "(" << file << ":" << line << ")";
 }
 
-// 終了条件
-inline void printImpl() {
-    std::cerr << std::endl;
-}
-
-// 可変長テンプレートを使用して引数を順番に出力
+// 引数を任意の区切り文字で標準エラーに出力
+// 注意：改行しない、0引数は受け付けない
 template <typename T, typename... Args>
-inline void printImpl(const T &arg, const Args &...args) {
+inline void printImpl(const char *sep, const T &arg, const Args &...args) {
     std::cerr << arg;
-    printImpl(args...);
+    ((std::cerr << sep << args), ...);
 }
 
 template <typename... Args>
 inline void printPre(const char *file, int line, const Args &...args) {
     printHeadline("🐝", file, line);
-    constexpr size_t len = sizeof...(args);
-    if constexpr (len > 0) {
+    if constexpr (sizeof...(args) > 0) {
         std::cerr << " ";
+        printImpl("", args...);
     }
-    printImpl(args...);
+    std::cerr << std::endl;
 }
 
-// 再帰の終端。引数が0個の場合を担当。改行を出力。
-template <bool brace>
-inline void debugImpl() {}
-
-// 可変長引数。引数が1つ以上存在する場合を担当。
-// 最初の引数をHead、残りをTailとして切り離すことを再帰的に行う。
-template <bool brace, class Head, class... Tail>
-inline void debugImpl(Head &&head, Tail &&...tail) {
-    cerr << std::forward<Head>(head);
-    if constexpr (sizeof...(Tail) == 0) {
-        cerr << (brace ? "]" : "");
-    } else {
-        cerr << ", ";
-    }
-    debugImpl<brace>(std::forward<Tail>(tail)...);
-}
-
-template <class... Args> // NOTE: 未初期化変数の警告に対応するため、とりあえずdebugPreだけconst T&を受け取るように
+template <class... Args> // NOTE: 未初期化変数の警告に対応するためconst T&を受け取る
 inline void debugPre(const char *file, int line, const char *argnames, const Args &...args) {
     printHeadline("📦", file, line);
     // argsの要素数 0 or 1 or それ以上
     constexpr size_t len = sizeof...(args);
     if constexpr (len >= 2) {
-        cerr << " [" << argnames << "] = [";
-        debugImpl<true>(args...);
+        std::cerr << " [" << argnames << "] = [";
+        printImpl(", ", args...);
+        std::cerr << "]";
     } else if constexpr (len == 1) {
         cerr << " " << argnames << " = ";
-        debugImpl<false>(args...);
+        printImpl(", " /*doesn't matter*/, args...);
     }
-    cerr << '\n';
+    std::cerr << std::endl;
 }
 
 // ラムダ式を受け取り、実行時間を返す
