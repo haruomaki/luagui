@@ -37,8 +37,8 @@ class Polygon {
         vao_ = VertexArrayObject::gen();
         vao_.bind([&] {
             vbo_.bind([&] {
-                shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-                shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+                shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                    // 位置
+                shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(GLfloat) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
                 getErrors();
                 shader.setAttribute("uv", 2, GL_FLOAT, GL_FALSE, 0, nullptr); // FIXME: uv座標をvbo経由で設定できるようにする
                 getErrors();

@@ -8,6 +8,7 @@ Checks: "-*,\
   -cppcoreguidelines-pro-type-union-access,\ # TODO: vec3の要素にアクセスできるように？
   -cppcoreguidelines-avoid-const-or-ref-data-members,\ # TODO: 参照型のメンバ変数を許容
   -cppcoreguidelines-init-variables,\ # 変数宣言時の未初期化を許容
+  -cppcoreguidelines-pro-type-reinterpret-cast,\ # reinterpret_castを許可
   linuxkernel-*,\
   llvm-*,\
   -llvm-include-order,\ #マクロによるインクルード時、見かけの順序を保つ
