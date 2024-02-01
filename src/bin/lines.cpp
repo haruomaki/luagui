@@ -22,8 +22,8 @@ int main() {
     timer.start();
 
     constexpr int width = 600, height = 500;
-    Window window(width, height);
-    MaximumViewport viewport(window);
+    GUI gui(width, height);
+    MaximumViewport viewport(gui);
 
     World world, ui_world;
 
@@ -31,12 +31,12 @@ int main() {
         createShader(GL_VERTEX_SHADER, loadString("assets/shaders/shader.vsh")),
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
 
-    MobileOrthoCamera camera(window, world, viewport);
+    MobileOrthoCamera camera(gui, world, viewport);
     OrthoCamera ui_camera(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
 
-    DynamicArray line(window, world, main_shader, {}, {});
+    DynamicArray line(gui, world, main_shader, {}, {});
     line.draw_mode = GL_POINTS;
     line.scale = 100;
 
@@ -44,7 +44,7 @@ int main() {
     line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
 
     // 左上に常在する点
-    StickyPointTopLeft top_left_point(window, world, viewport);
+    StickyPointTopLeft top_left_point(gui, world, viewport);
 
     // 文字の表示
     Font migmix_font;
@@ -65,12 +65,12 @@ int main() {
     my_triangle.position = {-100, 0, 0};
 
     // レンダリングループ
-    window.mainloop([&] {
-        sample_text.text_ = toStr(window.tick);
+    gui.mainloop([&] {
+        sample_text.text_ = toStr(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
         line.vertices.xs = xs;
-        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(window.tick) / 100); });
+        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100); });
 
         world.masterDraw(camera);
         glClear(GL_DEPTH_BUFFER_BIT);

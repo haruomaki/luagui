@@ -1,6 +1,6 @@
 #include <KeyCallback.hpp>
 
-KeyCallback::KeyCallback(Window &window)
+KeyCallback::KeyCallback(GUI &window)
     : window_(window) {
     key_callback_ = [this](int key, int action) { this->keyCallback(key, action); };
     window.key_callbacks_.insert(&key_callback_);

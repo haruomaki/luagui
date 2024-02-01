@@ -6,9 +6,9 @@ class Update {
     std::function<void()> update_;
 
   public:
-    Window &window;
+    GUI &window;
 
     virtual void update() = 0;
-    Update(Window &window);
+    Update(GUI &window);
     virtual ~Update();
 };
