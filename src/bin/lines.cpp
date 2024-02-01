@@ -1,3 +1,4 @@
+#include <Timer.hpp>
 #include <master.hpp>
 #include <utility.hpp>
 
@@ -6,6 +7,20 @@ inline float f(float x) {
 }
 
 int main() {
+    Timer timer;
+    auto id_hi = timer.task(1, [] { print("hi!"); });
+    int count = 0;
+    timer.task(1. / 4, [&] {
+        print("あいう");
+        if (count++ >= 5) {
+            timer.erase(id_hi);
+            if (count >= 10) {
+                timer.stop();
+            }
+        }
+    });
+    timer.start();
+
     constexpr int width = 600, height = 500;
     Window window(width, height);
     MaximumViewport viewport(window);
