@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GUI.hpp>
 #include <SizeCallback.hpp>
+#include <graphical_base.hpp>
 
 struct Viewport {
     GLint x, y;

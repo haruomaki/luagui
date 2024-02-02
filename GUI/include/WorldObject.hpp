@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GUI.hpp>
 #include <Property.hpp>
+#include <graphical_base.hpp>
 
 class World;
 

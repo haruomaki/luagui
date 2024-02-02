@@ -1,4 +1,4 @@
-#include <GUI.hpp>
+#include <graphical_base.hpp>
 
 #include <base.hpp>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GUI.hpp>
+#include <graphical_base.hpp>
 
 class GUI {
     GLFWwindow *gwin_;

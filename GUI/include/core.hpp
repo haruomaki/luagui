@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GUI.hpp>
 #include <Property.hpp>
+#include <graphical_base.hpp>
 
 struct InterleavedVertexInfo {
     glm::vec3 coord = {0, 0, 0};
