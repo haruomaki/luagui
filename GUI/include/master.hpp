@@ -3,6 +3,7 @@
 #include <Camera.hpp>
 #include <Drawable.hpp>
 #include <DynamicArray.hpp>
+#include <GUI.hpp>
 #include <KeyCallback.hpp>
 #include <Polygon.hpp>
 #include <Shader.hpp>

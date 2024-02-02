@@ -7,23 +7,24 @@ inline float f(float x) {
 }
 
 int main() {
-    Timer timer;
-    auto id_hi = timer.task(1, [] { print("hi!"); });
-    int count = 0;
-    timer.task(1. / 4, [&] {
-        print("あいう");
-        if (count++ >= 5) {
-            timer.erase(id_hi);
-            if (count >= 10) {
-                timer.stop();
-            }
-        }
-    });
-    timer.start();
+    // Timer timer;
+    // auto id_hi = timer.task(1, [] { print("hi!"); });
+    // int count = 0;
+    // timer.task(1. / 4, [&] {
+    //     print("あいう");
+    //     if (count++ >= 5) {
+    //         timer.erase(id_hi);
+    //         if (count >= 10) {
+    //             timer.stop();
+    //         }
+    //     }
+    // });
+    // timer.start();
 
     constexpr int width = 600, height = 500;
-    Window gui(width, height);
-    MaximumViewport viewport(gui);
+    GUI gui;
+    Window &window = gui.createWindow(width, height, "ウィンドウタイトル");
+    MaximumViewport viewport(window);
 
     World world, ui_world;
 
@@ -31,12 +32,12 @@ int main() {
         createShader(GL_VERTEX_SHADER, loadString("assets/shaders/shader.vsh")),
         createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
 
-    MobileOrthoCamera camera(gui, world, viewport);
+    MobileOrthoCamera camera(window, world, viewport);
     OrthoCamera ui_camera(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
 
-    DynamicArray line(gui, world, main_shader, {}, {});
+    DynamicArray line(window, world, main_shader, {}, {});
     line.draw_mode = GL_POINTS;
     line.scale = 100;
 
@@ -44,7 +45,7 @@ int main() {
     line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
 
     // 左上に常在する点
-    StickyPointTopLeft top_left_point(gui, world, viewport);
+    StickyPointTopLeft top_left_point(window, world, viewport);
 
     // 文字の表示
     Font migmix_font;

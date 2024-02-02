@@ -6,5 +6,6 @@ SizeCallback::SizeCallback(Window &window)
     window.size_callbacks_.insert(&size_callback_);
 }
 SizeCallback::~SizeCallback() {
+    // FIXME: window_の参照が切れている場合メモリエラーが発生する
     window_.size_callbacks_.erase(&size_callback_);
 }
