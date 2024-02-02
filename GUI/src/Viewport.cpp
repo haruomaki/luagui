@@ -1,8 +1,8 @@
 #include <Viewport.hpp>
 
 void MaximumViewport::sizeCallback(int width, int height) {
-    x = y = 0;
-    this->width = width;
-    this->height = height;
+    x_ = y_ = 0;
+    this->width_ = width;
+    this->height_ = height;
     set();
 }

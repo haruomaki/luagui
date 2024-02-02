@@ -9,12 +9,14 @@ Checks: "-*,\
   -cppcoreguidelines-avoid-const-or-ref-data-members,\ # TODO: 参照型のメンバ変数を許容
   -cppcoreguidelines-init-variables,\ # 変数宣言時の未初期化を許容
   -cppcoreguidelines-pro-type-reinterpret-cast,\ # reinterpret_castを許可
+  -cppcoreguidelines-non-private-member-variables-in-classes,\ # misc-non-private-member-variables-in-classesと全く同じなため無効化
+  -cppcoreguidelines-c-copy-assignment-signature,\ # misc-unconventional-assign-operatorと全く同じなため無効化
   linuxkernel-*,\
   llvm-*,\
   -llvm-include-order,\ #マクロによるインクルード時、見かけの順序を保つ
   misc-*,\
   -misc-no-recursion,\
-  -misc-non-private-member-variables-in-classes,\
+  -misc-non-private-member-variables-in-classes,\ # publicおよびprotectedメンバ変数を無制限に許容
   modernize-*,\
   -modernize-use-trailing-return-type,\
   performance-*,\
@@ -30,7 +32,6 @@ HeaderFilterRegex: 'source.*\.(hpp|h)'
 AnalyzeTemporaryDtors: false
 FormatStyle: file
 CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
-  cppcoreguidelines-non-private-member-variables-in-classes.IgnorePublicMemberVariables: true # 一部にpublicなメンバ変数を持つのを許容
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true # デストラクタをデフォルトのままvirtual指定したとき、その他の暗黙の関数の警告を出さない
   readability-identifier-naming.ClassCase: CamelCase
   readability-identifier-naming.EnumCase: CamelCase
