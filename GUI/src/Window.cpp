@@ -1,7 +1,7 @@
+#include <GUI.hpp>
 #include <KeyCallback.hpp>
 #include <SizeCallback.hpp>
 #include <Update.hpp>
-#include <Window.hpp>
 
 using namespace std::chrono_literals;
 

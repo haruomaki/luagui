@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Window.hpp>
+#include <GUI.hpp>
 
 class SizeCallback {
     GUI &window_;
