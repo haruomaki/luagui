@@ -2,7 +2,7 @@
 #include <utility.hpp>
 
 int main() {
-    GUI window(600, 500);
+    Window window(600, 500);
     MaximumViewport viewport(window);
     World main_world, ui_world;
 

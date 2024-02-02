@@ -1,6 +1,6 @@
 #include <Update.hpp>
 
-Update::Update(GUI &window)
+Update::Update(Window &window)
     : window(window) {
     update_ = [this] { this->update(); };
     window.updates_.insert(&update_);

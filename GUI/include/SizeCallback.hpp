@@ -1,13 +1,13 @@
 #pragma once
 
-#include <GUI.hpp>
+#include <Window.hpp>
 
 class SizeCallback {
-    GUI &window_;
+    Window &window_;
     std::function<void(int, int)> size_callback_;
 
   public:
     virtual void sizeCallback(int width, int height) = 0;
-    SizeCallback(GUI &window);
+    SizeCallback(Window &window);
     virtual ~SizeCallback();
 };

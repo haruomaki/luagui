@@ -144,5 +144,5 @@ class WorldObject {
     PropertyGetSet<&WorldObject::getScale, &WorldObject::setScale, &WorldObject::setScaleOne> scale{this};
     PropertyGetSet<&WorldObject::getRotate, &WorldObject::setRotate> rotate{this};
 
-    friend class GUI;
+    friend class Window;
 };

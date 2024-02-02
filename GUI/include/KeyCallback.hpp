@@ -1,13 +1,13 @@
 #pragma once
 
-#include <GUI.hpp>
+#include <Window.hpp>
 
 class KeyCallback {
-    GUI &window_;
+    Window &window_;
     std::function<void(int, int)> key_callback_;
 
   public:
     virtual void keyCallback(int key, int action) = 0;
-    KeyCallback(GUI &window);
+    KeyCallback(Window &window);
     virtual ~KeyCallback();
 };

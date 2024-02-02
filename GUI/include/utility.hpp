@@ -18,7 +18,7 @@ class StickyPointTopLeft : public WorldObject, Update {
     }
 
   public:
-    StickyPointTopLeft(GUI &win, World &world, const Viewport &viewport)
+    StickyPointTopLeft(Window &win, World &world, const Viewport &viewport)
         : WorldObject(world)
         , Update(win)
         , viewport_(viewport) {}
@@ -60,7 +60,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
     }
 
   public:
-    MobileOrthoCamera(GUI &win, World &world, const Viewport &viewport)
+    MobileOrthoCamera(Window &win, World &world, const Viewport &viewport)
         : OrthoCamera(world, viewport)
         , Update(win) {}
 };
@@ -117,7 +117,7 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
     }
 
   public:
-    MobileNormalCamera(GUI &win, World &world, const Viewport &viewport)
+    MobileNormalCamera(Window &win, World &world, const Viewport &viewport)
         : WorldObject(world)
         , Update(win)
         , camera_head_(world, viewport)

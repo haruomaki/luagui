@@ -1,11 +1,11 @@
-#include <GUI.hpp>
 #include <KeyCallback.hpp>
 #include <SizeCallback.hpp>
 #include <Update.hpp>
+#include <Window.hpp>
 
 using namespace std::chrono_literals;
 
-GUI::GUI(int width, int height) {
+Window::Window(int width, int height) {
     // ライブラリglfw の初期化
     if (glfwInit() == 0) {
         throw;
@@ -48,7 +48,7 @@ GUI::GUI(int width, int height) {
     // ウィンドウサイズコールバック関数を登録する
     glfwSetWindowSizeCallback(gwin_, [](GLFWwindow *gwin, int width, int height) {
         // ここで描画処理などを行う
-        auto *window = static_cast<GUI *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
         // window->setCamera({0, 0}, default_camera_zoom);
         // debug(window->getViewMatrix());
 
@@ -61,7 +61,7 @@ GUI::GUI(int width, int height) {
     // キーコールバック
     // INFO: キャラを一定速度で動かしたいなどの際は、1フレームごとにgetKeyメソッドを呼び出す方がいい
     glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int /*scancode*/, int action, int /*mods*/) {
-        auto *window = static_cast<GUI *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
         for (auto *key_callback : window->key_callbacks_) {
             (*key_callback)(key, action);
         }
@@ -70,39 +70,39 @@ GUI::GUI(int width, int height) {
     // setCamera({0, 0}, default_camera_zoom);
 }
 
-GUI::~GUI() { glfwTerminate(); }
+Window::~Window() { glfwTerminate(); }
 
-GLFWwindow *GUI::getGLFW() const {
+GLFWwindow *Window::getGLFW() const {
     return this->gwin_;
 }
 
-pair<int, int> GUI::getWindowSize() const {
+pair<int, int> Window::getWindowSize() const {
     int width, height;
     glfwGetWindowSize(gwin_, &width, &height);
     return {width, height};
 }
 
-pair<int, int> GUI::getFrameBufferSize() const {
+pair<int, int> Window::getFrameBufferSize() const {
     int width, height;
     glfwGetFramebufferSize(gwin_, &width, &height);
     return {width, height};
 }
 
-pair<float, float> GUI::getWindowContentScale() const {
+pair<float, float> Window::getWindowContentScale() const {
     float xscale, yscale;
     glfwGetWindowContentScale(gwin_, &xscale, &yscale);
     return {xscale, yscale};
 }
 
-void GUI::close() const {
+void Window::close() const {
     glfwSetWindowShouldClose(gwin_, GL_TRUE);
 }
 
-bool GUI::getKey(int key) const {
+bool Window::getKey(int key) const {
     return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
 }
 
-void GUI::mainloop(const std::function<void()> &callback) {
+void Window::mainloop(const std::function<void()> &callback) {
     if (looping_) {
         throw std::runtime_error("すでにメインループが始まっています");
     }

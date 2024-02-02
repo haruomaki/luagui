@@ -1,14 +1,14 @@
 #pragma once
 
-#include <GUI.hpp>
+#include <Window.hpp>
 
 class Update {
     std::function<void()> update_;
 
   public:
-    GUI &window;
+    Window &window;
 
     virtual void update() = 0;
-    Update(GUI &window);
+    Update(Window &window);
     virtual ~Update();
 };

@@ -2,7 +2,7 @@
 
 #include <graphical_base.hpp>
 
-class GUI {
+class Window {
     GLFWwindow *gwin_;
     bool looping_ = false;
     std::set<std::function<void(int, int)> *> size_callbacks_;
@@ -12,8 +12,8 @@ class GUI {
   public:
     int tick = 0;
 
-    GUI(int width, int height);
-    ~GUI();
+    Window(int width, int height);
+    ~Window();
     void mainloop(const std::function<void()> &callback);
     [[nodiscard]] GLFWwindow *getGLFW() const;
     [[nodiscard]] pair<int, int> getWindowSize() const;

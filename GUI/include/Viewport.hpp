@@ -24,7 +24,7 @@ struct Viewport {
 
 class MaximumViewport : public Viewport, SizeCallback {
   public:
-    MaximumViewport(GUI &window)
+    MaximumViewport(Window &window)
         : Viewport(0, 0, 0, 0)
         , SizeCallback(window) {
         const auto fbsize = window.getFrameBufferSize();

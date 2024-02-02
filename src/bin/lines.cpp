@@ -22,7 +22,7 @@ int main() {
     timer.start();
 
     constexpr int width = 600, height = 500;
-    GUI gui(width, height);
+    Window gui(width, height);
     MaximumViewport viewport(gui);
 
     World world, ui_world;

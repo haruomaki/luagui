@@ -14,13 +14,13 @@ class MovingShape : public Shape, Update {
     }
 
   public:
-    MovingShape(GUI &window, World &world, Polygon polygon)
+    MovingShape(Window &window, World &world, Polygon polygon)
         : Shape(world, polygon)
         , Update(window) {}
 };
 
 int main() {
-    GUI window(600, 500);
+    Window window(600, 500);
     MaximumViewport viewport(window);
     World main_world, ui_world;
 
