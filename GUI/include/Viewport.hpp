@@ -45,7 +45,7 @@ class MaximumViewport : public Viewport, public SizeCallback {
 
     // ビューポートの大きさ即時設定＆Windowに登録を一度に行うヘルパー関数
     static MaximumViewport &create(Window &window) {
-        auto &viewport = window.registerSizeCallback(MaximumViewport());
+        auto &viewport = window.makeChild<MaximumViewport>();
         const auto fbsize = window.getFrameBufferSize();
         viewport.size_callback(&viewport, fbsize.first, fbsize.second);
         return viewport;

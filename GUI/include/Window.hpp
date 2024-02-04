@@ -39,11 +39,12 @@ class Window {
     // glfwGetKeyのラッパー。GLFW_PRESSのときtrue、GLFW_RELEASEのときfalse
     [[nodiscard]] bool getKey(int key) const;
 
-    template <typename T>
-    // TはSizeCallbackの派生クラス
-    // Tはムーブコンストラクタを持つ
-    T &registerSizeCallback(T &&size_callback) {
-        std::unique_ptr<SizeCallback> ptr(new T(size_callback)); // ヒープへムーブ
+    template <typename T, typename... Args>
+        requires std::is_constructible_v<T, Args...> && // ArgsはTのコンストラクタの引数
+                 std::is_base_of_v<SizeCallback, T>     // TはSizeCallbackの派生クラス
+    T &makeChild(Args &&...args) {
+        // argsを引数として使って、ヒープ上にT型のオブジェクトを作成
+        auto ptr = std::make_unique<T>(std::forward<Args>(args)...); // NOTE: &&やforwardは必要かよく分からない
         auto [it, inserted] = this->size_callbacks_.insert(std::move(ptr));
         if (!inserted) {
             std::runtime_error("registerSizeCallbackに失敗");
