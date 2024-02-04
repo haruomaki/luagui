@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SizeCallback.hpp>
+#include <Window.hpp>
 #include <graphical_base.hpp>
 
 // 描画領域（ビューポート）を管理するクラス
@@ -27,14 +28,22 @@ class Viewport {
     }
 };
 
-class MaximumViewport : public Viewport, SizeCallback {
+class MaximumViewport : public Viewport, public SizeCallback {
   public:
-    MaximumViewport(Window &window)
-        : Viewport(0, 0, 0, 0)
-        , SizeCallback(window) {
+    MaximumViewport(const Window &window)
+        : Viewport(0, 0, 0, 0) {
+        print("MaximumViewportのコンストラクタ開始");
         const auto fbsize = window.getFrameBufferSize();
-        sizeCallback(fbsize.first, fbsize.second);
+        print("1");
+        this->size_callback = [](auto *thi, int width, int height) {
+            auto *th = static_cast<MaximumViewport *>(thi);
+            th->x_ = th->y_ = 0;
+            th->width_ = width;
+            th->height_ = height;
+            th->set();
+        };
+        print("2");
+        this->size_callback(this, fbsize.first, fbsize.second);
+        print("3");
     }
-
-    void sizeCallback(int width, int height) override;
 };

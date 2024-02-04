@@ -1,13 +1,24 @@
 #pragma once
 
-#include <Window.hpp>
+// #include <Window.hpp>
+#include <graphical_base.hpp>
+
+class Window;
 
 class SizeCallback {
-    Window &window_;
-    std::function<void(int, int)> size_callback_;
+    friend class Window;
+    Window *window_ = nullptr;
+    Window &getWindow() const {
+        return *this->window_;
+    }
 
   public:
-    virtual void sizeCallback(int width, int height) = 0;
-    SizeCallback(Window &window);
-    virtual ~SizeCallback();
+    std::function<void(SizeCallback *, int, int)> size_callback;
+
+    // SizeCallback();
+    // virtual ~SizeCallback();
+    // virtual void sizeCallback(int width, int height) = 0;
+    virtual ~SizeCallback() {
+        print("SizeCallbackのデストラクタです");
+    }
 };

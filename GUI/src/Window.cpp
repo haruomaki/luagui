@@ -49,8 +49,9 @@ Window::Window(int width, int height, const char *title)
         // debug(window->getViewMatrix());
 
         // 登録されたコールバック関数たちを実行
-        for (auto *size_callback : window->size_callbacks_) {
-            (*size_callback)(width, height);
+        debug(window->size_callbacks_.size());
+        for (auto &&size_callback : window->size_callbacks_) {
+            (size_callback->size_callback)(size_callback.get(), width, height);
         }
     });
 
@@ -67,6 +68,12 @@ Window::Window(int width, int height, const char *title)
 }
 
 // Window::~Window() {
+// print("Windowのデストラクタです");
+// debug(this->size_callbacks_.size());
+// this->size_callbacks_.erase(this->size_callbacks_.begin());
+// debug(this->size_callbacks_.size());
+// print("消しました");
+
 // glfwSetWindowSizeCallback(gwin_, nullptr);
 // glfwSetKeyCallback(gwin_, nullptr);
 // }
