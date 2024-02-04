@@ -43,8 +43,12 @@ class Window {
         requires std::is_constructible_v<T, Args...> &&     // ArgsはTのコンストラクタの引数
                  std::is_convertible_v<T *, SizeCallback *> // TはSizeCallbackの派生クラス
     T &makeChild(Args &&...args) {
+        // SizeCallbackのコンストラクタを呼ぶ直前には必ずsetWindowStaticを呼び、直後nullptrにリセット
+        SizeCallback::setWindowStatic(this);
         // argsを引数として使って、ヒープ上にT型のオブジェクトを作成
         auto ptr = std::make_unique<T>(std::forward<Args>(args)...); // NOTE: &&やforwardは必要かよく分からない
+        SizeCallback::setWindowStatic(nullptr);
+
         auto [it, inserted] = this->size_callbacks_.insert(std::move(ptr));
         if (!inserted) {
             std::runtime_error("registerSizeCallbackに失敗");

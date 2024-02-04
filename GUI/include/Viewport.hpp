@@ -34,20 +34,19 @@ class MaximumViewport : public Viewport, public SizeCallback {
   public:
     MaximumViewport()
         : Viewport(0, 0, 0, 0) {
-        this->size_callback = [](auto *thi, int width, int height) {
-            auto *th = static_cast<MaximumViewport *>(thi);
-            th->x_ = th->y_ = 0;
-            th->width_ = width;
-            th->height_ = height;
-            th->set();
+        this->size_callback = [this](int width, int height) {
+            this->x_ = this->y_ = 0;
+            this->width_ = width;
+            this->height_ = height;
+            this->set();
         };
+        const auto fbsize = this->getWindow().getFrameBufferSize();
+        this->size_callback(fbsize.first, fbsize.second);
     }
 
     // ビューポートの大きさ即時設定＆Windowに登録を一度に行うヘルパー関数
     static MaximumViewport &create(Window &window) {
         auto &viewport = window.makeChild<MaximumViewport>();
-        const auto fbsize = window.getFrameBufferSize();
-        viewport.size_callback(&viewport, fbsize.first, fbsize.second);
         return viewport;
     }
 };
