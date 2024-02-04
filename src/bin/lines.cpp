@@ -24,8 +24,9 @@ int main() {
     constexpr int width = 600, height = 500;
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
+    // Window &another_window = gui.create_window(width, height, "２つめのウィンドウ");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
-    auto &viewport = MaximumViewport::create(window);
+    auto &viewport = window.make_child<MaximumViewport>();
 
     World world, ui_world;
 

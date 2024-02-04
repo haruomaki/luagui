@@ -43,10 +43,4 @@ class MaximumViewport : public Viewport, public SizeCallback {
         const auto fbsize = this->get_window().get_frame_buffer_size();
         this->size_callback(fbsize.first, fbsize.second);
     }
-
-    // ビューポートの大きさ即時設定＆Windowに登録を一度に行うヘルパー関数
-    static MaximumViewport &create(Window &window) {
-        auto &viewport = window.make_child<MaximumViewport>();
-        return viewport;
-    }
 };
