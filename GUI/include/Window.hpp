@@ -41,17 +41,17 @@ class Window {
 
     template <typename T, typename... Args>
         requires std::is_constructible_v<T, Args...> &&     // ArgsはTのコンストラクタの引数
-                 std::is_convertible_v<T *, SizeCallback *> // TはSizeCallbackの派生クラス
+                 std::is_convertible_v<T *, WindowObject *> // TはWindowObjectの派生クラス
     T &make_child(Args &&...args) {
-        // SizeCallbackのコンストラクタを呼ぶ直前には必ずsetWindowStaticを呼び、直後nullptrにリセット
-        SizeCallback::set_window_static(this);
+        // WindowObjectのコンストラクタを呼ぶ直前には必ずsetWindowStaticを呼び、直後nullptrにリセット
+        WindowObject::set_window_static(this);
         // argsを引数として使って、ヒープ上にT型のオブジェクトを作成
         auto ptr = std::make_unique<T>(std::forward<Args>(args)...); // NOTE: &&やforwardは必要かよく分からない
-        SizeCallback::set_window_static(nullptr);
+        WindowObject::set_window_static(nullptr);
 
         auto [it, inserted] = this->size_callbacks_.insert(std::move(ptr));
         if (!inserted) {
-            std::runtime_error("registerSizeCallbackに失敗");
+            std::runtime_error("make_childに失敗");
         }
         auto ptr2 = static_cast<T *>(it->get());
         return *ptr2;
