@@ -26,11 +26,11 @@ int main() {
 
     // バーテックスシェーダのコンパイル
     auto vsh_string = loadString("assets/shaders/shader.vsh");
-    auto vsh_id = createShader(GL_VERTEX_SHADER, vsh_string);
+    auto vsh_id = create_shader(GL_VERTEX_SHADER, vsh_string);
 
     // フラグメントシェーダのコンパイル
     auto fsh_string = loadString("assets/shaders/shader.fsh");
-    auto fsh_id = createShader(GL_FRAGMENT_SHADER, fsh_string);
+    auto fsh_id = create_shader(GL_FRAGMENT_SHADER, fsh_string);
 
     auto main_shader = ProgramObject{vsh_id, fsh_id};
 
@@ -100,8 +100,8 @@ int main() {
     });
 
     ProgramObject hello_shader = {
-        createShader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
-        createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
+        create_shader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
+        create_shader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
 
     const vector<glm::vec3> vertices = {
         glm::vec3(0, -900, 500),
@@ -124,10 +124,10 @@ int main() {
     auto vao = VertexArrayObject::gen();
     vao.bind([&] {
         vbo.bind([&] {
-            main_shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr); // 位置
+            main_shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr); // 位置
         });
         vbo_color.bind([&] {
-            main_shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(RGBA), nullptr); // 位置
+            main_shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(RGBA), nullptr); // 位置
         });
         getErrors();
     });
@@ -144,7 +144,7 @@ int main() {
 
         main_shader.use();
         main_shader.setUniform("modelViewMatrix", camera.getViewMatrix());
-        main_shader.setUniform("is_tex", GL_FALSE);
+        main_shader.set_Uniform("is_tex", GL_FALSE);
         vao.bind([&] {
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         });

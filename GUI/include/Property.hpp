@@ -9,8 +9,8 @@
 // 読み取り専用プロパティ
 template <auto getter>
 class PropertyGet {
-    using C = getMemberFunctionClass<decltype(getter)>;
-    using R = getMemberFunctionRet<decltype(getter)>;
+    using C = get_member_function_class<decltype(getter)>;
+    using R = get_member_function_ret<decltype(getter)>;
 
   public:
     PropertyGet(C *p)
@@ -51,8 +51,8 @@ class PropertyGet {
 template <typename Property, auto setter>
 class SetterUnit {
   protected:
-    using C = getMemberFunctionClass<decltype(setter)>;
-    using A = getMemberFunctionArg<decltype(setter)>;
+    using C = get_member_function_class<decltype(setter)>;
+    using A = get_member_function_arg<decltype(setter)>;
 
     C *const p_;
 
@@ -74,7 +74,7 @@ template <auto... setters>
 class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
     // すべてのセッターは同一のクラスCのメンバ関数である必要がある
     static_assert(are_same_v<typename SetterUnit<PropertySet, setters>::C...>, "同じクラスのメンバ関数でないといけません");
-    using C = getMemberFunctionClass<getFirstArgType<setters...>>;
+    using C = get_member_function_class<get_first_arg_type<setters...>>;
 
   public:
     PropertySet(C *p)
@@ -96,20 +96,20 @@ class PropertySet : public SetterUnit<PropertySet<setters...>, setters>... {
 // tはT型の変数
 // ⊕は一例。演算子Opはstd::plus<>などを指定する
 template <typename T, template <class = void> typename Op, typename C, typename R, auto setter>
-concept CompoundInvocableUnit = std::is_invocable_v<decltype(setter), C, getOperatorResult<Op, R, T>>;
+concept CompoundInvocableUnit = std::is_invocable_v<decltype(setter), C, get_operator_result<Op, R, T>>;
 
 // 可変n個のsetterに対して、setter(getter() ⊕ t) が一つでもコンパイル可能かどうかチェックする
 // ①getterからCとRを抽出する
 // ②パックを展開して各setterをCompoundInvacableOneに渡し、判定のorを取る
 template <typename T, template <class = void> typename Op, auto getter, auto... setters>
-concept CompoundInvocable = (CompoundInvocableUnit<T, Op, getMemberFunctionClass<decltype(getter)>, getMemberFunctionRet<decltype(getter)>, setters> || ...);
+concept CompoundInvocable = (CompoundInvocableUnit<T, Op, get_member_function_class<decltype(getter)>, get_member_function_ret<decltype(getter)>, setters> || ...);
 
 // 読み書き可能プロパティ
 template <auto getter, auto... setters>
 class PropertyGetSet : public PropertyGet<getter>,
                        public SetterUnit<PropertyGetSet<getter, setters...>, setters>... {
-    using C = getMemberFunctionClass<decltype(getter)>;
-    using R = getMemberFunctionRet<decltype(getter)>;
+    using C = get_member_function_class<decltype(getter)>;
+    using R = get_member_function_ret<decltype(getter)>;
 
   public:
     PropertyGetSet(C *p)

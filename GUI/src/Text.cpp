@@ -73,8 +73,8 @@ Font::Font() {
     glBindVertexArray(0);
 
     shader_ = ProgramObject{
-        createShader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
-        createShader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))};
+        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
+        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))};
 }
 
 Text::Text(World &world, Font &font, string text, RGBA color)
@@ -86,7 +86,7 @@ Text::Text(World &world, Font &font, string text, RGBA color)
 void Text::draw(const Camera &camera) const {
     // activate corresponding render state
     font_.shader_.use();
-    font_.shader_.setUniform("textColor", color_);
+    font_.shader_.set_uniform("textColor", color_);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(font_.VAO);
 
@@ -121,11 +121,11 @@ void Text::draw(const Camera &camera) const {
         // モデルビュー行列
         const auto model_matrix = this->getAbsoluteTransform();
         const auto model_view_matrix = camera.getViewMatrix() * model_matrix;
-        font_.shader_.setUniform("modelViewMatrix", model_view_matrix);
+        font_.shader_.set_uniform("modelViewMatrix", model_view_matrix);
 
         // 射影変換行列
         const auto projection_matrix = camera.getProjectionMatrix();
-        font_.shader_.setUniform("projectionMatrix", projection_matrix);
+        font_.shader_.set_uniform("projectionMatrix", projection_matrix);
 
         // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -2,7 +2,7 @@
 
 #include <graphical_base.hpp>
 
-GLuint createShader(GLenum shader_type, const string &source_code);
+GLuint create_shader(GLenum shader_type, const string &source_code);
 
 enum StorageQualifier {
     Attribute,
@@ -15,18 +15,18 @@ class ProgramObject {
   public:
     ProgramObject() = default; // FIXME: glCreateProgram()をしないコンストラクタはナンセンス
     ProgramObject(std::initializer_list<GLuint> shader_ids);
-    [[nodiscard]] GLuint getPrgramId() const;
+    [[nodiscard]] GLuint get_program_id() const;
     void use() const;
 
     template <StorageQualifier q>
-    [[nodiscard]] GLint getLocation(const string &name) const;
+    [[nodiscard]] GLint get_location(const string &name) const;
 
-    void setAttribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const;
+    void set_attribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const;
 
-    void setUniform(const string &name, GLint int_value) const;
-    void setUniform(const string &name, const glm::vec3 &vec3_value) const;
-    void setUniform(const string &name, const glm::vec4 &vec4_value) const;
-    void setUniform(const string &name, const glm::mat4 &mat4_value) const;
+    void set_uniform(const string &name, GLint int_value) const;
+    void set_uniform(const string &name, const glm::vec3 &vec3_value) const;
+    void set_uniform(const string &name, const glm::vec4 &vec4_value) const;
+    void set_uniform(const string &name, const glm::mat4 &mat4_value) const;
 };
 
 class VertexArrayObject {

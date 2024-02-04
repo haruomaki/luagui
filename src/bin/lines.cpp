@@ -30,8 +30,8 @@ int main() {
     World world, ui_world;
 
     ProgramObject main_shader = {
-        createShader(GL_VERTEX_SHADER, load_string("assets/shaders/shader.vsh")),
-        createShader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
+        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/shader.vsh")),
+        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
 
     MobileOrthoCamera camera(window, world, viewport);
     OrthoCamera ui_camera(ui_world, viewport);
