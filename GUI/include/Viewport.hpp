@@ -28,13 +28,12 @@ class Viewport {
     }
 };
 
+// 常にウィンドウの描画領域全体のサイズとなるビューポート
+// 手動でwindow.registerSizeCallbackするのではなく、create関数を使うと最初の即時設定ができる
 class MaximumViewport : public Viewport, public SizeCallback {
   public:
-    MaximumViewport(const Window &window)
+    MaximumViewport()
         : Viewport(0, 0, 0, 0) {
-        print("MaximumViewportのコンストラクタ開始");
-        const auto fbsize = window.getFrameBufferSize();
-        print("1");
         this->size_callback = [](auto *thi, int width, int height) {
             auto *th = static_cast<MaximumViewport *>(thi);
             th->x_ = th->y_ = 0;
@@ -42,8 +41,13 @@ class MaximumViewport : public Viewport, public SizeCallback {
             th->height_ = height;
             th->set();
         };
-        print("2");
-        this->size_callback(this, fbsize.first, fbsize.second);
-        print("3");
+    }
+
+    // ビューポートの大きさ即時設定＆Windowに登録を一度に行うヘルパー関数
+    static MaximumViewport &create(Window &window) {
+        auto &viewport = window.registerSizeCallback(MaximumViewport());
+        const auto fbsize = window.getFrameBufferSize();
+        viewport.size_callback(&viewport, fbsize.first, fbsize.second);
+        return viewport;
     }
 };

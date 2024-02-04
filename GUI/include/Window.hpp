@@ -43,17 +43,12 @@ class Window {
     // TはSizeCallbackの派生クラス
     // Tはムーブコンストラクタを持つ
     T &registerSizeCallback(T &&size_callback) {
-        print("はい");
-        // size_callback.window_ = this;
         std::unique_ptr<SizeCallback> ptr(new T(size_callback)); // ヒープへムーブ
-        (*ptr).window_ = this;
-        // auto y = (ptr.get());
         auto [it, inserted] = this->size_callbacks_.insert(std::move(ptr));
         if (!inserted) {
             std::runtime_error("registerSizeCallbackに失敗");
         }
         auto ptr2 = static_cast<T *>(it->get());
-        debug(ptr2);
         return *ptr2;
     }
 };

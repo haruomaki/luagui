@@ -47,11 +47,7 @@ class GUI {
             auto remove_begin = std::remove_if(this->windows_.begin(), this->windows_.end(), [](const Window &window) {
                 return glfwWindowShouldClose(window.gwin_) != 0;
             });
-            if (remove_begin != this->windows_.end()) {
-                print("消えるらしいよ");
-                this->windows_.erase(remove_begin, this->windows_.end());
-                print("消したよ");
-            }
+            this->windows_.erase(remove_begin, this->windows_.end());
 
             // 生きている各ウィンドウに対して更新および描画
             for (const Window &window : this->windows_) {
@@ -84,7 +80,6 @@ class GUI {
             // 受け取ったイベント（キーボードやマウス入力）を処理する
             glfwPollEvents();
         }
-        print("ループ終了");
 
         looping_ = false;
     }

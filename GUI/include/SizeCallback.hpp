@@ -7,18 +7,15 @@ class Window;
 
 class SizeCallback {
     friend class Window;
-    Window *window_ = nullptr;
-    Window &getWindow() const {
-        return *this->window_;
-    }
+    // Window *window_ = nullptr;
 
   public:
-    std::function<void(SizeCallback *, int, int)> size_callback;
+    std::function<void(SizeCallback *this_ptr, int width, int height)> size_callback;
 
-    // SizeCallback();
-    // virtual ~SizeCallback();
-    // virtual void sizeCallback(int width, int height) = 0;
-    virtual ~SizeCallback() {
-        print("SizeCallbackのデストラクタです");
-    }
+    SizeCallback() = default;
+    virtual ~SizeCallback() = default; // virtualにするのが重要
+    SizeCallback(const SizeCallback &) = default;
+    SizeCallback &operator=(const SizeCallback &) = default;
+    SizeCallback(SizeCallback &&) = default;
+    SizeCallback &operator=(SizeCallback &&) = default;
 };
