@@ -1,71 +1,86 @@
 #pragma once
 
-#include <GL/glew.h> // glとglfw3より早く
+#include <Window.hpp>
 
-#include <GL/gl.h> // glGetString()のため
-#include <GLFW/glfw3.h>
-#include <glm/ext.hpp>
-#include <glm/gtx/string_cast.hpp>
+class GUI {
+    std::vector<Window> windows_ = {};
+    bool looping_ = false;
 
-#include <iostream>
+  public:
+    int tick = 0;
 
-// base.hppのインクルードより先に書かないといけない処理
-namespace base {
+    GUI() {
+        // ライブラリglfw の初期化
+        if (glfwInit() == 0) {
+            throw std::runtime_error("GLFWの初期化に失敗しました");
+        }
 
-template <glm::length_t l, class T, glm::qualifier q>
-std::ostream &operator<<(std::ostream &os, const glm::vec<l, T, q> input_vec) {
-    os << glm::to_string(input_vec);
-    return os;
-}
-
-template <glm::length_t c, glm::length_t r, class T, glm::qualifier q>
-std::ostream &operator<<(std::ostream &os, const glm::mat<c, r, T, q> input_mat) {
-    os << glm::to_string(input_mat);
-    return os;
-}
-
-} // namespace base
-
-// これより上に書かないと動かない
-#include <base.hpp>
-
-// base.hppのインクルードのあとでも問題無い処理
-namespace base {
-
-inline void getErrorsPre(const char *file, int line) {
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR) {
-        printHeadline("❎", file, line);
-        std::cerr << " " << err << std::endl;
+        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
     }
-}
 
-#ifdef DEBUG
-#define getErrors() getErrorsPre(__FILE__, __LINE__) // NOLINT(cppcoreguidelines-macro-usage)
-#else
-#defile getErrors()
-#endif
+    ~GUI() { glfwTerminate(); }
 
-struct RGB {
-    unsigned char r, g, b;
-};
+    // デフォルトのコピーコンストラクタ、コピー代入演算子
+    GUI(const GUI &) = default;
+    GUI &operator=(const GUI &) = default;
 
-struct RGBA {
-    float r, g, b, a;
+    // デフォルトのムーブコンストラクタ、ムーブ代入演算子
+    GUI(GUI &&) = default;
+    GUI &operator=(GUI &&) = default;
 
-    operator glm::vec4() const {
-        return {r, g, b, a};
+    Window &createWindow(int width, int height, const std::string &title) {
+        this->windows_.emplace_back(width, height, title.c_str());
+        return this->windows_.back();
+    }
+
+    void mainloop(const std::function<void()> &callback) {
+        if (looping_) {
+            throw std::runtime_error("すでにメインループが始まっています");
+        }
+        looping_ = true;
+
+        // 描画のループ
+        while (!this->windows_.empty()) {
+            tick++;
+
+            // 閉じるべきウィンドウを見つけてvectorから削除
+            auto remove_begin = std::remove_if(this->windows_.begin(), this->windows_.end(), [](const Window &window) {
+                return glfwWindowShouldClose(window.gwin_) != 0;
+            });
+            this->windows_.erase(remove_begin, this->windows_.end());
+
+            // 生きている各ウィンドウに対して更新および描画
+            for (const Window &window : this->windows_) {
+                // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
+                // world_object_root_.refreshAbsolutePosition();
+
+                // 更新処理
+                for (auto *update : window.updates_) {
+                    (*update)();
+                }
+
+                // OpenGLの描画関数のターゲットにするウィンドウを指定
+                glfwMakeContextCurrent(window.gwin_);
+
+                // 画面の初期化
+                constexpr RGBA bg_color{0.2f, 0.2f, 0.2f, 1};
+                glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+                // ユーザの描画関数
+                // glDisable(GL_DEPTH_TEST);
+                glClear(GL_DEPTH_BUFFER_BIT);
+                callback();
+                // glEnable(GL_DEPTH_TEST);
+
+                // 上記描画した図形を表画面のバッファにスワップする
+                glfwSwapBuffers(window.gwin_);
+            }
+
+            // 受け取ったイベント（キーボードやマウス入力）を処理する
+            glfwPollEvents();
+        }
+
+        looping_ = false;
     }
 };
-
-// TODO: 可変長テンプレート関数化する
-#define TRANSLATE(...) glm::translate(glm::mat4(1), __VA_ARGS__)
-#define ROTATE(angle, ...) glm::rotate(glm::mat4(1), angle, __VA_ARGS__)
-#define ANGLE_X(angle) glm::angleAxis(angle, glm::vec3{1, 0, 0})
-#define ANGLE_Y(angle) glm::angleAxis(angle, glm::vec3{0, 1, 0})
-#define ANGLE_Z(angle) glm::angleAxis(angle, glm::vec3{0, 0, 1})
-#define SCALE(...) glm::scale(glm::mat4(1), __VA_ARGS__)
-
-} // namespace base
-
-using namespace base;

@@ -7,23 +7,25 @@ inline float f(float x) {
 }
 
 int main() {
-    Timer timer;
-    auto id_hi = timer.task(1, [] { print("hi!"); });
-    int count = 0;
-    timer.task(1. / 4, [&] {
-        print("あいう");
-        if (count++ >= 5) {
-            timer.erase(id_hi);
-            if (count >= 10) {
-                timer.stop();
-            }
-        }
-    });
-    timer.start();
+    // Timer timer;
+    // auto id_hi = timer.task(1, [] { print("hi!"); });
+    // int count = 0;
+    // timer.task(1. / 4, [&] {
+    //     print("あいう");
+    //     if (count++ >= 5) {
+    //         timer.erase(id_hi);
+    //         if (count >= 10) {
+    //             timer.stop();
+    //         }
+    //     }
+    // });
+    // timer.start();
 
     constexpr int width = 600, height = 500;
-    Window window(width, height);
-    MaximumViewport viewport(window);
+    GUI gui;
+    Window &window = gui.createWindow(width, height, "ウィンドウタイトル");
+    // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
+    auto &viewport = MaximumViewport::create(window);
 
     World world, ui_world;
 
@@ -65,12 +67,12 @@ int main() {
     my_triangle.position = {-100, 0, 0};
 
     // レンダリングループ
-    window.mainloop([&] {
-        sample_text.text_ = toStr(window.tick);
+    gui.mainloop([&] {
+        sample_text.text_ = toStr(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
         line.vertices.xs = xs;
-        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(window.tick) / 100); });
+        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100); });
 
         world.masterDraw(camera);
         glClear(GL_DEPTH_BUFFER_BIT);

@@ -1,35 +1,52 @@
 #pragma once
 
-#include <GUI.hpp>
 #include <SizeCallback.hpp>
+#include <Window.hpp>
+#include <graphical_base.hpp>
 
-struct Viewport {
-    GLint x, y;
-    GLsizei width, height;
+// 描画領域（ビューポート）を管理するクラス
+class Viewport {
+  protected:
+    GLint x_, y_;
+    GLsizei width_, height_;
 
     Viewport(GLint x, GLint y, GLsizei width, GLsizei height)
-        : x(x)
-        , y(y)
-        , width(width)
-        , height(height) {}
+        : x_(x)
+        , y_(y)
+        , width_(width)
+        , height_(height) {}
 
+    // ビューポートを実際にセットする
     void set() const {
-        glViewport(x, y, width, height);
+        glViewport(x_, y_, width_, height_);
     }
 
+  public:
+    // ビューポートの大きさを取得する
     [[nodiscard]] glm::vec<2, GLint> getSize() const {
-        return {width, height};
+        return {width_, height_};
     }
 };
 
-class MaximumViewport : public Viewport, SizeCallback {
+// 常にウィンドウの描画領域全体のサイズとなるビューポート
+// 手動でwindow.registerSizeCallbackするのではなく、create関数を使うと最初の即時設定ができる
+class MaximumViewport : public Viewport, public SizeCallback {
   public:
-    MaximumViewport(Window &window)
-        : Viewport(0, 0, 0, 0)
-        , SizeCallback(window) {
-        const auto fbsize = window.getFrameBufferSize();
-        sizeCallback(fbsize.first, fbsize.second);
+    MaximumViewport()
+        : Viewport(0, 0, 0, 0) {
+        this->size_callback = [this](int width, int height) {
+            this->x_ = this->y_ = 0;
+            this->width_ = width;
+            this->height_ = height;
+            this->set();
+        };
+        const auto fbsize = this->getWindow().getFrameBufferSize();
+        this->size_callback(fbsize.first, fbsize.second);
     }
 
-    void sizeCallback(int width, int height) override;
+    // ビューポートの大きさ即時設定＆Windowに登録を一度に行うヘルパー関数
+    static MaximumViewport &create(Window &window) {
+        auto &viewport = window.makeChild<MaximumViewport>();
+        return viewport;
+    }
 };

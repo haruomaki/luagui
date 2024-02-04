@@ -16,3 +16,4 @@
 #include <Window.hpp>
 #include <World.hpp>
 #include <WorldObject.hpp>
+#include <graphical_base.hpp>

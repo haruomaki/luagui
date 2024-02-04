@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GUI.hpp>
+#include <graphical_base.hpp>
 
 GLuint createShader(GLenum shader_type, const string &source_code);
 

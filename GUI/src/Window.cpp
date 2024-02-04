@@ -5,21 +5,17 @@
 
 using namespace std::chrono_literals;
 
-Window::Window(int width, int height) {
-    // ライブラリglfw の初期化
-    if (glfwInit() == 0) {
-        throw;
-    }
-
-    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-
+Window::Window(int width, int height, const char *title)
+    : gwin_(glfwCreateWindow(width, height, title, nullptr, nullptr)) {
     // ウィンドウを作成
-    // window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    gwin_ = glfwCreateWindow(width, height, "Hello World", nullptr, nullptr);
     if (gwin_ == nullptr) {
-        glfwTerminate();
-        throw;
+        throw std::runtime_error("ウィンドウの作成に失敗しました");
     }
+    // GLFWwindow *gwin = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    // if (gwin == nullptr) {
+    //     throw std::runtime_error("ウィンドウの作成に失敗しました");
+    // }
+    // this->gwin_ = gwin;
 
     // 作成したウィンドウを，OpenGLの描画関数のターゲットにする
     glfwMakeContextCurrent(gwin_);
@@ -28,7 +24,7 @@ Window::Window(int width, int height) {
     // GLEWの初期化
     if (glewInit() != GLEW_OK) {
         glfwTerminate();
-        throw std::runtime_error("Failed to initialize GLEW");
+        throw std::runtime_error("GLEWの初期化に失敗しました");
     }
 
     debug(glGetString(GL_VERSION));
@@ -53,8 +49,9 @@ Window::Window(int width, int height) {
         // debug(window->getViewMatrix());
 
         // 登録されたコールバック関数たちを実行
-        for (auto *size_callback : window->size_callbacks_) {
-            (*size_callback)(width, height);
+        debug(window->size_callbacks_.size());
+        for (auto &&size_callback : window->size_callbacks_) {
+            (size_callback->size_callback)(width, height);
         }
     });
 
@@ -70,7 +67,16 @@ Window::Window(int width, int height) {
     // setCamera({0, 0}, default_camera_zoom);
 }
 
-Window::~Window() { glfwTerminate(); }
+// Window::~Window() {
+// print("Windowのデストラクタです");
+// debug(this->size_callbacks_.size());
+// this->size_callbacks_.erase(this->size_callbacks_.begin());
+// debug(this->size_callbacks_.size());
+// print("消しました");
+
+// glfwSetWindowSizeCallback(gwin_, nullptr);
+// glfwSetKeyCallback(gwin_, nullptr);
+// }
 
 GLFWwindow *Window::getGLFW() const {
     return this->gwin_;
@@ -100,42 +106,4 @@ void Window::close() const {
 
 bool Window::getKey(int key) const {
     return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
-}
-
-void Window::mainloop(const std::function<void()> &callback) {
-    if (looping_) {
-        throw std::runtime_error("すでにメインループが始まっています");
-    }
-    looping_ = true;
-
-    // 描画のループ
-    while (glfwWindowShouldClose(gwin_) == 0) {
-        // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
-        // world_object_root_.refreshAbsolutePosition();
-
-        // 更新処理
-        tick++;
-        for (auto *update : this->updates_) {
-            (*update)();
-        }
-
-        // 画面の初期化
-        constexpr RGBA bg_color{0.2f, 0.2f, 0.2f, 1};
-        glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // ユーザの描画関数
-        // glDisable(GL_DEPTH_TEST);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        callback();
-        // glEnable(GL_DEPTH_TEST);
-
-        // 上記描画した図形を表画面のバッファにスワップする
-        glfwSwapBuffers(gwin_);
-
-        // 受け取ったイベント（キーボードやマウス入力）を処理する
-        glfwPollEvents();
-    }
-
-    looping_ = false;
 }

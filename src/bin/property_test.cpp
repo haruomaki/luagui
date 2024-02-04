@@ -1,5 +1,5 @@
-#include <GUI.hpp>
 #include <Property.hpp>
+#include <graphical_base.hpp>
 #include <iostream>
 
 using namespace std;

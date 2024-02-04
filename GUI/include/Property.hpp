@@ -56,16 +56,14 @@ class SetterUnit {
 
     C *const p_;
 
-  public:
-    SetterUnit() = delete;
     SetterUnit(C *p)
         : p_(p) {}
 
     void set(const A &v) { (p_->*setter)(v); }
 
-    // PropertySet -> A -> PropertySet
+    // SetterUnit(を継承した型) -> A -> Property(そのもの)
     // where Aはセッターの引数型
-    Property &operator=(const A &x) { // NOLINT(misc-unconventional-assign-operator) 継承先でusingされることが前提だから
+    Property &operator=(const A &x) { // NOLINT(misc-unconventional-assign-operator) 継承先でusingされることが前提だから、SetterUnit&ではなくProperty&（PropertySetやPropertyGetSetが入る）を返す
         set(x);
         return static_cast<Property &>(*this);
     }
