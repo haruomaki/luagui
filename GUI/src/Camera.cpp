@@ -7,7 +7,7 @@ glm::mat4 NormalCamera::getViewMatrix() const {
 }
 
 glm::mat4 NormalCamera::getProjectionMatrix() const {
-    auto size = viewport_.getSize();
+    auto size = viewport_.get_size();
     auto width = float(size.x);
     auto height = float(size.y);
 
@@ -21,7 +21,7 @@ glm::mat4 OrthoCamera::getViewMatrix() const {
 }
 
 glm::mat4 OrthoCamera::getProjectionMatrix() const {
-    auto size = viewport_.getSize();
+    auto size = viewport_.get_size();
     int width = size.x;
     int height = size.y;
 

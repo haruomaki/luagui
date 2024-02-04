@@ -23,15 +23,15 @@ int main() {
 
     constexpr int width = 600, height = 500;
     GUI gui;
-    Window &window = gui.createWindow(width, height, "ウィンドウタイトル");
+    Window &window = gui.create_window(width, height, "ウィンドウタイトル");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
     auto &viewport = MaximumViewport::create(window);
 
     World world, ui_world;
 
     ProgramObject main_shader = {
-        createShader(GL_VERTEX_SHADER, loadString("assets/shaders/shader.vsh")),
-        createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
+        createShader(GL_VERTEX_SHADER, load_string("assets/shaders/shader.vsh")),
+        createShader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
 
     MobileOrthoCamera camera(window, world, viewport);
     OrthoCamera ui_camera(ui_world, viewport);
@@ -68,7 +68,7 @@ int main() {
 
     // レンダリングループ
     gui.mainloop([&] {
-        sample_text.text_ = toStr(gui.tick);
+        sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
         line.vertices.xs = xs;

@@ -73,8 +73,8 @@ Font::Font() {
     glBindVertexArray(0);
 
     shader_ = ProgramObject{
-        createShader(GL_VERTEX_SHADER, loadString("assets/shaders/font.vsh")),
-        createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/font.fsh"))};
+        createShader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
+        createShader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))};
 }
 
 Text::Text(World &world, Font &font, string text, RGBA color)

@@ -1,4 +1,5 @@
 # https://qiita.com/s_araki/items/32aded38dca734c0e02d
+# yamlのリスト表記もokのはずだが、vscodeではバグ？で認識しないため単一の文字列とする
 Checks: "-*,\
   cert-*,\
   clang-analyzer-*,\
@@ -29,13 +30,12 @@ Checks: "-*,\
   "
 WarningsAsErrors: ""
 HeaderFilterRegex: 'source.*\.(hpp|h)'
-AnalyzeTemporaryDtors: false
 FormatStyle: file
 CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true # デストラクタをデフォルトのままvirtual指定したとき、その他の暗黙の関数の警告を出さない
   readability-identifier-naming.ClassCase: CamelCase
   readability-identifier-naming.EnumCase: CamelCase
-  readability-identifier-naming.FunctionCase: camelBack
+  readability-identifier-naming.FunctionCase: lower_case
   readability-identifier-naming.MemberCase: lower_case
   readability-identifier-naming.PrivateMemberCase: lower_case
   readability-identifier-naming.PrivateMemberSuffix: _

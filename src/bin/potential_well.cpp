@@ -8,11 +8,11 @@ int main() {
 
     // バーテックスシェーダのコンパイル
     auto vsh_string = loadString("assets/shaders/shader.vsh");
-    auto vsh_id = createShader(GL_VERTEX_SHADER, vsh_string);
+    auto vsh_id = create_shader(GL_VERTEX_SHADER, vsh_string);
 
     // フラグメントシェーダのコンパイル
     auto fsh_string = loadString("assets/shaders/shader.fsh");
-    auto fsh_id = createShader(GL_FRAGMENT_SHADER, fsh_string);
+    auto fsh_id = create_shader(GL_FRAGMENT_SHADER, fsh_string);
 
     auto main_shader = ProgramObject{vsh_id, fsh_id};
 
@@ -29,8 +29,8 @@ int main() {
     credit_text.setPosition({200, 400, 1});
 
     ProgramObject hello_shader = {
-        createShader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
-        createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
+        create_shader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
+        create_shader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
 
     DynamicArray line(window, main_world, main_shader);
     line.vertices.xs = linspace(-200, 200, 10);

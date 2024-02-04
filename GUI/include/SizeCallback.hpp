@@ -11,15 +11,15 @@ class SizeCallback {
     Window *window_; // コンストラクト後は変更されない
 
     // コンストラクタのかわりにグローバル変数を利用してwindow_を初期化するための内部関数
-    static Window *getWindowStatic();
-    static void setWindowStatic(Window *window);
+    static Window *get_window_static();
+    static void set_window_static(Window *window);
 
   public:
     std::function<void(int width, int height)> size_callback;
 
     // このクラスのコンストラクタは呼ぶ直前にsetWindowStatic()を実行しておかなければならない
     SizeCallback()
-        : window_(getWindowStatic()) {
+        : window_(get_window_static()) {
         if (this->window_ == nullptr) {
             std::runtime_error("SizeCallbackに関連付けるウィンドウの取得に失敗");
         }
@@ -31,8 +31,8 @@ class SizeCallback {
     SizeCallback &operator=(SizeCallback &&) = delete;
 
     // window_を読み取るゲッターおよびプロパティ
-    Window &getWindow() {
+    Window &get_window() {
         return *this->window_;
     }
-    PropertyGet<&SizeCallback::getWindow> window{this};
+    PropertyGet<&SizeCallback::get_window> window{this};
 };

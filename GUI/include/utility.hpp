@@ -10,7 +10,7 @@ class StickyPointTopLeft : public WorldObject, Update {
     const Viewport &viewport_;
 
     void update() override {
-        const auto size = viewport_.getSize();
+        const auto size = viewport_.get_size();
         const auto width = float(size.x);
         const auto height = float(size.y);
 
@@ -32,25 +32,25 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
     void update() override {
         constexpr float speed = 5;
 
-        if (window.getKey(GLFW_KEY_RIGHT)) {
+        if (window.get_key(GLFW_KEY_RIGHT)) {
             position += getLeft() * speed;
         }
-        if (window.getKey(GLFW_KEY_LEFT)) {
+        if (window.get_key(GLFW_KEY_LEFT)) {
             position += getRight() * speed;
         }
-        if (window.getKey(GLFW_KEY_DOWN)) {
+        if (window.get_key(GLFW_KEY_DOWN)) {
             position += getDown() * speed;
         }
-        if (window.getKey(GLFW_KEY_UP)) {
+        if (window.get_key(GLFW_KEY_UP)) {
             position += getUp() * speed;
         }
-        if (window.getKey(GLFW_KEY_Z)) {
+        if (window.get_key(GLFW_KEY_Z)) {
             scale /= 1.01F;
         }
-        if (window.getKey(GLFW_KEY_X)) {
+        if (window.get_key(GLFW_KEY_X)) {
             scale *= 1.01F;
         }
-        if (window.getKey(GLFW_KEY_Q)) {
+        if (window.get_key(GLFW_KEY_Q)) {
             window.close();
         }
 
@@ -75,43 +75,43 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
     void update() override {
         constexpr float speed = 5;
 
-        if (window.getKey(GLFW_KEY_W)) {
+        if (window.get_key(GLFW_KEY_W)) {
             position += getFront() * speed;
         }
-        if (window.getKey(GLFW_KEY_A)) {
+        if (window.get_key(GLFW_KEY_A)) {
             position += getLeft() * speed;
         }
-        if (window.getKey(GLFW_KEY_S)) {
+        if (window.get_key(GLFW_KEY_S)) {
             position += getBack() * speed;
         }
-        if (window.getKey(GLFW_KEY_D)) {
+        if (window.get_key(GLFW_KEY_D)) {
             position += getRight() * speed;
         }
-        if (window.getKey(GLFW_KEY_SPACE)) {
+        if (window.get_key(GLFW_KEY_SPACE)) {
             position += getUp() * speed;
         }
-        if (window.getKey(GLFW_KEY_LEFT_SHIFT)) {
+        if (window.get_key(GLFW_KEY_LEFT_SHIFT)) {
             position += getDown() * speed;
         }
-        if (window.getKey(GLFW_KEY_RIGHT)) {
+        if (window.get_key(GLFW_KEY_RIGHT)) {
             rotate *= ANGLE_Y(-0.01F);
         }
-        if (window.getKey(GLFW_KEY_LEFT)) {
+        if (window.get_key(GLFW_KEY_LEFT)) {
             rotate *= ANGLE_Y(0.01F);
         }
-        if (window.getKey(GLFW_KEY_DOWN)) {
+        if (window.get_key(GLFW_KEY_DOWN)) {
             camera_head_.rotate *= ANGLE_X(0.01F);
         }
-        if (window.getKey(GLFW_KEY_UP)) {
+        if (window.get_key(GLFW_KEY_UP)) {
             camera_head_.rotate *= ANGLE_X(-0.01F);
         }
-        // if (window_.getKey(GLFW_KEY_Z)) {
+        // if (window_.get_key(GLFW_KEY_Z)) {
         //     setScale(scale / 1.01);
         // }
-        // if (window_.getKey(GLFW_KEY_X)) {
+        // if (window_.get_key(GLFW_KEY_X)) {
         //     setScale(scale * 1.01);
         // }
-        if (window.getKey(GLFW_KEY_Q)) {
+        if (window.get_key(GLFW_KEY_Q)) {
             window.close();
         }
     }

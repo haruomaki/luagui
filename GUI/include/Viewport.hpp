@@ -23,7 +23,7 @@ class Viewport {
 
   public:
     // ビューポートの大きさを取得する
-    [[nodiscard]] glm::vec<2, GLint> getSize() const {
+    [[nodiscard]] glm::vec<2, GLint> get_size() const {
         return {width_, height_};
     }
 };
@@ -40,13 +40,13 @@ class MaximumViewport : public Viewport, public SizeCallback {
             this->height_ = height;
             this->set();
         };
-        const auto fbsize = this->getWindow().getFrameBufferSize();
+        const auto fbsize = this->get_window().get_frame_buffer_size();
         this->size_callback(fbsize.first, fbsize.second);
     }
 
     // ビューポートの大きさ即時設定＆Windowに登録を一度に行うヘルパー関数
     static MaximumViewport &create(Window &window) {
-        auto &viewport = window.makeChild<MaximumViewport>();
+        auto &viewport = window.make_child<MaximumViewport>();
         return viewport;
     }
 };

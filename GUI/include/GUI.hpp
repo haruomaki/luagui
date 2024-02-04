@@ -28,7 +28,7 @@ class GUI {
     GUI(GUI &&) = default;
     GUI &operator=(GUI &&) = default;
 
-    Window &createWindow(int width, int height, const std::string &title) {
+    Window &create_window(int width, int height, const std::string &title) {
         this->windows_.emplace_back(width, height, title.c_str());
         return this->windows_.back();
     }
