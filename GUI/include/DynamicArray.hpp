@@ -24,8 +24,8 @@ class DynamicArray : public DrawableWorldObject, Update {
                 vao_ = VertexArrayObject::gen();
                 vao_.bind([&] {
                     vbo_.bind([&] {
-                        shader_.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-                        shader_.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12
+                        shader_.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+                        shader_.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
                     });
                     getErrors();
                 });
@@ -55,21 +55,21 @@ class DynamicArray : public DrawableWorldObject, Update {
         }
 
         // ワールド座標変換
-        const glm::mat4 &model_matrix = this->getAbsoluteTransform();
+        const glm::mat4 &model_matrix = this->get_absolute_transform();
 
         // ビュー座標変換
-        const glm::mat4 &view_matrix = camera.getViewMatrix();
+        const glm::mat4 &view_matrix = camera.get_view_matrix();
 
         // 合成して、モデルビュー行列を得る
         const auto &model_view_matrix = view_matrix * model_matrix;
-        shader.setUniform("modelViewMatrix", model_view_matrix);
+        shader.set_uniform("modelViewMatrix", model_view_matrix);
 
         // 射影変換行列
-        const auto projection_matrix = camera.getProjectionMatrix();
-        shader.setUniform("projectionMatrix", projection_matrix);
+        const auto projection_matrix = camera.get_projection_matrix();
+        shader.set_uniform("projectionMatrix", projection_matrix);
 
         // モデルの描画
-        shader.setUniform("is_tex", GL_FALSE);
+        shader.set_uniform("is_tex", GL_FALSE);
         vao_.bind([&] {
             glDrawArrays(draw_mode, 0, GLsizei(n_));
         });
@@ -81,9 +81,9 @@ class DynamicArray : public DrawableWorldObject, Update {
     GLfloat point_size = 4;
     GLfloat line_width = 4;
 
-    DynamicArray(Window &window, World &world, const ProgramObject &shader, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
+    DynamicArray(World &world, const ProgramObject &shader, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
         : DrawableWorldObject(world)
-        , Update(window)
+        , Update(world)
         , shader_(shader)
         , n_(coords.size())
         , capacity_(coords.capacity()) {

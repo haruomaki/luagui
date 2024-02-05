@@ -4,7 +4,7 @@
 DEFINE_RUNTIME_ERROR(GLShaderCreationException);
 
 // 個々のシェーダを生成する
-GLuint createShader(GLenum shader_type, const string &source_code) {
+GLuint create_shader(GLenum shader_type, const string &source_code) {
     GLuint shader_id = glCreateShader(shader_type);
 
     // コンパイル
@@ -42,7 +42,7 @@ ProgramObject::ProgramObject(std::initializer_list<GLuint> shader_ids) {
     program_id_ = program_id;
 }
 
-GLuint ProgramObject::getPrgramId() const {
+GLuint ProgramObject::get_program_id() const {
     return program_id_;
 }
 
@@ -51,33 +51,33 @@ void ProgramObject::use() const {
 }
 
 template <>
-GLint ProgramObject::getLocation<Attribute>(const string &name) const {
+GLint ProgramObject::get_location<Attribute>(const string &name) const {
     return glGetAttribLocation(program_id_, name.c_str());
 }
 
 template <>
-GLint ProgramObject::getLocation<Uniform>(const string &name) const {
+GLint ProgramObject::get_location<Uniform>(const string &name) const {
     return glGetUniformLocation(program_id_, name.c_str());
 }
 
-void ProgramObject::setAttribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const {
-    GLint location = getLocation<Attribute>(name);
+void ProgramObject::set_attribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const {
+    GLint location = get_location<Attribute>(name);
     glVertexAttribPointer(location, size, type, normalized, stride, pointer);
     glEnableVertexAttribArray(location);
 }
 
-void ProgramObject::setUniform(const string &name, GLint int_value) const {
-    glUniform1i(getLocation<Uniform>(name), int_value);
+void ProgramObject::set_uniform(const string &name, GLint int_value) const {
+    glUniform1i(get_location<Uniform>(name), int_value);
 }
 
-void ProgramObject::setUniform(const string &name, const glm::vec3 &vec3_value) const {
-    glUniform3f(getLocation<Uniform>(name), vec3_value.x, vec3_value.y, vec3_value.z);
+void ProgramObject::set_uniform(const string &name, const glm::vec3 &vec3_value) const {
+    glUniform3f(get_location<Uniform>(name), vec3_value.x, vec3_value.y, vec3_value.z);
 }
 
-void ProgramObject::setUniform(const string &name, const glm::vec4 &vec4_value) const {
-    glUniform4f(getLocation<Uniform>(name), vec4_value.x, vec4_value.y, vec4_value.z, vec4_value.w);
+void ProgramObject::set_uniform(const string &name, const glm::vec4 &vec4_value) const {
+    glUniform4f(get_location<Uniform>(name), vec4_value.x, vec4_value.y, vec4_value.z, vec4_value.w);
 }
 
-void ProgramObject::setUniform(const string &name, const glm::mat4 &mat4_value) const {
-    glUniformMatrix4fv(getLocation<Uniform>(name), 1, GL_FALSE, glm::value_ptr(mat4_value));
+void ProgramObject::set_uniform(const string &name, const glm::mat4 &mat4_value) const {
+    glUniformMatrix4fv(get_location<Uniform>(name), 1, GL_FALSE, glm::value_ptr(mat4_value));
 }

@@ -23,30 +23,26 @@ class Viewport {
 
   public:
     // ビューポートの大きさを取得する
-    [[nodiscard]] glm::vec<2, GLint> getSize() const {
+    [[nodiscard]] glm::vec<2, GLint> get_size() const {
         return {width_, height_};
     }
 };
 
 // 常にウィンドウの描画領域全体のサイズとなるビューポート
 // 手動でwindow.registerSizeCallbackするのではなく、create関数を使うと最初の即時設定ができる
-class MaximumViewport : public Viewport, public SizeCallback {
+class MaximumViewport : public Viewport, public WindowObject {
   public:
     MaximumViewport()
         : Viewport(0, 0, 0, 0) {
-        this->size_callback = [this](int width, int height) {
+
+        auto size_callback = [this](int width, int height) {
             this->x_ = this->y_ = 0;
             this->width_ = width;
             this->height_ = height;
             this->set();
         };
-        const auto fbsize = this->getWindow().getFrameBufferSize();
-        this->size_callback(fbsize.first, fbsize.second);
-    }
-
-    // ビューポートの大きさ即時設定＆Windowに登録を一度に行うヘルパー関数
-    static MaximumViewport &create(Window &window) {
-        auto &viewport = window.makeChild<MaximumViewport>();
-        return viewport;
+        const auto fbsize = this->get_window().get_frame_buffer_size();
+        size_callback(fbsize.first, fbsize.second);
+        this->get_window().set_callback<Size>(std::move(size_callback));
     }
 };

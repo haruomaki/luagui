@@ -7,6 +7,6 @@ DrawableWorldObject::DrawableWorldObject(World &world)
     world.draws_.insert(&draw_);
 }
 DrawableWorldObject::~DrawableWorldObject() {
-    auto *world = getWorld();
+    auto *world = get_world();
     world->draws_.erase(&draw_);
 }

@@ -10,17 +10,17 @@ class StickyPointTopLeft : public WorldObject, Update {
     const Viewport &viewport_;
 
     void update() override {
-        const auto size = viewport_.getSize();
+        const auto size = viewport_.get_size();
         const auto width = float(size.x);
         const auto height = float(size.y);
 
-        setPosition({-width / 2, height / 2, 0});
+        set_position({-width / 2, height / 2, 0});
     }
 
   public:
-    StickyPointTopLeft(Window &win, World &world, const Viewport &viewport)
+    StickyPointTopLeft(World &world, const Viewport &viewport)
         : WorldObject(world)
-        , Update(win)
+        , Update(world)
         , viewport_(viewport) {}
 };
 
@@ -31,26 +31,27 @@ class StickyPointTopLeft : public WorldObject, Update {
 class MobileOrthoCamera : public OrthoCamera, protected Update {
     void update() override {
         constexpr float speed = 5;
+        const Window &window = this->world.window;
 
-        if (window.getKey(GLFW_KEY_RIGHT)) {
-            position += getLeft() * speed;
+        if (window.get_key(GLFW_KEY_RIGHT)) {
+            position += get_left() * speed;
         }
-        if (window.getKey(GLFW_KEY_LEFT)) {
-            position += getRight() * speed;
+        if (window.get_key(GLFW_KEY_LEFT)) {
+            position += get_right() * speed;
         }
-        if (window.getKey(GLFW_KEY_DOWN)) {
-            position += getDown() * speed;
+        if (window.get_key(GLFW_KEY_DOWN)) {
+            position += get_down() * speed;
         }
-        if (window.getKey(GLFW_KEY_UP)) {
-            position += getUp() * speed;
+        if (window.get_key(GLFW_KEY_UP)) {
+            position += get_up() * speed;
         }
-        if (window.getKey(GLFW_KEY_Z)) {
+        if (window.get_key(GLFW_KEY_Z)) {
             scale /= 1.01F;
         }
-        if (window.getKey(GLFW_KEY_X)) {
+        if (window.get_key(GLFW_KEY_X)) {
             scale *= 1.01F;
         }
-        if (window.getKey(GLFW_KEY_Q)) {
+        if (window.get_key(GLFW_KEY_Q)) {
             window.close();
         }
 
@@ -60,12 +61,12 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
     }
 
   public:
-    MobileOrthoCamera(Window &win, World &world, const Viewport &viewport)
+    MobileOrthoCamera(World &world, const Viewport &viewport)
         : OrthoCamera(world, viewport)
-        , Update(win) {}
+        , Update(world) {}
 };
 
-class MobileNormalCamera : public Camera, public WorldObject, protected Update {
+class MobileNormalCamera : public Camera, protected Update {
     // class MobileNormalCameraHead : public NormalCamera {
     //     using NormalCamera::NormalCamera;
     // } camera_head_;
@@ -74,63 +75,64 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
 
     void update() override {
         constexpr float speed = 5;
+        const Window &window = this->world.window;
 
-        if (window.getKey(GLFW_KEY_W)) {
-            position += getFront() * speed;
+        if (window.get_key(GLFW_KEY_W)) {
+            position += get_front() * speed;
         }
-        if (window.getKey(GLFW_KEY_A)) {
-            position += getLeft() * speed;
+        if (window.get_key(GLFW_KEY_A)) {
+            position += get_left() * speed;
         }
-        if (window.getKey(GLFW_KEY_S)) {
-            position += getBack() * speed;
+        if (window.get_key(GLFW_KEY_S)) {
+            position += get_back() * speed;
         }
-        if (window.getKey(GLFW_KEY_D)) {
-            position += getRight() * speed;
+        if (window.get_key(GLFW_KEY_D)) {
+            position += get_right() * speed;
         }
-        if (window.getKey(GLFW_KEY_SPACE)) {
-            position += getUp() * speed;
+        if (window.get_key(GLFW_KEY_SPACE)) {
+            position += get_up() * speed;
         }
-        if (window.getKey(GLFW_KEY_LEFT_SHIFT)) {
-            position += getDown() * speed;
+        if (window.get_key(GLFW_KEY_LEFT_SHIFT)) {
+            position += get_down() * speed;
         }
-        if (window.getKey(GLFW_KEY_RIGHT)) {
+        if (window.get_key(GLFW_KEY_RIGHT)) {
             rotate *= ANGLE_Y(-0.01F);
         }
-        if (window.getKey(GLFW_KEY_LEFT)) {
+        if (window.get_key(GLFW_KEY_LEFT)) {
             rotate *= ANGLE_Y(0.01F);
         }
-        if (window.getKey(GLFW_KEY_DOWN)) {
+        if (window.get_key(GLFW_KEY_DOWN)) {
             camera_head_.rotate *= ANGLE_X(0.01F);
         }
-        if (window.getKey(GLFW_KEY_UP)) {
+        if (window.get_key(GLFW_KEY_UP)) {
             camera_head_.rotate *= ANGLE_X(-0.01F);
         }
-        // if (window_.getKey(GLFW_KEY_Z)) {
+        // if (window_.get_key(GLFW_KEY_Z)) {
         //     setScale(scale / 1.01);
         // }
-        // if (window_.getKey(GLFW_KEY_X)) {
+        // if (window_.get_key(GLFW_KEY_X)) {
         //     setScale(scale * 1.01);
         // }
-        if (window.getKey(GLFW_KEY_Q)) {
+        if (window.get_key(GLFW_KEY_Q)) {
             window.close();
         }
     }
 
   public:
-    MobileNormalCamera(Window &win, World &world, const Viewport &viewport)
-        : WorldObject(world)
-        , Update(win)
+    MobileNormalCamera(World &world, const Viewport &viewport)
+        : Camera(world)
+        , Update(world)
         , camera_head_(world, viewport)
         , camera_base_(world) {
         this->append(camera_base_);
         camera_base_.append(camera_head_);
     }
 
-    [[nodiscard]] glm::mat4 getViewMatrix() const override {
-        return camera_head_.getViewMatrix();
+    [[nodiscard]] glm::mat4 get_view_matrix() const override {
+        return camera_head_.get_view_matrix();
     }
 
-    [[nodiscard]] glm::mat4 getProjectionMatrix() const override {
-        return camera_head_.getProjectionMatrix();
+    [[nodiscard]] glm::mat4 get_projection_matrix() const override {
+        return camera_head_.get_projection_matrix();
     }
 };

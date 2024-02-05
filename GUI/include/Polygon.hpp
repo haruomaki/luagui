@@ -9,8 +9,7 @@ class Polygon {
     VertexBufferObject vbo_;
     const ProgramObject &shader_;
     GLuint tex_id_ = 0;
-    const size_t n_;                                                             // TODO: GLsizeiにすればキャストを減らせる？
-    static constexpr GLfloat vertex_uv[4][2] = {{1, 0}, {0, 0}, {0, 1}, {1, 1}}; // TODO: std::arrayを用いる
+    const size_t n_; // TODO: GLsizeiにすればキャストを減らせる？
     static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
 
     friend class Shape;
@@ -37,10 +36,10 @@ class Polygon {
         vao_ = VertexArrayObject::gen();
         vao_.bind([&] {
             vbo_.bind([&] {
-                shader.setAttribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                    // 位置
-                shader.setAttribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(GLfloat) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
+                shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                    // 位置
+                shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(GLfloat) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
                 getErrors();
-                shader.setAttribute("uv", 2, GL_FLOAT, GL_FALSE, 0, nullptr); // FIXME: uv座標をvbo経由で設定できるようにする
+                shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, 0, nullptr); // FIXME: uv座標をvbo経由で設定できるようにする
                 getErrors();
             });
         });
@@ -61,17 +60,17 @@ class Shape : public DrawableWorldObject {
         shader.use();
 
         // モデルビュー行列
-        const auto model_matrix = this->getAbsoluteTransform();
-        const auto view_matrix = camera.getViewMatrix();
+        const auto model_matrix = this->get_absolute_transform();
+        const auto view_matrix = camera.get_view_matrix();
         const auto model_view_matrix = view_matrix * model_matrix;
-        shader.setUniform("modelViewMatrix", model_view_matrix);
+        shader.set_uniform("modelViewMatrix", model_view_matrix);
 
         // 射影変換行列
-        const auto projection_matrix = camera.getProjectionMatrix();
-        shader.setUniform("projectionMatrix", projection_matrix);
+        const auto projection_matrix = camera.get_projection_matrix();
+        shader.set_uniform("projectionMatrix", projection_matrix);
 
         // モデルの描画
-        shader.setUniform("is_tex", (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
+        shader.set_uniform("is_tex", (polygon_.tex_id_ != 0 ? GL_TRUE : GL_FALSE));
         polygon_.vao_.bind([&] {
             glBindTexture(GL_TEXTURE_2D, polygon_.tex_id_);
             glDrawArrays(GL_TRIANGLE_FAN, 0, GLsizei(polygon_.n_));

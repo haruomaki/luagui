@@ -8,11 +8,11 @@ int main() {
 
     // バーテックスシェーダのコンパイル
     auto vsh_string = loadString("assets/shaders/shader.vsh");
-    auto vsh_id = createShader(GL_VERTEX_SHADER, vsh_string);
+    auto vsh_id = create_shader(GL_VERTEX_SHADER, vsh_string);
 
     // フラグメントシェーダのコンパイル
     auto fsh_string = loadString("assets/shaders/shader.fsh");
-    auto fsh_id = createShader(GL_FRAGMENT_SHADER, fsh_string);
+    auto fsh_id = create_shader(GL_FRAGMENT_SHADER, fsh_string);
 
     auto main_shader = ProgramObject{vsh_id, fsh_id};
 
@@ -25,18 +25,18 @@ int main() {
     Text sample_text(main_world, migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
     Text credit_text(main_world, migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9, 0.4});
 
-    sample_text.setPosition({-200, 50, 200});
-    credit_text.setPosition({200, 400, 1});
+    sample_text.set_position({-200, 50, 200});
+    credit_text.set_position({200, 400, 1});
 
     ProgramObject hello_shader = {
-        createShader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
-        createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
+        create_shader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
+        create_shader(GL_FRAGMENT_SHADER, loadString("assets/shaders/hello.fsh"))};
 
     DynamicArray line(window, main_world, main_shader);
     line.vertices.xs = linspace(-200, 200, 10);
     line.vertices.colors = vector<RGBA>(10, {0.5, 0.7, 0.1, 1});
     setInterval(0.5F, [&line] {
-        line.setPosition(line.getPosition() + glm::vec3{-10, 0, 0});
+        line.set_position(line.get_position() + glm::vec3{-10, 0, 0});
         return true;
     });
 

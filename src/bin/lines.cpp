@@ -23,22 +23,26 @@ int main() {
 
     constexpr int width = 600, height = 500;
     GUI gui;
-    Window &window = gui.createWindow(width, height, "ウィンドウタイトル");
+    Window &window = gui.create_window(width, height, "ウィンドウタイトル");
+    // Window &another_window = gui.create_window(width, height, "２つめのウィンドウ");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
-    auto &viewport = MaximumViewport::create(window);
+    auto &viewport = window.make_child<MaximumViewport>();
 
-    World world, ui_world;
+    World &world = window.create_world();
+    World &ui_world = window.create_world();
 
     ProgramObject main_shader = {
-        createShader(GL_VERTEX_SHADER, loadString("assets/shaders/shader.vsh")),
-        createShader(GL_FRAGMENT_SHADER, loadString("assets/shaders/shader.fsh"))};
+        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/shader.vsh")),
+        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
 
-    MobileOrthoCamera camera(window, world, viewport);
+    MobileOrthoCamera camera(world, viewport);
     OrthoCamera ui_camera(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
+    camera.set_active();
+    ui_camera.set_active();
 
-    DynamicArray line(window, world, main_shader, {}, {});
+    DynamicArray line(world, main_shader, {}, {});
     line.draw_mode = GL_POINTS;
     line.scale = 100;
 
@@ -46,7 +50,7 @@ int main() {
     line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
 
     // 左上に常在する点
-    StickyPointTopLeft top_left_point(window, world, viewport);
+    StickyPointTopLeft top_left_point(world, viewport);
 
     // 文字の表示
     Font migmix_font;
@@ -68,14 +72,14 @@ int main() {
 
     // レンダリングループ
     gui.mainloop([&] {
-        sample_text.text_ = toStr(gui.tick);
+        sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
         line.vertices.xs = xs;
         line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100); });
 
-        world.masterDraw(camera);
+        world.master_draw();
         glClear(GL_DEPTH_BUFFER_BIT);
-        ui_world.masterDraw(ui_camera);
+        ui_world.master_draw();
     });
 }
