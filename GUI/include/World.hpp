@@ -2,7 +2,7 @@
 
 #include <Camera.hpp>
 
-class World {
+class World : public WorldObject {
     set<function<void(const Camera &)> *> draws_;
     std::set<std::function<void()> *> updates_;
     Camera *active_camera_ = nullptr;
@@ -14,7 +14,13 @@ class World {
     Window &window;
 
     World(Window &window)
-        : window(window) {}
+        : WorldObject(*this, true)
+        , window(window) {}
+
+    // ~World() override {
+    //     print("Worldのデストラクタ");
+    //     // this->children_.clear();
+    // }
 
     void master_draw() {
         if (this->active_camera_ == nullptr) {

@@ -7,6 +7,14 @@ inline float f(float x) {
 }
 
 int main() {
+    std::function<void()> waa = [] {};
+    std::function<void()> pen = [] {};
+    std::function<void()> mage = [] {};
+    std::set<std::function<void()> *> sss = {&waa, &pen, &mage};
+    // sss.erase(9);
+    print(sss);
+    sss.erase(&pen);
+    print(sss);
     // Timer timer;
     // auto id_hi = timer.task(1, [] { print("hi!"); });
     // int count = 0;
@@ -35,14 +43,15 @@ int main() {
         create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/shader.vsh")),
         create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
 
-    MobileOrthoCamera camera(world, viewport);
-    OrthoCamera ui_camera(ui_world, viewport);
+    auto &camera = world.append_child<MobileOrthoCamera>(world, viewport);
+    auto &ui_camera = world.append_child<OrthoCamera>(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
     camera.set_active();
     ui_camera.set_active();
 
-    DynamicArray line(world, main_shader, {}, {});
+    // DynamicArray line(world, main_shader, {}, {});
+    auto &line = world.append_child<DynamicArray>(world, main_shader);
     line.draw_mode = GL_POINTS;
     line.scale = 100;
 
@@ -50,13 +59,12 @@ int main() {
     line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
 
     // 左上に常在する点
-    StickyPointTopLeft top_left_point(world, viewport);
+    auto &top_left_point = world.append_child<StickyPointTopLeft>(world, viewport);
 
     // 文字の表示
     Font migmix_font;
-    Text sample_text(ui_world, migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
-    Text credit_text(ui_world, migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9, 0.4});
-    top_left_point.append(sample_text);
+    auto &sample_text = top_left_point.append_child<Text>(ui_world, migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
+    /* auto &credit_text =*/ui_world.append_child<Text>(ui_world, migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
     sample_text.position = {20, -60, 0};
 
     // 三角形の表示

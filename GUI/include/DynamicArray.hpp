@@ -14,6 +14,7 @@ class DynamicArray : public DrawableWorldObject, Update {
     static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
 
     void update() override {
+        print("DynamicArrayのupdate関数です");
         // VBOの更新
         vao_.bind([&] {
             if (capacity_ != vertices.capacity()) {
