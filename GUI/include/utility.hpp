@@ -20,7 +20,7 @@ class StickyPointTopLeft : public WorldObject, Update {
   public:
     StickyPointTopLeft(Window &win, World &world, const Viewport &viewport)
         : WorldObject(world)
-        , Update(win)
+        , Update(world)
         , viewport_(viewport) {}
 };
 
@@ -31,6 +31,7 @@ class StickyPointTopLeft : public WorldObject, Update {
 class MobileOrthoCamera : public OrthoCamera, protected Update {
     void update() override {
         constexpr float speed = 5;
+        const Window &window = this->world.window;
 
         if (window.get_key(GLFW_KEY_RIGHT)) {
             position += getLeft() * speed;
@@ -62,7 +63,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
   public:
     MobileOrthoCamera(Window &win, World &world, const Viewport &viewport)
         : OrthoCamera(world, viewport)
-        , Update(win) {}
+        , Update(world) {}
 };
 
 class MobileNormalCamera : public Camera, public WorldObject, protected Update {
@@ -74,6 +75,7 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
 
     void update() override {
         constexpr float speed = 5;
+        const Window &window = this->world.window;
 
         if (window.get_key(GLFW_KEY_W)) {
             position += getFront() * speed;
@@ -119,7 +121,7 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
   public:
     MobileNormalCamera(Window &win, World &world, const Viewport &viewport)
         : WorldObject(world)
-        , Update(win)
+        , Update(world)
         , camera_head_(world, viewport)
         , camera_base_(world) {
         this->append(camera_base_);

@@ -1,14 +1,14 @@
 #pragma once
 
-#include <Window.hpp>
+#include <World.hpp>
 
 class Update {
     std::function<void()> update_;
 
   public:
-    Window &window;
+    World &world;
 
     virtual void update() = 0;
-    Update(Window &window);
+    Update(World &world);
     virtual ~Update();
 };

@@ -25,7 +25,6 @@ class Window {
     std::set<std::unique_ptr<WindowObject>> window_objects_;
     FunctionSet<void(int, int)> size_callbacks_;
     std::set<std::function<void(int, int)> *> key_callbacks_;
-    std::set<std::function<void()> *> updates_;
     std::vector<std::unique_ptr<World>> worlds_ = {};
 
     friend class GUI;

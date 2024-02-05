@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Window.hpp>
+#include <World.hpp>
 
 class GUI {
     std::vector<std::unique_ptr<Window>> windows_ = {};
@@ -59,9 +60,9 @@ class GUI {
                 // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
                 // world_object_root_.refreshAbsolutePosition();
 
-                // 更新処理
-                for (auto *update : window->updates_) {
-                    (*update)();
+                // 各ワールドの更新処理
+                for (const auto &world : window->worlds_) {
+                    world->master_update();
                 }
 
                 // OpenGLの描画関数のターゲットにするウィンドウを指定

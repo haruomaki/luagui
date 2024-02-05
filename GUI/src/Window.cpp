@@ -109,7 +109,7 @@ bool Window::get_key(int key) const {
 }
 
 World &Window::create_world() {
-    auto world = std::make_unique<World>();
+    auto world = std::make_unique<World>(*this);
     this->worlds_.push_back(std::move(world));
     return *this->worlds_.back();
 }
