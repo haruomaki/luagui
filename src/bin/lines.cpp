@@ -28,7 +28,8 @@ int main() {
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
     auto &viewport = window.make_child<MaximumViewport>();
 
-    World world, ui_world;
+    World &world = window.create_world();
+    World &ui_world = window.create_world();
 
     ProgramObject main_shader = {
         create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/shader.vsh")),

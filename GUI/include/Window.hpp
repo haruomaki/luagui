@@ -4,6 +4,7 @@
 #include <graphical_base.hpp>
 
 class SizeCallback;
+class World;
 
 using FunctionId = int;
 
@@ -25,6 +26,7 @@ class Window {
     FunctionSet<void(int, int)> size_callbacks_;
     std::set<std::function<void(int, int)> *> key_callbacks_;
     std::set<std::function<void()> *> updates_;
+    std::vector<std::unique_ptr<World>> worlds_ = {};
 
     friend class GUI;
     friend class SizeCallback;
@@ -90,4 +92,6 @@ class Window {
     // void unset_callback<Size>(std::function<void(int, int)> &&callback) {
     //     this->size_callbacks_.erase(callback);
     // }
+
+    World &create_world();
 };

@@ -1,3 +1,4 @@
+#include "World.hpp"
 #include <KeyCallback.hpp>
 #include <SizeCallback.hpp>
 #include <Update.hpp>
@@ -105,4 +106,10 @@ void Window::close() const {
 
 bool Window::get_key(int key) const {
     return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
+}
+
+World &Window::create_world() {
+    auto world = std::make_unique<World>();
+    this->worlds_.push_back(std::move(world));
+    return *this->worlds_.back();
 }
