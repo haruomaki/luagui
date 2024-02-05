@@ -113,9 +113,21 @@ class WorldObject {
         return *raw;
     }
 
-    // void erase() {
-    //     this->children_.
-    // }
+    bool erase() {
+        auto *ptr_to_erase = this;
+
+        // 生ポインタを使用して要素を削除する
+        auto &candidates = this->parent_->children_;
+        auto it = candidates.begin();
+        while (it != candidates.end()) {
+            if ((*it).get() == ptr_to_erase) {
+                it = candidates.erase(it);
+                return true;
+            }
+            ++it;
+        }
+        return false;
+    }
 
     // void showAbsolutePositionRecursively(int depth) const {
     //     // cout << "showです。" << endl;

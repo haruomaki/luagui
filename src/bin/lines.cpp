@@ -44,7 +44,7 @@ int main() {
         create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
 
     auto &camera = world.append_child<MobileOrthoCamera>(world, viewport);
-    auto &ui_camera = world.append_child<OrthoCamera>(ui_world, viewport);
+    auto &ui_camera = ui_world.append_child<OrthoCamera>(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
     camera.set_active();
@@ -58,7 +58,8 @@ int main() {
     line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
 
     // 左上に常在する点
-    auto &top_left_point = world.append_child<StickyPointTopLeft>(world, viewport);
+    // TODO: これが間違ってworldの子になってもメモリエラー？要調査
+    auto &top_left_point = ui_world.append_child<StickyPointTopLeft>(ui_world, viewport);
 
     // 文字の表示
     Font migmix_font;
@@ -79,6 +80,10 @@ int main() {
 
     // レンダリングループ
     gui.mainloop([&] {
+        if (gui.tick == 200) {
+            world.set_active_camera(ui_camera);
+            camera.erase();
+        }
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);

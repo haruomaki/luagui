@@ -3,7 +3,7 @@
 #include <World.hpp>
 
 class Update {
-    std::function<void()> update_;
+    FunctionId func_id_;
 
   public:
     World &world;

@@ -2,9 +2,17 @@
 
 #include <Camera.hpp>
 
+// テスト用。Worldのデストラクタ、Worldのメンバ変数解放などの順序を確認するため
+struct Namahage {
+    int x{};
+    Namahage() { print("なまはげ登場"); }
+    ~Namahage() { print("なまはげ退散"); }
+};
+
 class World : public WorldObject {
     set<function<void(const Camera &)> *> draws_;
-    std::set<std::function<void()> *> updates_;
+    FunctionSet<void()> updates_;
+    Namahage namahage();
     Camera *active_camera_ = nullptr;
 
     friend class DrawableWorldObject;
@@ -17,10 +25,10 @@ class World : public WorldObject {
         : WorldObject(*this, true)
         , window(window) {}
 
-    // ~World() override {
-    //     print("Worldのデストラクタ");
-    //     // this->children_.clear();
-    // }
+    ~World() override {
+        print("Worldのデストラクタ");
+        this->children_.clear();
+    }
 
     void master_draw() {
         if (this->active_camera_ == nullptr) {
@@ -32,8 +40,8 @@ class World : public WorldObject {
     }
 
     void master_update() {
-        for (auto *update : this->updates_) {
-            (*update)();
+        for (const auto &[id, update] : this->updates_) {
+            update();
         }
     }
 

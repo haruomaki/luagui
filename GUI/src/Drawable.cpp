@@ -9,6 +9,6 @@ DrawableWorldObject::DrawableWorldObject(World &world)
 DrawableWorldObject::~DrawableWorldObject() {
     print("Drawのデストラクタ");
     auto *world = get_world();
-    world->draws_.erase(&draw_);
+    // world->draws_.erase(&draw_);
     print("Drawのデストラクタおわり");
 }
