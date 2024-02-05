@@ -10,7 +10,7 @@ enum CallbackKind {
     Key,
 };
 
-// ユーザはこのクラス（を継承したクラス）を必ずwindow.make_child経由でインスタンス化する
+// ユーザはこのクラス（をpublic継承したクラス）を必ずwindow.make_child経由でインスタンス化する
 class WindowObject {
     friend class Window;
     Window *window_; // コンストラクト後は変更されない
@@ -36,14 +36,14 @@ class WindowObject {
     PropertyGet<&WindowObject::get_window> window{this};
 };
 
-class SizeCallback : public WindowObject {
-  public:
-    std::function<void(int width, int height)> size_callback;
+// class SizeCallback : public WindowObject {
+//   public:
+//     std::function<void(int width, int height)> size_callback;
 
-    // SizeCallback() = default;
-    // ~SizeCallback() override = default; // virtualにするのが重要
-    // SizeCallback(const SizeCallback &) = default;
-    // SizeCallback &operator=(const SizeCallback &) = delete;
-    // SizeCallback(SizeCallback &&) = default;
-    // SizeCallback &operator=(SizeCallback &&) = delete;
-};
+//     // SizeCallback() = default;
+//     // ~SizeCallback() override = default; // virtualにするのが重要
+//     // SizeCallback(const SizeCallback &) = default;
+//     // SizeCallback &operator=(const SizeCallback &) = delete;
+//     // SizeCallback(SizeCallback &&) = default;
+//     // SizeCallback &operator=(SizeCallback &&) = delete;
+// };

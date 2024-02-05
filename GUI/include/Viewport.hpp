@@ -30,19 +30,19 @@ class Viewport {
 
 // 常にウィンドウの描画領域全体のサイズとなるビューポート
 // 手動でwindow.registerSizeCallbackするのではなく、create関数を使うと最初の即時設定ができる
-class MaximumViewport : public Viewport, public SizeCallback {
+class MaximumViewport : public Viewport, public WindowObject {
   public:
     MaximumViewport()
         : Viewport(0, 0, 0, 0) {
 
-        this->size_callback = [this](int width, int height) {
+        auto size_callback = [this](int width, int height) {
             this->x_ = this->y_ = 0;
             this->width_ = width;
             this->height_ = height;
             this->set();
         };
         const auto fbsize = this->get_window().get_frame_buffer_size();
-        this->size_callback(fbsize.first, fbsize.second);
-        this->get_window().set_callback<Size>(std::move(this->size_callback));
+        size_callback(fbsize.first, fbsize.second);
+        this->get_window().set_callback<Size>(std::move(size_callback));
     }
 };
