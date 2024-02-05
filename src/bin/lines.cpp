@@ -50,7 +50,6 @@ int main() {
     camera.set_active();
     ui_camera.set_active();
 
-    // DynamicArray line(world, main_shader, {}, {});
     auto &line = world.append_child<DynamicArray>(world, main_shader);
     line.draw_mode = GL_POINTS;
     line.scale = 100;
@@ -74,7 +73,7 @@ int main() {
                                     {0.9, 0.2, 0.7, 0.3},
                                     {0.3, 0.7, 0.5, 0.5},
                                 });
-    Shape my_triangle(world, my_triangle_polygon);
+    auto &my_triangle = world.append_child<Shape>(world, my_triangle_polygon);
     my_triangle.scale = 200;
     my_triangle.position = {-100, 0, 0};
 

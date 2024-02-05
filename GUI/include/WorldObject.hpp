@@ -47,7 +47,7 @@ class WorldObject {
         , abs_transform_(glm::mat4(1))
         , parent_(get_parent_static()) {
         if (this->parent_ == nullptr) {
-            std::runtime_error("WorldObjectの親の設定に失敗");
+            throw std::runtime_error("WorldObjectの親の設定に失敗");
         }
     }
 
@@ -107,7 +107,7 @@ class WorldObject {
 
         auto [it, inserted] = this->children_.insert(std::move(ptr));
         if (!inserted) {
-            std::runtime_error("append_childに失敗");
+            throw std::runtime_error("append_childに失敗");
         }
         auto raw = static_cast<T *>(it->get());
         return *raw;

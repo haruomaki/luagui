@@ -65,7 +65,7 @@ class Window {
 
         auto [it, inserted] = this->window_objects_.insert(std::move(ptr));
         if (!inserted) {
-            std::runtime_error("make_childに失敗");
+            throw std::runtime_error("make_childに失敗");
         }
         auto ptr2 = static_cast<T *>(it->get());
         return *ptr2;

@@ -24,7 +24,7 @@ class WindowObject {
     WindowObject()
         : window_(get_window_static()) {
         if (this->window_ == nullptr) {
-            std::runtime_error("WindowObjectに関連付けるウィンドウの取得に失敗");
+            throw std::runtime_error("WindowObjectに関連付けるウィンドウの取得に失敗");
         }
     }
     virtual ~WindowObject() = default;
