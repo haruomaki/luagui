@@ -39,6 +39,8 @@ int main() {
     OrthoCamera ui_camera(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
+    world.set_active_camera(camera);
+    ui_world.set_active_camera(ui_camera);
 
     DynamicArray line(world, main_shader, {}, {});
     line.draw_mode = GL_POINTS;
@@ -76,8 +78,8 @@ int main() {
         line.vertices.xs = xs;
         line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100); });
 
-        world.masterDraw(camera);
+        world.master_draw();
         glClear(GL_DEPTH_BUFFER_BIT);
-        ui_world.masterDraw(ui_camera);
+        ui_world.master_draw();
     });
 }

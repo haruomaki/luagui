@@ -140,7 +140,7 @@ int main() {
 
     // レンダリングループ
     window.mainloop([&] {
-        main_world.masterDraw(camera);
+        main_world.master_draw(camera);
 
         main_shader.use();
         main_shader.setUniform("modelViewMatrix", camera.getViewMatrix());
