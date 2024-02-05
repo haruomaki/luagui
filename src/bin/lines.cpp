@@ -44,7 +44,7 @@ int main() {
         create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
 
     auto &camera = world.append_child<MobileOrthoCamera>(world, viewport);
-    auto &ui_camera = ui_world.append_child<OrthoCamera>(ui_world, viewport);
+    auto &ui_camera = ui_world.append_child<OrthoCamera>(viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
     camera.set_active();
@@ -58,13 +58,13 @@ int main() {
     line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
 
     // 左上に常在する点
-    // TODO: これが間違ってworldの子になってもメモリエラー？要調査
+    // TODO: これが間違ってworldの子になってもメモリエラー？回答：前と後ろでui_worldとworldのようにチグハグに指定するとエラー
     auto &top_left_point = ui_world.append_child<StickyPointTopLeft>(ui_world, viewport);
 
     // 文字の表示
     Font migmix_font;
-    auto &sample_text = top_left_point.append_child<Text>(ui_world, migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
-    /* auto &credit_text =*/ui_world.append_child<Text>(ui_world, migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
+    auto &sample_text = top_left_point.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
+    /* auto &credit_text =*/ui_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
     sample_text.position = {20, -60, 0};
 
     // 三角形の表示
@@ -74,16 +74,12 @@ int main() {
                                     {0.9, 0.2, 0.7, 0.3},
                                     {0.3, 0.7, 0.5, 0.5},
                                 });
-    auto &my_triangle = world.append_child<Shape>(world, my_triangle_polygon);
+    auto &my_triangle = world.append_child<Shape>(my_triangle_polygon);
     my_triangle.scale = 200;
     my_triangle.position = {-100, 0, 0};
 
     // レンダリングループ
     gui.mainloop([&] {
-        if (gui.tick == 200) {
-            world.set_active_camera(ui_camera);
-            camera.erase();
-        }
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);

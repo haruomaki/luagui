@@ -30,5 +30,5 @@ class Text : public DrawableWorldObject {
   public:
     string text_;
 
-    Text(World &world, Font &font, string text, RGBA color);
+    Text(Font &font, string text, RGBA color);
 };

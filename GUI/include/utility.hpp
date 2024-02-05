@@ -19,8 +19,7 @@ class StickyPointTopLeft : public WorldObject, Update {
 
   public:
     StickyPointTopLeft(World &world, const Viewport &viewport)
-        : WorldObject(world)
-        , Update(world)
+        : Update(world)
         , viewport_(viewport) {}
 };
 
@@ -62,7 +61,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
 
   public:
     MobileOrthoCamera(World &world, const Viewport &viewport)
-        : OrthoCamera(world, viewport)
+        : OrthoCamera(viewport)
         , Update(world) {}
 };
 

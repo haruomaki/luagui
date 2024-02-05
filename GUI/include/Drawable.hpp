@@ -8,6 +8,6 @@ class DrawableWorldObject : public WorldObject {
     virtual void draw(const Camera &camera) const = 0;
 
   public:
-    DrawableWorldObject(World &world);
+    DrawableWorldObject();
     virtual ~DrawableWorldObject();
 };

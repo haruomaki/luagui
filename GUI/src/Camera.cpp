@@ -1,8 +1,8 @@
+#include "Camera.hpp"
 #include "World.hpp"
-#include <Camera.hpp>
 
 void Camera::set_active() {
-    this->get_world()->set_active_camera(*this);
+    this->get_world().set_active_camera(*this);
 }
 
 glm::mat4 NormalCamera::get_view_matrix() const {

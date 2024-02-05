@@ -77,9 +77,8 @@ Font::Font() {
         create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))};
 }
 
-Text::Text(World &world, Font &font, string text, RGBA color)
-    : DrawableWorldObject(world)
-    , font_(font)
+Text::Text(Font &font, string text, RGBA color)
+    : font_(font)
     , color_(color)
     , text_(std::move(text)) {}
 

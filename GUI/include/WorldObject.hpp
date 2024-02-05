@@ -28,7 +28,7 @@ class WorldObject {
 
     // 根ノードの生成のみに使うコンストラクタ
     friend class World; // Worldの生成に使ってもらう
-    WorldObject(World &world, bool /*オーバーロードのため。値に意味はない*/)
+    WorldObject(World &world)
         : world_(&world)
         , pos_(glm::vec3(0))
         , rotate_(glm::quat(1, 0, 0, 0))
@@ -39,8 +39,8 @@ class WorldObject {
   public:
     // 子孫ノードを生成するコンストラクタ
     // このコンストラクタを呼ぶ直前には必ずset_parent_staticを実行しておく
-    WorldObject(World &world)
-        : world_(&world)
+    WorldObject()
+        : world_(get_parent_static()->world_) // FIXME: get_parent_staticが不正だったときバグる
         , pos_(glm::vec3(0))
         , rotate_(glm::quat(1, 0, 0, 0))
         , scale_(glm::vec3(1))
@@ -137,8 +137,8 @@ class WorldObject {
     //     }
     // }
 
-    [[nodiscard]] World *get_world() const {
-        return world_;
+    [[nodiscard]] World &get_world() const {
+        return *world_;
     }
 
     [[nodiscard]] const glm::vec3 &get_position() const {

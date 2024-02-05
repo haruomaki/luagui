@@ -50,9 +50,8 @@ class Shape : public DrawableWorldObject {
     const Polygon &polygon_;
 
   public:
-    Shape(World &world, const Polygon &polygon)
-        : DrawableWorldObject(world)
-        , polygon_(polygon) {}
+    Shape(const Polygon &polygon)
+        : polygon_(polygon) {}
 
     void draw(const Camera &camera) const override {
         // シェーダを有効化

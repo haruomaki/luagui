@@ -22,7 +22,7 @@ class World : public WorldObject {
     Window &window;
 
     World(Window &window)
-        : WorldObject(*this, true)
+        : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
         , window(window) {}
 
     ~World() override {
