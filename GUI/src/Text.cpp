@@ -119,12 +119,12 @@ void Text::draw(const Camera &camera) const {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         // モデルビュー行列
-        const auto model_matrix = this->getAbsoluteTransform();
-        const auto model_view_matrix = camera.getViewMatrix() * model_matrix;
+        const auto model_matrix = this->get_absolute_transform();
+        const auto model_view_matrix = camera.get_view_matrix() * model_matrix;
         font_.shader_.set_uniform("modelViewMatrix", model_view_matrix);
 
         // 射影変換行列
-        const auto projection_matrix = camera.getProjectionMatrix();
+        const auto projection_matrix = camera.get_projection_matrix();
         font_.shader_.set_uniform("projectionMatrix", projection_matrix);
 
         // render quad

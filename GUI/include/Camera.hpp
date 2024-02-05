@@ -8,9 +8,9 @@ class Camera : public WorldObject {
   public:
     Camera(World &world)
         : WorldObject(world) {}
-    virtual ~Camera();
-    [[nodiscard]] virtual glm::mat4 getViewMatrix() const = 0;
-    [[nodiscard]] virtual glm::mat4 getProjectionMatrix() const = 0;
+    virtual ~Camera() = default;
+    [[nodiscard]] virtual glm::mat4 get_view_matrix() const = 0;
+    [[nodiscard]] virtual glm::mat4 get_projection_matrix() const = 0;
 
     // このカメラをそれが属するワールドのアクティブカメラとする
     void set_active();
@@ -24,8 +24,8 @@ class NormalCamera : public Camera {
         : Camera(world)
         , viewport_(viewport) {}
 
-    [[nodiscard]] glm::mat4 getViewMatrix() const override;
-    [[nodiscard]] glm::mat4 getProjectionMatrix() const override;
+    [[nodiscard]] glm::mat4 get_view_matrix() const override;
+    [[nodiscard]] glm::mat4 get_projection_matrix() const override;
 };
 
 // 1ピクセルがfloat値1のスケールの正射影カメラ
@@ -37,6 +37,6 @@ class OrthoCamera : public Camera {
         : Camera(world)
         , viewport_(viewport) {}
 
-    [[nodiscard]] glm::mat4 getViewMatrix() const override;
-    [[nodiscard]] glm::mat4 getProjectionMatrix() const override;
+    [[nodiscard]] glm::mat4 get_view_matrix() const override;
+    [[nodiscard]] glm::mat4 get_projection_matrix() const override;
 };

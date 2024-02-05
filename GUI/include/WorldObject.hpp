@@ -14,11 +14,11 @@ class WorldObject {
     WorldObject *parent_ = nullptr;
     set<WorldObject *> children_;
 
-    void refreshAbsoluteTransform() {
+    void refresh_absolute_transform() {
         const auto &parent_abs_transform = (parent_ != nullptr ? parent_->abs_transform_ : glm::mat4(1));
         abs_transform_ = parent_abs_transform * TRANSLATE(pos_) * glm::mat4_cast(rotate_) * SCALE(scale_);
         for (auto *child : children_) {
-            child->refreshAbsoluteTransform();
+            child->refresh_absolute_transform();
         }
     }
 
@@ -68,14 +68,7 @@ class WorldObject {
     void append(WorldObject &child) {
         child.parent_ = this;
         this->children_.insert(&child);
-        this->refreshAbsoluteTransform();
-    }
-
-    void deleteRecursively() {
-        for (auto *child : children_) {
-            child->deleteRecursively();
-        }
-        delete this;
+        this->refresh_absolute_transform();
     }
 
     // void showAbsolutePositionRecursively(int depth) const {
@@ -90,48 +83,48 @@ class WorldObject {
         return world_;
     }
 
-    [[nodiscard]] const glm::vec3 &getPosition() const {
+    [[nodiscard]] const glm::vec3 &get_position() const {
         return pos_;
     }
 
-    [[nodiscard]] const glm::quat &getRotate() const {
+    [[nodiscard]] const glm::quat &get_rotate() const {
         return rotate_;
     }
 
-    [[nodiscard]] const glm::vec3 &getScale() const {
+    [[nodiscard]] const glm::vec3 &get_scale() const {
         return scale_;
     }
 
-    [[nodiscard]] const glm::mat4 &getAbsoluteTransform() const {
+    [[nodiscard]] const glm::mat4 &get_absolute_transform() const {
         return abs_transform_;
     }
 
-    [[nodiscard]] glm::vec3 getFront() const { return abs_transform_ * glm::vec4{0, 0, 1, 0}; }
-    [[nodiscard]] glm::vec3 getBack() const { return abs_transform_ * glm::vec4{0, 0, -1, 0}; }
-    [[nodiscard]] glm::vec3 getRight() const { return abs_transform_ * glm::vec4{-1, 0, 0, 0}; }
-    [[nodiscard]] glm::vec3 getLeft() const { return abs_transform_ * glm::vec4{1, 0, 0, 0}; }
-    [[nodiscard]] glm::vec3 getUp() const { return abs_transform_ * glm::vec4{0, 1, 0, 0}; }
-    [[nodiscard]] glm::vec3 getDown() const { return abs_transform_ * glm::vec4{0, -1, 0, 0}; }
+    [[nodiscard]] glm::vec3 get_front() const { return abs_transform_ * glm::vec4{0, 0, 1, 0}; }
+    [[nodiscard]] glm::vec3 get_back() const { return abs_transform_ * glm::vec4{0, 0, -1, 0}; }
+    [[nodiscard]] glm::vec3 get_right() const { return abs_transform_ * glm::vec4{-1, 0, 0, 0}; }
+    [[nodiscard]] glm::vec3 get_left() const { return abs_transform_ * glm::vec4{1, 0, 0, 0}; }
+    [[nodiscard]] glm::vec3 get_up() const { return abs_transform_ * glm::vec4{0, 1, 0, 0}; }
+    [[nodiscard]] glm::vec3 get_down() const { return abs_transform_ * glm::vec4{0, -1, 0, 0}; }
 
-    void setPosition(const glm::vec3 &pos) {
+    void set_position(const glm::vec3 &pos) {
         pos_ = pos;
-        this->refreshAbsoluteTransform();
+        this->refresh_absolute_transform();
     }
 
-    void setRotate(const glm::quat &rotate) {
+    void set_rotate(const glm::quat &rotate) {
         rotate_ = rotate;
-        this->refreshAbsoluteTransform();
+        this->refresh_absolute_transform();
     }
 
-    void setScale(const glm::vec3 &scale) {
+    void set_scale(const glm::vec3 &scale) {
         scale_ = scale;
-        this->refreshAbsoluteTransform();
+        this->refresh_absolute_transform();
     }
-    void setScaleOne(float scale) {
-        setScale({scale, scale, scale});
+    void set_scale_one(float scale) {
+        set_scale({scale, scale, scale});
     }
 
-    WorldObject *getParent() {
+    WorldObject *get_parent() {
         return parent_;
     }
 
@@ -140,9 +133,7 @@ class WorldObject {
     // }
 
     // プロパティ
-    PropertyGetSet<&WorldObject::getPosition, &WorldObject::setPosition> position{this};
-    PropertyGetSet<&WorldObject::getScale, &WorldObject::setScale, &WorldObject::setScaleOne> scale{this};
-    PropertyGetSet<&WorldObject::getRotate, &WorldObject::setRotate> rotate{this};
-
-    friend class Window;
+    PropertyGetSet<&WorldObject::get_position, &WorldObject::set_position> position{this};
+    PropertyGetSet<&WorldObject::get_scale, &WorldObject::set_scale, &WorldObject::set_scale_one> scale{this};
+    PropertyGetSet<&WorldObject::get_rotate, &WorldObject::set_rotate> rotate{this};
 };

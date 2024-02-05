@@ -60,13 +60,13 @@ class Shape : public DrawableWorldObject {
         shader.use();
 
         // モデルビュー行列
-        const auto model_matrix = this->getAbsoluteTransform();
-        const auto view_matrix = camera.getViewMatrix();
+        const auto model_matrix = this->get_absolute_transform();
+        const auto view_matrix = camera.get_view_matrix();
         const auto model_view_matrix = view_matrix * model_matrix;
         shader.set_uniform("modelViewMatrix", model_view_matrix);
 
         // 射影変換行列
-        const auto projection_matrix = camera.getProjectionMatrix();
+        const auto projection_matrix = camera.get_projection_matrix();
         shader.set_uniform("projectionMatrix", projection_matrix);
 
         // モデルの描画

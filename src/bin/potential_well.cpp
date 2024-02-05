@@ -25,8 +25,8 @@ int main() {
     Text sample_text(main_world, migmix_font, "This is sample text 123456789", {0.5, 0.8, 0.2, 0.4});
     Text credit_text(main_world, migmix_font, "(C) LearnOpenGL.com", {0.3, 0.7, 0.9, 0.4});
 
-    sample_text.setPosition({-200, 50, 200});
-    credit_text.setPosition({200, 400, 1});
+    sample_text.set_position({-200, 50, 200});
+    credit_text.set_position({200, 400, 1});
 
     ProgramObject hello_shader = {
         create_shader(GL_VERTEX_SHADER, loadString("assets/shaders/hello.vsh")),
@@ -36,7 +36,7 @@ int main() {
     line.vertices.xs = linspace(-200, 200, 10);
     line.vertices.colors = vector<RGBA>(10, {0.5, 0.7, 0.1, 1});
     setInterval(0.5F, [&line] {
-        line.setPosition(line.getPosition() + glm::vec3{-10, 0, 0});
+        line.set_position(line.get_position() + glm::vec3{-10, 0, 0});
         return true;
     });
 

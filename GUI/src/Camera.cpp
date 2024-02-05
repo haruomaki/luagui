@@ -1,17 +1,15 @@
 #include "World.hpp"
 #include <Camera.hpp>
 
-Camera::~Camera() = default;
-
 void Camera::set_active() {
     this->get_world()->set_active_camera(*this);
 }
 
-glm::mat4 NormalCamera::getViewMatrix() const {
-    return SCALE({-1, 1, -1}) * glm::inverse(getAbsoluteTransform());
+glm::mat4 NormalCamera::get_view_matrix() const {
+    return SCALE({-1, 1, -1}) * glm::inverse(get_absolute_transform());
 }
 
-glm::mat4 NormalCamera::getProjectionMatrix() const {
+glm::mat4 NormalCamera::get_projection_matrix() const {
     auto size = viewport_.get_size();
     auto width = float(size.x);
     auto height = float(size.y);
@@ -21,11 +19,11 @@ glm::mat4 NormalCamera::getProjectionMatrix() const {
     return projection_matrix;
 }
 
-glm::mat4 OrthoCamera::getViewMatrix() const {
-    return glm::inverse(getAbsoluteTransform());
+glm::mat4 OrthoCamera::get_view_matrix() const {
+    return glm::inverse(get_absolute_transform());
 }
 
-glm::mat4 OrthoCamera::getProjectionMatrix() const {
+glm::mat4 OrthoCamera::get_projection_matrix() const {
     auto size = viewport_.get_size();
     int width = size.x;
     int height = size.y;
