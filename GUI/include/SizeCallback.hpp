@@ -5,6 +5,11 @@
 
 class Window;
 
+enum CallbackKind {
+    Size,
+    Key,
+};
+
 // ユーザはこのクラス（を継承したクラス）を必ずwindow.make_child経由でインスタンス化する
 class WindowObject {
     friend class Window;

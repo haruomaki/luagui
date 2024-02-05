@@ -49,9 +49,8 @@ Window::Window(int width, int height, const char *title)
         // debug(window->getViewMatrix());
 
         // 登録されたコールバック関数たちを実行
-        debug(window->size_callbacks_.size());
-        for (auto &&size_callback : window->size_callbacks_) {
-            (size_callback->size_callback)(width, height);
+        for (const auto &size_callback : window->size_callbacks_) {
+            (*size_callback)(width, height);
         }
     });
 

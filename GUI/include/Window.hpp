@@ -8,8 +8,8 @@ class SizeCallback;
 // 一つのウィンドウを表すクラス
 class Window {
     GLFWwindow *gwin_ = nullptr;
-    std::set<std::unique_ptr<SizeCallback>> size_callbacks_;
-    // std::set<std::function<void(int, int)> *> size_callbacks_;
+    std::set<std::unique_ptr<WindowObject>> window_objects_;
+    std::set<std::function<void(int, int)> *> size_callbacks_;
     std::set<std::function<void(int, int)> *> key_callbacks_;
     std::set<std::function<void()> *> updates_;
 
@@ -49,11 +49,32 @@ class Window {
         auto ptr = std::make_unique<T>(std::forward<Args>(args)...); // NOTE: &&やforwardは必要かよく分からない
         WindowObject::set_window_static(nullptr);
 
-        auto [it, inserted] = this->size_callbacks_.insert(std::move(ptr));
+        auto [it, inserted] = this->window_objects_.insert(std::move(ptr));
         if (!inserted) {
             std::runtime_error("make_childに失敗");
         }
         auto ptr2 = static_cast<T *>(it->get());
         return *ptr2;
     }
+
+    // 各種コールバックを設定する関数群
+    // TODO: テンプレートを駆使して短く記述
+    template <CallbackKind callback_kind>
+    void set_callback();
+    template <CallbackKind callback_kind>
+    void set_callback(std::function<void(int, int)> *callback);
+
+    template <>
+    void set_callback<Size>(std::function<void(int, int)> *callback) {
+        this->size_callbacks_.insert(callback);
+    }
+
+    // // コールバックを削除する関数群
+    // template <CallbackKind callback_kind>
+    // void unset_callback(std::function<void(int, int)> &&callback);
+
+    // template <>
+    // void unset_callback<Size>(std::function<void(int, int)> &&callback) {
+    //     this->size_callbacks_.erase(callback);
+    // }
 };

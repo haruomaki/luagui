@@ -34,12 +34,14 @@ class MaximumViewport : public Viewport, public SizeCallback {
   public:
     MaximumViewport()
         : Viewport(0, 0, 0, 0) {
+
         this->size_callback = [this](int width, int height) {
             this->x_ = this->y_ = 0;
             this->width_ = width;
             this->height_ = height;
             this->set();
         };
+        this->get_window().set_callback<Size>(&this->size_callback);
         const auto fbsize = this->get_window().get_frame_buffer_size();
         this->size_callback(fbsize.first, fbsize.second);
     }
