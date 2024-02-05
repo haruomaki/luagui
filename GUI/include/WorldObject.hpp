@@ -7,13 +7,13 @@ class World;
 
 // ユーザはこのクラスを必ずappend_child関数経由でインスタンス化する
 class WorldObject {
-    World *const world_;
     glm::vec3 pos_;
     glm::quat rotate_;
     glm::vec3 scale_;
     glm::mat4 abs_transform_;
-    WorldObject *parent_;
+    WorldObject *const parent_;
     std::set<std::unique_ptr<WorldObject>> children_;
+    World &world_; // parent_より後にする
 
     void refresh_absolute_transform() {
         const auto &parent_abs_transform = (parent_ != nullptr ? parent_->abs_transform_ : glm::mat4(1));
@@ -29,27 +29,29 @@ class WorldObject {
     // 根ノードの生成のみに使うコンストラクタ
     friend class World; // Worldの生成に使ってもらう
     WorldObject(World &world)
-        : world_(&world)
-        , pos_(glm::vec3(0))
+        : pos_(glm::vec3(0))
         , rotate_(glm::quat(1, 0, 0, 0))
         , scale_(glm::vec3(1))
         , abs_transform_(glm::mat4(1))
-        , parent_(nullptr) {}
+        , parent_(nullptr)
+        , world_(world) {}
 
   public:
     // 子孫ノードを生成するコンストラクタ
     // このコンストラクタを呼ぶ直前には必ずset_parent_staticを実行しておく
     WorldObject()
-        : world_(get_parent_static()->world_) // FIXME: get_parent_staticが不正だったときバグる
-        , pos_(glm::vec3(0))
+        : pos_(glm::vec3(0))
         , rotate_(glm::quat(1, 0, 0, 0))
         , scale_(glm::vec3(1))
         , abs_transform_(glm::mat4(1))
-        , parent_(get_parent_static()) {
-        if (this->parent_ == nullptr) {
-            throw std::runtime_error("WorldObjectの親の設定に失敗");
-        }
-    }
+        , parent_([] {
+            auto *p = get_parent_static();
+            if (p == nullptr) {
+                throw std::runtime_error("WorldObjectの親の設定に失敗");
+            }
+            return p;
+        }())
+        , world_(this->parent_->world_) {}
 
     // ノード削除は必ずerase関数経由で行う
     virtual ~WorldObject() = default;
@@ -138,7 +140,7 @@ class WorldObject {
     // }
 
     [[nodiscard]] World &get_world() const {
-        return *world_;
+        return this->world_;
     }
 
     [[nodiscard]] const glm::vec3 &get_position() const {
