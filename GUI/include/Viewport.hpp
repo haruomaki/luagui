@@ -41,8 +41,8 @@ class MaximumViewport : public Viewport, public SizeCallback {
             this->height_ = height;
             this->set();
         };
-        this->get_window().set_callback<Size>(&this->size_callback);
         const auto fbsize = this->get_window().get_frame_buffer_size();
         this->size_callback(fbsize.first, fbsize.second);
+        this->get_window().set_callback<Size>(std::move(this->size_callback));
     }
 };

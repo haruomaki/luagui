@@ -5,11 +5,24 @@
 
 class SizeCallback;
 
+using FunctionId = int;
+
+template <typename Func>
+class FunctionSet {
+  public:
+    std::map<FunctionId, std::function<Func>> functions_;
+    FunctionId function_id_counter_ = 0;
+    FunctionId set_function(std::function<Func> &&func) {
+        this->functions_[this->function_id_counter_] = std::move(func);
+        return function_id_counter_++;
+    }
+};
+
 // 一つのウィンドウを表すクラス
 class Window {
     GLFWwindow *gwin_ = nullptr;
     std::set<std::unique_ptr<WindowObject>> window_objects_;
-    std::set<std::function<void(int, int)> *> size_callbacks_;
+    FunctionSet<void(int, int)> size_callbacks_;
     std::set<std::function<void(int, int)> *> key_callbacks_;
     std::set<std::function<void()> *> updates_;
 
@@ -62,11 +75,11 @@ class Window {
     template <CallbackKind callback_kind>
     void set_callback();
     template <CallbackKind callback_kind>
-    void set_callback(std::function<void(int, int)> *callback);
+    void set_callback(std::function<void(int, int)> &&callback);
 
     template <>
-    void set_callback<Size>(std::function<void(int, int)> *callback) {
-        this->size_callbacks_.insert(callback);
+    void set_callback<Size>(std::function<void(int, int)> &&callback) {
+        this->size_callbacks_.set_function(std::move(callback));
     }
 
     // // コールバックを削除する関数群
