@@ -35,12 +35,12 @@ int main() {
         create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/shader.vsh")),
         create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
 
-    MobileOrthoCamera camera(window, world, viewport);
+    MobileOrthoCamera camera(world, viewport);
     OrthoCamera ui_camera(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
 
-    DynamicArray line(window, world, main_shader, {}, {});
+    DynamicArray line(world, main_shader, {}, {});
     line.draw_mode = GL_POINTS;
     line.scale = 100;
 
@@ -48,7 +48,7 @@ int main() {
     line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
 
     // 左上に常在する点
-    StickyPointTopLeft top_left_point(window, world, viewport);
+    StickyPointTopLeft top_left_point(world, viewport);
 
     // 文字の表示
     Font migmix_font;
