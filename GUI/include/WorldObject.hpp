@@ -86,7 +86,7 @@ class WorldObject {
     //     }
     // }
 
-    [[nodiscard]] World *getWorld() const {
+    [[nodiscard]] World *get_world() const {
         return world_;
     }
 

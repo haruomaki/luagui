@@ -39,8 +39,8 @@ int main() {
     OrthoCamera ui_camera(ui_world, viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
-    world.set_active_camera(camera);
-    ui_world.set_active_camera(ui_camera);
+    camera.set_active();
+    ui_camera.set_active();
 
     DynamicArray line(world, main_shader, {}, {});
     line.draw_mode = GL_POINTS;

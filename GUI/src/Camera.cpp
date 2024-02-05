@@ -1,6 +1,11 @@
+#include "World.hpp"
 #include <Camera.hpp>
 
 Camera::~Camera() = default;
+
+void Camera::set_active() {
+    this->get_world()->set_active_camera(*this);
+}
 
 glm::mat4 NormalCamera::getViewMatrix() const {
     return SCALE({-1, 1, -1}) * glm::inverse(getAbsoluteTransform());

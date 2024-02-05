@@ -66,7 +66,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
         , Update(world) {}
 };
 
-class MobileNormalCamera : public Camera, public WorldObject, protected Update {
+class MobileNormalCamera : public Camera, protected Update {
     // class MobileNormalCameraHead : public NormalCamera {
     //     using NormalCamera::NormalCamera;
     // } camera_head_;
@@ -120,7 +120,7 @@ class MobileNormalCamera : public Camera, public WorldObject, protected Update {
 
   public:
     MobileNormalCamera(World &world, const Viewport &viewport)
-        : WorldObject(world)
+        : Camera(world)
         , Update(world)
         , camera_head_(world, viewport)
         , camera_base_(world) {
