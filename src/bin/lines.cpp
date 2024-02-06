@@ -78,12 +78,10 @@ int main() {
     my_triangle.scale = 200;
     my_triangle.position = {-100, 0, 0};
 
+    gui.timer.task(1, [] { print("タイマーからこんにちは😚"); });
+
     // レンダリングループ
     gui.mainloop([&] {
-        debug(world.draw_priority, ui_world.draw_priority);
-        if (gui.tick == 200) {
-            world.draw_priority = -1;
-        }
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);

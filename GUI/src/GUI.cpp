@@ -34,6 +34,9 @@ void GUI::mainloop(const std::function<void()> &callback) {
             callback();
         }
 
+        // タイマーの更新処理
+        this->timer.step();
+
         // 受け取ったイベント（キーボードやマウス入力）を処理する
         glfwPollEvents();
     }

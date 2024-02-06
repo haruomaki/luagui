@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Timer.hpp"
 #include "Window.hpp"
 
 class GUI {
@@ -8,6 +9,7 @@ class GUI {
 
   public:
     int tick = 0;
+    Timer timer;
 
     GUI() {
         // ライブラリglfw の初期化

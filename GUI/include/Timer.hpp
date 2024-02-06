@@ -5,8 +5,6 @@
 #include <map>
 #include <thread>
 
-#define TIMER_SLEEP_UNIT std::chrono::milliseconds(1)
-
 using TaskId = unsigned long;
 
 class Timer {
@@ -17,7 +15,6 @@ class Timer {
     };
 
     std::map<TaskId, TaskInfo> tasks_{};
-    bool running_ = false;
     TaskId id_history_ = 0;
     std::vector<TaskId> ids_to_erase_{};
 
@@ -35,30 +32,21 @@ class Timer {
         this->ids_to_erase_.push_back(id);
     }
 
-    void start() {
-        this->running_ = true;
-
-        while (this->running_) {
-            // 削除予約されたタスクを削除
-            // mapのイテレーション最中に要素を削除してはいけない
-            for (auto &&id : this->ids_to_erase_) {
-                this->tasks_.erase(id);
-            }
-            this->ids_to_erase_.clear();
-
-            for (auto &[id, task_info] : this->tasks_) {
-                auto now = std::chrono::high_resolution_clock::now();
-                auto delta = now - task_info.last_time;
-                if (delta > task_info.interval) {
-                    task_info.last_time = now;
-                    task_info.callback();
-                }
-            }
-            std::this_thread::sleep_for(TIMER_SLEEP_UNIT);
+    void step() {
+        // 削除予約されたタスクを削除
+        // mapのイテレーション最中に要素を削除してはいけない
+        for (auto &&id : this->ids_to_erase_) {
+            this->tasks_.erase(id);
         }
-    }
+        this->ids_to_erase_.clear();
 
-    void stop() {
-        this->running_ = false;
+        for (auto &[id, task_info] : this->tasks_) {
+            auto now = std::chrono::high_resolution_clock::now();
+            auto delta = now - task_info.last_time;
+            if (delta > task_info.interval) {
+                task_info.last_time = now;
+                task_info.callback();
+            }
+        }
     }
 };
