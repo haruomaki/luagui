@@ -10,11 +10,15 @@ class World : public WorldObject {
     friend class DrawableWorldObject;
     friend class Update;
 
+    friend class Window;
+    int draw_priority_ = 0;
+
   public:
     Window &window;
 
-    World(Window &window)
+    World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
+        , draw_priority_(draw_priority)
         , window(window) {}
 
     ~World() override {
@@ -44,5 +48,10 @@ class World : public WorldObject {
 
     void set_active_camera(Camera &camera) {
         this->active_camera_ = &camera;
+    }
+
+    void set_draw_priority(int priority) {
+        this->draw_priority_ = priority;
+        this->window.refresh_world_order();
     }
 };

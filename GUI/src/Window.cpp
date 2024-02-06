@@ -4,6 +4,8 @@
 #include <Update.hpp>
 #include <Window.hpp>
 
+#include <algorithm>
+
 using namespace std::chrono_literals;
 
 Window::Window(int width, int height, const char *title)
@@ -109,7 +111,19 @@ bool Window::get_key(int key) const {
 }
 
 World &Window::create_world() {
-    auto world = std::make_unique<World>(*this);
+    // draw_priority_の最大値
+    int max_priority = std::numeric_limits<int>::min();
+    for (const auto &world : worlds_) {
+        max_priority = std::max(max_priority, world->draw_priority_);
+    }
+
+    // 新規ワールドの描画優先度は、max_priorityより少しだけ大きい10の倍数とする
+    int one_level_higher = 0;
+    if (max_priority >= 0) {
+        one_level_higher = max_priority - (max_priority % 10) + 10;
+    }
+
+    auto world = std::make_unique<World>(*this, one_level_higher);
     this->worlds_.push_back(std::move(world));
     return *this->worlds_.back();
 }
@@ -141,4 +155,12 @@ void Window::update_routine() {
     for (const auto &world : this->worlds_) {
         world->master_update();
     }
+}
+
+// World::draw_priority_に基づき、worlds_を昇順に並べ替える
+void Window::refresh_world_order() {
+    std::sort(this->worlds_.begin(), this->worlds_.end(),
+              [](const auto &world1, const auto &world2) {
+                  return world1->draw_priority_ < world2->draw_priority_;
+              });
 }

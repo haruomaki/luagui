@@ -15,13 +15,16 @@ class Window {
     std::set<std::function<void(int, int)> *> key_callbacks_;
     std::vector<std::unique_ptr<World>> worlds_ = {};
 
-    friend class GUI;
     friend class SizeCallback;
     friend class KeyCallback;
     friend class Update;
 
+    friend class GUI;
     void draw_routine(const std::function<void()> &callback);
     void update_routine();
+
+    friend class World;
+    void refresh_world_order();
 
   public:
     Window(int width, int height, const char *title);
