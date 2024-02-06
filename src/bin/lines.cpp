@@ -82,6 +82,7 @@ int main() {
 
     // レンダリングループ
     gui.mainloop([&] {
+        debug(gui.tick);
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);

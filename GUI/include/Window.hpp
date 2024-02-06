@@ -6,6 +6,7 @@
 
 class SizeCallback;
 class World;
+class GUI;
 
 // 一つのウィンドウを表すクラス
 class Window {
@@ -21,13 +22,14 @@ class Window {
 
     friend class GUI;
     void draw_routine();
-    void update_routine();
 
     friend class World;
     void refresh_world_order();
 
   public:
-    Window(int width, int height, const char *title);
+    GUI &gui;
+
+    Window(GUI &gui, int width, int height, const char *title);
     // ~Window();
 
     // // コピーは禁止する

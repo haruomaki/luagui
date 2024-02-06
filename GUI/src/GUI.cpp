@@ -2,7 +2,7 @@
 #include "World.hpp"
 
 Window &GUI::create_window(int width, int height, const std::string &title) {
-    auto window = std::make_unique<Window>(width, height, title.c_str());
+    auto window = std::make_unique<Window>(*this, width, height, title.c_str());
     this->windows_.push_back(std::move(window));
     return *this->windows_.back();
 }
@@ -29,7 +29,6 @@ void GUI::mainloop(const std::function<void()> &callback) {
 
         // 生きている各ウィンドウに対して更新および描画
         for (const auto &window : this->windows_) {
-            window->update_routine();
             window->draw_routine();
             callback();
         }

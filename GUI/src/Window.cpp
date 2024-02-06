@@ -8,8 +8,9 @@
 
 using namespace std::chrono_literals;
 
-Window::Window(int width, int height, const char *title)
-    : gwin_(glfwCreateWindow(width, height, title, nullptr, nullptr)) {
+Window::Window(GUI &gui, int width, int height, const char *title)
+    : gwin_(glfwCreateWindow(width, height, title, nullptr, nullptr))
+    , gui(gui) {
     // ウィンドウを作成
     if (gwin_ == nullptr) {
         throw std::runtime_error("ウィンドウの作成に失敗しました");
@@ -125,6 +126,7 @@ World &Window::create_world() {
 
     auto world = std::make_unique<World>(*this, one_level_higher);
     this->worlds_.push_back(std::move(world));
+
     return *this->worlds_.back();
 }
 
@@ -147,16 +149,6 @@ void Window::draw_routine() {
 
     // 上記描画した図形を表画面のバッファにスワップする
     glfwSwapBuffers(this->gwin_);
-}
-
-void Window::update_routine() {
-    // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
-    // world_object_root_.refreshAbsolutePosition();
-
-    // 各ワールドの更新処
-    for (const auto &world : this->worlds_) {
-        world->master_update();
-    }
 }
 
 // World::draw_priority_に基づき、worlds_を昇順に並べ替える

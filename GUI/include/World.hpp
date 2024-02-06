@@ -1,11 +1,17 @@
 #pragma once
 
+#include "GUI.hpp"
 #include <Camera.hpp>
 
 class World : public WorldObject {
+  public:
+    Window &window; // update_task_id_初期化に必要なので前に書く
+
+  private:
     set<function<void(const Camera &)> *> draws_;
     FunctionSet<void()> updates_;
     Camera *active_camera_ = nullptr;
+    const TaskId update_task_id_;
 
     friend class DrawableWorldObject;
     friend class Update;
@@ -14,15 +20,17 @@ class World : public WorldObject {
     int draw_priority_ = 0;
 
   public:
-    Window &window;
-
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
-        , draw_priority_(draw_priority)
-        , window(window) {}
+        , window(window)
+        , update_task_id_(
+              // 更新処理を定期的に呼ぶタイマーをセットする
+              this->window.gui.timer.task(1. / 60, [this] { this->master_update(); }))
+        , draw_priority_(draw_priority) {}
 
     ~World() override {
         print("Worldのデストラクタ");
+        this->window.gui.timer.erase(this->update_task_id_);
         this->children_.clear(); // draws_やupdates_が消える前にUpdate等のデストラクタを呼ぶ
     }
 
