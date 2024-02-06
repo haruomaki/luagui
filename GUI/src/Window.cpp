@@ -113,3 +113,32 @@ World &Window::create_world() {
     this->worlds_.push_back(std::move(world));
     return *this->worlds_.back();
 }
+
+void Window::draw_routine(const std::function<void()> &callback) {
+    // OpenGLの描画関数のターゲットにするウィンドウを指定
+    glfwMakeContextCurrent(this->gwin_);
+
+    // 画面の初期化
+    constexpr RGBA bg_color{0.2f, 0.2f, 0.2f, 1};
+    glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // ユーザの描画関数
+    // glDisable(GL_DEPTH_TEST);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    callback();
+    // glEnable(GL_DEPTH_TEST);
+
+    // 上記描画した図形を表画面のバッファにスワップする
+    glfwSwapBuffers(this->gwin_);
+}
+
+void Window::update_routine() {
+    // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
+    // world_object_root_.refreshAbsolutePosition();
+
+    // 各ワールドの更新処
+    for (const auto &world : this->worlds_) {
+        world->master_update();
+    }
+}

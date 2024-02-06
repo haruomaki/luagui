@@ -20,6 +20,9 @@ class Window {
     friend class KeyCallback;
     friend class Update;
 
+    void draw_routine(const std::function<void()> &callback);
+    void update_routine();
+
   public:
     Window(int width, int height, const char *title);
     // ~Window();
