@@ -56,9 +56,10 @@ int main() {
                     {0.9, 0.2, 0.7, 0.3},
                     {0.3, 0.7, 0.5f, 0.5},
                 },
+                {{1, 0}, {0, 0}, {0, 1}, {1, 1}},
                 tex_id);
 
-    Polygon gon2(main_shader, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+    Polygon gon2(main_shader, {{-0.8, -0.3, -0.1}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
                  {
                      {0.9, 0.3, 0, 1},
                      {0.9, 0.2, 0.7, 0.3},
@@ -76,7 +77,7 @@ int main() {
 
     Polygon poly(main_shader, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
-    auto &ins3 = main_world.append_child<MovingShape>(gon3);
+    auto &ins3 = main_world.append_child<Shape>(gon3);
     auto &ins = ins3.append_child<Shape>(gon);
     auto &ins2 = main_world.append_child<Shape>(gon2);
     auto &inspoly = main_world.append_child<Shape>(poly);
@@ -94,9 +95,9 @@ int main() {
         instance.set_position({-0, 300, i});
     }
 
-    main_world.timer.task(1, [&] {
-        debug(ins3.get_absolute_transform());
-    });
+    // main_world.timer.task(1, [&] {
+    //     debug(ins3.get_absolute_transform());
+    // });
 
     ProgramObject hello_shader = {
         create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/hello.vsh")),
