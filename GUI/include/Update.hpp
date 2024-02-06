@@ -2,13 +2,11 @@
 
 #include <World.hpp>
 
-class Update {
+class Update : virtual public WorldObject {
     FunctionId func_id_;
 
   public:
-    World &world;
-
     virtual void update() = 0;
-    Update(World &world);
-    virtual ~Update();
+    Update();
+    ~Update() override;
 };

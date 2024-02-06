@@ -6,7 +6,7 @@
 #pragma clang diagnostic ignored "-Wweak-vtables"
 
 // 常に画面の左上にある点
-class StickyPointTopLeft : public WorldObject, Update {
+class StickyPointTopLeft : public Update {
     const Viewport &viewport_;
 
     void update() override {
@@ -18,9 +18,8 @@ class StickyPointTopLeft : public WorldObject, Update {
     }
 
   public:
-    StickyPointTopLeft(World &world, const Viewport &viewport)
-        : Update(world)
-        , viewport_(viewport) {}
+    StickyPointTopLeft(const Viewport &viewport)
+        : viewport_(viewport) {}
 };
 
 // glm::vec3 operator*(const glm::vec3 &v, const float a) {
@@ -30,7 +29,7 @@ class StickyPointTopLeft : public WorldObject, Update {
 class MobileOrthoCamera : public OrthoCamera, protected Update {
     void update() override {
         constexpr float speed = 5;
-        const Window &window = this->world.window;
+        const Window &window = this->get_world().window;
 
         if (window.get_key(GLFW_KEY_RIGHT)) {
             position += get_left() * speed;
@@ -60,9 +59,8 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
     }
 
   public:
-    MobileOrthoCamera(World &world, const Viewport &viewport)
-        : OrthoCamera(viewport)
-        , Update(world) {}
+    MobileOrthoCamera(const Viewport &viewport)
+        : OrthoCamera(viewport) {}
 };
 
 // class MobileNormalCamera : public Camera, protected Update {

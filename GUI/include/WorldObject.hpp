@@ -111,7 +111,7 @@ class WorldObject {
         if (!inserted) {
             throw std::runtime_error("append_childに失敗");
         }
-        auto raw = static_cast<T *>(it->get());
+        auto raw = dynamic_cast<T *>(it->get());
         return *raw;
     }
 

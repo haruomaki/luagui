@@ -82,9 +82,8 @@ class DynamicArray : public DrawableWorldObject, Update {
     GLfloat point_size = 4;
     GLfloat line_width = 4;
 
-    DynamicArray(World &world, const ProgramObject &shader, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
-        : Update(world)
-        , shader_(shader)
+    DynamicArray(const ProgramObject &shader, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
+        : shader_(shader)
         , n_(coords.size())
         , capacity_(coords.capacity()) {
 
