@@ -78,7 +78,8 @@ int main() {
     my_triangle.scale = 200;
     my_triangle.position = {-100, 0, 0};
 
-    gui.timer.task(1, [] { print("タイマーからこんにちは😚"); });
+    float t = 0;
+    world.timer.task(1, [&t] { t += 0.1; });
 
     // レンダリングループ
     gui.mainloop([&] {
@@ -86,6 +87,6 @@ int main() {
 
         const auto xs = linspace(-9, 9, points_num);
         line.vertices.xs = xs;
-        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100); });
+        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100) + t; });
     });
 }

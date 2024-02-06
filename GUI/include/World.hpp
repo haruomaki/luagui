@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Camera.hpp>
+#include "Camera.hpp"
+#include "Timer.hpp"
 
 class World : public WorldObject {
     set<function<void(const Camera &)> *> draws_;
@@ -15,6 +16,7 @@ class World : public WorldObject {
 
   public:
     Window &window;
+    Timer timer;
 
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
@@ -44,6 +46,7 @@ class World : public WorldObject {
         for (const auto &[id, update] : this->updates_) {
             update();
         }
+        this->timer.step(); // タイマーを進める
     }
 
     Camera *&active_camera() {
