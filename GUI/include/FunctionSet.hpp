@@ -1,3 +1,5 @@
+#pragma once
+
 #include <functional>
 #include <map>
 
@@ -24,6 +26,10 @@ class FunctionSet {
         }
         this->functions_.erase(pos);
         return true;
+    }
+
+    const std::function<Func> &at(FunctionId id) {
+        return this->functions_.at(id);
     }
 
     // 範囲ベースforで回せるように
