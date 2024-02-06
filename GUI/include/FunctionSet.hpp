@@ -16,13 +16,14 @@ class FunctionSet {
         return function_id_counter_++;
     }
 
-    void erase_function(FunctionId function_id) {
+    bool erase_function(FunctionId function_id) {
         auto pos = this->functions_.find(function_id);
         if (pos == functions_.end()) {
             warn("キーが見つかりませんでした: ", function_id);
-        } else {
-            this->functions_.erase(pos);
+            return false;
         }
+        this->functions_.erase(pos);
+        return true;
     }
 
     // 範囲ベースforで回せるように

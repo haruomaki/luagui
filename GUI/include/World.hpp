@@ -4,7 +4,6 @@
 #include "Timer.hpp"
 
 class World : public WorldObject {
-    set<function<void(const Camera &)> *> draws_;
     Camera *active_camera_ = nullptr;
 
     friend class DrawableWorldObject;
@@ -16,6 +15,7 @@ class World : public WorldObject {
   public:
     Window &window;
     Timer timer;
+    FunctionSet<void(const Camera &)> draws;
     FunctionSet<void()> updates;
 
     World(Window &window, int draw_priority)
@@ -25,7 +25,7 @@ class World : public WorldObject {
 
     ~World() override {
         print("Worldのデストラクタ");
-        this->children_.clear(); // draws_やupdates_が消える前にUpdate等のデストラクタを呼ぶ
+        this->children_.clear(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
     }
 
     World(const World &) = delete;
@@ -37,8 +37,8 @@ class World : public WorldObject {
         if (this->active_camera_ == nullptr) {
             print("警告: アクティブなカメラが存在しません");
         }
-        for (auto *draw : draws_) {
-            (*draw)(*this->active_camera_);
+        for (const auto &[id, draw] : this->draws) {
+            draw(*this->active_camera_);
         }
     }
 

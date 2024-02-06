@@ -2,10 +2,9 @@
 #include <World.hpp>
 
 DrawableWorldObject::DrawableWorldObject() {
-    draw_ = [this](const Camera &camera) { this->draw(camera); };
-    this->get_world().draws_.insert(&draw_);
+    auto func = [this](const Camera &camera) { this->draw(camera); };
+    this->func_id_ = this->get_world().draws.set_function(std::move(func));
 }
 DrawableWorldObject::~DrawableWorldObject() {
-    auto &world = get_world();
-    world.draws_.erase(&draw_);
+    this->get_world().draws.erase_function(this->func_id_);
 }

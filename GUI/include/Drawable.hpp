@@ -4,7 +4,7 @@
 #include <World.hpp>
 
 class DrawableWorldObject : virtual public WorldObject {
-    function<void(const Camera &camera)> draw_;
+    FunctionId func_id_;
     virtual void draw(const Camera &camera) const = 0;
 
   public:
