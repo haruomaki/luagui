@@ -31,5 +31,5 @@ class GUI {
     GUI &operator=(GUI &&) = default;
 
     Window &create_window(int width, int height, const std::string &title);
-    void mainloop(const std::function<void()> &callback);
+    void mainloop();
 };

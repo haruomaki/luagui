@@ -7,28 +7,6 @@ inline float f(float x) {
 }
 
 int main() {
-    std::function<void()> waa = [] {};
-    std::function<void()> pen = [] {};
-    std::function<void()> mage = [] {};
-    std::set<std::function<void()> *> sss = {&waa, &pen, &mage};
-    // sss.erase(9);
-    print(sss);
-    sss.erase(&pen);
-    print(sss);
-    // Timer timer;
-    // auto id_hi = timer.task(1, [] { print("hi!"); });
-    // int count = 0;
-    // timer.task(1. / 4, [&] {
-    //     print("あいう");
-    //     if (count++ >= 5) {
-    //         timer.erase(id_hi);
-    //         if (count >= 10) {
-    //             timer.stop();
-    //         }
-    //     }
-    // });
-    // timer.start();
-
     constexpr int width = 600, height = 500;
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
@@ -81,12 +59,13 @@ int main() {
     float t = 0;
     world.timer.task(1, [&t] { t += 0.1; });
 
-    // レンダリングループ
-    gui.mainloop([&] {
+    world.updates.set_function([&] {
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
         line.vertices.xs = xs;
         line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100) + t; });
     });
+
+    gui.mainloop();
 }

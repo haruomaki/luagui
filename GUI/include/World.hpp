@@ -5,7 +5,6 @@
 
 class World : public WorldObject {
     set<function<void(const Camera &)> *> draws_;
-    FunctionSet<void()> updates_;
     Camera *active_camera_ = nullptr;
 
     friend class DrawableWorldObject;
@@ -17,6 +16,7 @@ class World : public WorldObject {
   public:
     Window &window;
     Timer timer;
+    FunctionSet<void()> updates;
 
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
@@ -43,7 +43,7 @@ class World : public WorldObject {
     }
 
     void master_update() {
-        for (const auto &[id, update] : this->updates_) {
+        for (const auto &[id, update] : this->updates) {
             update();
         }
         this->timer.step(); // タイマーを進める

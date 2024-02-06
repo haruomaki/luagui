@@ -7,7 +7,7 @@ Window &GUI::create_window(int width, int height, const std::string &title) {
     return *this->windows_.back();
 }
 
-void GUI::mainloop(const std::function<void()> &callback) {
+void GUI::mainloop() {
     if (looping_) {
         throw std::runtime_error("すでにメインループが始まっています");
     }
@@ -31,7 +31,6 @@ void GUI::mainloop(const std::function<void()> &callback) {
         for (const auto &window : this->windows_) {
             window->update_routine();
             window->draw_routine();
-            callback();
         }
 
         // 受け取ったイベント（キーボードやマウス入力）を処理する
