@@ -30,7 +30,8 @@ void GUI::mainloop(const std::function<void()> &callback) {
         // 生きている各ウィンドウに対して更新および描画
         for (const auto &window : this->windows_) {
             window->update_routine();
-            window->draw_routine(callback);
+            window->draw_routine();
+            callback();
         }
 
         // 受け取ったイベント（キーボードやマウス入力）を処理する

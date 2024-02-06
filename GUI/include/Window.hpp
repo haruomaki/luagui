@@ -20,7 +20,7 @@ class Window {
     friend class Update;
 
     friend class GUI;
-    void draw_routine(const std::function<void()> &callback);
+    void draw_routine();
     void update_routine();
 
     friend class World;

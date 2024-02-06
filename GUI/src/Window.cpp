@@ -128,7 +128,7 @@ World &Window::create_world() {
     return *this->worlds_.back();
 }
 
-void Window::draw_routine(const std::function<void()> &callback) {
+void Window::draw_routine() {
     // OpenGLの描画関数のターゲットにするウィンドウを指定
     glfwMakeContextCurrent(this->gwin_);
 
@@ -137,11 +137,13 @@ void Window::draw_routine(const std::function<void()> &callback) {
     glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // ユーザの描画関数
-    // glDisable(GL_DEPTH_TEST);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    callback();
-    // glEnable(GL_DEPTH_TEST);
+    // 優先度が非負である各ワールドを順に描画
+    for (const auto &world : this->worlds_) {
+        if (world->draw_priority_ >= 0) {
+            glClear(GL_DEPTH_BUFFER_BIT);
+            world->master_draw();
+        }
+    }
 
     // 上記描画した図形を表画面のバッファにスワップする
     glfwSwapBuffers(this->gwin_);

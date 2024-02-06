@@ -80,14 +80,14 @@ int main() {
 
     // レンダリングループ
     gui.mainloop([&] {
+        debug(world.draw_priority, ui_world.draw_priority);
+        if (gui.tick == 200) {
+            world.draw_priority = -1;
+        }
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
         line.vertices.xs = xs;
         line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100); });
-
-        world.master_draw();
-        glClear(GL_DEPTH_BUFFER_BIT);
-        ui_world.master_draw();
     });
 }

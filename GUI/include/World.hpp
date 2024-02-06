@@ -46,12 +46,16 @@ class World : public WorldObject {
         }
     }
 
-    void set_active_camera(Camera &camera) {
-        this->active_camera_ = &camera;
+    Camera *&active_camera() {
+        return this->active_camera_;
     }
 
+    [[nodiscard]] int get_draw_priority() const {
+        return this->draw_priority_;
+    }
     void set_draw_priority(int priority) {
         this->draw_priority_ = priority;
         this->window.refresh_world_order();
     }
+    PropertyGetSet<&World::get_draw_priority, &World::set_draw_priority> draw_priority{this};
 };
