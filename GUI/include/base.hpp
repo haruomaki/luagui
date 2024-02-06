@@ -111,8 +111,8 @@ inline void print_impl(const char *sep, const T &arg, const Args &...args) {
 }
 
 template <typename... Args>
-inline void print_pre(const char *file, int line, const Args &...args) {
-    print_headline("🐝", file, line);
+inline void print_pre(const char *icon, const char *file, int line, const Args &...args) {
+    print_headline(icon, file, line);
     if constexpr (sizeof...(args) > 0) {
         std::cerr << " ";
         print_impl("", args...);
@@ -156,7 +156,8 @@ inline void time_pre(const char *file, int line, Func &&func) {
 }
 
 #ifdef DEBUG
-#define print(...) print_pre(__FILE__, __LINE__ __VA_OPT__(, __VA_ARGS__))               // NOLINT(cppcoreguidelines-macro-usage)
+#define print(...) print_pre("✅", __FILE__, __LINE__ __VA_OPT__(, __VA_ARGS__))         // NOLINT(cppcoreguidelines-macro-usage)
+#define warn(...) print_pre("🐝", __FILE__, __LINE__ __VA_OPT__(, __VA_ARGS__))          // NOLINT(cppcoreguidelines-macro-usage)
 #define debug(...) debug_pre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
 #define time(...) time_pre(__FILE__, __LINE__, [&] { __VA_ARGS__; })                     // NOLINT(cppcoreguidelines-macro-usage)
 #else

@@ -17,18 +17,11 @@ class FunctionSet {
     }
 
     void erase_function(FunctionId function_id) {
-        // for (const auto &[id, f] : this->functions_) {
-        //     debug(id);
-        // }
-        print("検索〜♪");
         auto pos = this->functions_.find(function_id);
-        print("検索おわり");
         if (pos == functions_.end()) {
-            print("キーが見つかりませんでした: ", function_id);
+            warn("キーが見つかりませんでした: ", function_id);
         } else {
-            print("消すよ！: ", function_id);
             this->functions_.erase(pos);
-            print("消したよ！");
         }
     }
 

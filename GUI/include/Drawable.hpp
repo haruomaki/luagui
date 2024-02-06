@@ -10,4 +10,8 @@ class DrawableWorldObject : virtual public WorldObject {
   public:
     DrawableWorldObject();
     ~DrawableWorldObject() override;
+    DrawableWorldObject(const DrawableWorldObject &) = delete;
+    DrawableWorldObject &operator=(const DrawableWorldObject &) const = delete;
+    DrawableWorldObject(DrawableWorldObject &&) = delete;
+    DrawableWorldObject &operator=(DrawableWorldObject &&) const = delete;
 };

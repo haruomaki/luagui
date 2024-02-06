@@ -67,35 +67,11 @@ class WorldObject {
 
     // コピー禁止
     WorldObject(const WorldObject &) = delete;
+    WorldObject &operator=(const WorldObject &) const = delete;
 
     // ムーブも禁止
     WorldObject(WorldObject &&) = delete;
-    // WorldObject(WorldObject &&other) noexcept
-    //     : world_(other.world_)
-    //     , pos_(other.pos_)
-    //     , rotate_(other.rotate_)
-    //     , scale_(other.scale_)
-    //     , abs_transform_(other.abs_transform_)
-    //     , parent_(other.parent_)
-    //     , children_(other.children_) {
-
-    //     // 親の子情報を更新
-    //     if (parent_ != nullptr) {
-    //         parent_->children_.erase(&other);
-    //         parent_->children_.insert(this);
-    //     }
-
-    //     // 子たちの親情報を更新
-    //     for (auto *child : children_) {
-    //         child->parent_ = this;
-    //     }
-    // }
-
-    // void append_child(WorldObject &child) {
-    //     child.parent_ = this;
-    //     this->children_.insert(&child);
-    //     this->refresh_absolute_transform();
-    // }
+    WorldObject &operator=(WorldObject &&) const = delete;
 
     template <typename T, typename... Args>
         requires std::is_constructible_v<T, Args...> &&    // ArgsはTのコンストラクタの引数

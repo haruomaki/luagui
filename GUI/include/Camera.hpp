@@ -7,7 +7,6 @@
 class Camera : virtual public WorldObject {
   public:
     Camera() = default;
-    virtual ~Camera() = default;
     [[nodiscard]] virtual glm::mat4 get_view_matrix() const = 0;
     [[nodiscard]] virtual glm::mat4 get_projection_matrix() const = 0;
 
