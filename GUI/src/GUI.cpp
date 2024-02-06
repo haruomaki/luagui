@@ -2,7 +2,7 @@
 #include "World.hpp"
 
 Window &GUI::create_window(int width, int height, const std::string &title) {
-    auto window = std::make_unique<Window>(width, height, title.c_str());
+    auto window = std::make_unique<Window>(*this, width, height, title.c_str());
     this->windows_.push_back(std::move(window));
     return *this->windows_.back();
 }

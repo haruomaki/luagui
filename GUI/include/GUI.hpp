@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Timer.hpp"
-#include "Window.hpp"
+#include "graphical_base.hpp"
+
+class Window;
 
 class GUI {
     std::vector<std::unique_ptr<Window>> windows_ = {};

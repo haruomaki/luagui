@@ -8,8 +8,9 @@
 
 using namespace std::chrono_literals;
 
-Window::Window(int width, int height, const char *title)
-    : gwin_(glfwCreateWindow(width, height, title, nullptr, nullptr)) {
+Window::Window(GUI &gui, int width, int height, const char *title)
+    : gwin_(glfwCreateWindow(width, height, title, nullptr, nullptr))
+    , gui(gui) {
     // ウィンドウを作成
     if (gwin_ == nullptr) {
         throw std::runtime_error("ウィンドウの作成に失敗しました");
@@ -125,6 +126,7 @@ World &Window::create_world() {
 
     auto world = std::make_unique<World>(*this, one_level_higher);
     this->worlds_.push_back(std::move(world));
+
     return *this->worlds_.back();
 }
 
