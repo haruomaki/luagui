@@ -6,35 +6,39 @@
 #include <core.hpp>
 
 class DynamicArray : public DrawableWorldObject, Update {
-    VertexArrayObject vao_;
+    const VertexArrayObject vao_;
     VertexBufferObject vbo_;
     const ProgramObject &shader_;
     size_t n_;
     size_t capacity_;
     static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
 
+    void regenerate_vbo() {
+        print("VBO生成");
+        // 空のVBOを生成
+        vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, GL_DYNAMIC_DRAW);
+
+        // VAOに頂点の座標と色を関連付ける
+        vao_.bind([&] {
+            vbo_.bind([&] {
+                shader_.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+                shader_.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
+                shader_.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
+            });
+            getErrors();
+        });
+    }
+
     void update() override {
         // VBOの更新
-        vao_.bind([&] {
-            if (capacity_ != vertices.capacity()) {
-                // 空のVBOを生成
-                vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, GL_DYNAMIC_DRAW);
-
-                // VAOを作成。頂点の座標と色を関連付ける
-                vao_ = VertexArrayObject::gen();
-                vao_.bind([&] {
-                    vbo_.bind([&] {
-                        shader_.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-                        shader_.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
-                    });
-                    getErrors();
-                });
-            }
-            capacity_ = vertices.capacity();
-            n_ = vertices.size();
-            vbo_.bind([&] {
-                glBufferSubData(GL_ARRAY_BUFFER, 0, GLsizeiptr(sizeof(InterleavedVertexInfo) * capacity_), vertices.data());
-            });
+        // verticesの長さ変更に伴ってヒープが再確保されるを検知し、新たにVBOを作り直す
+        if (capacity_ != vertices.capacity()) {
+            this->regenerate_vbo();
+        }
+        capacity_ = vertices.capacity();
+        n_ = vertices.size();
+        vbo_.bind([&] {
+            glBufferSubData(GL_ARRAY_BUFFER, 0, GLsizeiptr(sizeof(InterleavedVertexInfo) * capacity_), vertices.data());
         });
     }
 
@@ -82,7 +86,8 @@ class DynamicArray : public DrawableWorldObject, Update {
     GLfloat line_width = 4;
 
     DynamicArray(const ProgramObject &shader, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
-        : shader_(shader)
+        : vao_(VertexArrayObject::gen())
+        , shader_(shader)
         , n_(coords.size())
         , capacity_(coords.capacity()) {
 
@@ -94,6 +99,6 @@ class DynamicArray : public DrawableWorldObject, Update {
         }
         vertices = vers;
 
-        // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
+        regenerate_vbo(); // VBOが常に存在するようにする
     }
 };

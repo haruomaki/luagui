@@ -93,9 +93,7 @@ struct InterleavedVertexInfoVector : public vector<InterleavedVertexInfo> {
 
     void setColors(const vector<RGBA> &colors) {
         const auto size = colors.size();
-        if (size > this->size()) {
-            this->resize(size);
-        }
+        pad(size);
         for (size_t i = 0; i < size; i++) {
             this->at(i).color = colors[i];
         }

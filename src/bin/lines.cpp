@@ -31,9 +31,7 @@ int main() {
     auto &line = world.append_child<DynamicArray>(main_shader);
     line.draw_mode = GL_POINTS;
     line.scale = 100;
-
-    constexpr int points_num = 100;
-    line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
+    int points_num = 100;
 
     // 左上に常在する点
     // TODO: これが間違ってworldの子になってもメモリエラー？回答：前と後ろでui_worldとworldのようにチグハグに指定するとエラー
@@ -57,14 +55,19 @@ int main() {
     my_triangle.position = {-100, 0, 0};
 
     float t = 0;
-    world.timer.task(1, [&t] { t += 0.1; });
+    world.timer.task(0.5, [&] {
+        t += 0.1;
+        points_num = (points_num - 90) % 200 + 100; // 100〜300を繰り返す
+    });
 
     world.updates.set_function([&] {
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
+        line.vertices.clear();
         line.vertices.xs = xs;
         line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100) + t; });
+        line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
     });
 
     gui.mainloop();
