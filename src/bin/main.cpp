@@ -136,16 +136,14 @@ int main() {
         line.set_position(line.get_position() + glm::vec3{-10, 0, 0});
     });
 
-    // [&] {
-    //         main_world.master_draw(camera);
-
-    //         main_shader.use();
-    //         main_shader.setUniform("modelViewMatrix", camera.get_view_matrix());
-    //         main_shader.set_Uniform("is_tex", GL_FALSE);
-    //         vao.bind([&] {
-    //             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    //         });
-    //     }
+    main_world.draws.set_function([&](const auto &camera) {
+        main_shader.use();
+        main_shader.set_uniform("modelViewMatrix", camera.get_view_matrix());
+        main_shader.set_uniform("is_tex", GL_FALSE);
+        vao.bind([&] {
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+        });
+    });
 
     // レンダリングループ
     gui.mainloop();

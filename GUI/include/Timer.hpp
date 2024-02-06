@@ -14,19 +14,8 @@ class Timer {
     std::map<FunctionId, TaskInfo> task_infos_{};
     std::vector<FunctionId> ids_to_erase_{};
 
-  public:
-    FunctionId task(double interval, std::function<void()> &&callback) {
-        auto id = this->tasks_.set_function(std::forward<std::function<void()>>(callback));
-        this->task_infos_.emplace(std::piecewise_construct,
-                                  std::forward_as_tuple(id),
-                                  std::forward_as_tuple(std::chrono::duration<double>(interval), std::chrono::high_resolution_clock::time_point()));
-        return id;
-    }
-
-    void erase(FunctionId id) {
-        this->ids_to_erase_.push_back(id);
-    }
-
+    // Worldクラスがタイマーを所有し毎フレーム更新する
+    friend class World;
     void step() {
         // 削除予約されたタスクを削除
         // mapのイテレーション最中に要素を削除してはいけない
@@ -45,5 +34,18 @@ class Timer {
                 this->tasks_.at(id)();
             }
         }
+    }
+
+  public:
+    FunctionId task(double interval, std::function<void()> &&callback) {
+        auto id = this->tasks_.set_function(std::forward<std::function<void()>>(callback));
+        this->task_infos_.emplace(std::piecewise_construct,
+                                  std::forward_as_tuple(id),
+                                  std::forward_as_tuple(std::chrono::duration<double>(interval), std::chrono::high_resolution_clock::time_point()));
+        return id;
+    }
+
+    void erase(FunctionId id) {
+        this->ids_to_erase_.push_back(id);
     }
 };
