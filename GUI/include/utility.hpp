@@ -63,73 +63,63 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
         : OrthoCamera(viewport) {}
 };
 
-// class MobileNormalCamera : public Camera, protected Update {
-//     // class MobileNormalCameraHead : public NormalCamera {
-//     //     using NormalCamera::NormalCamera;
-//     // } camera_head_;
-//     NormalCamera camera_head_;
-//     WorldObject camera_base_;
+class MobileNormalCamera : public Camera, protected Update {
+    NormalCamera &camera_head_;
 
-//     void update() override {
-//         constexpr float speed = 5;
-//         const Window &window = this->world.window;
+    void update() override {
+        constexpr float speed = 5;
+        const Window &window = this->get_world().window;
 
-//         if (window.get_key(GLFW_KEY_W)) {
-//             position += get_front() * speed;
-//         }
-//         if (window.get_key(GLFW_KEY_A)) {
-//             position += get_left() * speed;
-//         }
-//         if (window.get_key(GLFW_KEY_S)) {
-//             position += get_back() * speed;
-//         }
-//         if (window.get_key(GLFW_KEY_D)) {
-//             position += get_right() * speed;
-//         }
-//         if (window.get_key(GLFW_KEY_SPACE)) {
-//             position += get_up() * speed;
-//         }
-//         if (window.get_key(GLFW_KEY_LEFT_SHIFT)) {
-//             position += get_down() * speed;
-//         }
-//         if (window.get_key(GLFW_KEY_RIGHT)) {
-//             rotate *= ANGLE_Y(-0.01F);
-//         }
-//         if (window.get_key(GLFW_KEY_LEFT)) {
-//             rotate *= ANGLE_Y(0.01F);
-//         }
-//         if (window.get_key(GLFW_KEY_DOWN)) {
-//             camera_head_.rotate *= ANGLE_X(0.01F);
-//         }
-//         if (window.get_key(GLFW_KEY_UP)) {
-//             camera_head_.rotate *= ANGLE_X(-0.01F);
-//         }
-//         // if (window_.get_key(GLFW_KEY_Z)) {
-//         //     setScale(scale / 1.01);
-//         // }
-//         // if (window_.get_key(GLFW_KEY_X)) {
-//         //     setScale(scale * 1.01);
-//         // }
-//         if (window.get_key(GLFW_KEY_Q)) {
-//             window.close();
-//         }
-//     }
+        if (window.get_key(GLFW_KEY_W)) {
+            position += get_front() * speed;
+        }
+        if (window.get_key(GLFW_KEY_A)) {
+            position += get_left() * speed;
+        }
+        if (window.get_key(GLFW_KEY_S)) {
+            position += get_back() * speed;
+        }
+        if (window.get_key(GLFW_KEY_D)) {
+            position += get_right() * speed;
+        }
+        if (window.get_key(GLFW_KEY_SPACE)) {
+            position += get_up() * speed;
+        }
+        if (window.get_key(GLFW_KEY_LEFT_SHIFT)) {
+            position += get_down() * speed;
+        }
+        if (window.get_key(GLFW_KEY_RIGHT)) {
+            rotate *= ANGLE_Y(-0.01F);
+        }
+        if (window.get_key(GLFW_KEY_LEFT)) {
+            rotate *= ANGLE_Y(0.01F);
+        }
+        if (window.get_key(GLFW_KEY_DOWN)) {
+            camera_head_.rotate *= ANGLE_X(0.01F);
+        }
+        if (window.get_key(GLFW_KEY_UP)) {
+            camera_head_.rotate *= ANGLE_X(-0.01F);
+        }
+        // if (window_.get_key(GLFW_KEY_Z)) {
+        //     setScale(scale / 1.01);
+        // }
+        // if (window_.get_key(GLFW_KEY_X)) {
+        //     setScale(scale * 1.01);
+        // }
+        if (window.get_key(GLFW_KEY_Q)) {
+            window.close();
+        }
+    }
 
-//   public:
-//     MobileNormalCamera(World &world, const Viewport &viewport)
-//         : Camera(world)
-//         , Update(world)
-//         , camera_head_(world, viewport)
-//         , camera_base_(world) {
-//         this->append(camera_base_);
-//         camera_base_.append(camera_head_);
-//     }
+  public:
+    MobileNormalCamera(const Viewport &viewport)
+        : camera_head_(this->append_child<NormalCamera>(viewport)) {}
 
-//     [[nodiscard]] glm::mat4 get_view_matrix() const override {
-//         return camera_head_.get_view_matrix();
-//     }
+    [[nodiscard]] glm::mat4 get_view_matrix() const override {
+        return camera_head_.get_view_matrix();
+    }
 
-//     [[nodiscard]] glm::mat4 get_projection_matrix() const override {
-//         return camera_head_.get_projection_matrix();
-//     }
-// };
+    [[nodiscard]] glm::mat4 get_projection_matrix() const override {
+        return camera_head_.get_projection_matrix();
+    }
+};
