@@ -11,6 +11,13 @@ void GUI::mainloop() {
     if (looping_) {
         throw std::runtime_error("すでにメインループが始まっています");
     }
+
+    //  デフォルトシェーダの設定
+    if (!this->default_shader.has_value()) {
+        this->default_shader.emplace({create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
+                                      create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))});
+    }
+
     looping_ = true;
 
     // 描画のループ

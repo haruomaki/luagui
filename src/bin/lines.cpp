@@ -18,8 +18,8 @@ int main() {
     World &ui_world = window.create_world();
 
     ProgramObject main_shader = {
-        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/shader.vsh")),
-        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
+        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
+        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))};
 
     auto &camera = world.append_child<MobileOrthoCamera>(viewport);
     auto &ui_camera = ui_world.append_child<OrthoCamera>(viewport);
