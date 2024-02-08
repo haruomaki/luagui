@@ -13,8 +13,14 @@ class ProgramObject {
     GLuint program_id_;
 
   public:
-    ProgramObject() = default; // FIXME: glCreateProgram()をしないコンストラクタはナンセンス
+    ProgramObject() = delete; // glCreateProgram()をしないコンストラクタはナンセンス
     ProgramObject(std::initializer_list<GLuint> shader_ids);
+    ~ProgramObject();
+    ProgramObject(const ProgramObject &) = delete;
+    ProgramObject &operator=(const ProgramObject &) const = delete;
+    ProgramObject(ProgramObject &&) = delete; // TODO: ムーブくらいは許していいかも
+    ProgramObject &operator=(ProgramObject &&) const = delete;
+
     [[nodiscard]] GLuint get_program_id() const;
     void use() const;
 

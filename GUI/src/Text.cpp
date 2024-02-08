@@ -1,11 +1,15 @@
-#include <Text.hpp>
+#include "Text.hpp"
+#include "Shader.hpp"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 DEFINE_RUNTIME_ERROR(FreeTypeException);
 
-Font::Font() {
+Font::Font()
+    : shader_(ProgramObject{
+          create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
+          create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))}) {
     // FreeTypeを初期化
     FT_Library ft;
     if (FT_Init_FreeType(&ft) != 0) {
@@ -62,19 +66,13 @@ Font::Font() {
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    shader_ = ProgramObject{
-        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
-        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))};
+    this->vao_ = VertexArrayObject::gen();
+    this->vbo_ = VertexBufferObject::gen(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
+    this->vao_.bind([&] {
+        this->vbo_.bind([&] {
+            this->shader_.set_attribute("vertex", 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
+        });
+    });
 }
 
 Text::Text(Font &font, string text, RGBA color)
@@ -87,50 +85,49 @@ void Text::draw(const Camera &camera) const {
     font_.shader_.use();
     font_.shader_.set_uniform("textColor", color_);
     glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(font_.VAO);
+    this->font_.vao_.bind([&] {
+        float tail = 0;
 
-    float tail = 0;
+        // iterate through all characters
+        std::string::const_iterator c;
+        for (c = text_.begin(); c != text_.end(); c++) {
+            Character ch = font_.Characters.at(*c);
 
-    // iterate through all characters
-    std::string::const_iterator c;
-    for (c = text_.begin(); c != text_.end(); c++) {
-        Character ch = font_.Characters.at(*c);
+            float xpos = tail + ch.Bearing.x;
+            float ypos = -(ch.Size.y - ch.Bearing.y);
 
-        float xpos = tail + ch.Bearing.x;
-        float ypos = -(ch.Size.y - ch.Bearing.y);
+            float w = ch.Size.x;
+            float h = ch.Size.y;
+            // update VBO for each character
+            float vertices[6][4] = {
+                {xpos, ypos + h, 0.0F, 0.0F},
+                {xpos, ypos, 0.0F, 1.0F},
+                {xpos + w, ypos, 1.0F, 1.0F},
 
-        float w = ch.Size.x;
-        float h = ch.Size.y;
-        // update VBO for each character
-        float vertices[6][4] = {
-            {xpos, ypos + h, 0.0F, 0.0F},
-            {xpos, ypos, 0.0F, 1.0F},
-            {xpos + w, ypos, 1.0F, 1.0F},
+                {xpos, ypos + h, 0.0F, 0.0F},
+                {xpos + w, ypos, 1.0F, 1.0F},
+                {xpos + w, ypos + h, 1.0F, 0.0F}};
+            // render glyph texture over quad
+            glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+            // update content of VBO memory
+            this->font_.vbo_.bind([&] {
+                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+            });
 
-            {xpos, ypos + h, 0.0F, 0.0F},
-            {xpos + w, ypos, 1.0F, 1.0F},
-            {xpos + w, ypos + h, 1.0F, 0.0F}};
-        // render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-        // update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, font_.VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+            // モデルビュー行列
+            const auto model_matrix = this->get_absolute_transform();
+            const auto model_view_matrix = camera.get_view_matrix() * model_matrix;
+            font_.shader_.set_uniform("modelViewMatrix", model_view_matrix);
 
-        // モデルビュー行列
-        const auto model_matrix = this->get_absolute_transform();
-        const auto model_view_matrix = camera.get_view_matrix() * model_matrix;
-        font_.shader_.set_uniform("modelViewMatrix", model_view_matrix);
+            // 射影変換行列
+            const auto projection_matrix = camera.get_projection_matrix();
+            font_.shader_.set_uniform("projectionMatrix", projection_matrix);
 
-        // 射影変換行列
-        const auto projection_matrix = camera.get_projection_matrix();
-        font_.shader_.set_uniform("projectionMatrix", projection_matrix);
-
-        // render quad
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-        tail += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
-    }
-    glBindVertexArray(0);
+            // render quad
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+            tail += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
+        }
+    });
     glBindTexture(GL_TEXTURE_2D, 0);
 }

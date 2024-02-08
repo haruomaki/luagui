@@ -42,6 +42,10 @@ ProgramObject::ProgramObject(std::initializer_list<GLuint> shader_ids) {
     program_id_ = program_id;
 }
 
+ProgramObject::~ProgramObject() {
+    glDeleteProgram(this->program_id_);
+}
+
 GLuint ProgramObject::get_program_id() const {
     return program_id_;
 }
