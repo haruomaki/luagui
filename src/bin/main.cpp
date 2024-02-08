@@ -25,11 +25,11 @@ int main() {
     World &main_world = window.create_world();
 
     // バーテックスシェーダのコンパイル
-    auto vsh_string = load_string("assets/shaders/shader.vsh");
+    auto vsh_string = load_string("assets/shaders/default.vsh");
     auto vsh_id = create_shader(GL_VERTEX_SHADER, vsh_string);
 
     // フラグメントシェーダのコンパイル
-    auto fsh_string = load_string("assets/shaders/shader.fsh");
+    auto fsh_string = load_string("assets/shaders/default.fsh");
     auto fsh_id = create_shader(GL_FRAGMENT_SHADER, fsh_string);
 
     auto main_shader = ProgramObject{vsh_id, fsh_id};
