@@ -28,7 +28,7 @@ int main() {
     camera.set_active();
     ui_camera.set_active();
 
-    auto &line = world.append_child<DynamicArray>(main_shader);
+    auto &line = world.append_child<DynamicArray>();
     line.draw_mode = GL_POINTS;
     line.scale = 100;
     int points_num = 100;
