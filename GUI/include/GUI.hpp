@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Shader.hpp"
 #include "graphical_base.hpp"
 
 class Window;
@@ -11,7 +10,6 @@ class GUI {
 
   public:
     int tick = 0;
-    std::optional<ProgramObject> default_shader;
 
     GUI() {
         // ライブラリglfw の初期化

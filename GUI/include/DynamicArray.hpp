@@ -88,7 +88,7 @@ class DynamicArray : public DrawableWorldObject, Update {
 
     DynamicArray(const ProgramObject *shader = nullptr, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
         : vao_(VertexArrayObject::gen())
-        , shader_(shader == nullptr ? *this->get_world().window.gui.default_shader : *shader)
+        , shader_(shader == nullptr ? *this->get_world().window.default_shader : *shader)
         , n_(coords.size())
         , capacity_(coords.capacity()) {
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FunctionSet.hpp"
+#include "Shader.hpp"
 #include "SizeCallback.hpp"
 #include <graphical_base.hpp>
 
@@ -29,6 +30,7 @@ class Window {
 
   public:
     GUI &gui;
+    std::optional<ProgramObject> default_shader;
 
     Window(GUI &gui, int width, int height, const char *title);
     // ~Window();

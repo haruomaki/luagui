@@ -67,7 +67,9 @@ Window::Window(GUI &gui, int width, int height, const char *title)
         }
     });
 
-    // setCamera({0, 0}, default_camera_zoom);
+    //  デフォルトシェーダの設定
+    this->default_shader.emplace({create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
+                                  create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))});
 }
 
 // Window::~Window() {
