@@ -22,7 +22,7 @@ GLuint create_shader(GLenum shader_type, const string &source_code) {
         GLsizei buf_size; // ログメッセージの長さ
         glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &buf_size);
 
-        auto info_log = std::make_unique<GLchar[]>(buf_size); // ログの文字列を格納する領域
+        auto info_log = std::make_unique<GLchar[]>(buf_size); // NOLINT(modernize-avoid-c-arrays) ログの文字列を格納する領域
         glGetShaderInfoLog(shader_id, buf_size, nullptr, info_log.get());
 
         throw GLShaderCreationException(info_log.get());
