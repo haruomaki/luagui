@@ -4,7 +4,7 @@
 
 GLuint create_shader(GLenum shader_type, const string &source_code);
 
-enum StorageQualifier {
+enum class StorageQualifier {
     Attribute,
     Uniform,
 };

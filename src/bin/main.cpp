@@ -99,10 +99,6 @@ int main() {
     //     debug(ins3.get_absolute_transform());
     // });
 
-    ProgramObject hello_shader = {
-        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/hello.vsh")),
-        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/hello.fsh"))};
-
     const vector<glm::vec3> vertices = {
         glm::vec3(0, -900, 500),
         glm::vec3(500, 0, 0),
@@ -132,7 +128,7 @@ int main() {
         getErrors();
     });
 
-    auto &line = main_world.append_child<DynamicArray>(main_shader, std::vector{glm::vec3{0, 0, 0}}, std::vector{RGBA{200, 200, 200, 255}});
+    auto &line = main_world.append_child<DynamicArray>(&main_shader, std::vector{glm::vec3{0, 0, 0}}, std::vector{RGBA{200, 200, 200, 255}});
     main_world.timer.task(0.5, [&line] {
         line.set_position(line.get_position() + glm::vec3{-10, 0, 0});
     });

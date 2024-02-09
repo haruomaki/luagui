@@ -1,6 +1,8 @@
 #include <Shader.hpp>
 #include <graphical_base.hpp>
 
+using enum StorageQualifier;
+
 DEFINE_RUNTIME_ERROR(GLShaderCreationException);
 
 // 個々のシェーダを生成する

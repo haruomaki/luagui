@@ -78,7 +78,7 @@ class Window {
     void set_callback(std::function<void(int, int)> &&callback);
 
     template <>
-    void set_callback<Size>(std::function<void(int, int)> &&callback) {
+    void set_callback<CallbackKind::Size>(std::function<void(int, int)> &&callback) {
         this->size_callbacks_.set_function(std::move(callback));
     }
 

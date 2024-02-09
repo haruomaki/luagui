@@ -5,7 +5,7 @@
 
 class Window;
 
-enum CallbackKind {
+enum class CallbackKind {
     Size,
     Key,
 };
