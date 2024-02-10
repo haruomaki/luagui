@@ -36,18 +36,7 @@ int main() {
     mesh.scale = 2;
     mesh.position = {1, 1, 5};
 
-    auto &grid = main_world.append_child<DynamicArray>();
-    // grid.indices = {0, 1, 2, 3, 4, 5};
-    for (int i = -10; i <= 10; i++) {
-        constexpr RGBA grid_color = {0.1, 0.1, 0.1, 1};
-        grid.vertices.push_back(InterleavedVertexInfo{{i, 0, -10}, grid_color});
-        grid.vertices.push_back(InterleavedVertexInfo{{i, 0, 10}, grid_color});
-        grid.vertices.push_back(InterleavedVertexInfo{{-10, 0, i}, grid_color});
-        grid.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
-    }
-    grid.draw_mode = GL_LINES;
-    grid.line_width = 6;
-    grid.scale = 1;
+    main_world.append_child<GridGround>();
 
     // レンダリングループ
     gui.mainloop();
