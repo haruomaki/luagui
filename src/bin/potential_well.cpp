@@ -14,15 +14,15 @@ class WaveSimulator : public WorldObject {
     std::vector<double> grid;
     std::vector<double> prev_grid;
 
-    WaveSimulator(const ProgramObject &shader)
+    WaveSimulator()
         : grid(grid_size, 0)
         , prev_grid(grid_size, 0) {
         initialize();
-        auto &line = this->append_child<DynamicArray>(shader);
+        auto &line = this->append_child<DynamicArray>();
         this->get_world().timer.task(0.05, [this, &line] {
             this->step();
-            line.vertices.xs = linspace(-300, 300, grid_size);
-            line.vertices.ys = map(grid, [](auto x) { return float(x) * 300; });
+            line.vertices.xs = linspace(-1, 1, grid_size);
+            line.vertices.ys = map(grid, [](auto x) { return float(x); });
             line.vertices.colors = std::vector<RGBA>(grid_size, {1, 1, 1, 1});
         });
     }
@@ -78,17 +78,17 @@ int main() {
     World &main_world = window.create_world();
 
     // バーテックスシェーダのコンパイル
-    auto vsh_string = load_string("assets/shaders/shader.vsh");
+    auto vsh_string = load_string("assets/shaders/default.vsh");
     auto vsh_id = create_shader(GL_VERTEX_SHADER, vsh_string);
 
     // フラグメントシェーダのコンパイル
-    auto fsh_string = load_string("assets/shaders/shader.fsh");
+    auto fsh_string = load_string("assets/shaders/default.fsh");
     auto fsh_id = create_shader(GL_FRAGMENT_SHADER, fsh_string);
 
     auto main_shader = ProgramObject{vsh_id, fsh_id};
 
     auto &camera = main_world.append_child<MobileNormalCamera>(viewport);
-    camera.position = {0, 0, 1000};
+    camera.position = {0, 1, 10};
     camera.rotate = ANGLE_Y(M_PIf);
     camera.scale = 1;
     camera.set_active();
@@ -96,11 +96,16 @@ int main() {
     Font migmix_font;
     auto &sample_text = main_world.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = main_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
+    sample_text.scale = 0.01;
+    credit_text.scale = 0.01;
 
-    sample_text.set_position({-200, 50, 200});
-    credit_text.set_position({200, 400, 1});
+    sample_text.set_position({-2, 0.5, 2});
+    credit_text.set_position({2, 4, 0.01});
 
-    main_world.append_child<WaveSimulator>(main_shader);
+    auto &ws = main_world.append_child<WaveSimulator>();
+    ws.scale = 5;
+
+    main_world.append_child<GridGround>();
 
     gui.mainloop();
 }
