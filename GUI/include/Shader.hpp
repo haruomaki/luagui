@@ -75,3 +75,4 @@ class BufferObject {
 };
 
 using VertexBufferObject = BufferObject<GL_ARRAY_BUFFER>;
+using ElementBufferObject = BufferObject<GL_ELEMENT_ARRAY_BUFFER>;

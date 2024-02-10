@@ -142,6 +142,18 @@ int main() {
         });
     });
 
+    auto &mesh = main_world.append_child<Mesh>();
+    // mesh.vertices.xs = {1, 0, 0, 8};
+    // mesh.vertices.ys = {1, 2, 3, -1};
+    mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}};
+    // mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 0}, {1, 1, 0}, {0, 1, 1}, {1, 1, 1}};
+    mesh.vertices.colors = std::vector(8, RGBA{0.46, 0.85, 0.84, 0.9});
+    mesh.draw_mode = GL_LINE_STRIP;
+    mesh.draw_mode = GL_TRIANGLE_STRIP;
+    mesh.line_width = 10;
+    mesh.scale = 200;
+    mesh.position = {100, 100, 500};
+
     // レンダリングループ
     gui.mainloop();
 }
