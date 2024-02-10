@@ -67,7 +67,7 @@ class MobileNormalCamera : public Camera, protected Update {
     NormalCamera &camera_head_;
 
     void update() override {
-        constexpr float speed = 5;
+        constexpr float speed = 0.1;
         const Window &window = this->get_world().window;
 
         if (window.get_key(GLFW_KEY_W)) {
