@@ -53,6 +53,7 @@ class DynamicArray : public DrawableWorldObject, Update {
         case GL_POINTS:
             glPointSize(point_size);
             break;
+        case GL_LINES:
         case GL_LINE_STRIP:
         case GL_LINE_LOOP:
             glLineWidth(line_width);
@@ -162,6 +163,7 @@ class Mesh : public DrawableWorldObject, Update {
         case GL_POINTS:
             glPointSize(point_size);
             break;
+        case GL_LINES:
         case GL_LINE_STRIP:
         case GL_LINE_LOOP:
             glLineWidth(line_width);

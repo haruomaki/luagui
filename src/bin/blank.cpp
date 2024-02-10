@@ -31,8 +31,8 @@ int main() {
     }
     mesh.vertices.colors = colors_tmp;
     mesh.draw_mode = GL_LINE_STRIP;
-    mesh.draw_mode = GL_TRIANGLE_STRIP;
-    mesh.line_width = 10;
+    // mesh.draw_mode = GL_TRIANGLE_STRIP;
+    mesh.line_width = 5;
     mesh.scale = 2;
     mesh.position = {1, 1, 5};
 

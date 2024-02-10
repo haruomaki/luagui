@@ -149,7 +149,7 @@ class GridGround : public WorldObject {
             grid.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
         }
         grid.draw_mode = GL_LINES;
-        grid.line_width = 6;
+        grid.line_width = 1;
         grid.scale = 1;
     }
 };
