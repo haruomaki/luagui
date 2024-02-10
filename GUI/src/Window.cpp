@@ -113,6 +113,12 @@ bool Window::get_key(int key) const {
     return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
 }
 
+pair<double, double> Window::get_cursor_pos() const {
+    double x, y;
+    glfwGetCursorPos(this->gwin_, &x, &y);
+    return {x, y};
+}
+
 World &Window::create_world() {
     // draw_priority_の最大値
     int max_priority = std::numeric_limits<int>::min();

@@ -52,6 +52,9 @@ class Window {
     // glfwGetKeyのラッパー。GLFW_PRESSのときtrue、GLFW_RELEASEのときfalse
     [[nodiscard]] bool get_key(int key) const;
 
+    // glfwGetCursorPos()のラッパー
+    [[nodiscard]] pair<double, double> get_cursor_pos() const;
+
     template <typename T, typename... Args>
         requires std::is_constructible_v<T, Args...> &&     // ArgsはTのコンストラクタの引数
                  std::is_convertible_v<T *, WindowObject *> // TはWindowObjectの派生クラス
