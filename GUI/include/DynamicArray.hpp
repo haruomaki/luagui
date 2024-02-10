@@ -104,7 +104,6 @@ class DynamicArray : public DrawableWorldObject, Update {
     }
 };
 
-static constexpr std::array<int, 14> ind = {0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5};
 class Mesh : public DrawableWorldObject, Update {
     const VertexArrayObject vao_;
     VertexBufferObject vbo_;
@@ -112,6 +111,7 @@ class Mesh : public DrawableWorldObject, Update {
     const ProgramObject &shader_;
     size_t n_;
     size_t capacity_;
+    size_t indices_capacity_ = 0;
     static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
 
     void regenerate_vbo() {
@@ -130,20 +130,26 @@ class Mesh : public DrawableWorldObject, Update {
         });
     }
 
+    void regenerate_ibo() {
+        print("IBO生成");
+        this->ebo_ = ElementBufferObject::gen(sizeof(int) * indices.size(), indices.data(), GL_DYNAMIC_DRAW);
+    }
+
     void update() override {
         // VBOの更新
         // verticesの長さ変更に伴ってヒープが再確保されるを検知し、新たにVBOを作り直す
         if (capacity_ != vertices.capacity()) {
             this->regenerate_vbo();
         }
+        // インデックスも同様に更新
+        if (indices_capacity_ != indices.capacity()) {
+            this->regenerate_ibo();
+        }
         capacity_ = vertices.capacity();
+        indices_capacity_ = indices.capacity();
         n_ = vertices.size();
-        vbo_.bind([&] {
-            glBufferSubData(GL_ARRAY_BUFFER, 0, GLsizeiptr(sizeof(InterleavedVertexInfo) * capacity_), vertices.data());
-        });
-
-        // インデックスを更新
-        // this->indices = {0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5};
+        vbo_.subdata(0, sizeof(InterleavedVertexInfo) * capacity_, vertices.data());
+        ebo_.subdata(0, sizeof(int) * indices.size(), indices.data());
     }
 
     void draw(const Camera &camera) const override {
@@ -194,7 +200,6 @@ class Mesh : public DrawableWorldObject, Update {
 
     Mesh(const ProgramObject *shader = nullptr, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
         : vao_(VertexArrayObject::gen())
-        , ebo_(ElementBufferObject::gen(sizeof(int) * ind.size(), ind.data(), GL_STATIC_DRAW))
         , shader_(shader == nullptr ? *this->get_world().window.default_shader : *shader)
         , n_(coords.size())
         , capacity_(coords.capacity()) {
@@ -207,5 +212,6 @@ class Mesh : public DrawableWorldObject, Update {
         vertices = vers;
 
         regenerate_vbo(); // VBOが常に存在するようにする
+        regenerate_ibo();
     }
 };

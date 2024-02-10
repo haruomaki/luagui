@@ -61,10 +61,17 @@ class BufferObject {
     static inline BufferObject gen(size_t size, const void *data, GLenum usage) {
         BufferObject xbo;
         glGenBuffers(1, &xbo.buffer_); // BOの生成
-        glBindBuffer(target, xbo.buffer_);
-        glBufferData(target, GLsizeiptr(size), data, usage); // バインド中にデータを設定
-        glBindBuffer(target, 0);
+        xbo.bind([&] {
+            glBufferData(target, GLsizeiptr(size), data, usage); // バインド中にデータを設定
+        });
         return xbo;
+    }
+
+    // バッファ内容を更新する
+    inline void subdata(GLintptr offset, size_t size, const void *data) {
+        this->bind([&] {
+            glBufferSubData(target, offset, GLsizeiptr(size), data);
+        });
     }
 
     inline void bind(const function<void()> &proc_in_bind) const {
