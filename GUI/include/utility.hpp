@@ -109,11 +109,20 @@ class MobileNormalCamera : public Camera, protected Update {
         if (window.get_key(GLFW_KEY_Q)) {
             window.close();
         }
+
+        Point<double> new_cursor_pos{};
+        glfwGetCursorPos(window.get_glfw(), &new_cursor_pos.x, &new_cursor_pos.y);
+        auto dx = new_cursor_pos.x - this->cursor_pos.x;
+        auto dy = new_cursor_pos.y - this->cursor_pos.y;
+        rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.1f);
+        camera_head_.rotate *= ANGLE_X(angle_speed * float(dy) * 0.1f);
+        this->cursor_pos = new_cursor_pos;
     }
 
   public:
     float speed = 0.1;
-    float angle_speed = 0.01;
+    float angle_speed = 0.02;
+    Point<double> cursor_pos;
 
     MobileNormalCamera(const Viewport &viewport)
         : camera_head_(this->append_child<NormalCamera>(viewport)) {}

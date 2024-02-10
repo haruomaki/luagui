@@ -7,6 +7,8 @@ int main() {
     auto &viewport = window.make_child<MaximumViewport>();
     World &main_world = window.create_world();
 
+    glfwSetInputMode(window.get_glfw(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     auto &camera = main_world.append_child<MobileNormalCamera>(viewport);
     camera.position = {0, 0, 10};
     camera.rotate = ANGLE_Y(M_PIf);
