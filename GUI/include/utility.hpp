@@ -67,7 +67,6 @@ class MobileNormalCamera : public Camera, protected Update {
     NormalCamera &camera_head_;
 
     void update() override {
-        constexpr float speed = 0.1;
         const Window &window = this->get_world().window;
 
         if (window.get_key(GLFW_KEY_W)) {
@@ -89,29 +88,33 @@ class MobileNormalCamera : public Camera, protected Update {
             position += get_down() * speed;
         }
         if (window.get_key(GLFW_KEY_RIGHT)) {
-            rotate *= ANGLE_Y(-0.01F);
+            rotate *= ANGLE_Y(-angle_speed);
         }
         if (window.get_key(GLFW_KEY_LEFT)) {
-            rotate *= ANGLE_Y(0.01F);
+            rotate *= ANGLE_Y(angle_speed);
         }
         if (window.get_key(GLFW_KEY_DOWN)) {
-            camera_head_.rotate *= ANGLE_X(0.01F);
+            camera_head_.rotate *= ANGLE_X(angle_speed);
         }
         if (window.get_key(GLFW_KEY_UP)) {
-            camera_head_.rotate *= ANGLE_X(-0.01F);
+            camera_head_.rotate *= ANGLE_X(-angle_speed);
         }
-        // if (window_.get_key(GLFW_KEY_Z)) {
-        //     setScale(scale / 1.01);
-        // }
-        // if (window_.get_key(GLFW_KEY_X)) {
-        //     setScale(scale * 1.01);
-        // }
+        if (window.get_key(GLFW_KEY_Z)) {
+            // 移動速度が変わる
+            scale /= 1.01;
+        }
+        if (window.get_key(GLFW_KEY_X)) {
+            scale *= 1.01;
+        }
         if (window.get_key(GLFW_KEY_Q)) {
             window.close();
         }
     }
 
   public:
+    float speed = 0.1;
+    float angle_speed = 0.01;
+
     MobileNormalCamera(const Viewport &viewport)
         : camera_head_(this->append_child<NormalCamera>(viewport)) {}
 

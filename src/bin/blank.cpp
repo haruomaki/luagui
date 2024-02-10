@@ -1,5 +1,5 @@
-#include <master.hpp>
-#include <utility.hpp>
+#include "master.hpp"
+#include "utility.hpp"
 
 int main() {
     GUI gui;
@@ -20,6 +20,14 @@ int main() {
     mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}};
     // mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 0}, {1, 1, 0}, {0, 1, 1}, {1, 1, 1}};
     mesh.vertices.colors = std::vector(8, RGBA{0.46, 0.85, 0.84, 0.9});
+    std::vector<RGBA> colors_tmp = {};
+    for (int i = 0; i < 8; i++) {
+        auto r = float(pow(sin(0.4 * i + 1), 2));
+        auto g = float(pow(sin(0.4 * i + 2), 2));
+        auto b = float(pow(sin(0.4 * i + 3), 2));
+        colors_tmp.emplace_back(r, g, b, 1);
+    }
+    mesh.vertices.colors = colors_tmp;
     mesh.draw_mode = GL_LINE_STRIP;
     mesh.draw_mode = GL_TRIANGLE_STRIP;
     mesh.line_width = 10;
