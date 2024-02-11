@@ -4,11 +4,11 @@
 class WaveSimulator : public WorldObject {
   public:
     // シミュレーションのパラメータ
-    const int grid_size = 100;          // グリッドのサイズ
+    const int grid_size = 200;          // グリッドのサイズ
     const double dx = 0.1;              // グリッド間の距離
-    const double dt = 0.01;             // 時間ステップ
-    const double c = 1.0;               // 波の速度
-    const double damping_factor = 0.99; // 減衰係数
+    const double dt = 0.005;            // 時間ステップ
+    const double c = 6.0;               // 波の速度
+    const double damping_factor = 0.88; // 減衰係数
 
     // グリッドの初期化
     std::vector<double> grid;
@@ -19,7 +19,7 @@ class WaveSimulator : public WorldObject {
         , prev_grid(grid_size, 0) {
         initialize();
         auto &line = this->append_child<DynamicArray>();
-        this->get_world().timer.task(0.05, [this, &line] {
+        this->get_world().timer.task(0.03, [this, &line] {
             this->step();
             line.vertices.xs = linspace(-1, 1, grid_size);
             line.vertices.ys = map(grid, [](auto x) { return float(x); });
@@ -31,22 +31,36 @@ class WaveSimulator : public WorldObject {
     void initialize() {
         // 初期の波形を設定
         for (int i = grid_size / 4; i < 3 * grid_size / 4; ++i) {
-            grid[i] = 1.0; // 波の初期振幅
+            grid[i] = prev_grid[i] = 1.0; // 波の初期振幅
         }
     }
 
     // シミュレーションの更新
     void step() {
+        // for (int i = 1; i < grid_size - 1; ++i) {
+        //     // オイラー法による更新
+        //     double acceleration = (c * c) * (grid[i + 1] + grid[i - 1] - 2 * grid[i]) / (dx * dx);
+        //     prev_grid[i] = grid[i];
+        //     grid[i] += acceleration * dt;
+        // }
+
+        std::vector<double> next_grid(grid_size, 0);
+
         for (int i = 1; i < grid_size - 1; ++i) {
             // オイラー法による更新
             double acceleration = (c * c) * (grid[i + 1] + grid[i - 1] - 2 * grid[i]) / (dx * dx);
+            // prev_grid[i] = grid[i];
+            // grid[i] += acceleration * dt;
+            next_grid[i] = 2 * grid[i] - prev_grid[i] + acceleration * dt * dt;
             prev_grid[i] = grid[i];
-            grid[i] += acceleration * dt;
+            grid[i] = next_grid[i];
         }
 
         // 境界条件
-        grid[0] = grid[1];
-        grid[grid_size - 1] = grid[grid_size - 2];
+        grid[0] = 0;
+        grid[grid_size - 1] = 0;
+
+        // debug(grid[1]);
 
         // 減衰
         for (int i = 0; i < grid_size; ++i) {
