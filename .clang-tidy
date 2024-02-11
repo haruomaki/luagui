@@ -12,6 +12,7 @@ Checks: "-*,\
   -cppcoreguidelines-pro-type-reinterpret-cast,\ # reinterpret_castを許可
   -cppcoreguidelines-non-private-member-variables-in-classes,\ # misc-non-private-member-variables-in-classesと全く同じなため無効化
   -cppcoreguidelines-c-copy-assignment-signature,\ # misc-unconventional-assign-operatorと全く同じなため無効化
+  -cppcoreguidelines-avoid-c-arrays,\ # modernize-avoid-c-arraysと全く同じなため無効化
   linuxkernel-*,\
   llvm-*,\
   -llvm-include-order,\ #マクロによるインクルード時、見かけの順序を保つ

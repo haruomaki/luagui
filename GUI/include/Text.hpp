@@ -13,7 +13,8 @@ struct Character {
 class Font {
     ProgramObject shader_;
     std::map<char, Character> Characters;
-    unsigned int VAO, VBO;
+    VertexArrayObject vao_;
+    VertexBufferObject vbo_;
 
     friend class Text;
 

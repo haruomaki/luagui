@@ -1,5 +1,7 @@
 #pragma once
 
+#define GLM_ENABLE_EXPERIMENTAL // TODO: 無いとglmが全く使えないが、他に対策があるかも＆アップデートで変わるかも
+
 #include <GL/glew.h> // glとglfw3より早く
 
 #include <GL/gl.h> // glGetString()のため

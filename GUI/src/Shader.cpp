@@ -1,6 +1,8 @@
 #include <Shader.hpp>
 #include <graphical_base.hpp>
 
+using enum StorageQualifier;
+
 DEFINE_RUNTIME_ERROR(GLShaderCreationException);
 
 // 個々のシェーダを生成する
@@ -20,7 +22,7 @@ GLuint create_shader(GLenum shader_type, const string &source_code) {
         GLsizei buf_size; // ログメッセージの長さ
         glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &buf_size);
 
-        auto info_log = std::make_unique<GLchar[]>(buf_size); // ログの文字列を格納する領域
+        auto info_log = std::make_unique<GLchar[]>(buf_size); // NOLINT(modernize-avoid-c-arrays) ログの文字列を格納する領域
         glGetShaderInfoLog(shader_id, buf_size, nullptr, info_log.get());
 
         throw GLShaderCreationException(info_log.get());
@@ -40,6 +42,10 @@ ProgramObject::ProgramObject(std::initializer_list<GLuint> shader_ids) {
     glLinkProgram(program_id);
 
     program_id_ = program_id;
+}
+
+ProgramObject::~ProgramObject() {
+    glDeleteProgram(this->program_id_);
 }
 
 GLuint ProgramObject::get_program_id() const {

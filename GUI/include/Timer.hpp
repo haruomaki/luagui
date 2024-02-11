@@ -1,52 +1,51 @@
 #pragma once
 
-#include <chrono>
-#include <functional>
-#include <map>
-#include <thread>
+#include "FunctionSet.hpp"
 
-using TaskId = unsigned long;
+#include <chrono>
 
 class Timer {
     struct TaskInfo {
-        const std::function<void()> callback;
         const std::chrono::duration<double> interval;
         std::chrono::high_resolution_clock::time_point last_time;
     };
 
-    std::map<TaskId, TaskInfo> tasks_{};
-    TaskId id_history_ = 0;
-    std::vector<TaskId> ids_to_erase_{};
+    FunctionSet<void()> tasks_{};
+    std::map<FunctionId, TaskInfo> task_infos_{};
+    std::vector<FunctionId> ids_to_erase_{};
 
-  public:
-    TaskId task(double interval, const std::function<void()> &callback) {
-        TaskId id = id_history_++;
-        this->tasks_.emplace(
-            std::piecewise_construct,
-            std::forward_as_tuple(id),
-            std::forward_as_tuple(callback, std::chrono::duration<double>(interval), std::chrono::high_resolution_clock::time_point()));
-        return id;
-    }
-
-    void erase(TaskId id) {
-        this->ids_to_erase_.push_back(id);
-    }
-
+    // Worldクラスがタイマーを所有し毎フレーム更新する
+    friend class World;
     void step() {
         // 削除予約されたタスクを削除
         // mapのイテレーション最中に要素を削除してはいけない
         for (auto &&id : this->ids_to_erase_) {
-            this->tasks_.erase(id);
+            this->task_infos_.erase(id);
+            this->tasks_.erase_function(id);
         }
         this->ids_to_erase_.clear();
 
-        for (auto &[id, task_info] : this->tasks_) {
+        for (auto &[id, task_info] : this->task_infos_) {
+            // 経過時間が登録されたインターバルより長ければタスクを実行
             auto now = std::chrono::high_resolution_clock::now();
             auto delta = now - task_info.last_time;
             if (delta > task_info.interval) {
                 task_info.last_time = now;
-                task_info.callback();
+                this->tasks_.at(id)();
             }
         }
+    }
+
+  public:
+    FunctionId task(double interval, std::function<void()> &&callback) {
+        auto id = this->tasks_.set_function(std::forward<std::function<void()>>(callback));
+        this->task_infos_.emplace(std::piecewise_construct,
+                                  std::forward_as_tuple(id),
+                                  std::forward_as_tuple(std::chrono::duration<double>(interval), std::chrono::high_resolution_clock::time_point()));
+        return id;
+    }
+
+    void erase(FunctionId id) {
+        this->ids_to_erase_.push_back(id);
     }
 };

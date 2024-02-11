@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FunctionSet.hpp"
+#include "Shader.hpp"
 #include "SizeCallback.hpp"
 #include <graphical_base.hpp>
 
@@ -22,12 +23,14 @@ class Window {
 
     friend class GUI;
     void draw_routine();
+    void update_routine();
 
     friend class World;
     void refresh_world_order();
 
   public:
     GUI &gui;
+    std::optional<ProgramObject> default_shader;
 
     Window(GUI &gui, int width, int height, const char *title);
     // ~Window();
@@ -48,6 +51,9 @@ class Window {
 
     // glfwGetKeyのラッパー。GLFW_PRESSのときtrue、GLFW_RELEASEのときfalse
     [[nodiscard]] bool get_key(int key) const;
+
+    // glfwGetCursorPos()のラッパー
+    [[nodiscard]] pair<double, double> get_cursor_pos() const;
 
     template <typename T, typename... Args>
         requires std::is_constructible_v<T, Args...> &&     // ArgsはTのコンストラクタの引数
@@ -75,7 +81,7 @@ class Window {
     void set_callback(std::function<void(int, int)> &&callback);
 
     template <>
-    void set_callback<Size>(std::function<void(int, int)> &&callback) {
+    void set_callback<CallbackKind::Size>(std::function<void(int, int)> &&callback) {
         this->size_callbacks_.set_function(std::move(callback));
     }
 

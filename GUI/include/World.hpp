@@ -1,17 +1,10 @@
 #pragma once
 
-#include "GUI.hpp"
-#include <Camera.hpp>
+#include "Camera.hpp"
+#include "Timer.hpp"
 
 class World : public WorldObject {
-  public:
-    Window &window; // update_task_id_初期化に必要なので前に書く
-
-  private:
-    set<function<void(const Camera &)> *> draws_;
-    FunctionSet<void()> updates_;
     Camera *active_camera_ = nullptr;
-    const TaskId update_task_id_;
 
     friend class DrawableWorldObject;
     friend class Update;
@@ -20,18 +13,19 @@ class World : public WorldObject {
     int draw_priority_ = 0;
 
   public:
+    Window &window;
+    Timer timer;
+    FunctionSet<void(const Camera &)> draws;
+    FunctionSet<void()> updates;
+
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
-        , window(window)
-        , update_task_id_(
-              // 更新処理を定期的に呼ぶタイマーをセットする
-              this->window.gui.timer.task(1. / 60, [this] { this->master_update(); }))
-        , draw_priority_(draw_priority) {}
+        , draw_priority_(draw_priority)
+        , window(window) {}
 
     ~World() override {
         print("Worldのデストラクタ");
-        this->window.gui.timer.erase(this->update_task_id_);
-        this->children_.clear(); // draws_やupdates_が消える前にUpdate等のデストラクタを呼ぶ
+        this->children_.clear(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
     }
 
     World(const World &) = delete;
@@ -43,15 +37,16 @@ class World : public WorldObject {
         if (this->active_camera_ == nullptr) {
             print("警告: アクティブなカメラが存在しません");
         }
-        for (auto *draw : draws_) {
-            (*draw)(*this->active_camera_);
+        for (const auto &[id, draw] : this->draws) {
+            draw(*this->active_camera_);
         }
     }
 
     void master_update() {
-        for (const auto &[id, update] : this->updates_) {
+        for (const auto &[id, update] : this->updates) {
             update();
         }
+        this->timer.step(); // タイマーを進める
     }
 
     Camera *&active_camera() {

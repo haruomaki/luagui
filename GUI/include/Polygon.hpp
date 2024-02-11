@@ -15,7 +15,7 @@ class Polygon {
     friend class Shape;
 
   public:
-    Polygon(const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
+    Polygon(const ProgramObject &shader, vector<glm::vec3> coords, vector<RGBA> colors = {}, vector<glm::vec2> uvs = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
         : shader_(shader)
         , tex_id_(tex_id)
         , n_(coords.size()) {
@@ -24,7 +24,8 @@ class Polygon {
         for (size_t i = 0; i < n_; i++) {
             glm::vec3 coord = coords[i];
             RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
-            vers.push_back({coord, color});
+            glm::vec2 uv = (i < uvs.size() ? uvs[i] : glm::vec2{0, 0});   // uv情報がないときは(0,0)に
+            vers.push_back({coord, color, uv});
         }
 
         // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
@@ -39,7 +40,7 @@ class Polygon {
                 shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                    // 位置
                 shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(GLfloat) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
                 getErrors();
-                shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, 0, nullptr); // FIXME: uv座標をvbo経由で設定できるようにする
+                shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(glm::vec3) + sizeof(RGBA))); // uv座標 offset=28 NOLINT(performance-no-int-to-ptr)
                 getErrors();
             });
         });

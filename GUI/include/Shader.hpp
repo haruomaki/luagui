@@ -4,7 +4,7 @@
 
 GLuint create_shader(GLenum shader_type, const string &source_code);
 
-enum StorageQualifier {
+enum class StorageQualifier {
     Attribute,
     Uniform,
 };
@@ -13,8 +13,14 @@ class ProgramObject {
     GLuint program_id_;
 
   public:
-    ProgramObject() = default; // FIXME: glCreateProgram()をしないコンストラクタはナンセンス
+    ProgramObject() = delete; // glCreateProgram()をしないコンストラクタはナンセンス
     ProgramObject(std::initializer_list<GLuint> shader_ids);
+    ~ProgramObject();
+    ProgramObject(const ProgramObject &) = delete;
+    ProgramObject &operator=(const ProgramObject &) const = delete;
+    ProgramObject(ProgramObject &&) = delete; // TODO: ムーブくらいは許していいかも
+    ProgramObject &operator=(ProgramObject &&) const = delete;
+
     [[nodiscard]] GLuint get_program_id() const;
     void use() const;
 
@@ -55,10 +61,17 @@ class BufferObject {
     static inline BufferObject gen(size_t size, const void *data, GLenum usage) {
         BufferObject xbo;
         glGenBuffers(1, &xbo.buffer_); // BOの生成
-        glBindBuffer(target, xbo.buffer_);
-        glBufferData(target, GLsizeiptr(size), data, usage); // バインド中にデータを設定
-        glBindBuffer(target, 0);
+        xbo.bind([&] {
+            glBufferData(target, GLsizeiptr(size), data, usage); // バインド中にデータを設定
+        });
         return xbo;
+    }
+
+    // バッファ内容を更新する
+    inline void subdata(GLintptr offset, size_t size, const void *data) {
+        this->bind([&] {
+            glBufferSubData(target, offset, GLsizeiptr(size), data);
+        });
     }
 
     inline void bind(const function<void()> &proc_in_bind) const {
@@ -69,3 +82,4 @@ class BufferObject {
 };
 
 using VertexBufferObject = BufferObject<GL_ARRAY_BUFFER>;
+using ElementBufferObject = BufferObject<GL_ELEMENT_ARRAY_BUFFER>;

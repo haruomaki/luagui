@@ -67,7 +67,9 @@ Window::Window(GUI &gui, int width, int height, const char *title)
         }
     });
 
-    // setCamera({0, 0}, default_camera_zoom);
+    //  デフォルトシェーダの設定
+    this->default_shader.emplace({create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
+                                  create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))});
 }
 
 // Window::~Window() {
@@ -111,6 +113,12 @@ bool Window::get_key(int key) const {
     return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
 }
 
+pair<double, double> Window::get_cursor_pos() const {
+    double x, y;
+    glfwGetCursorPos(this->gwin_, &x, &y);
+    return {x, y};
+}
+
 World &Window::create_world() {
     // draw_priority_の最大値
     int max_priority = std::numeric_limits<int>::min();
@@ -149,6 +157,16 @@ void Window::draw_routine() {
 
     // 上記描画した図形を表画面のバッファにスワップする
     glfwSwapBuffers(this->gwin_);
+}
+
+void Window::update_routine() {
+    // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
+    // world_object_root_.refreshAbsolutePosition();
+
+    // 各ワールドの更新処
+    for (const auto &world : this->worlds_) {
+        world->master_update();
+    }
 }
 
 // World::draw_priority_に基づき、worlds_を昇順に並べ替える

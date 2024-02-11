@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Timer.hpp"
 #include "graphical_base.hpp"
 
 class Window;
@@ -11,7 +10,6 @@ class GUI {
 
   public:
     int tick = 0;
-    Timer timer;
 
     GUI() {
         // ライブラリglfw の初期化
@@ -24,14 +22,14 @@ class GUI {
 
     ~GUI() { glfwTerminate(); }
 
-    // デフォルトのコピーコンストラクタ、コピー代入演算子
-    GUI(const GUI &) = default;
-    GUI &operator=(const GUI &) = default;
+    // コピーコンストラクタ、コピー代入演算子を削除
+    GUI(const GUI &) = delete;
+    GUI &operator=(const GUI &) const = delete;
 
-    // デフォルトのムーブコンストラクタ、ムーブ代入演算子
-    GUI(GUI &&) = default;
-    GUI &operator=(GUI &&) = default;
+    // ムーブコンストラクタ、ムーブ代入演算子を削除
+    GUI(GUI &&) = delete;
+    GUI &operator=(GUI &&) const = delete;
 
     Window &create_window(int width, int height, const std::string &title);
-    void mainloop(const std::function<void()> &callback);
+    void mainloop();
 };

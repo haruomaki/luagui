@@ -7,28 +7,6 @@ inline float f(float x) {
 }
 
 int main() {
-    std::function<void()> waa = [] {};
-    std::function<void()> pen = [] {};
-    std::function<void()> mage = [] {};
-    std::set<std::function<void()> *> sss = {&waa, &pen, &mage};
-    // sss.erase(9);
-    print(sss);
-    sss.erase(&pen);
-    print(sss);
-    // Timer timer;
-    // auto id_hi = timer.task(1, [] { print("hi!"); });
-    // int count = 0;
-    // timer.task(1. / 4, [&] {
-    //     print("あいう");
-    //     if (count++ >= 5) {
-    //         timer.erase(id_hi);
-    //         if (count >= 10) {
-    //             timer.stop();
-    //         }
-    //     }
-    // });
-    // timer.start();
-
     constexpr int width = 600, height = 500;
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
@@ -40,8 +18,8 @@ int main() {
     World &ui_world = window.create_world();
 
     ProgramObject main_shader = {
-        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/shader.vsh")),
-        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/shader.fsh"))};
+        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
+        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))};
 
     auto &camera = world.append_child<MobileOrthoCamera>(viewport);
     auto &ui_camera = ui_world.append_child<OrthoCamera>(viewport);
@@ -50,12 +28,10 @@ int main() {
     camera.set_active();
     ui_camera.set_active();
 
-    auto &line = world.append_child<DynamicArray>(main_shader);
+    auto &line = world.append_child<DynamicArray>();
     line.draw_mode = GL_POINTS;
     line.scale = 100;
-
-    constexpr int points_num = 100;
-    line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
+    int points_num = 100;
 
     // 左上に常在する点
     // TODO: これが間違ってworldの子になってもメモリエラー？回答：前と後ろでui_worldとworldのようにチグハグに指定するとエラー
@@ -78,15 +54,21 @@ int main() {
     my_triangle.scale = 200;
     my_triangle.position = {-100, 0, 0};
 
-    gui.timer.task(1, [] { print("タイマーからこんにちは😚"); });
+    float t = 0;
+    world.timer.task(0.5, [&] {
+        t += 0.1;
+        points_num = (points_num - 90) % 200 + 100; // 100〜300を繰り返す
+    });
 
-    // レンダリングループ
-    gui.mainloop([&] {
-        debug(gui.tick);
+    world.updates.set_function([&] {
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
+        line.vertices.clear();
         line.vertices.xs = xs;
-        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100); });
+        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100) + t; });
+        line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
     });
+
+    gui.mainloop();
 }
