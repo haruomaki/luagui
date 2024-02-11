@@ -8,7 +8,7 @@ class WaveSimulator : public WorldObject {
     const double dx = 0.1;              // グリッド間の距離
     const double dt = 0.005;            // 時間ステップ
     const double c = 6.0;               // 波の速度
-    const double damping_factor = 0.88; // 減衰係数
+    const double damping_factor = 0.89; // 減衰係数
 
     // グリッドの初期化
     std::vector<double> grid;
@@ -31,7 +31,11 @@ class WaveSimulator : public WorldObject {
     void initialize() {
         // 初期の波形を設定
         for (int i = grid_size / 4; i < 3 * grid_size / 4; ++i) {
-            grid[i] = prev_grid[i] = 1.0; // 波の初期振幅
+            grid[i] = prev_grid[i] = sqrt(1 - pow((i - grid_size / 2.) / (grid_size / 4.), 2)); // 波の初期振幅
+        }
+        for (int i = 1; i < grid_size; i++) {
+            auto u = (i - grid_size / 1.5) / grid_size * 2;
+            grid[i] += prev_grid[i] += (exp(u) + exp(-u)) / 2 - 1;
         }
     }
 
@@ -59,8 +63,8 @@ class WaveSimulator : public WorldObject {
         // 境界条件
         grid[0] = 0;
         grid[grid_size - 1] = 0;
-
-        // debug(grid[1]);
+        // grid[0] = grid[1];
+        // grid[grid_size - 1] = grid[grid_size - 2];
 
         // 減衰
         for (int i = 0; i < grid_size; ++i) {
