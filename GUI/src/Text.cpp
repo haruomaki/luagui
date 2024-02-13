@@ -6,6 +6,8 @@
 
 DEFINE_RUNTIME_ERROR(FreeTypeException);
 
+constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
+
 Font::Font()
     : shader_(ProgramObject{
           create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
@@ -22,7 +24,7 @@ Font::Font()
         throw FreeTypeException("ERROR::FREETYPE: Failed to load font");
     }
 
-    // フォントサイズを指定
+    // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
     FT_Set_Pixel_Sizes(face, 0, 48);
 
     // バイト列の制限（4の倍数byte）を解除する
@@ -93,11 +95,13 @@ void Text::draw(const Camera &camera) const {
         for (c = text_.begin(); c != text_.end(); c++) {
             Character ch = font_.Characters.at(*c);
 
-            float xpos = tail + ch.Bearing.x;
-            float ypos = -(ch.Size.y - ch.Bearing.y);
+            // Characterのサイズやオフセット情報から描画位置・幅を計算する
+            // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする TODO: HiDPI（1pt≠1px）時の対応
+            float xpos = tail + ch.Bearing.x * pt_meter;
+            float ypos = -(ch.Size.y - ch.Bearing.y) * pt_meter;
 
-            float w = ch.Size.x;
-            float h = ch.Size.y;
+            float w = ch.Size.x * pt_meter;
+            float h = ch.Size.y * pt_meter;
             // update VBO for each character
             float vertices[6][4] = {
                 {xpos, ypos + h, 0.0F, 0.0F},
@@ -126,7 +130,7 @@ void Text::draw(const Camera &camera) const {
             // render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
             // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-            tail += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
+            tail += (ch.Advance >> 6) * pt_meter; // bitshift by 6 to get value in pixels (2^6 = 64)
         }
     });
     glBindTexture(GL_TEXTURE_2D, 0);

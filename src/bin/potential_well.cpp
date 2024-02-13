@@ -114,8 +114,8 @@ int main() {
     Font migmix_font;
     auto &sample_text = main_world.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = main_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
-    sample_text.scale = 0.01;
-    credit_text.scale = 0.01;
+    sample_text.scale = 10;
+    credit_text.scale = 10;
 
     sample_text.set_position({-2, 0.5, 2});
     credit_text.set_position({2, 4, 0.01});

@@ -10,6 +10,7 @@ struct Character {
     unsigned int Advance;   // Offset to advance to next glyph
 };
 
+// 文字描画用のシェーダと48ptフォントテクスチャのセット
 class Font {
     ProgramObject shader_;
     std::map<char, Character> Characters;
