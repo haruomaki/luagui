@@ -26,7 +26,10 @@ class NormalCamera : public Camera {
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;
 };
 
-// 1ピクセルがfloat値1のスケールの正射影カメラ
+constexpr float inch_meter = 0.0254f;       // 1インチは2.54cm
+constexpr float px_meter = inch_meter / 72; // 72dpiのピクセル幅
+
+// 1ピクセルがfloat値0.0003528のスケールの正射影カメラ
 class OrthoCamera : public Camera {
     const Viewport &viewport_;
 

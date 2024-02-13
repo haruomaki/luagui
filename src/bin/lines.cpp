@@ -30,7 +30,7 @@ int main() {
 
     auto &line = world.append_child<DynamicArray>();
     line.draw_mode = GL_POINTS;
-    line.scale = 100;
+    line.scale = 0.03;
     int points_num = 100;
 
     // 左上に常在する点
@@ -41,7 +41,7 @@ int main() {
     Font migmix_font;
     auto &sample_text = top_left_point.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     /* auto &credit_text =*/ui_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
-    sample_text.position = {20, -60, 0};
+    sample_text.position = {0.005, -0.02, 0};
 
     // 三角形の表示
     Polygon my_triangle_polygon(main_shader, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
@@ -51,8 +51,8 @@ int main() {
                                     {0.3, 0.7, 0.5, 0.5},
                                 });
     auto &my_triangle = world.append_child<Shape>(my_triangle_polygon);
-    my_triangle.scale = 200;
-    my_triangle.position = {-100, 0, 0};
+    my_triangle.scale = 0.1;
+    my_triangle.position = {-0.1, 0, 0};
 
     float t = 0;
     world.timer.task(0.5, [&] {

@@ -12,8 +12,8 @@ class StickyPointTopLeft : public Update {
 
     void update() override {
         const auto size = viewport_.get_size();
-        const auto width = float(size.x);
-        const auto height = float(size.y);
+        const auto width = float(size.x) * px_meter;
+        const auto height = float(size.y) * px_meter;
 
         set_position({-width / 2, height / 2, 0});
     }
@@ -29,7 +29,7 @@ class StickyPointTopLeft : public Update {
 
 class MobileOrthoCamera : public OrthoCamera, protected Update {
     void update() override {
-        constexpr float speed = 5;
+        constexpr float speed = 0.002;
         const Window &window = this->get_world().window;
 
         if (window.get_key(GLFW_KEY_RIGHT)) {

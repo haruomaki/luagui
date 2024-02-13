@@ -28,8 +28,8 @@ glm::mat4 OrthoCamera::get_projection_matrix() const {
     int width = size.x;
     int height = size.y;
 
-    const auto w = float(width);
-    const auto h = float(height);
+    const auto w = float(width) * px_meter;
+    const auto h = float(height) * px_meter;
     const auto projection_matrix = glm::ortho<float>(-w / 2, w / 2, -h / 2, h / 2, 1000.F, -1000.F);
     return projection_matrix;
 }
