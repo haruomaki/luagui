@@ -1,6 +1,7 @@
 # ビルド方法
+GLFW, GLEW, glmが必要。
 ```bash
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -B ./build -G "Ninja Multi-Config"
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_CXX_COMPILER:FILEPATH=clang++ -B ./build -G "Ninja Multi-Config"
 cmake --build build --target main  # ビルド
 ./build/Debug/main  # 実行
 ```
@@ -12,4 +13,6 @@ configureの部分（一行目）はvscodeのcmake拡張などでもok
 clang16
 libstdc++
 
-警告：libc++では動作しません。
+~~警告：libc++では動作しません。~~ 普通に動く
+
+警告 TODO: g++だとテンプレート関連のエラー？でコンパイルできない

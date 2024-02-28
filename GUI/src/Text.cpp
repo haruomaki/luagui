@@ -20,7 +20,7 @@ Font::Font()
 
     // フォントを読み込む
     FT_Face face;
-    if (FT_New_Face(ft, "assets/fonts/migmix-2p-regular.ttf", 0, &face) != 0) {
+    if (FT_New_Face(ft, "assets/fonts/main.ttf", 0, &face) != 0) {
         throw FreeTypeException("ERROR::FREETYPE: Failed to load font");
     }
 

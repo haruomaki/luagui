@@ -6,8 +6,9 @@ project(cppgui CXX)
 # もしくは`cmake -DCMAKE_CXX_COMPILER=***`とする
 # vscodeのkit設定: ~/.local/share/CMakeTools/cmake-tools-kits.jsonを編集 https://qiita.com/kilo/items/05e48d22ceff55049b29
 
-# コンパイルオプション
+# コンパイルオプション（-Weverythingを使いたいためclangのときだけ）
 # すべてのサブディレクトリにも適用される
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 add_compile_options(
     # -Wall
     # -Wextra
@@ -30,6 +31,7 @@ add_compile_options(
     -Wno-weak-vtables # TODO: 知識不足
     -Wno-header-hygiene # ヘッダファイルでusing namespaceしてはいけないという警告。TODO: これはONでもよさそう
 )
+endif()
 set(CMAKE_CXX_FLAGS "-std=c++20 -fPIC -msse4.1 -fcolor-diagnostics")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -march=x86-64 -mtune=generic")

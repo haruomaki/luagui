@@ -14,5 +14,7 @@ find_package(Freetype REQUIRED)
 target_include_directories(GUI SYSTEM PUBLIC ${FREETYPE_INCLUDE_DIRS}) # SYSTEMを指定して警告対象から除外
 target_link_libraries(GUI PRIVATE ${FREETYPE_LIBRARIES})
 
-# Luaのリンク
-target_link_libraries(GUI PUBLIC lua)
+# Lua
+find_package(Lua REQUIRED)
+target_include_directories(GUI SYSTEM PUBLIC ${LUA_INCLUDE_DIRS})
+target_link_libraries(GUI PRIVATE ${LUA_LIBRARIES})
