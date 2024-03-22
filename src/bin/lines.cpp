@@ -17,10 +17,6 @@ int main() {
     World &world = window.create_world();
     World &ui_world = window.create_world();
 
-    ProgramObject main_shader = {
-        create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
-        create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))};
-
     auto &camera = world.append_child<MobileOrthoCamera>(viewport);
     auto &ui_camera = ui_world.append_child<OrthoCamera>(viewport);
     // camera.setScale(0.01F);
@@ -44,7 +40,8 @@ int main() {
     sample_text.position = {0.005, -0.02, 0};
 
     // 三角形の表示
-    Polygon my_triangle_polygon(main_shader, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+
+    Polygon my_triangle_polygon(MaterialBuilder().build(window), {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
                                 {
                                     {0.9, 0.3, 0, 1},
                                     {0.9, 0.2, 0.7, 0.3},

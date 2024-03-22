@@ -5,6 +5,7 @@
 #include <DynamicArray.hpp>
 #include <GUI.hpp>
 #include <KeyCallback.hpp>
+#include <Material.hpp>
 #include <Polygon.hpp>
 #include <Shader.hpp>
 #include <SizeCallback.hpp>

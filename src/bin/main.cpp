@@ -37,7 +37,7 @@ int main() {
     auto &camera = main_world.append_child<MobileNormalCamera>(viewport);
     camera.position = {0, 0, 1000};
     camera.rotate = ANGLE_Y(M_PIf);
-    camera.scale = 1;
+    camera.scale = 100;
     camera.set_active();
 
     Font migmix_font;
@@ -48,8 +48,9 @@ int main() {
     credit_text.set_position({200, 400, 1});
 
     GLuint tex_id = loadTexture("assets/images/cat.raw");
+    Material &main_material = MaterialBuilder().build(window);
 
-    Polygon gon(main_shader, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
+    Polygon gon(main_material, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
                 {
                     {0.9, 0.3, 0, 1},
                     {0.1, 0.2, 0.7, 0.3},
@@ -59,14 +60,14 @@ int main() {
                 {{1, 0}, {0, 0}, {0, 1}, {1, 1}},
                 tex_id);
 
-    Polygon gon2(main_shader, {{-0.8, -0.3, -0.1}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+    Polygon gon2(main_material, {{-0.8, -0.3, -0.1}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
                  {
                      {0.9, 0.3, 0, 1},
                      {0.9, 0.2, 0.7, 0.3},
                      {0.3, 0.7, 0.5f, 0.5},
                  });
 
-    Polygon gon3(main_shader, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
+    Polygon gon3(main_material, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
                  {
                      {0.9, 0.3, 0, 1},
                      {0.9, 0.2, 0.7, 0.3},
@@ -75,7 +76,7 @@ int main() {
                      {0.3, 0.7, 0.5f, 0.5},
                  });
 
-    Polygon poly(main_shader, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
+    Polygon poly(main_material, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
     auto &ins3 = main_world.append_child<Shape>(gon3);
     auto &ins = ins3.append_child<Shape>(gon);

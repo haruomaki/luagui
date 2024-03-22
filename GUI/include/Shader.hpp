@@ -18,8 +18,13 @@ class ProgramObject {
     ~ProgramObject();
     ProgramObject(const ProgramObject &) = delete;
     ProgramObject &operator=(const ProgramObject &) const = delete;
-    ProgramObject(ProgramObject &&) = delete; // TODO: ムーブくらいは許していいかも
-    ProgramObject &operator=(ProgramObject &&) const = delete;
+    ProgramObject(ProgramObject &&shader) noexcept // TODO: ソースファイルに
+        : program_id_(shader.program_id_) {
+    }
+    ProgramObject &operator=(ProgramObject &&shader) noexcept {
+        this->program_id_ = shader.program_id_;
+        return *this;
+    }
 
     [[nodiscard]] GLuint get_program_id() const;
     void use() const;

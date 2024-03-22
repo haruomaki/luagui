@@ -95,16 +95,6 @@ int main() {
     auto &viewport = window.make_child<MaximumViewport>();
     World &main_world = window.create_world();
 
-    // バーテックスシェーダのコンパイル
-    auto vsh_string = load_string("assets/shaders/default.vsh");
-    auto vsh_id = create_shader(GL_VERTEX_SHADER, vsh_string);
-
-    // フラグメントシェーダのコンパイル
-    auto fsh_string = load_string("assets/shaders/default.fsh");
-    auto fsh_id = create_shader(GL_FRAGMENT_SHADER, fsh_string);
-
-    auto main_shader = ProgramObject{vsh_id, fsh_id};
-
     auto &camera = main_world.append_child<MobileNormalCamera>(viewport);
     camera.position = {0, 1, 10};
     camera.rotate = ANGLE_Y(M_PIf);
