@@ -40,7 +40,6 @@ int main() {
     sample_text.position = {0.005, -0.02, 0};
 
     // 三角形の表示
-
     Polygon my_triangle_polygon(MaterialBuilder().build(window), {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
                                 {
                                     {0.9, 0.3, 0, 1},
