@@ -13,3 +13,4 @@ AllowAllConstructorInitializersOnNextLine: false
 BreakConstructorInitializers: BeforeComma
 DerivePointerAlignment: false
 IndentCaseLabels: false
+AllowShortIfStatementsOnASingleLine: WithoutElse  # 単一行のif文を許容

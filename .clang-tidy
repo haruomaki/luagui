@@ -1,39 +1,39 @@
 # https://qiita.com/s_araki/items/32aded38dca734c0e02d
 # yamlのリスト表記もokのはずだが、vscodeではバグ？で認識しないため単一の文字列とする
-Checks: "-*,\
-  cert-*,\
-  clang-analyzer-*,\
-  concurrency-*,\
-  cppcoreguidelines-*,\
-  -cppcoreguidelines-avoid-magic-numbers,\ # マジックナンバー
-  -cppcoreguidelines-pro-type-union-access,\ # TODO: vec3の要素にアクセスできるように？
-  -cppcoreguidelines-avoid-const-or-ref-data-members,\ # TODO: 参照型のメンバ変数を許容
-  -cppcoreguidelines-init-variables,\ # 変数宣言時の未初期化を許容
-  -cppcoreguidelines-pro-type-reinterpret-cast,\ # reinterpret_castを許可
-  -cppcoreguidelines-non-private-member-variables-in-classes,\ # misc-non-private-member-variables-in-classesと全く同じなため無効化
-  -cppcoreguidelines-c-copy-assignment-signature,\ # misc-unconventional-assign-operatorと全く同じなため無効化
-  -cppcoreguidelines-avoid-c-arrays,\ # modernize-avoid-c-arraysと全く同じなため無効化
-  linuxkernel-*,\
-  llvm-*,\
-  -llvm-include-order,\ #マクロによるインクルード時、見かけの順序を保つ
-  misc-*,\
-  -misc-no-recursion,\
-  -misc-non-private-member-variables-in-classes,\ # publicおよびprotectedメンバ変数を無制限に許容
-  modernize-*,\
-  -modernize-use-trailing-return-type,\
-  performance-*,\
-  -performance-avoid-endl,\ # std::endl禁止
-  portability-*,\
-  readability-*,\
-  -readability-isolate-declaration,\
-  -readability-magic-numbers,\ #マジックナンバー
-  -readability-uppercase-literal-suffix,\ # リテラルの小文字サフィックス
-  "
+Checks:
+  - -*
+  - cert-*
+  - clang-analyzer-*
+  - concurrency-*
+  - cppcoreguidelines-*
+  - -cppcoreguidelines-avoid-magic-numbers # マジックナンバー
+  - -cppcoreguidelines-pro-type-union-access # TODO: vec3の要素にアクセスできるように？
+  - -cppcoreguidelines-avoid-const-or-ref-data-members # TODO: 参照型のメンバ変数を許容
+  - -cppcoreguidelines-init-variables # 変数宣言時の未初期化を許容
+  - -cppcoreguidelines-pro-type-reinterpret-cast # reinterpret_castを許可
+  - -cppcoreguidelines-non-private-member-variables-in-classes # misc-non-private-member-variables-in-classesと全く同じなため無効化
+  - -cppcoreguidelines-c-copy-assignment-signature # misc-unconventional-assign-operatorと全く同じなため無効化
+  - -cppcoreguidelines-avoid-c-arrays # modernize-avoid-c-arraysと全く同じなため無効化
+  - linuxkernel-*
+  - llvm-*
+  - -llvm-include-order #マクロによるインクルード時、見かけの順序を保つ
+  - misc-*
+  - -misc-no-recursion
+  - -misc-non-private-member-variables-in-classes # publicおよびprotectedメンバ変数を無制限に許容
+  - modernize-*
+  - -modernize-use-trailing-return-type
+  - performance-*
+  - portability-*
+  - readability-*
+  - -readability-isolate-declaration
+  - -readability-magic-numbers #マジックナンバー
+  - -readability-uppercase-literal-suffix # リテラルの小文字サフィックス
 WarningsAsErrors: ""
 HeaderFilterRegex: 'source.*\.(hpp|h)'
 FormatStyle: file
 CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true # デストラクタをデフォルトのままvirtual指定したとき、その他の暗黙の関数の警告を出さない
+  readability-braces-around-statements.ShortStatementLines: 1  # 単一行のif文（やその他構文）は中括弧付与を免除
   readability-identifier-naming.ClassCase: CamelCase
   readability-identifier-naming.EnumCase: CamelCase
   readability-identifier-naming.FunctionCase: lower_case
