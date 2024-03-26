@@ -3,6 +3,7 @@
 #include <Camera.hpp>
 #include <World.hpp>
 
+// TODO: Drawに改名
 class DrawableWorldObject : virtual public WorldObject {
     FunctionId func_id_;
     virtual void draw(const Camera &camera) const = 0;

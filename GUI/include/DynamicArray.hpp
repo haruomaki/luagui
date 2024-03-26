@@ -105,7 +105,7 @@ class DynamicArray : public DrawableWorldObject, Update {
     }
 };
 
-class Mesh : public DrawableWorldObject, Update {
+class MeshOld : public DrawableWorldObject, Update {
     const VertexArrayObject vao_;
     VertexBufferObject vbo_;
     ElementBufferObject ebo_;
@@ -200,7 +200,7 @@ class Mesh : public DrawableWorldObject, Update {
     GLfloat point_size = 4;
     GLfloat line_width = 4;
 
-    Mesh(const ProgramObject *shader = nullptr, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
+    MeshOld(const ProgramObject *shader = nullptr, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
         : vao_(VertexArrayObject::gen())
         , shader_(shader == nullptr ? *this->get_world().window.default_shader : *shader)
         , n_(coords.size())

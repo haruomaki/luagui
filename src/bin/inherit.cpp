@@ -1,18 +1,28 @@
-#include <base.hpp>
+#include <iostream>
 
-class Base {
-  public:
-    int x_ = 0;
+struct Extra {
+    int b = 2;
 };
 
-class DerivedA : virtual Base {
+template <bool inherit>
+struct MyClass {
+    int a = 1;
+    void print() {
+        std::cout << a << "\n";
+    }
 };
 
-class DerivedX : public virtual Base, DerivedA {
+template <>
+struct MyClass<true> : Extra {
+    void print() {
+        std::cout << a << " and " << b << "\n";
+    }
 };
 
 int main() {
-    DerivedX x;
+    MyClass<false> my1;
+    my1.print(); // 1
 
-    debug(x.x_);
+    MyClass<true> my2;
+    my2.print(); // 1 and 2
 }

@@ -15,7 +15,7 @@ int main() {
     camera.scale = 1;
     camera.set_active();
 
-    auto &mesh = main_world.append_child<Mesh>();
+    auto &mesh = main_world.append_child<MeshOld>();
     // mesh.vertices.xs = {1, 0, 0, 8};
     // mesh.vertices.ys = {1, 2, 3, -1};
     mesh.indices = {0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5};

@@ -6,6 +6,7 @@
 #include <GUI.hpp>
 #include <KeyCallback.hpp>
 #include <Material.hpp>
+#include <Mesh.hpp>
 #include <Polygon.hpp>
 #include <Shader.hpp>
 #include <SizeCallback.hpp>
