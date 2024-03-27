@@ -1,4 +1,5 @@
 #include "DynamicArray.hpp"
+#include "Mesh.hpp"
 #include <Camera.hpp>
 #include <Update.hpp>
 #include <Viewport.hpp>
@@ -153,3 +154,11 @@ class GridGround : public WorldObject {
         grid.scale = 1;
     }
 };
+
+inline MeshObject &new_mesh(WorldObject &parent) {
+    auto &world = parent.get_world();
+    auto &mesh = world.append_child<Mesh>();
+    auto &obj = parent.append_child<MeshObject>(mesh, true);
+
+    return obj;
+}

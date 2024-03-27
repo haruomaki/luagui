@@ -151,7 +151,7 @@ class Mesh : public StaticMesh, public Update {
 
 class MeshObject : public DrawableWorldObject {
   public:
-    const StaticMesh &mesh;
+    StaticMesh &mesh;
     bool use_index;
     GLenum draw_mode = GL_LINE_STRIP;
     GLfloat point_size = 4;
@@ -159,7 +159,7 @@ class MeshObject : public DrawableWorldObject {
 
     template <class Msh>
         requires std::is_convertible_v<Msh &, StaticMesh &>
-    MeshObject(const Msh &mesh, bool use_index = false)
+    MeshObject(Msh &mesh, bool use_index = false)
         : mesh(mesh)
         , use_index(use_index) {}
 
