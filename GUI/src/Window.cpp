@@ -71,16 +71,18 @@ Window::Window(GUI &gui, int width, int height, const char *title)
                                   create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))});
 }
 
-// Window::~Window() {
-// print("Windowのデストラクタです");
-// debug(this->size_callbacks_.size());
-// this->size_callbacks_.erase(this->size_callbacks_.begin());
-// debug(this->size_callbacks_.size());
-// print("消しました");
+Window::~Window() {
+    this->window_objects_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
 
-// glfwSetWindowSizeCallback(gwin_, nullptr);
-// glfwSetKeyCallback(gwin_, nullptr);
-// }
+    // print("Windowのデストラクタです");
+    // debug(this->size_callbacks_.size());
+    // this->size_callbacks_.erase(this->size_callbacks_.begin());
+    // debug(this->size_callbacks_.size());
+    // print("消しました");
+
+    // glfwSetWindowSizeCallback(gwin_, nullptr);
+    // glfwSetKeyCallback(gwin_, nullptr);
+}
 
 GLFWwindow *Window::get_glfw() const {
     return this->gwin_;
@@ -162,7 +164,12 @@ void Window::update_routine() {
     // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
     // world_object_root_.refreshAbsolutePosition();
 
-    // 各ワールドの更新処
+    // リソースの更新処理
+    for (const auto &[id, update] : this->resource_updates) {
+        update();
+    }
+
+    // 各ワールドの更新処理
     for (const auto &world : this->worlds_) {
         world->master_update();
     }

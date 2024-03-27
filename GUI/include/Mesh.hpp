@@ -1,17 +1,17 @@
 #pragma once
 
 #include "Material.hpp"
-#include "Update.hpp"
+#include "ResourceUpdate.hpp"
 #include <Drawable.hpp>
 #include <Shader.hpp>
 #include <core.hpp>
 #include <utility>
 
 // TODO: WindowObjectを廃止し置き換え
-class Resource : public virtual WorldObject {};
+// class Resource : virtual public WindowObject {};
 
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
-class StaticMesh : public Resource {
+class StaticMesh : virtual public WindowObject {
     friend class MeshObject;
 
   protected:
@@ -53,7 +53,7 @@ class StaticMesh : public Resource {
 
     StaticMesh(const ProgramObject *shader = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, GLenum usage = GL_STATIC_DRAW)
         : vao_(VertexArrayObject::gen())
-        , shader_(shader == nullptr ? *this->get_world().window.default_shader : *shader)
+        , shader_(shader == nullptr ? *this->get_window().default_shader : *shader)
         , usage_(usage)
         , n_(coords.size())
         , capacity_(coords.capacity()) {
@@ -90,7 +90,7 @@ class StaticMesh : public Resource {
     }
 };
 
-class Mesh : public StaticMesh, public Update {
+class Mesh : public StaticMesh, public ResourceUpdate {
     void update() override {
         sync_vram();
     }

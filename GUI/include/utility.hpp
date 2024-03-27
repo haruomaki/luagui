@@ -156,8 +156,8 @@ class GridGround : public WorldObject {
 };
 
 inline MeshObject &new_mesh(WorldObject &parent) {
-    auto &world = parent.get_world();
-    auto &mesh = world.append_child<Mesh>();
+    auto &window = parent.get_world().window;
+    auto &mesh = window.make_child<Mesh>();
     auto &obj = parent.append_child<MeshObject>(mesh, true);
 
     return obj;

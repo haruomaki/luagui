@@ -31,9 +31,10 @@ class Window {
   public:
     GUI &gui;
     std::optional<ProgramObject> default_shader;
+    FunctionSet<void()> resource_updates;
 
     Window(GUI &gui, int width, int height, const char *title);
-    // ~Window();
+    ~Window();
 
     // // コピーは禁止する
     // Window(const Window &) = default;
@@ -55,6 +56,7 @@ class Window {
     // glfwGetCursorPos()のラッパー
     [[nodiscard]] pair<double, double> get_cursor_pos() const;
 
+    // TODO: append_childに改名
     template <typename T, typename... Args>
         requires std::is_constructible_v<T, Args...> &&     // ArgsはTのコンストラクタの引数
                  std::is_convertible_v<T *, WindowObject *> // TはWindowObjectの派生クラス
@@ -69,7 +71,7 @@ class Window {
         if (!inserted) {
             throw std::runtime_error("make_childに失敗");
         }
-        auto ptr2 = static_cast<T *>(it->get());
+        auto ptr2 = dynamic_cast<T *>(it->get());
         return *ptr2;
     }
 
