@@ -92,7 +92,7 @@ class WaveSimulator : public WorldObject {
 int main() {
     GUI gui;
     Window &window = gui.create_window(600, 500, "井戸型ポテンシャル");
-    auto &viewport = window.make_child<MaximumViewport>();
+    auto &viewport = window.append_child<MaximumViewport>();
     World &main_world = window.create_world();
 
     auto &camera = main_world.append_child<MobileNormalCamera>(viewport);

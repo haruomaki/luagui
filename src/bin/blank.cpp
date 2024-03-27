@@ -4,7 +4,7 @@
 int main() {
     GUI gui;
     Window &window = gui.create_window(1280, 720, "blank");
-    auto &viewport = window.make_child<MaximumViewport>();
+    auto &viewport = window.append_child<MaximumViewport>();
     World &main_world = window.create_world();
 
     glfwSetInputMode(window.get_glfw(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);

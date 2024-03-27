@@ -12,7 +12,7 @@ int main() {
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
     // Window &another_window = gui.create_window(width, height, "２つめのウィンドウ");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
-    auto &viewport = window.make_child<MaximumViewport>();
+    auto &viewport = window.append_child<MaximumViewport>();
 
     World &world = window.create_world();
     World &ui_world = window.create_world();
