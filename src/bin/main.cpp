@@ -143,7 +143,7 @@ int main() {
         });
     });
 
-    auto &mesh = main_world.append_child<Mesh>();
+    auto &mesh = main_world.append_child<StaticMesh>();
     auto &cube = main_world.append_child<MeshObject>(mesh);
     // mesh.vertices.xs = {1, 0, 0, 8};
     // mesh.vertices.ys = {1, 2, 3, -1};
@@ -151,6 +151,7 @@ int main() {
     mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}};
     // mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 0}, {1, 1, 0}, {0, 1, 1}, {1, 1, 1}};
     mesh.vertices.colors = std::vector(8, RGBA{0.46, 0.85, 0.84, 0.9});
+    mesh.sync_vram();
     cube.draw_mode = GL_LINE_STRIP;
     cube.draw_mode = GL_TRIANGLE_STRIP;
     cube.line_width = 10;

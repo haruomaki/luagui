@@ -5,10 +5,12 @@
 #include <Drawable.hpp>
 #include <Shader.hpp>
 #include <core.hpp>
+#include <utility>
 
 // TODO: WindowObjectを廃止し置き換え
 class Resource : public virtual WorldObject {};
 
+// VRAMとの同期を毎フレーム自動で行わないメッシュ
 class StaticMesh : public Resource {
     friend class MeshObject;
 
@@ -17,6 +19,7 @@ class StaticMesh : public Resource {
     VertexBufferObject vbo_;
     ElementBufferObject ebo_;
     const ProgramObject &shader_;
+    const GLenum usage_;
     size_t n_ = 0;
     size_t capacity_ = 0;
     size_t indices_capacity_ = 0;
@@ -25,7 +28,7 @@ class StaticMesh : public Resource {
     void regenerate_vbo() {
         print("VBO生成");
         // 空のVBOを生成
-        vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, GL_DYNAMIC_DRAW);
+        vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, usage_);
 
         // VAOに頂点の座標と色を関連付ける
         vao_.bind([&] {
@@ -40,16 +43,17 @@ class StaticMesh : public Resource {
 
     void regenerate_ibo() {
         print("IBO生成");
-        this->ebo_ = ElementBufferObject::gen(sizeof(int) * indices.size(), indices.data(), GL_DYNAMIC_DRAW);
+        this->ebo_ = ElementBufferObject::gen(sizeof(int) * indices.size(), indices.data(), usage_);
     }
 
   public:
     InterleavedVertexInfoVector vertices;
     std::vector<int> indices;
 
-    StaticMesh(const ProgramObject *shader = nullptr, vector<glm::vec3> coords = {}, vector<RGBA> colors = {})
+    StaticMesh(const ProgramObject *shader = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, GLenum usage = GL_STATIC_DRAW)
         : vao_(VertexArrayObject::gen())
         , shader_(shader == nullptr ? *this->get_world().window.default_shader : *shader)
+        , usage_(usage)
         , n_(coords.size())
         , capacity_(coords.capacity()) {
         vector<InterleavedVertexInfo> vers = {};
@@ -90,7 +94,8 @@ class Mesh : public StaticMesh, public Update {
     }
 
   public:
-    Mesh() = default;
+    Mesh(const ProgramObject *shader = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {})
+        : StaticMesh(shader, coords, colors, GL_DYNAMIC_DRAW) {}
 };
 
 // template <GLenum usage>
