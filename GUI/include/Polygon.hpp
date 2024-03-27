@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Draw.hpp"
 #include "Material.hpp"
-#include <Drawable.hpp>
 #include <Shader.hpp>
 #include <core.hpp>
 

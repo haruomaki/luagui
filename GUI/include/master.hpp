@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Camera.hpp>
-#include <Drawable.hpp>
+#include <Draw.hpp>
 #include <DynamicArray.hpp>
 #include <GUI.hpp>
 #include <Material.hpp>
