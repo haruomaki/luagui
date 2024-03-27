@@ -50,7 +50,8 @@ class VertexArrayObject {
         return vao;
     }
 
-    inline void bind(const function<void()> &proc_in_bind) const {
+    template <typename F>
+    inline void bind(const F &proc_in_bind) const {
         glBindVertexArray(array_); // VAOをバインド
         proc_in_bind();
         glBindVertexArray(0);
@@ -79,7 +80,8 @@ class BufferObject {
         });
     }
 
-    inline void bind(const function<void()> &proc_in_bind) const {
+    template <typename F>
+    inline void bind(const F &proc_in_bind) const {
         glBindBuffer(target, buffer_);
         proc_in_bind();
         glBindBuffer(target, 0);

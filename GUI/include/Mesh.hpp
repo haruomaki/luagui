@@ -21,6 +21,7 @@ class StaticMesh : public Resource {
     const ProgramObject &shader_;
     const GLenum usage_;
     size_t n_ = 0;
+    size_t indices_n_ = 0;
     size_t capacity_ = 0;
     size_t indices_capacity_ = 0;
     static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
@@ -83,6 +84,7 @@ class StaticMesh : public Resource {
         capacity_ = vertices.capacity();
         indices_capacity_ = indices.capacity();
         n_ = vertices.size();
+        indices_n_ = indices.size();
         vbo_.subdata(0, sizeof(InterleavedVertexInfo) * capacity_, vertices.data());
         ebo_.subdata(0, sizeof(int) * indices.size(), indices.data());
     }
@@ -150,14 +152,16 @@ class Mesh : public StaticMesh, public Update {
 class MeshObject : public DrawableWorldObject {
   public:
     const StaticMesh &mesh;
+    bool use_index;
     GLenum draw_mode = GL_LINE_STRIP;
     GLfloat point_size = 4;
     GLfloat line_width = 4;
 
     template <class Msh>
         requires std::is_convertible_v<Msh &, StaticMesh &>
-    MeshObject(const Msh &mesh)
-        : mesh(mesh) {}
+    MeshObject(const Msh &mesh, bool use_index = false)
+        : mesh(mesh)
+        , use_index(use_index) {}
 
     void draw(const Camera &camera) const override {
         // シェーダを有効化
@@ -193,9 +197,15 @@ class MeshObject : public DrawableWorldObject {
         // モデルの描画
         shader.set_uniform("is_tex", GL_FALSE);
         this->mesh.vao_.bind([&] {
-            this->mesh.ebo_.bind([&] {
-                glDrawElements(draw_mode, sizeof(int) * 14, GL_UNSIGNED_INT, nullptr);
-            });
+            if (use_index) {
+                size_t indices_length = this->mesh.indices_n_;
+                this->mesh.ebo_.bind([&] {
+                    glDrawElements(draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
+                });
+            } else {
+                size_t vertices_length = this->mesh.n_;
+                glDrawArrays(draw_mode, 0, GLsizei(vertices_length));
+            }
         });
     }
 };
