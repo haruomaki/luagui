@@ -21,7 +21,6 @@ class MovingShape : public Shape, Update {
 int main() {
     GUI gui;
     Window &window = gui.create_window(600, 500, "めいん");
-    auto &viewport = window.append_resource<MaximumViewport>();
     World &main_world = window.create_world();
 
     // バーテックスシェーダのコンパイル
@@ -34,7 +33,7 @@ int main() {
 
     auto main_shader = ProgramObject{vsh_id, fsh_id};
 
-    auto &camera = main_world.append_child<MobileNormalCamera>(&viewport);
+    auto &camera = main_world.append_child<MobileNormalCamera>();
     camera.position = {0, 0, 1000};
     camera.rotate = ANGLE_Y(M_PIf);
     camera.scale = 100;

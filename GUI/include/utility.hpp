@@ -20,8 +20,8 @@ class StickyPointTopLeft : public Update {
     }
 
   public:
-    StickyPointTopLeft(const Viewport &viewport)
-        : viewport_(viewport) {}
+    StickyPointTopLeft(const Viewport *viewport = nullptr)
+        : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
 };
 
 // glm::vec3 operator*(const glm::vec3 &v, const float a) {

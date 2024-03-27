@@ -1,15 +1,15 @@
-#include "master.hpp"
+#include <master.hpp>
+
 #include "utility.hpp"
 
 int main() {
     GUI gui;
     Window &window = gui.create_window(1280, 720, "blank");
-    auto &viewport = window.append_resource<MaximumViewport>();
     World &main_world = window.create_world();
 
     glfwSetInputMode(window.get_glfw(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    auto &camera = main_world.append_child<MobileNormalCamera>(viewport);
+    auto &camera = main_world.append_child<MobileNormalCamera>();
     camera.position = {0, 0, 10};
     camera.rotate = ANGLE_Y(M_PIf);
     camera.scale = 1;

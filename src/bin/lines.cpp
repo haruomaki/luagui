@@ -12,13 +12,12 @@ int main() {
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
     // Window &another_window = gui.create_window(width, height, "２つめのウィンドウ");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
-    auto &viewport = window.append_resource<MaximumViewport>();
 
     World &world = window.create_world();
     World &ui_world = window.create_world();
 
-    auto &camera = world.append_child<MobileOrthoCamera>(&viewport);
-    auto &ui_camera = ui_world.append_child<OrthoCamera>(&viewport);
+    auto &camera = world.append_child<MobileOrthoCamera>();
+    auto &ui_camera = ui_world.append_child<OrthoCamera>();
     // camera.setScale(0.01F);
     // camera.setScale(100);
     camera.set_active();
@@ -31,7 +30,7 @@ int main() {
 
     // 左上に常在する点
     // TODO: これが間違ってworldの子になってもメモリエラー？回答：前と後ろでui_worldとworldのようにチグハグに指定するとエラー
-    auto &top_left_point = ui_world.append_child<StickyPointTopLeft>(viewport);
+    auto &top_left_point = ui_world.append_child<StickyPointTopLeft>();
 
     // 文字の表示
     Font migmix_font;
