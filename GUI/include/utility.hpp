@@ -137,28 +137,43 @@ class MobileNormalCamera : public Camera, protected Update {
     }
 };
 
+inline MeshObject &new_mesh(WorldObject &parent) {
+    auto &window = parent.get_world().window;
+    auto &mesh = window.append_resource<Mesh>();
+    auto &obj = parent.append_child<MeshObject>(mesh, true);
+    return obj;
+}
+
+inline MeshObject &new_points(WorldObject &parent) {
+    auto &window = parent.get_world().window;
+    auto &mesh = window.append_resource<Mesh>();
+    auto &obj = parent.append_child<MeshObject>(mesh);
+    obj.draw_mode = GL_POINTS;
+    return obj;
+}
+
+inline MeshObject &new_line(WorldObject &parent) {
+    auto &window = parent.get_world().window;
+    auto &mesh = window.append_resource<Mesh>();
+    auto &obj = parent.append_child<MeshObject>(mesh);
+    obj.draw_mode = GL_LINE_STRIP;
+    return obj;
+}
+
 // xz平面に[-10, 10]の大きさのグリッドを作成する
 class GridGround : public WorldObject {
   public:
     GridGround() {
-        auto &grid = this->append_child<DynamicArray>();
+        auto &grid = new_line(*this);
         for (int i = -10; i <= 10; i++) {
             constexpr RGBA grid_color = {0.1, 0.1, 0.1, 1};
-            grid.vertices.push_back(InterleavedVertexInfo{{i, 0, -10}, grid_color});
-            grid.vertices.push_back(InterleavedVertexInfo{{i, 0, 10}, grid_color});
-            grid.vertices.push_back(InterleavedVertexInfo{{-10, 0, i}, grid_color});
-            grid.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
+            grid.mesh.vertices.push_back(InterleavedVertexInfo{{i, 0, -10}, grid_color});
+            grid.mesh.vertices.push_back(InterleavedVertexInfo{{i, 0, 10}, grid_color});
+            grid.mesh.vertices.push_back(InterleavedVertexInfo{{-10, 0, i}, grid_color});
+            grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
         }
         grid.draw_mode = GL_LINES;
         grid.line_width = 1;
         grid.scale = 1;
     }
 };
-
-inline MeshObject &new_mesh(WorldObject &parent) {
-    auto &window = parent.get_world().window;
-    auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshObject>(mesh, true);
-
-    return obj;
-}

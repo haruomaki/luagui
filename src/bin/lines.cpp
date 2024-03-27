@@ -23,8 +23,8 @@ int main() {
     camera.set_active();
     ui_camera.set_active();
 
-    auto &line = world.append_child<DynamicArray>();
-    line.draw_mode = GL_POINTS;
+    auto &line = new_points(world);
+    auto &line_mesh = line.mesh;
     line.scale = 0.03;
     int points_num = 100;
 
@@ -59,10 +59,10 @@ int main() {
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
-        line.vertices.clear();
-        line.vertices.xs = xs;
-        line.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100) + t; });
-        line.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
+        line_mesh.vertices.clear();
+        line_mesh.vertices.xs = xs;
+        line_mesh.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100) + t; });
+        line_mesh.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
     });
 
     gui.mainloop();

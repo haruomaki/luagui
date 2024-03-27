@@ -15,7 +15,8 @@ int main() {
     camera.scale = 1;
     camera.set_active();
 
-    auto &mesh = main_world.append_child<MeshOld>();
+    auto &cube = new_mesh(main_world);
+    auto &mesh = cube.mesh;
     // mesh.vertices.xs = {1, 0, 0, 8};
     // mesh.vertices.ys = {1, 2, 3, -1};
     mesh.indices = {0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5};
@@ -30,11 +31,11 @@ int main() {
         colors_tmp.emplace_back(r, g, b, 1);
     }
     mesh.vertices.colors = colors_tmp;
-    mesh.draw_mode = GL_LINE_STRIP;
-    // mesh.draw_mode = GL_TRIANGLE_STRIP;
-    mesh.line_width = 5;
-    mesh.scale = 2;
-    mesh.position = {1, 1, 5};
+    // cube.draw_mode = GL_LINE_STRIP;
+    cube.draw_mode = GL_TRIANGLE_STRIP;
+    cube.line_width = 5;
+    cube.scale = 2;
+    cube.position = {1, 1, 5};
 
     main_world.append_child<GridGround>();
 

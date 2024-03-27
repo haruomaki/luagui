@@ -128,11 +128,6 @@ int main() {
         getErrors();
     });
 
-    auto &line = main_world.append_child<DynamicArray>(&main_shader, std::vector{glm::vec3{0, 0, 0}}, std::vector{RGBA{200, 200, 200, 255}});
-    main_world.timer.task(0.5, [&line] {
-        line.set_position(line.get_position() + glm::vec3{-10, 0, 0});
-    });
-
     main_world.draws.set_function([&](const auto &camera) {
         main_shader.use();
         main_shader.set_uniform("modelViewMatrix", camera.get_view_matrix());
@@ -156,14 +151,14 @@ int main() {
     cube.scale = 200;
     cube.position = {100, 100, 500};
 
-    auto &grid = main_world.append_child<DynamicArray>();
+    auto &grid = new_line(main_world);
     // grid.indices = {0, 1, 2, 3, 4, 5};
     for (int i = -10; i <= 10; i++) {
         constexpr RGBA grid_color = {0.1, 0.1, 0.1, 1};
-        grid.vertices.push_back(InterleavedVertexInfo{{i, 0, -10}, grid_color});
-        grid.vertices.push_back(InterleavedVertexInfo{{i, 0, 10}, grid_color});
-        grid.vertices.push_back(InterleavedVertexInfo{{-10, 0, i}, grid_color});
-        grid.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
+        grid.mesh.vertices.push_back(InterleavedVertexInfo{{i, 0, -10}, grid_color});
+        grid.mesh.vertices.push_back(InterleavedVertexInfo{{i, 0, 10}, grid_color});
+        grid.mesh.vertices.push_back(InterleavedVertexInfo{{-10, 0, i}, grid_color});
+        grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
     }
     grid.draw_mode = GL_LINES;
     grid.line_width = 6;

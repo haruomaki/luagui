@@ -18,12 +18,12 @@ class WaveSimulator : public WorldObject {
         : grid(grid_size, 0)
         , prev_grid(grid_size, 0) {
         initialize();
-        auto &line = this->append_child<DynamicArray>();
+        auto &line = new_line(*this);
         this->get_world().timer.task(0.03, [this, &line] {
             this->step();
-            line.vertices.xs = linspace(-1, 1, grid_size);
-            line.vertices.ys = map(grid, [](auto x) { return float(x); });
-            line.vertices.colors = std::vector<RGBA>(grid_size, {1, 1, 1, 1});
+            line.mesh.vertices.xs = linspace(-1, 1, grid_size);
+            line.mesh.vertices.ys = map(grid, [](auto x) { return float(x); });
+            line.mesh.vertices.colors = std::vector<RGBA>(grid_size, {1, 1, 1, 1});
         });
     }
 
