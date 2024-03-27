@@ -23,7 +23,7 @@ class Font {
     Font();
 };
 
-class Text : public DrawableWorldObject {
+class Text : public Draw {
     Font &font_;
     RGBA color_;
 

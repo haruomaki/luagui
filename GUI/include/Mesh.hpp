@@ -146,7 +146,7 @@ class Mesh : public StaticMesh, public ResourceUpdate {
 //     }
 // };
 
-class MeshObject : public DrawableWorldObject {
+class MeshObject : public Draw {
   public:
     StaticMesh &mesh;
     bool use_index;

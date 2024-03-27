@@ -49,7 +49,7 @@ class Polygon {
     }
 };
 
-class Shape : public DrawableWorldObject {
+class Shape : public Draw {
     const Polygon &polygon_;
 
   public:

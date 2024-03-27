@@ -6,7 +6,7 @@
 #include <Update.hpp>
 #include <core.hpp>
 
-class DynamicArray : public DrawableWorldObject, Update {
+class DynamicArray : public Draw, Update {
     const VertexArrayObject vao_;
     VertexBufferObject vbo_;
     const ProgramObject &shader_;
@@ -105,7 +105,7 @@ class DynamicArray : public DrawableWorldObject, Update {
     }
 };
 
-class MeshOld : public DrawableWorldObject, Update {
+class MeshOld : public Draw, Update {
     const VertexArrayObject vao_;
     VertexBufferObject vbo_;
     ElementBufferObject ebo_;

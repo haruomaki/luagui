@@ -4,15 +4,15 @@
 #include <World.hpp>
 
 // TODO: Drawに改名
-class DrawableWorldObject : virtual public WorldObject {
+class Draw : virtual public WorldObject {
     FunctionId func_id_;
     virtual void draw(const Camera &camera) const = 0;
 
   public:
-    DrawableWorldObject();
-    ~DrawableWorldObject() override;
-    DrawableWorldObject(const DrawableWorldObject &) = delete;
-    DrawableWorldObject &operator=(const DrawableWorldObject &) const = delete;
-    DrawableWorldObject(DrawableWorldObject &&) = delete;
-    DrawableWorldObject &operator=(DrawableWorldObject &&) const = delete;
+    Draw();
+    ~Draw() override;
+    Draw(const Draw &) = delete;
+    Draw &operator=(const Draw &) const = delete;
+    Draw(Draw &&) = delete;
+    Draw &operator=(Draw &&) const = delete;
 };
