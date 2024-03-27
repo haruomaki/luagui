@@ -1,4 +1,3 @@
-#include "DynamicArray.hpp"
 #include "Mesh.hpp"
 #include <Camera.hpp>
 #include <Update.hpp>

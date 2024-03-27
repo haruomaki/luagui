@@ -2,7 +2,6 @@
 
 #include <Camera.hpp>
 #include <Draw.hpp>
-#include <DynamicArray.hpp>
 #include <GUI.hpp>
 #include <Material.hpp>
 #include <Mesh.hpp>
