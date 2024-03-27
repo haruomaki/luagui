@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SizeCallback.hpp>
 #include <Window.hpp>
+#include <WindowObject.hpp>
 #include <graphical_base.hpp>
 
 // 描画領域（ビューポート）を管理するクラス

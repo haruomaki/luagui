@@ -1,8 +1,7 @@
 #include "World.hpp"
-#include <KeyCallback.hpp>
-#include <SizeCallback.hpp>
 #include <Update.hpp>
 #include <Window.hpp>
+#include <WindowObject.hpp>
 
 #include <algorithm>
 

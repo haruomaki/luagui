@@ -2,7 +2,7 @@
 
 #include "FunctionSet.hpp"
 #include "Shader.hpp"
-#include "SizeCallback.hpp"
+#include "WindowObject.hpp"
 #include <graphical_base.hpp>
 
 class SizeCallback;

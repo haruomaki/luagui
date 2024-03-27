@@ -1,4 +1,4 @@
-#include <SizeCallback.hpp>
+#include <WindowObject.hpp>
 
 // SizeCallback::SizeCallback() {
 //     size_callback_ = [this](int width, int height) { this->sizeCallback(width, height); };
