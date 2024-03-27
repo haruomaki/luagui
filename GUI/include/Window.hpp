@@ -59,7 +59,7 @@ class Window {
     template <typename T, typename... Args>
         requires std::is_constructible_v<T, Args...> && // ArgsはTのコンストラクタの引数
                  std::is_convertible_v<T *, Resource *> // TはWindowObjectの派生クラス
-    T &append_child(Args &&...args) {
+    T &append_resource(Args &&...args) {
         // WindowObjectのコンストラクタを呼ぶ直前には必ずsetWindowStaticを呼び、直後nullptrにリセット
         Resource::set_window_static(this);
         // argsを引数として使って、ヒープ上にT型のオブジェクトを作成

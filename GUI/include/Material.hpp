@@ -29,7 +29,7 @@ class MaterialBuilder {
     }
 
     Material &build(Window &window) {
-        auto &material = window.append_child<Material>(this->shader_, this->color_);
+        auto &material = window.append_resource<Material>(this->shader_, this->color_);
         return material;
     }
 };

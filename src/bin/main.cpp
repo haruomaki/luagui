@@ -21,7 +21,7 @@ class MovingShape : public Shape, Update {
 int main() {
     GUI gui;
     Window &window = gui.create_window(600, 500, "めいん");
-    auto &viewport = window.append_child<MaximumViewport>();
+    auto &viewport = window.append_resource<MaximumViewport>();
     World &main_world = window.create_world();
 
     // バーテックスシェーダのコンパイル
