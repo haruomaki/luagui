@@ -17,8 +17,8 @@ int main() {
     World &world = window.create_world();
     World &ui_world = window.create_world();
 
-    auto &camera = world.append_child<MobileOrthoCamera>(viewport);
-    auto &ui_camera = ui_world.append_child<OrthoCamera>(viewport);
+    auto &camera = world.append_child<MobileOrthoCamera>(&viewport);
+    auto &ui_camera = ui_world.append_child<OrthoCamera>(&viewport);
     // camera.setScale(0.01F);
     // camera.setScale(100);
     camera.set_active();

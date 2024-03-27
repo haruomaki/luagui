@@ -34,7 +34,7 @@ int main() {
 
     auto main_shader = ProgramObject{vsh_id, fsh_id};
 
-    auto &camera = main_world.append_child<MobileNormalCamera>(viewport);
+    auto &camera = main_world.append_child<MobileNormalCamera>(&viewport);
     camera.position = {0, 0, 1000};
     camera.rotate = ANGLE_Y(M_PIf);
     camera.scale = 100;

@@ -61,7 +61,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
     }
 
   public:
-    MobileOrthoCamera(const Viewport &viewport)
+    MobileOrthoCamera(const Viewport *viewport = nullptr)
         : OrthoCamera(viewport) {}
 };
 
@@ -125,7 +125,7 @@ class MobileNormalCamera : public Camera, protected Update {
     float angle_speed = 0.02;
     pair<double, double> cursor_pos = this->get_world().window.get_cursor_pos();
 
-    MobileNormalCamera(const Viewport &viewport)
+    MobileNormalCamera(const Viewport *viewport = nullptr)
         : camera_head_(this->append_child<NormalCamera>(viewport)) {}
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override {

@@ -1,6 +1,9 @@
 #include "Camera.hpp"
 #include "World.hpp"
 
+NormalCamera::NormalCamera(const Viewport *viewport)
+    : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
+
 void Camera::set_active() {
     this->get_world().active_camera() = this;
 }
@@ -18,6 +21,9 @@ glm::mat4 NormalCamera::get_projection_matrix() const {
     const auto projection_matrix = glm::perspective(glm::radians(60.0F), aspect_ratio, 0.1F, 3000.F);
     return projection_matrix;
 }
+
+OrthoCamera::OrthoCamera(const Viewport *viewport)
+    : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
 
 glm::mat4 OrthoCamera::get_view_matrix() const {
     return glm::inverse(get_absolute_transform());
