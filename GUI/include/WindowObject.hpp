@@ -11,7 +11,7 @@ enum class CallbackKind {
 };
 
 // ユーザはこのクラス（をpublic継承したクラス）を必ずwindow.make_child経由でインスタンス化する
-class WindowObject {
+class Resource {
     friend class Window;
     Window *window_; // コンストラクト後は変更されない
 
@@ -21,19 +21,19 @@ class WindowObject {
 
   public:
     // このクラスのコンストラクタは呼ぶ直前にsetWindowStatic()を実行しておかなければならない
-    WindowObject()
+    Resource()
         : window_(get_window_static()) {
         if (this->window_ == nullptr) {
             throw std::runtime_error("WindowObjectに関連付けるウィンドウの取得に失敗");
         }
     }
-    virtual ~WindowObject() = default;
+    virtual ~Resource() = default;
 
     // window_を読み取るゲッターおよびプロパティ
     Window &get_window() {
         return *this->window_;
     }
-    PropertyGet<&WindowObject::get_window> window{this};
+    PropertyGet<&Resource::get_window> window{this};
 };
 
 // class SizeCallback : public WindowObject {

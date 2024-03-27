@@ -11,7 +11,7 @@
 // class Resource : virtual public WindowObject {};
 
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
-class StaticMesh : virtual public WindowObject {
+class StaticMesh : virtual public Resource {
     friend class MeshObject;
 
   protected:

@@ -3,7 +3,7 @@
 #include "Shader.hpp"
 #include "Window.hpp"
 
-struct Material : public WindowObject {
+struct Material : public Resource {
     const ProgramObject &shader;
     int color; // 今のところはただのテスト用ダミー
 

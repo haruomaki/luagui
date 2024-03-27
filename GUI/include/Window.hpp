@@ -12,7 +12,7 @@ class GUI;
 // 一つのウィンドウを表すクラス
 class Window {
     GLFWwindow *gwin_ = nullptr;
-    std::set<std::unique_ptr<WindowObject>> window_objects_;
+    std::set<std::unique_ptr<Resource>> window_objects_;
     FunctionSet<void(int, int)> size_callbacks_;
     std::set<std::function<void(int, int)> *> key_callbacks_;
     std::vector<std::unique_ptr<World>> worlds_ = {};
@@ -58,14 +58,14 @@ class Window {
 
     // TODO: append_childに改名
     template <typename T, typename... Args>
-        requires std::is_constructible_v<T, Args...> &&     // ArgsはTのコンストラクタの引数
-                 std::is_convertible_v<T *, WindowObject *> // TはWindowObjectの派生クラス
+        requires std::is_constructible_v<T, Args...> && // ArgsはTのコンストラクタの引数
+                 std::is_convertible_v<T *, Resource *> // TはWindowObjectの派生クラス
     T &make_child(Args &&...args) {
         // WindowObjectのコンストラクタを呼ぶ直前には必ずsetWindowStaticを呼び、直後nullptrにリセット
-        WindowObject::set_window_static(this);
+        Resource::set_window_static(this);
         // argsを引数として使って、ヒープ上にT型のオブジェクトを作成
         auto ptr = std::make_unique<T>(std::forward<Args>(args)...); // NOTE: &&やforwardは必要かよく分からない
-        WindowObject::set_window_static(nullptr);
+        Resource::set_window_static(nullptr);
 
         auto [it, inserted] = this->window_objects_.insert(std::move(ptr));
         if (!inserted) {

@@ -30,7 +30,7 @@ class Viewport {
 
 // 常にウィンドウの描画領域全体のサイズとなるビューポート
 // 手動でwindow.registerSizeCallbackするのではなく、create関数を使うと最初の即時設定ができる
-class MaximumViewport : public Viewport, public WindowObject {
+class MaximumViewport : public Viewport, public Resource {
   public:
     MaximumViewport()
         : Viewport(0, 0, 0, 0) {

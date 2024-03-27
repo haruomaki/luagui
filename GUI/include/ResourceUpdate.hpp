@@ -3,7 +3,7 @@
 #include "FunctionSet.hpp"
 #include "WindowObject.hpp"
 
-class ResourceUpdate : virtual public WindowObject {
+class ResourceUpdate : virtual public Resource {
     FunctionId func_id_;
 
   public:
