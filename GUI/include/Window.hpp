@@ -3,6 +3,7 @@
 #include "FunctionSet.hpp"
 #include "Resource.hpp"
 #include "Shader.hpp"
+#include "Viewport.hpp"
 #include <graphical_base.hpp>
 
 class SizeCallback;
@@ -31,6 +32,7 @@ class Window {
   public:
     GUI &gui;
     std::optional<ProgramObject> default_shader;
+    Viewport *default_viewport = nullptr;
     FunctionSet<void()> resource_updates;
 
     Window(GUI &gui, int width, int height, const char *title);

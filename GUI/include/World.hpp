@@ -2,6 +2,7 @@
 
 #include "Camera.hpp"
 #include "Timer.hpp"
+#include "Window.hpp"
 
 class World : public WorldObject {
     Camera *active_camera_ = nullptr;

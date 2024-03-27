@@ -1,3 +1,4 @@
+#include "Viewport.hpp"
 #include "World.hpp"
 #include <Update.hpp>
 #include <Window.hpp>
@@ -68,6 +69,9 @@ Window::Window(GUI &gui, int width, int height, const char *title)
     //  デフォルトシェーダの設定
     this->default_shader.emplace({create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
                                   create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))});
+
+    // デフォルトビューポートの設定
+    this->default_viewport = &this->append_resource<MaximumViewport>();
 }
 
 Window::~Window() {
