@@ -7,6 +7,7 @@
 #include <Material.hpp>
 #include <Mesh.hpp>
 #include <Polygon.hpp>
+#include <Resource.hpp>
 #include <Shader.hpp>
 #include <Text.hpp>
 #include <Texture.hpp>
@@ -14,7 +15,6 @@
 #include <Update.hpp>
 #include <Viewport.hpp>
 #include <Window.hpp>
-#include <WindowObject.hpp>
 #include <World.hpp>
 #include <WorldObject.hpp>
 #include <graphical_base.hpp>

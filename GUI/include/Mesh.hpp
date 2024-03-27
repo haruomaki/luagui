@@ -7,9 +7,6 @@
 #include <core.hpp>
 #include <utility>
 
-// TODO: WindowObjectを廃止し置き換え
-// class Resource : virtual public WindowObject {};
-
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
 class StaticMesh : virtual public Resource {
     friend class MeshObject;

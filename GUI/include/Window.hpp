@@ -1,8 +1,8 @@
 #pragma once
 
 #include "FunctionSet.hpp"
+#include "Resource.hpp"
 #include "Shader.hpp"
-#include "WindowObject.hpp"
 #include <graphical_base.hpp>
 
 class SizeCallback;

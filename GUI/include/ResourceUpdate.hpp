@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FunctionSet.hpp"
-#include "WindowObject.hpp"
+#include "Resource.hpp"
 
 class ResourceUpdate : virtual public Resource {
     FunctionId func_id_;

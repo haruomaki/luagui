@@ -1,7 +1,6 @@
 #include "World.hpp"
 #include <Update.hpp>
 #include <Window.hpp>
-#include <WindowObject.hpp>
 
 #include <algorithm>
 
