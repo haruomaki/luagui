@@ -9,12 +9,8 @@
 // TODO: WindowObjectを廃止し置き換え
 class Resource : public virtual WorldObject {};
 
-// friend用の前方宣言
-template <class Msh>
-class MeshObject;
-
 class StaticMesh : public Resource {
-    friend class MeshObject<StaticMesh>;
+    friend class MeshObject;
 
   protected:
     const VertexArrayObject vao_;
@@ -25,6 +21,27 @@ class StaticMesh : public Resource {
     size_t capacity_ = 0;
     size_t indices_capacity_ = 0;
     static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
+
+    void regenerate_vbo() {
+        print("VBO生成");
+        // 空のVBOを生成
+        vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, GL_DYNAMIC_DRAW);
+
+        // VAOに頂点の座標と色を関連付ける
+        vao_.bind([&] {
+            vbo_.bind([&] {
+                shader_.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+                shader_.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
+                shader_.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
+            });
+            getErrors();
+        });
+    }
+
+    void regenerate_ibo() {
+        print("IBO生成");
+        this->ebo_ = ElementBufferObject::gen(sizeof(int) * indices.size(), indices.data(), GL_DYNAMIC_DRAW);
+    }
 
   public:
     InterleavedVertexInfoVector vertices;
@@ -47,32 +64,7 @@ class StaticMesh : public Resource {
         regenerate_ibo();
     }
 
-    void regenerate_vbo() {
-        print("VBO生成");
-        // 空のVBOを生成
-        vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, GL_DYNAMIC_DRAW);
-
-        // VAOに頂点の座標と色を関連付ける
-        vao_.bind([&] {
-            vbo_.bind([&] {
-                shader_.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-                shader_.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
-                shader_.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
-            });
-            getErrors();
-        });
-    }
-
-    void regenerate_ibo() {
-        print("IBO生成");
-        this->ebo_ = ElementBufferObject::gen(sizeof(int) * indices.size(), indices.data(), GL_DYNAMIC_DRAW);
-    }
-};
-
-class DynamicMesh : public StaticMesh, public Update {
-    friend class MeshObject<DynamicMesh>;
-
-    void update() override {
+    void sync_vram() {
         // VBO,IBOの更新
         // verticesの長さ変更に伴ってヒープが再確保されるを検知し、新たにVBOを作り直す
         if (capacity_ != vertices.capacity()) {
@@ -90,9 +82,15 @@ class DynamicMesh : public StaticMesh, public Update {
         vbo_.subdata(0, sizeof(InterleavedVertexInfo) * capacity_, vertices.data());
         ebo_.subdata(0, sizeof(int) * indices.size(), indices.data());
     }
+};
+
+class Mesh : public StaticMesh, public Update {
+    void update() override {
+        sync_vram();
+    }
 
   public:
-    DynamicMesh() = default;
+    Mesh() = default;
 };
 
 // template <GLenum usage>
@@ -144,14 +142,15 @@ class DynamicMesh : public StaticMesh, public Update {
 //     }
 // };
 
-template <class Msh>
 class MeshObject : public DrawableWorldObject {
   public:
-    const Msh &mesh;
+    const StaticMesh &mesh;
     GLenum draw_mode = GL_LINE_STRIP;
     GLfloat point_size = 4;
     GLfloat line_width = 4;
 
+    template <class Msh>
+        requires std::is_convertible_v<Msh &, StaticMesh &>
     MeshObject(const Msh &mesh)
         : mesh(mesh) {}
 
