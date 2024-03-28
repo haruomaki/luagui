@@ -143,6 +143,11 @@ inline MeshObject &new_mesh(WorldObject &parent) {
     return obj;
 }
 
+inline Mesh &new_mesh(Window &window, const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}) {
+    auto &mesh = window.append_resource<Mesh>(material, coords, colors, uvs);
+    return mesh;
+}
+
 inline MeshObject &new_points(WorldObject &parent) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();

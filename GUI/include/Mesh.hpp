@@ -48,7 +48,7 @@ class StaticMesh : virtual public Resource {
     InterleavedVertexInfoVector vertices;
     std::vector<int> indices;
 
-    StaticMesh(const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, GLenum usage = GL_STATIC_DRAW)
+    StaticMesh(const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
         : vao_(VertexArrayObject::gen())
         , material_(material == nullptr ? *this->get_window().default_material : *material)
         , usage_(usage)
@@ -58,7 +58,8 @@ class StaticMesh : virtual public Resource {
         for (size_t i = 0; i < n_; i++) {
             glm::vec3 coord = coords[i];
             RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
-            vers.push_back({coord, color});
+            glm::vec2 uv = (i < uvs.size() ? uvs[i] : glm::vec2{0, 0});   // uv情報がないときは(0,0)に
+            vers.push_back({coord, color, uv});
         }
         vertices = vers;
 
@@ -93,8 +94,8 @@ class Mesh : public StaticMesh, public ResourceUpdate {
     }
 
   public:
-    Mesh(const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {})
-        : StaticMesh(material, coords, colors, GL_DYNAMIC_DRAW) {}
+    Mesh(const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {})
+        : StaticMesh(material, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
 };
 
 // template <GLenum usage>
@@ -192,8 +193,10 @@ class MeshObject : public Draw {
         shader.set_uniform("projectionMatrix", projection_matrix);
 
         // モデルの描画
-        shader.set_uniform("is_tex", GL_FALSE);
+        GLuint tex_id = mesh.material_.texture.value_or(0);
+        shader.set_uniform("is_tex", (tex_id == 0 ? GL_FALSE : GL_TRUE));
         this->mesh.vao_.bind([&] {
+            glBindTexture(GL_TEXTURE_2D, tex_id); // テクスチャを指定
             if (use_index) {
                 size_t indices_length = this->mesh.indices_n_;
                 this->mesh.ebo_.bind([&] {
@@ -203,6 +206,7 @@ class MeshObject : public Draw {
                 size_t vertices_length = this->mesh.n_;
                 glDrawArrays(draw_mode, 0, GLsizei(vertices_length));
             }
+            glBindTexture(GL_TEXTURE_2D, 0); // テクスチャのバインドを解除
         });
     }
 };

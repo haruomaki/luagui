@@ -46,52 +46,50 @@ int main() {
     sample_text.set_position({-200, 50, 200});
     credit_text.set_position({200, 400, 1});
 
-    GLuint tex_id = loadTexture("assets/images/cat.raw");
-    Material &main_material = MaterialBuilder().build(window);
+    GLuint cat_texture = loadTexture("assets/images/cat.raw");
+    Material &cat_material = MaterialBuilder().texture(cat_texture).build(window);
 
-    Polygon gon(main_material, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
-                {
-                    {0.9, 0.3, 0, 1},
-                    {0.1, 0.2, 0.7, 0.3},
-                    {0.9, 0.2, 0.7, 0.3},
-                    {0.3, 0.7, 0.5f, 0.5},
-                },
-                {{1, 0}, {0, 0}, {0, 1}, {1, 1}},
-                tex_id);
+    auto &gon = new_mesh(window, &cat_material, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
+                         {
+                             {0.9, 0.3, 0, 1},
+                             {0.1, 0.2, 0.7, 0.3},
+                             {0.9, 0.2, 0.7, 0.3},
+                             {0.3, 0.7, 0.5f, 0.5},
+                         },
+                         {{1, 0}, {0, 0}, {0, 1}, {1, 1}});
 
-    Polygon gon2(main_material, {{-0.8, -0.3, -0.1}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
-                 {
-                     {0.9, 0.3, 0, 1},
-                     {0.9, 0.2, 0.7, 0.3},
-                     {0.3, 0.7, 0.5f, 0.5},
-                 });
+    auto &gon2 = new_mesh(window, nullptr, {{-0.8, -0.3, -0.1}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+                          {
+                              {0.9, 0.3, 0, 1},
+                              {0.9, 0.2, 0.7, 0.3},
+                              {0.3, 0.7, 0.5f, 0.5},
+                          });
 
-    Polygon gon3(main_material, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
-                 {
-                     {0.9, 0.3, 0, 1},
-                     {0.9, 0.2, 0.7, 0.3},
-                     {0.9, 0.2, 0.7, 0.3},
-                     {0.9, 0.2, 0.7, 0.3},
-                     {0.3, 0.7, 0.5f, 0.5},
-                 });
+    auto &gon3 = new_mesh(window, nullptr, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
+                          {
+                              {0.9, 0.3, 0, 1},
+                              {0.9, 0.2, 0.7, 0.3},
+                              {0.9, 0.2, 0.7, 0.3},
+                              {0.9, 0.2, 0.7, 0.3},
+                              {0.3, 0.7, 0.5f, 0.5},
+                          });
 
-    Polygon poly(main_material, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
+    auto &poly = new_mesh(window, nullptr, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
-    auto &ins3 = main_world.append_child<Shape>(gon3);
-    auto &ins = ins3.append_child<Shape>(gon);
-    auto &ins2 = main_world.append_child<Shape>(gon2);
-    auto &inspoly = main_world.append_child<Shape>(poly);
+    auto &ins3 = main_world.append_child<MeshObject>(gon3);
+    auto &ins = ins3.append_child<MeshObject>(gon);
+    auto &ins2 = main_world.append_child<MeshObject>(gon2);
+    auto &inspoly = main_world.append_child<MeshObject>(poly);
     ins3.scale = 1000;
     ins2.scale = 1500;
     inspoly.set_position({0, 100, 100});
 
-    vector<std::unique_ptr<Shape>> poly_instances;
     for (int i = -500; i <= 500; i += 100) {
-        auto &instance = main_world.append_child<Shape>(poly);
+        auto &instance = main_world.append_child<MeshObject>(poly);
         instance.set_position({-200, -50, i});
     }
     for (int i = -300; i <= 300; i += 100) {
-        auto &instance = main_world.append_child<Shape>(poly);
+        auto &instance = main_world.append_child<MeshObject>(poly);
         instance.set_position({-0, 300, i});
     }
 
