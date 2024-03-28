@@ -5,7 +5,6 @@
 #include "ResourceUpdate.hpp"
 #include <Shader.hpp>
 #include <core.hpp>
-#include <utility>
 
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
 class StaticMesh : virtual public Resource {
@@ -15,7 +14,7 @@ class StaticMesh : virtual public Resource {
     const VertexArrayObject vao_;
     VertexBufferObject vbo_;
     ElementBufferObject ebo_;
-    const ProgramObject &shader_;
+    const Material &material_;
     const GLenum usage_;
     size_t n_ = 0;
     size_t indices_n_ = 0;
@@ -31,9 +30,10 @@ class StaticMesh : virtual public Resource {
         // VAOに頂点の座標と色を関連付ける
         vao_.bind([&] {
             vbo_.bind([&] {
-                shader_.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-                shader_.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
-                shader_.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
+                const auto &shader = this->material_.shader;
+                shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+                shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
+                shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
             });
             getErrors();
         });
@@ -48,9 +48,9 @@ class StaticMesh : virtual public Resource {
     InterleavedVertexInfoVector vertices;
     std::vector<int> indices;
 
-    StaticMesh(const ProgramObject *shader = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, GLenum usage = GL_STATIC_DRAW)
+    StaticMesh(const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, GLenum usage = GL_STATIC_DRAW)
         : vao_(VertexArrayObject::gen())
-        , shader_(shader == nullptr ? *this->get_window().default_shader : *shader)
+        , material_(material == nullptr ? *this->get_window().default_material : *material)
         , usage_(usage)
         , n_(coords.size())
         , capacity_(coords.capacity()) {
@@ -93,8 +93,8 @@ class Mesh : public StaticMesh, public ResourceUpdate {
     }
 
   public:
-    Mesh(const ProgramObject *shader = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {})
-        : StaticMesh(shader, coords, colors, GL_DYNAMIC_DRAW) {}
+    Mesh(const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {})
+        : StaticMesh(material, coords, colors, GL_DYNAMIC_DRAW) {}
 };
 
 // template <GLenum usage>
@@ -162,7 +162,7 @@ class MeshObject : public Draw {
 
     void draw(const Camera &camera) const override {
         // シェーダを有効化
-        const auto &shader = this->mesh.shader_;
+        const auto &shader = this->mesh.material_.shader;
         shader.use();
 
         // 点の大きさ・線の太さを設定

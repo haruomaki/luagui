@@ -9,6 +9,7 @@
 class SizeCallback;
 class World;
 class GUI;
+struct Material;
 
 // 一つのウィンドウを表すクラス
 class Window {
@@ -32,6 +33,7 @@ class Window {
   public:
     GUI &gui;
     std::optional<ProgramObject> default_shader;
+    Material *default_material = nullptr;
     Viewport *default_viewport = nullptr;
     FunctionSet<void()> resource_updates;
 
