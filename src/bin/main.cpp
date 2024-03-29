@@ -49,7 +49,7 @@ int main() {
     GLuint cat_texture = loadTexture("assets/images/cat.raw");
     Material &cat_material = MaterialBuilder().texture(cat_texture).build(window);
 
-    auto &gon = new_mesh(window, &cat_material, GL_TRIANGLE_FAN, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
+    auto &gon = new_mesh(window, GL_TRIANGLE_FAN, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
                          {
                              {0.9, 0.3, 0, 1},
                              {0.1, 0.2, 0.7, 0.3},
@@ -58,14 +58,14 @@ int main() {
                          },
                          {{1, 0}, {0, 0}, {0, 1}, {1, 1}});
 
-    auto &gon2 = new_mesh(window, nullptr, GL_TRIANGLE_FAN, {{-0.8, -0.3, -0.1}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+    auto &gon2 = new_mesh(window, GL_TRIANGLE_FAN, {{-0.8, -0.3, -0.1}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
                           {
                               {0.9, 0.3, 0, 1},
                               {0.9, 0.2, 0.7, 0.3},
                               {0.3, 0.7, 0.5f, 0.5},
                           });
 
-    auto &gon3 = new_mesh(window, nullptr, GL_TRIANGLE_FAN, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
+    auto &gon3 = new_mesh(window, GL_TRIANGLE_FAN, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
                           {
                               {0.9, 0.3, 0, 1},
                               {0.9, 0.2, 0.7, 0.3},
@@ -74,10 +74,10 @@ int main() {
                               {0.3, 0.7, 0.5f, 0.5},
                           });
 
-    auto &poly = new_mesh(window, nullptr, GL_TRIANGLE_FAN, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
+    auto &poly = new_mesh(window, GL_TRIANGLE_FAN, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
     auto &ins3 = main_world.append_child<MeshObject>(gon3);
-    auto &ins = ins3.append_child<MeshObject>(gon);
+    auto &ins = ins3.append_child<MeshObject>(gon, &cat_material);
     auto &ins2 = main_world.append_child<MeshObject>(gon2);
     auto &inspoly = main_world.append_child<MeshObject>(poly);
     ins3.scale = 1000;
@@ -145,7 +145,7 @@ int main() {
     mesh.vertices.colors = std::vector(8, RGBA{0.46, 0.85, 0.84, 0.9});
     mesh.draw_mode = GL_LINE_STRIP;
     mesh.draw_mode = GL_TRIANGLE_STRIP;
-    mesh.material.line_width = 10;
+    cube.material->line_width = 10;
     cube.scale = 200;
     cube.position = {100, 100, 500};
 
@@ -159,7 +159,7 @@ int main() {
         grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
     }
     grid.mesh.draw_mode = GL_LINES;
-    grid.mesh.material.line_width = 6;
+    grid.material->line_width = 6;
     grid.scale = 100;
 
     // レンダリングループ

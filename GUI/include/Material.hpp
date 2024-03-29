@@ -24,7 +24,7 @@ class MaterialBuilder {
     int color_ = 0;
     std::optional<GLuint> texture_ = std::nullopt;
     double point_size_ = 4;
-    double line_width_ = 40;
+    double line_width_ = 4;
 
   public:
     MaterialBuilder shader(const ProgramObject &shader) {

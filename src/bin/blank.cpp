@@ -33,7 +33,7 @@ int main() {
     mesh.vertices.colors = colors_tmp;
     // cube.draw_mode = GL_LINE_STRIP;
     mesh.draw_mode = GL_TRIANGLE_STRIP;
-    mesh.material.line_width = 5;
+    cube.material->line_width = 5;
     cube.scale = 2;
     cube.position = {1, 1, 5};
 

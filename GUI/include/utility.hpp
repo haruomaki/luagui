@@ -144,8 +144,8 @@ inline MeshObject &new_mesh(WorldObject &parent) {
     return obj;
 }
 
-inline Mesh &new_mesh(Window &window, Material *material = nullptr, GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}) {
-    auto &mesh = window.append_resource<Mesh>(material, draw_mode, coords, colors, uvs);
+inline Mesh &new_mesh(Window &window, GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}) {
+    auto &mesh = window.append_resource<Mesh>(draw_mode, coords, colors, uvs);
     return mesh;
 }
 
@@ -178,7 +178,7 @@ class GridGround : public WorldObject {
             grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
         }
         grid.mesh.draw_mode = GL_LINES;
-        grid.mesh.material.line_width = 1;
+        grid.material = &MaterialBuilder().line_width(1).build(this->get_world().window);
         grid.scale = 1;
     }
 };

@@ -36,17 +36,15 @@ class StaticMesh : virtual public Resource {
     }
 
   public:
-    Material &material;
     GLenum draw_mode;
     bool use_index = false;
     InterleavedVertexInfoVector vertices;
     std::vector<int> indices;
 
-    StaticMesh(Material *material = nullptr, GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
+    StaticMesh(GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
         : usage_(usage)
         , n_(coords.size())
         , capacity_(coords.capacity())
-        , material(material == nullptr ? *this->get_window().default_material : *material)
         , draw_mode(draw_mode) {
         vector<InterleavedVertexInfo> vers = {};
         for (size_t i = 0; i < n_; i++) {
@@ -88,18 +86,16 @@ class Mesh : public StaticMesh, public ResourceUpdate {
     }
 
   public:
-    Mesh(Material *material = nullptr, GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {})
-        : StaticMesh(material, draw_mode, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
+    Mesh(GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {})
+        : StaticMesh(draw_mode, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
 };
 
 class MeshObject : public Draw {
   public:
     StaticMesh &mesh;
+    Material *material;
 
-    template <class Msh>
-        requires std::is_convertible_v<Msh &, StaticMesh &>
-    MeshObject(Msh &mesh)
-        : mesh(mesh) {}
+    MeshObject(StaticMesh &mesh, Material *material = nullptr);
 
     void draw(const Camera &camera) const override;
 };
@@ -107,14 +103,13 @@ class MeshObject : public Draw {
 struct MeshDrawManager {
     std::map<std::tuple<const StaticMesh *, const Material *, const ProgramObject *>, std::pair<VertexArrayObject, vector<glm::mat4>>> vao_modelmatrices{};
 
-    static VertexArrayObject regenerate_vao(StaticMesh &mesh) {
+    static VertexArrayObject regenerate_vao(StaticMesh &mesh, const ProgramObject &shader) {
         print("VAO生成");
         auto vao = VertexArrayObject::gen();
 
         // VAOに頂点の座標と色を関連付ける
         vao.bind([&] {
             mesh.vbo_.bind([&] {
-                const auto &shader = mesh.material.shader;
                 shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
                 shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
                 shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
@@ -127,9 +122,7 @@ struct MeshDrawManager {
         return vao;
     }
 
-    static inline void draw_one(const glm::mat4 &model_matrix, const StaticMesh &mesh, const VertexArrayObject vao, const Camera &camera) {
-        const Material &material = mesh.material;
-
+    static inline void draw_one(const StaticMesh &mesh, const Material &material, const VertexArrayObject vao, const glm::mat4 &model_matrix, const Camera &camera) {
         // シェーダを有効化
         const auto &shader = material.shader;
         shader.use();
@@ -177,20 +170,20 @@ struct MeshDrawManager {
 
     void register_to_draw(const MeshObject &obj) {
         auto &mesh = obj.mesh;
-        const Material &material = mesh.material;
+        const Material &material = *obj.material;
         const auto &shader = material.shader;
         const StaticMesh *mp = &mesh;
-        const Material *tp = &material;
+        const Material *tp = &material; // = obj.material
         const ProgramObject *sp = &shader;
         const auto key = std::make_tuple(mp, tp, sp); // メッシュ・マテリア・シェーダの三項組をキーとする
 
         if (!vao_modelmatrices.contains(key)) {
             // キャッシュに未登録ならばVAOを新規作成する
-            auto vao = regenerate_vao(mesh);
+            auto vao = regenerate_vao(mesh, shader);
             vao_modelmatrices[key] = std::make_pair(vao, std::vector<glm::mat4>(0));
         } else if (mesh.vao_should_regen_) {
             // もしくはVBOの更新などでVAOの再生成が必要な場合もある
-            vao_modelmatrices[key].first = regenerate_vao(mesh);
+            vao_modelmatrices[key].first = regenerate_vao(mesh, shader);
         }
 
         // モデル行列をキューに追加
@@ -202,6 +195,7 @@ struct MeshDrawManager {
         for (auto it = vao_modelmatrices.begin(); it != vao_modelmatrices.end();) {
             auto &[key, value] = *it;
             const StaticMesh &mesh = *std::get<0>(key);
+            const Material &material = *std::get<1>(key);
             const VertexArrayObject vao = value.first;
             std::vector<glm::mat4> &model_matrices = value.second;
 
@@ -211,7 +205,7 @@ struct MeshDrawManager {
             } else {
                 // 各モデル行列についてドローコールを発行
                 for (const auto &model_matrix : model_matrices) {
-                    draw_one(model_matrix, mesh, vao, camera);
+                    draw_one(mesh, material, vao, model_matrix, camera);
                 }
                 // 描画を終えたモデル行列のキューは空に
                 model_matrices.clear();
