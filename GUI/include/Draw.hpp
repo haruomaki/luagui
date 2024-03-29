@@ -1,7 +1,9 @@
 #pragma once
 
-#include <Camera.hpp>
-#include <World.hpp>
+#include "FunctionSet.hpp"
+#include "WorldObject.hpp"
+
+class Camera;
 
 // TODO: Drawに改名
 class Draw : virtual public WorldObject {

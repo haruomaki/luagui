@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Camera.hpp"
 #include "Draw.hpp"
 #include "Material.hpp"
 #include "ResourceUpdate.hpp"
-#include <Shader.hpp>
-#include <core.hpp>
+#include "core.hpp"
 
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
 class StaticMesh : virtual public Resource {
@@ -152,20 +152,20 @@ class MeshObject : public Draw {
         : mesh(mesh)
         , use_index(use_index) {}
 
-    void draw(const Camera &camera) const override {
-        // FIXME: register_to_drawを呼ぶ
-    }
+    void draw(const Camera &camera) const override;
 };
 
 struct MeshDrawManager {
-    std::map<std::tuple<const StaticMesh *, const Material *, const ProgramObject *>, std::pair<VertexArrayObject, vector<glm::mat4>>> vao_modelmatrices;
+    std::map<std::tuple<const StaticMesh *, const Material *, const ProgramObject *>, std::pair<VertexArrayObject, vector<glm::mat4>>> vao_modelmatrices{};
 
-    static VertexArrayObject regenerate_vao(StaticMesh &mesh, const ProgramObject &shader) {
+    static VertexArrayObject regenerate_vao(StaticMesh &mesh) {
+        print("VAO生成");
         auto vao = VertexArrayObject::gen();
 
         // VAOに頂点の座標と色を関連付ける
         vao.bind([&] {
             mesh.vbo_.bind([&] {
+                const auto &shader = mesh.material_.shader;
                 shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
                 shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
                 shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
@@ -230,8 +230,9 @@ struct MeshDrawManager {
         });
     }
 
-    void register_to_draw(const MeshObject &obj, const Material &material) {
+    void register_to_draw(const MeshObject &obj) {
         auto &mesh = obj.mesh;
+        const Material &material = mesh.material_;
         const auto &shader = material.shader;
         const StaticMesh *mp = &mesh;
         const Material *tp = &material;
@@ -240,11 +241,11 @@ struct MeshDrawManager {
 
         if (!vao_modelmatrices.contains(key)) {
             // キャッシュに未登録ならばVAOを新規作成する
-            auto vao = regenerate_vao(mesh, shader);
+            auto vao = regenerate_vao(mesh);
             vao_modelmatrices[key] = std::make_pair(vao, std::vector<glm::mat4>(0));
         } else if (mesh.vao_should_regen_) {
             // もしくはVBOの更新などでVAOの再生成が必要な場合もある
-            vao_modelmatrices[key].first = regenerate_vao(mesh, shader);
+            vao_modelmatrices[key].first = regenerate_vao(mesh);
         }
 
         // モデル行列をキューに追加

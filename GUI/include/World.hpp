@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera.hpp"
+#include "Mesh.hpp"
 #include "Timer.hpp"
 #include "Window.hpp"
 
@@ -12,6 +13,10 @@ class World : public WorldObject {
 
     friend class Window;
     int draw_priority_ = 0;
+
+    // メッシュ描画を一元管理するクラス
+    friend class MeshObject;
+    MeshDrawManager mesh_draw_manager_;
 
   public:
     Window &window;
@@ -47,8 +52,16 @@ class World : public WorldObject {
         for (const auto &[id, update] : this->updates) {
             update();
         }
+
+        // メッシュを描画
+        this->mesh_draw_manager_.draw_all_registered_objects(*active_camera());
+
         this->timer.step(); // タイマーを進める
     }
+
+    // void register_to_draw(const MeshObject &obj) {
+    //     this->mesh_draw_manager_.register_to_draw(obj);
+    // }
 
     Camera *&active_camera() {
         return this->active_camera_;
