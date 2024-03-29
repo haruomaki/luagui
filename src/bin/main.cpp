@@ -143,9 +143,9 @@ int main() {
     mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}};
     // mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 0}, {1, 1, 0}, {0, 1, 1}, {1, 1, 1}};
     mesh.vertices.colors = std::vector(8, RGBA{0.46, 0.85, 0.84, 0.9});
-    cube.draw_mode = GL_LINE_STRIP;
-    cube.draw_mode = GL_TRIANGLE_STRIP;
-    cube.line_width = 10;
+    mesh.material.draw_mode = GL_LINE_STRIP;
+    mesh.material.draw_mode = GL_TRIANGLE_STRIP;
+    mesh.material.line_width = 10;
     cube.scale = 200;
     cube.position = {100, 100, 500};
 
@@ -158,8 +158,8 @@ int main() {
         grid.mesh.vertices.push_back(InterleavedVertexInfo{{-10, 0, i}, grid_color});
         grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
     }
-    grid.draw_mode = GL_LINES;
-    grid.line_width = 6;
+    grid.mesh.material.draw_mode = GL_LINES;
+    grid.mesh.material.line_width = 6;
     grid.scale = 100;
 
     // レンダリングループ

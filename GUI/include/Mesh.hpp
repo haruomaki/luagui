@@ -15,7 +15,6 @@ class StaticMesh : virtual public Resource {
     bool vao_should_regen_ = true;
     VertexBufferObject vbo_;
     ElementBufferObject ebo_;
-    const Material &material_;
     const GLenum usage_;
     size_t n_ = 0;
     size_t indices_n_ = 0;
@@ -37,14 +36,15 @@ class StaticMesh : virtual public Resource {
     }
 
   public:
+    Material &material;
     InterleavedVertexInfoVector vertices;
     std::vector<int> indices;
 
-    StaticMesh(const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
-        : material_(material == nullptr ? *this->get_window().default_material : *material)
-        , usage_(usage)
+    StaticMesh(Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
+        : usage_(usage)
         , n_(coords.size())
-        , capacity_(coords.capacity()) {
+        , capacity_(coords.capacity())
+        , material(material == nullptr ? *this->get_window().default_material : *material) {
         vector<InterleavedVertexInfo> vers = {};
         for (size_t i = 0; i < n_; i++) {
             glm::vec3 coord = coords[i];
@@ -85,66 +85,14 @@ class Mesh : public StaticMesh, public ResourceUpdate {
     }
 
   public:
-    Mesh(const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {})
+    Mesh(Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {})
         : StaticMesh(material, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
 };
-
-// template <GLenum usage>
-// class Mesh : public StaticMesh {};
-// template <>
-// class Mesh<GL_DYNAMIC_DRAW> : public DynamicMesh {};
-
-// class MeshCommon : public Resource {
-//     VertexArrayObject vao_;
-//     VertexBufferObject vbo_;
-//     const Material &material_;
-//     GLuint tex_id_ = 0;
-//     const size_t n_; // TODO: GLsizeiにすればキャストを減らせる？
-//     static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
-
-//     friend class MeshObject;
-
-//   public:
-//     MeshCommon(const Material &material, vector<glm::vec3> coords, vector<RGBA> colors = {}, vector<glm::vec2> uvs = {}, GLuint tex_id = 0, GLenum usage = GL_STATIC_DRAW)
-//         : material_(material)
-//         , tex_id_(tex_id)
-//         , n_(coords.size()) {
-
-//         vector<InterleavedVertexInfo> vers = {};
-//         for (size_t i = 0; i < n_; i++) {
-//             glm::vec3 coord = coords[i];
-//             RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
-//             glm::vec2 uv = (i < uvs.size() ? uvs[i] : glm::vec2{0, 0});   // uv情報がないときは(0,0)に
-//             vers.push_back({coord, color, uv});
-//         }
-
-//         // debug(MemoryView(reinterpret_cast<float *>(vers.data()), sizeof(InterleavedVertexInfo) / sizeof(float) * n_));
-
-//         // 頂点バッファオブジェクト（VBO）の生成とデータの転送
-//         vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * n_, vers.data(), usage);
-
-//         // VAOを作成。頂点の座標と色、uvを関連付ける
-//         vao_ = VertexArrayObject::gen();
-//         vao_.bind([&] {
-//             vbo_.bind([&] {
-//                 const auto &shader = this->material_.shader;
-//                 shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                    // 位置
-//                 shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(GLfloat) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
-//                 getErrors();
-//                 shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(glm::vec3) + sizeof(RGBA))); // uv座標 offset=28 NOLINT(performance-no-int-to-ptr)
-//                 getErrors();
-//             });
-//         });
-//     }
-// };
 
 class MeshObject : public Draw {
   public:
     StaticMesh &mesh;
     bool use_index;
-    GLenum draw_mode = GL_LINE_STRIP;
-    GLfloat point_size = 4;
-    GLfloat line_width = 4;
 
     template <class Msh>
         requires std::is_convertible_v<Msh &, StaticMesh &>
@@ -165,7 +113,7 @@ struct MeshDrawManager {
         // VAOに頂点の座標と色を関連付ける
         vao.bind([&] {
             mesh.vbo_.bind([&] {
-                const auto &shader = mesh.material_.shader;
+                const auto &shader = mesh.material.shader;
                 shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
                 shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
                 shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
@@ -179,24 +127,21 @@ struct MeshDrawManager {
     }
 
     static inline void draw_one(const glm::mat4 &model_matrix, const StaticMesh &mesh, const VertexArrayObject vao, const Camera &camera) {
-        const Material &material = mesh.material_;
+        const Material &material = mesh.material;
 
         // シェーダを有効化
         const auto &shader = material.shader;
         shader.use();
 
         // 点の大きさ・線の太さを設定
-        auto draw_mode = GL_LINE_STRIP; // FIXME: ダミー
-        auto point_size = 10.f;         // FIXME: ダミー
-        auto line_width = 10.f;         // FIXME: ダミー
-        switch (draw_mode) {
+        switch (material.draw_mode) {
         case GL_POINTS:
-            glPointSize(point_size);
+            glPointSize(GLfloat(material.point_size));
             break;
         case GL_LINES:
         case GL_LINE_STRIP:
         case GL_LINE_LOOP:
-            glLineWidth(line_width);
+            glLineWidth(GLfloat(material.line_width));
             break;
         }
 
@@ -221,10 +166,10 @@ struct MeshDrawManager {
             auto use_index = false;               // FIXME:ダミー
             if (use_index) {
                 size_t indices_length = mesh.indices_n_;
-                glDrawElements(draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
+                glDrawElements(material.draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
             } else {
                 size_t vertices_length = mesh.n_;
-                glDrawArrays(draw_mode, 0, GLsizei(vertices_length));
+                glDrawArrays(material.draw_mode, 0, GLsizei(vertices_length));
             }
             glBindTexture(GL_TEXTURE_2D, 0); // テクスチャのバインドを解除
         });
@@ -232,7 +177,7 @@ struct MeshDrawManager {
 
     void register_to_draw(const MeshObject &obj) {
         auto &mesh = obj.mesh;
-        const Material &material = mesh.material_;
+        const Material &material = mesh.material;
         const auto &shader = material.shader;
         const StaticMesh *mp = &mesh;
         const Material *tp = &material;

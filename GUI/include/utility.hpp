@@ -143,7 +143,11 @@ inline MeshObject &new_mesh(WorldObject &parent) {
     return obj;
 }
 
-inline Mesh &new_mesh(Window &window, const Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}) {
+inline Mesh &new_mesh(Window &window, Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}) {
+    if (material == nullptr) {
+        material = &MaterialBuilder().build(window);
+        material->draw_mode = GL_TRIANGLE_FAN;
+    }
     auto &mesh = window.append_resource<Mesh>(material, coords, colors, uvs);
     return mesh;
 }
@@ -152,7 +156,7 @@ inline MeshObject &new_points(WorldObject &parent) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
     auto &obj = parent.append_child<MeshObject>(mesh);
-    obj.draw_mode = GL_POINTS;
+    mesh.material.draw_mode = GL_POINTS;
     return obj;
 }
 
@@ -160,7 +164,7 @@ inline MeshObject &new_line(WorldObject &parent) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
     auto &obj = parent.append_child<MeshObject>(mesh);
-    obj.draw_mode = GL_LINE_STRIP;
+    mesh.material.draw_mode = GL_LINE_STRIP;
     return obj;
 }
 
@@ -176,8 +180,8 @@ class GridGround : public WorldObject {
             grid.mesh.vertices.push_back(InterleavedVertexInfo{{-10, 0, i}, grid_color});
             grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
         }
-        grid.draw_mode = GL_LINES;
-        grid.line_width = 1;
+        grid.mesh.material.draw_mode = GL_LINES;
+        grid.mesh.material.line_width = 1;
         grid.scale = 1;
     }
 };
