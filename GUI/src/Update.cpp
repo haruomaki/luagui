@@ -1,4 +1,5 @@
-#include <Update.hpp>
+#include "Update.hpp"
+#include "World.hpp"
 
 Update::Update() {
     auto func = [this] { this->update(); };

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <World.hpp>
+#include "FunctionSet.hpp"
+#include "WorldObject.hpp"
 
 class Update : virtual public WorldObject {
     FunctionId func_id_;

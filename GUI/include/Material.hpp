@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Shader.hpp"
 #include "Window.hpp"
+
+class ProgramObject;
 
 struct Material : public Resource {
     const ProgramObject &shader;

@@ -3,13 +3,13 @@
 #include "FunctionSet.hpp"
 #include "Resource.hpp"
 #include "Shader.hpp"
-#include "Viewport.hpp"
 #include <graphical_base.hpp>
 
 class SizeCallback;
 class World;
 class GUI;
 struct Material;
+class Viewport;
 
 // 一つのウィンドウを表すクラス
 class Window {

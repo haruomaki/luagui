@@ -1,5 +1,5 @@
 #include "GUI.hpp"
-#include "World.hpp"
+#include "Window.hpp"
 
 Window &GUI::create_window(int width, int height, const std::string &title) {
     auto window = std::make_unique<Window>(*this, width, height, title.c_str());

@@ -60,7 +60,7 @@ int main() {
     auto &poly = new_mesh(window, GL_TRIANGLE_FAN, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
     auto &ins3 = main_world.append_child<MeshObject>(gon3);
-    auto &ins = ins3.append_child<MeshObject>(gon, &cat_material);
+    /* auto &ins = */ ins3.append_child<MeshObject>(gon, &cat_material);
     auto &ins2 = main_world.append_child<MeshObject>(gon2);
     auto &inspoly = main_world.append_child<MeshObject>(poly);
     ins3.scale = 1000;

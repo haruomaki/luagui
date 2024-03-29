@@ -1,8 +1,7 @@
+#include "Window.hpp"
 #include "Material.hpp"
 #include "Viewport.hpp"
 #include "World.hpp"
-#include <Update.hpp>
-#include <Window.hpp>
 
 #include <algorithm>
 
