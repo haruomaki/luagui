@@ -22,11 +22,7 @@ class StaticMesh : virtual public Resource {
     size_t indices_capacity_ = 0;
     static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
 
-    void regenerate_vbo() {
-        print("VBO生成");
-        // 空のVBOを生成
-        vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, usage_);
-
+    void regen_vao() {
         // VAOに頂点の座標と色を関連付ける
         vao_.bind([&] {
             vbo_.bind([&] {
@@ -35,13 +31,22 @@ class StaticMesh : virtual public Resource {
                 shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
                 shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
             });
+            ebo_.keep_bind();
             getErrors();
         });
+    }
+
+    void regenerate_vbo() {
+        print("VBO生成");
+        // 空のVBOを生成
+        vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, usage_);
+        regen_vao();
     }
 
     void regenerate_ibo() {
         print("IBO生成");
         this->ebo_ = ElementBufferObject::gen(sizeof(int) * indices.size(), indices.data(), usage_);
+        regen_vao();
     }
 
   public:
@@ -199,9 +204,7 @@ class MeshObject : public Draw {
             glBindTexture(GL_TEXTURE_2D, tex_id); // テクスチャを指定
             if (use_index) {
                 size_t indices_length = this->mesh.indices_n_;
-                this->mesh.ebo_.bind([&] {
-                    glDrawElements(draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
-                });
+                glDrawElements(draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
             } else {
                 size_t vertices_length = this->mesh.n_;
                 glDrawArrays(draw_mode, 0, GLsizei(vertices_length));

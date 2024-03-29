@@ -86,6 +86,10 @@ class BufferObject {
         proc_in_bind();
         glBindBuffer(target, 0);
     }
+
+    inline void keep_bind() const {
+        glBindBuffer(target, buffer_);
+    }
 };
 
 using VertexBufferObject = BufferObject<GL_ARRAY_BUFFER>;
