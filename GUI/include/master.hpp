@@ -5,7 +5,6 @@
 #include <GUI.hpp>
 #include <Material.hpp>
 #include <Mesh.hpp>
-#include <Polygon.hpp>
 #include <Resource.hpp>
 #include <Shader.hpp>
 #include <Text.hpp>

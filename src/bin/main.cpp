@@ -1,23 +1,6 @@
 #include <master.hpp>
 #include <utility.hpp>
 
-class MovingShape : public Shape, Update {
-    static constexpr float speed = 1.5;
-    float velocity_ = -speed;
-
-    void update() override {
-        auto next_pos = get_position() + glm::vec3(0, velocity_, 0);
-        set_position(next_pos);
-        if (next_pos.y < -300 || 300 < next_pos.y) {
-            velocity_ *= -1.1f;
-        }
-    }
-
-  public:
-    MovingShape(Polygon polygon)
-        : Shape(polygon) {}
-};
-
 int main() {
     GUI gui;
     Window &window = gui.create_window(600, 500, "めいん");
