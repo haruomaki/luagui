@@ -37,14 +37,16 @@ class StaticMesh : virtual public Resource {
 
   public:
     Material &material;
+    GLenum draw_mode;
     InterleavedVertexInfoVector vertices;
     std::vector<int> indices;
 
-    StaticMesh(Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
+    StaticMesh(Material *material = nullptr, GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
         : usage_(usage)
         , n_(coords.size())
         , capacity_(coords.capacity())
-        , material(material == nullptr ? *this->get_window().default_material : *material) {
+        , material(material == nullptr ? *this->get_window().default_material : *material)
+        , draw_mode(draw_mode) {
         vector<InterleavedVertexInfo> vers = {};
         for (size_t i = 0; i < n_; i++) {
             glm::vec3 coord = coords[i];
@@ -85,8 +87,8 @@ class Mesh : public StaticMesh, public ResourceUpdate {
     }
 
   public:
-    Mesh(Material *material = nullptr, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {})
-        : StaticMesh(material, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
+    Mesh(Material *material = nullptr, GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {})
+        : StaticMesh(material, draw_mode, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
 };
 
 class MeshObject : public Draw {
@@ -134,7 +136,7 @@ struct MeshDrawManager {
         shader.use();
 
         // 点の大きさ・線の太さを設定
-        switch (material.draw_mode) {
+        switch (mesh.draw_mode) {
         case GL_POINTS:
             glPointSize(GLfloat(material.point_size));
             break;
@@ -166,10 +168,10 @@ struct MeshDrawManager {
             auto use_index = false;               // FIXME:ダミー
             if (use_index) {
                 size_t indices_length = mesh.indices_n_;
-                glDrawElements(material.draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
+                glDrawElements(mesh.draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
             } else {
                 size_t vertices_length = mesh.n_;
-                glDrawArrays(material.draw_mode, 0, GLsizei(vertices_length));
+                glDrawArrays(mesh.draw_mode, 0, GLsizei(vertices_length));
             }
             glBindTexture(GL_TEXTURE_2D, 0); // テクスチャのバインドを解除
         });
