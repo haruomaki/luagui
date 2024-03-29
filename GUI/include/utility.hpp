@@ -139,7 +139,8 @@ class MobileNormalCamera : public Camera, protected Update {
 inline MeshObject &new_mesh(WorldObject &parent) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshObject>(mesh, true);
+    mesh.use_index = true;
+    auto &obj = parent.append_child<MeshObject>(mesh);
     return obj;
 }
 

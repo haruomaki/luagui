@@ -38,6 +38,7 @@ class StaticMesh : virtual public Resource {
   public:
     Material &material;
     GLenum draw_mode;
+    bool use_index = false;
     InterleavedVertexInfoVector vertices;
     std::vector<int> indices;
 
@@ -94,13 +95,11 @@ class Mesh : public StaticMesh, public ResourceUpdate {
 class MeshObject : public Draw {
   public:
     StaticMesh &mesh;
-    bool use_index;
 
     template <class Msh>
         requires std::is_convertible_v<Msh &, StaticMesh &>
-    MeshObject(Msh &mesh, bool use_index = false)
-        : mesh(mesh)
-        , use_index(use_index) {}
+    MeshObject(Msh &mesh)
+        : mesh(mesh) {}
 
     void draw(const Camera &camera) const override;
 };
@@ -165,8 +164,7 @@ struct MeshDrawManager {
         shader.set_uniform("is_tex", (tex_id == 0 ? GL_FALSE : GL_TRUE));
         vao.bind([&] {
             glBindTexture(GL_TEXTURE_2D, tex_id); // テクスチャを指定
-            auto use_index = false;               // FIXME:ダミー
-            if (use_index) {
+            if (mesh.use_index) {
                 size_t indices_length = mesh.indices_n_;
                 glDrawElements(mesh.draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
             } else {
