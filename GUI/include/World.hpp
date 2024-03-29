@@ -8,9 +8,6 @@
 class World : public WorldObject {
     Camera *active_camera_ = nullptr;
 
-    friend class DrawableWorldObject;
-    friend class Update;
-
     friend class Window;
     int draw_priority_ = 0;
 
@@ -39,6 +36,14 @@ class World : public WorldObject {
     World(World &&) = delete;
     World &operator=(World &&) const = delete;
 
+    void master_update() {
+        for (const auto &[id, update] : this->updates) {
+            update();
+        }
+
+        this->timer.step(); // タイマーを進める
+    }
+
     void master_draw() {
         if (this->active_camera_ == nullptr) {
             print("警告: アクティブなカメラが存在しません");
@@ -46,17 +51,9 @@ class World : public WorldObject {
         for (const auto &[id, draw] : this->draws) {
             draw(*this->active_camera_);
         }
-    }
-
-    void master_update() {
-        for (const auto &[id, update] : this->updates) {
-            update();
-        }
 
         // メッシュを描画
         this->mesh_draw_manager_.draw_all_registered_objects(*active_camera());
-
-        this->timer.step(); // タイマーを進める
     }
 
     // void register_to_draw(const MeshObject &obj) {
