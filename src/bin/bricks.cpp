@@ -9,6 +9,7 @@ class GlassBall : public MeshObject, Update {
 
     static StaticMesh &gen_mesh(Window &window) {
         auto &mesh = window.append_resource<StaticMesh>();
+        mesh.use_index = false;
         mesh.vertices.coords = {{0, 0, 0}, {0.02, 0, 0}, {0.02, 0.02, 0}, {0, 0.02, 0}};
         mesh.vertices.uvs = {{0, 1}, {1, 1}, {1, 0}, {0, 0}};
         mesh.draw_mode = GL_TRIANGLE_FAN;
@@ -43,9 +44,9 @@ int main() {
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
     World &world = window.create_world();
-    auto &camera = world.append_child<MobileOrthoCamera>();
-    // auto &camera = world.append_child<MobileNormalCamera>();
-    // camera.rotate = ANGLE_Y(M_PIf);
+    // auto &camera = world.append_child<MobileOrthoCamera>();
+    auto &camera = world.append_child<MobileNormalCamera>();
+    camera.rotate = ANGLE_Y(M_PIf);
     camera.set_active();
 
     // 三角形の表示

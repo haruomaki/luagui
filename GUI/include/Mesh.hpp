@@ -140,13 +140,11 @@ struct MeshDrawManager {
         }
 
         // ワールド座標変換 = model_matrix
+        shader.set_uniform("modelMatrix", model_matrix);
 
         // ビュー座標変換
         const glm::mat4 &view_matrix = camera.get_view_matrix();
-
-        // 合成して、モデルビュー行列を得る
-        const auto &model_view_matrix = view_matrix * model_matrix;
-        shader.set_uniform("modelViewMatrix", model_view_matrix);
+        shader.set_uniform("viewMatrix", view_matrix);
 
         // 射影変換行列
         const auto projection_matrix = camera.get_projection_matrix();
@@ -163,6 +161,7 @@ struct MeshDrawManager {
             } else {
                 size_t vertices_length = mesh.n_;
                 glDrawArrays(mesh.draw_mode, 0, GLsizei(vertices_length));
+                // glDrawArraysInstanced(mesh.draw_mode, 0, GLsizei(vertices_length), GLsizei(instance_num));
             }
             glBindTexture(GL_TEXTURE_2D, 0); // テクスチャのバインドを解除
         });
@@ -207,6 +206,16 @@ struct MeshDrawManager {
                 for (const auto &model_matrix : model_matrices) {
                     draw_one(mesh, material, vao, model_matrix, camera);
                 }
+                // auto model_matrices_vbo = VertexBufferObject::gen(sizeof(glm::mat4) * model_matrices.size(), model_matrices.data(), GL_STATIC_DRAW);
+                // vao.bind([&] {
+                //     model_matrices_vbo.bind([&] {
+                //         material.shader.set_attribute("instanceModelMatrix", 16, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), nullptr);
+                //     });
+                //     auto loc = material.shader.get_location<StorageQualifier::Attribute>("instanceModelMatrix");
+                //     glVertexAttribDivisor(loc, 1);
+                // });
+                // draw_instanced(mesh, material, vao, model_matrices.size(), camera);
+
                 // 描画を終えたモデル行列のキューは空に
                 model_matrices.clear();
                 it++;
