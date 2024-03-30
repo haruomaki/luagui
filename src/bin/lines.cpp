@@ -29,7 +29,7 @@ int main() {
     int points_num = 100;
 
     // 左上に常在する点
-    // TODO: これが間違ってworldの子になってもメモリエラー？回答：前と後ろでui_worldとworldのようにチグハグに指定するとエラー
+    // これが間違ってworldの子になってもメモリエラー？回答：前と後ろでui_worldとworldのようにチグハグに指定するとエラー
     auto &top_left_point = ui_world.append_child<StickyPointTopLeft>();
 
     // 文字の表示
@@ -39,13 +39,13 @@ int main() {
     sample_text.position = {0.005, -0.02, 0};
 
     // 三角形の表示
-    Polygon my_triangle_polygon(MaterialBuilder().build(window), {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
-                                {
-                                    {0.9, 0.3, 0, 1},
-                                    {0.9, 0.2, 0.7, 0.3},
-                                    {0.3, 0.7, 0.5, 0.5},
-                                });
-    auto &my_triangle = world.append_child<Shape>(my_triangle_polygon);
+    auto &my_triangle_mesh = new_mesh(window, GL_TRIANGLE_FAN, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+                                      {
+                                          {0.9, 0.3, 0, 1},
+                                          {0.9, 0.2, 0.7, 0.3},
+                                          {0.3, 0.7, 0.5, 0.5},
+                                      });
+    auto &my_triangle = world.append_child<MeshObject>(my_triangle_mesh);
     my_triangle.scale = 0.1;
     my_triangle.position = {-0.1, 0, 0};
 

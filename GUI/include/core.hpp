@@ -99,9 +99,26 @@ struct InterleavedVertexInfoVector : public vector<InterleavedVertexInfo> {
         }
     }
 
+    [[nodiscard]] vector<glm::vec2> get_uvs() const {
+        vector<glm::vec2> uvs;
+        for (auto &&info : *this) {
+            uvs.push_back(info.uv);
+        }
+        return uvs;
+    }
+
+    void set_uvs(const vector<glm::vec2> &uvs) {
+        const auto size = uvs.size();
+        pad(size);
+        for (size_t i = 0; i < size; i++) {
+            this->at(i).uv = uvs[i];
+        }
+    }
+
     PropertyGetSet<&InterleavedVertexInfoVector::getCoords, &InterleavedVertexInfoVector::setCoords> coords{this};
     PropertyGetSet<&InterleavedVertexInfoVector::getXs, &InterleavedVertexInfoVector::setXs> xs{this};
     PropertyGetSet<&InterleavedVertexInfoVector::getYs, &InterleavedVertexInfoVector::setYs> ys{this};
     PropertyGetSet<&InterleavedVertexInfoVector::getZs, &InterleavedVertexInfoVector::setZs> zs{this};
     PropertyGetSet<&InterleavedVertexInfoVector::getColors, &InterleavedVertexInfoVector::setColors> colors{this};
+    PropertyGetSet<&InterleavedVertexInfoVector::get_uvs, &InterleavedVertexInfoVector::set_uvs> uvs{this};
 };
