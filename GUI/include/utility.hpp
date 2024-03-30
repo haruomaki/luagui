@@ -120,7 +120,7 @@ class MobileNormalCamera : public Camera, protected Update {
     }
 
   public:
-    float speed = 0.1;
+    float speed = 0.003;
     float angle_speed = 0.02;
     pair<double, double> cursor_pos = this->get_world().window.get_cursor_pos();
 

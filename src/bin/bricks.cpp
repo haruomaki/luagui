@@ -43,9 +43,9 @@ int main() {
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
     World &world = window.create_world();
-    // auto &camera = world.append_child<MobileOrthoCamera>();
-    auto &camera = world.append_child<MobileNormalCamera>();
-    camera.rotate = ANGLE_Y(M_PIf);
+    auto &camera = world.append_child<MobileOrthoCamera>();
+    // auto &camera = world.append_child<MobileNormalCamera>();
+    // camera.rotate = ANGLE_Y(M_PIf);
     camera.set_active();
 
     // 三角形の表示

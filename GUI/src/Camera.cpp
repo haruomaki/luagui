@@ -18,7 +18,8 @@ glm::mat4 NormalCamera::get_projection_matrix() const {
     auto height = float(size.y);
 
     const auto aspect_ratio = width / height;
-    const auto projection_matrix = glm::perspective(glm::radians(60.0F), aspect_ratio, 0.1F, 3000.F);
+    const auto r = this->scale_prop;
+    const auto projection_matrix = glm::perspective(glm::radians(60.0F), aspect_ratio, 0.01F * r, 1000.F * r);
     return projection_matrix;
 }
 
@@ -36,6 +37,7 @@ glm::mat4 OrthoCamera::get_projection_matrix() const {
 
     const auto w = float(width) * px_meter;
     const auto h = float(height) * px_meter;
-    const auto projection_matrix = glm::ortho<float>(-w / 2, w / 2, -h / 2, h / 2, 1000.F, -1000.F);
+    const auto r = this->scale_prop;
+    const auto projection_matrix = glm::ortho<float>(-w / 2, w / 2, -h / 2, h / 2, -1000.F * r, 1000.F * r);
     return projection_matrix;
 }

@@ -130,6 +130,9 @@ class WorldObject {
     [[nodiscard]] const glm::vec3 &get_scale() const {
         return scale_;
     }
+    [[nodiscard]] float get_scale_prop() const {
+        return std::pow(scale_.x * scale_.y * scale_.z, 1.f / 3);
+    }
 
     [[nodiscard]] const glm::mat4 &get_absolute_transform() const {
         return abs_transform_;
@@ -159,6 +162,10 @@ class WorldObject {
     void set_scale_one(float scale) {
         set_scale({scale, scale, scale});
     }
+    void set_scale_prop(float scale) {
+        auto r = get_scale_prop(); // rで割ることで正規化する
+        set_scale({scale_.x / r * scale, scale_.y / r * scale, scale_.z / r * scale});
+    }
 
     WorldObject *get_parent() {
         return parent_;
@@ -171,5 +178,6 @@ class WorldObject {
     // プロパティ
     PropertyGetSet<&WorldObject::get_position, &WorldObject::set_position> position{this};
     PropertyGetSet<&WorldObject::get_scale, &WorldObject::set_scale, &WorldObject::set_scale_one> scale{this};
+    PropertyGetSet<&WorldObject::get_scale_prop, &WorldObject::set_scale_prop> scale_prop{this};
     PropertyGetSet<&WorldObject::get_rotate, &WorldObject::set_rotate> rotate{this};
 };
