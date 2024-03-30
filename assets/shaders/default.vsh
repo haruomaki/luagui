@@ -1,8 +1,10 @@
-attribute vec3 position;
-attribute vec2 uv;
-attribute vec4 color;
-varying vec2 vuv;
-varying vec4 vColor;
+#version 330 core
+
+in vec3 position;
+in vec2 uv;
+in vec4 color;
+out vec2 vuv;
+out vec4 vColor;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 

@@ -1,6 +1,34 @@
 #include "utility.hpp"
 #include <master.hpp>
 
+class GlassBall : public MeshObject, Update {
+    static Material &gen_material(Window &window) {
+        GLuint tex = create_texture_from_png_file("assets/images/青いガラス玉.png");
+        return MaterialBuilder().texture(tex).build(window);
+    }
+
+    static StaticMesh &gen_mesh(Window &window) {
+        auto &mesh = window.append_resource<StaticMesh>();
+        mesh.vertices.coords = {{0, 0, 0}, {0.02, 0, 0}, {0.02, 0.02, 0}, {0, 0.02, 0}};
+        mesh.vertices.uvs = {{0, 1}, {1, 1}, {1, 0}, {0, 0}};
+        mesh.draw_mode = GL_TRIANGLE_FAN;
+        mesh.sync_vram();
+        return mesh;
+    }
+
+  public:
+    GlassBall(Window &window)
+        : MeshObject(gen_mesh(window), &gen_material(window)) {}
+
+    double t = 0;
+    const double cycle = 30;
+
+    void update() override {
+        position = glm::vec3{0.1 * cos(t / cycle), 0.1 * sin(t / cycle), 0.1};
+        t++;
+    }
+};
+
 static StaticMesh &create_brick_mesh(Window &window) {
     auto &brick_mesh = window.append_resource<StaticMesh>();
     brick_mesh.vertices.coords = {{0, 0, 0}, {0.02, 0, 0}, {0.02, 0.01, 0}, {0, 0.01, 0}};
@@ -15,7 +43,9 @@ int main() {
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
     World &world = window.create_world();
-    auto &camera = world.append_child<MobileOrthoCamera>();
+    // auto &camera = world.append_child<MobileOrthoCamera>();
+    auto &camera = world.append_child<MobileNormalCamera>();
+    camera.rotate = ANGLE_Y(M_PIf);
     camera.set_active();
 
     // 三角形の表示
@@ -42,6 +72,8 @@ int main() {
             bricks[x][y]->position = {0.02 * x, 0.01 * y, 0};
         }
     }
+
+    auto &ball = world.append_child<GlassBall>(window);
 
     gui.mainloop();
 }
