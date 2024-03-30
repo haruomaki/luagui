@@ -101,9 +101,9 @@ class MeshObject : public Draw {
 };
 
 struct MeshDrawManager {
-    std::map<std::tuple<const StaticMesh *, const Material *, const ProgramObject *>, std::pair<VertexArrayObject, vector<glm::mat4>>> vao_modelmatrices{};
+    std::map<std::tuple<const StaticMesh *, const Material *, const ProgramObject *>, std::pair<char /*FIXME: ダミー*/, vector<glm::mat4>>> vao_modelmatrices{};
 
-    static VertexArrayObject regenerate_vao(StaticMesh &mesh, const ProgramObject &shader) {
+    static VertexArrayObject generate_vao(const StaticMesh &mesh, const ProgramObject &shader) {
         print("VAO生成");
         auto vao = VertexArrayObject::gen();
 
@@ -118,7 +118,7 @@ struct MeshDrawManager {
             getErrors();
         });
 
-        mesh.vao_should_regen_ = false; // VAOの再生成が完了
+        // mesh.vao_should_regen_ = false; // VAOの再生成が完了
         return vao;
     }
 
@@ -176,13 +176,16 @@ struct MeshDrawManager {
         const ProgramObject *sp = &shader;
         const auto key = std::make_tuple(mp, tp, sp); // メッシュ・マテリア・シェーダの三項組をキーとする
 
+        // if (!vao_modelmatrices.contains(key)) {
+        //     // キャッシュに未登録ならばVAOを新規作成する
+        //     auto vao = regenerate_vao(mesh, shader);
+        //     vao_modelmatrices[key] = std::make_pair(vao, std::vector<glm::mat4>(0));
+        // } else if (mesh.vao_should_regen_) {
+        //     // もしくはVBOの更新などでVAOの再生成が必要な場合もある
+        //     vao_modelmatrices[key].first = regenerate_vao(mesh, shader);
+        // }
         if (!vao_modelmatrices.contains(key)) {
-            // キャッシュに未登録ならばVAOを新規作成する
-            auto vao = regenerate_vao(mesh, shader);
-            vao_modelmatrices[key] = std::make_pair(vao, std::vector<glm::mat4>(0));
-        } else if (mesh.vao_should_regen_) {
-            // もしくはVBOの更新などでVAOの再生成が必要な場合もある
-            vao_modelmatrices[key].first = regenerate_vao(mesh, shader);
+            vao_modelmatrices[key] = std::make_pair('?' /*ダミー*/, std::vector<glm::mat4>(0));
         }
 
         // モデル行列をキューに追加
@@ -195,13 +198,16 @@ struct MeshDrawManager {
             auto &[key, value] = *it;
             const StaticMesh &mesh = *std::get<0>(key);
             const Material &material = *std::get<1>(key);
-            const VertexArrayObject vao = value.first;
+            // const VertexArrayObject vao = value.first;
             std::vector<glm::mat4> &model_matrices = value.second;
 
             // もはや使われなくなったVAOは削除し、次のキーへ
             if (model_matrices.size() == 0) {
                 it = vao_modelmatrices.erase(it);
             } else {
+                // 毎フレームVAOを生成
+                auto vao = generate_vao(mesh, material.shader);
+
                 // 各モデル行列についてドローコールを発行
                 for (const auto &model_matrix : model_matrices) {
                     draw_one(mesh, material, vao, model_matrix, camera);
