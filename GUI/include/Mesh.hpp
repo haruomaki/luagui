@@ -122,7 +122,7 @@ struct MeshDrawManager {
         return vao;
     }
 
-    static inline void draw_one(const StaticMesh &mesh, const Material &material, const VertexArrayObject vao, const glm::mat4 &model_matrix, const Camera &camera) {
+    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const VertexArrayObject vao, size_t count_instances, const Camera &camera) {
         // シェーダを有効化
         const auto &shader = material.shader;
         shader.use();
@@ -139,8 +139,7 @@ struct MeshDrawManager {
             break;
         }
 
-        // ワールド座標変換 = model_matrix
-        shader.set_uniform("modelMatrix", model_matrix);
+        // ワールド座標変換 = instanceModelMatrix
 
         // ビュー座標変換
         const glm::mat4 &view_matrix = camera.get_view_matrix();
@@ -160,8 +159,7 @@ struct MeshDrawManager {
                 glDrawElements(mesh.draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
             } else {
                 size_t vertices_length = mesh.n_;
-                glDrawArrays(mesh.draw_mode, 0, GLsizei(vertices_length));
-                // glDrawArraysInstanced(mesh.draw_mode, 0, GLsizei(vertices_length), GLsizei(instance_num));
+                glDrawArraysInstanced(mesh.draw_mode, 0, GLsizei(vertices_length), GLsizei(count_instances));
             }
             glBindTexture(GL_TEXTURE_2D, 0); // テクスチャのバインドを解除
         });
@@ -195,26 +193,25 @@ struct MeshDrawManager {
             auto &[key, value] = *it;
             const StaticMesh &mesh = *std::get<0>(key);
             const Material &material = *std::get<1>(key);
-            const VertexArrayObject vao = value.first;
+            // const VertexArrayObject vao = value.first;
             std::vector<glm::mat4> &model_matrices = value.second;
 
             // もはや使われなくなったVAOは削除し、次のキーへ
             if (model_matrices.size() == 0) {
                 it = vao_modelmatrices.erase(it);
             } else {
-                // 各モデル行列についてドローコールを発行
-                for (const auto &model_matrix : model_matrices) {
-                    draw_one(mesh, material, vao, model_matrix, camera);
-                }
-                // auto model_matrices_vbo = VertexBufferObject::gen(sizeof(glm::mat4) * model_matrices.size(), model_matrices.data(), GL_STATIC_DRAW);
-                // vao.bind([&] {
-                //     model_matrices_vbo.bind([&] {
-                //         material.shader.set_attribute("instanceModelMatrix", 16, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), nullptr);
-                //     });
-                //     auto loc = material.shader.get_location<StorageQualifier::Attribute>("instanceModelMatrix");
-                //     glVertexAttribDivisor(loc, 1);
-                // });
-                // draw_instanced(mesh, material, vao, model_matrices.size(), camera);
+                // とりあえず毎回再生成
+                auto vao = regenerate_vao(const_cast<StaticMesh &>(mesh), material.shader);
+
+                // 各インスタンスのモデル行列を格納するVBOを作成
+                auto model_matrices_vbo = VertexBufferObject::gen(sizeof(glm::mat4) * model_matrices.size(), model_matrices.data(), GL_DYNAMIC_DRAW);
+                vao.bind([&] {
+                    model_matrices_vbo.bind([&] {
+                        material.shader.set_attribute("instanceModelMatrix", 16, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), nullptr);
+                        material.shader.set_divisor("instanceModelMatrix", 1);
+                    });
+                });
+                draw_instanced(mesh, material, vao, model_matrices.size(), camera);
 
                 // 描画を終えたモデル行列のキューは空に
                 model_matrices.clear();

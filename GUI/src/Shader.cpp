@@ -58,13 +58,32 @@ void ProgramObject::use() const {
 
 template <>
 GLint ProgramObject::get_location<Attribute>(const string &name) const {
-    return glGetAttribLocation(program_id_, name.c_str());
+    auto loc = glGetAttribLocation(program_id_, name.c_str());
+    if (loc == -1) warn("Attribute変数名 \"", name, "\" は無効です");
+    return loc;
 }
 
 template <>
 GLint ProgramObject::get_location<Uniform>(const string &name) const {
-    return glGetUniformLocation(program_id_, name.c_str());
+    auto loc = glGetUniformLocation(program_id_, name.c_str());
+    if (loc == -1) warn("Uniform変数名 \"", name, "\" は無効です");
+    return loc;
 }
+
+// template <StorageQualifier q>
+// GLint ProgramObject::get_location(const string &name) const {
+//     GLint location;
+//     if constexpr (q == Attribute) {
+//         location = glGetAttribLocation(program_id_, name.c_str());
+//     } else if constexpr (q == Uniform) {
+//         location = glGetUniformLocation(program_id_, name.c_str());
+//     } else {
+//         static_assert(false, "StorageQualifierの種類が無効ですよ");
+//     }
+//     if (location == -1) {
+//         warn("指定された変数名が無効です");
+//     }
+// }
 
 void ProgramObject::set_attribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const {
     GLint location = get_location<Attribute>(name);
@@ -86,4 +105,9 @@ void ProgramObject::set_uniform(const string &name, const glm::vec4 &vec4_value)
 
 void ProgramObject::set_uniform(const string &name, const glm::mat4 &mat4_value) const {
     glUniformMatrix4fv(get_location<Uniform>(name), 1, GL_FALSE, glm::value_ptr(mat4_value));
+}
+
+void ProgramObject::set_divisor(const string &name, GLuint divisor) const {
+    GLint location = get_location<Attribute>(name);
+    glVertexAttribDivisor(location, divisor);
 }
