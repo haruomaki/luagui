@@ -12,6 +12,11 @@ enum class StorageQualifier {
 class ProgramObject {
     GLuint program_id_;
 
+    // 無効な名前の場合は-1が返る
+    // WARNING: 実装が.cppファイルに書かれているので、外部から呼び出すことはできない。（今後フレンドクラスなどを追加するときは要注意）
+    template <StorageQualifier q>
+    [[nodiscard]] GLint get_location(const string &name) const;
+
   public:
     ProgramObject() = delete; // glCreateProgram()をしないコンストラクタはナンセンス
     ProgramObject(std::initializer_list<GLuint> shader_ids);
@@ -29,15 +34,12 @@ class ProgramObject {
     [[nodiscard]] GLuint get_program_id() const;
     void use() const;
 
-    template <StorageQualifier q>
-    [[nodiscard]] GLint get_location(const string &name) const;
-
     void set_attribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const;
-
     void set_uniform(const string &name, GLint int_value) const;
     void set_uniform(const string &name, const glm::vec3 &vec3_value) const;
     void set_uniform(const string &name, const glm::vec4 &vec4_value) const;
     void set_uniform(const string &name, const glm::mat4 &mat4_value) const;
+    void set_divisor(const string &name, GLuint divisor) const;
 };
 
 class VertexArrayObject {
