@@ -74,13 +74,32 @@ class ProgramObject {
 };
 
 class VertexArrayObject {
-    GLuint array_{};
+    GLuint array_ = 0;
 
   public:
-    static inline VertexArrayObject gen() {
-        VertexArrayObject vao;
-        glGenVertexArrays(1, &vao.array_); // VAOの生成
-        return vao;
+    VertexArrayObject()
+        : array_([&] {
+            GLuint array;
+            glGenVertexArrays(1, &array); // BOの生成
+            return array;
+        }()) {}
+    ~VertexArrayObject() {
+        if (array_ != 0) {
+            glDeleteVertexArrays(1, &array_);
+        }
+    }
+    VertexArrayObject(const VertexArrayObject &) = delete;
+    VertexArrayObject &operator=(const VertexArrayObject &) const = delete;
+    VertexArrayObject(VertexArrayObject &&other) noexcept
+        : array_(other.array_) {
+        other.array_ = 0;
+    }
+    VertexArrayObject &operator=(VertexArrayObject &&other) noexcept {
+        if (this != &other) {
+            this->array_ = other.array_;
+            other.array_ = 0;
+        }
+        return *this;
     }
 
     template <typename F>
@@ -94,20 +113,17 @@ class VertexArrayObject {
 template <GLenum target>
 class BufferObject {
     // はじめはゼロ初期化。INFO: あくまで仮の初期値であり、使う際はgenしないと無意味
-    GLuint buffer_;
+    GLuint buffer_ = 0;
 
   public:
-    BufferObject(int /*dummy*/)
-        : buffer_(0) {
-        print("ゼロ0");
-    }
+    BufferObject() = default;
     BufferObject(size_t size, const void *data, GLenum usage)
         : buffer_([&] {
             GLuint buffer;
             glGenBuffers(1, &buffer); // BOの生成
+            print("じぇん", buffer);
             return buffer;
         }()) {
-        print("じぇん", this->buffer_);
         this->bind([&] {
             glBufferData(target, GLsizeiptr(size), data, usage); // バインド中にデータを設定
         });

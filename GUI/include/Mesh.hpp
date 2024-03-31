@@ -13,8 +13,8 @@ class StaticMesh : virtual public Resource {
 
   protected:
     bool vao_should_regen_ = true;
-    VertexBufferObject vbo_;
-    ElementBufferObject ebo_;
+    VertexBufferObject vbo_{};
+    ElementBufferObject ebo_{};
     const GLenum usage_;
     size_t n_ = 0;
     size_t indices_n_ = 0;
@@ -42,9 +42,7 @@ class StaticMesh : virtual public Resource {
     std::vector<int> indices;
 
     StaticMesh(GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
-        : vbo_(888)
-        , ebo_(888)
-        , usage_(usage)
+        : usage_(usage)
         , n_(coords.size())
         , capacity_(coords.capacity())
         , draw_mode(draw_mode) {
@@ -107,7 +105,7 @@ struct MeshDrawManager {
 
     static VertexArrayObject generate_vao(const StaticMesh &mesh, const ProgramObject &shader) {
         print("VAO生成");
-        auto vao = VertexArrayObject::gen();
+        auto vao = VertexArrayObject();
 
         // VAOに頂点の座標と色を関連付ける
         vao.bind([&] {
@@ -231,7 +229,7 @@ struct MeshDrawManager {
                     // debug(material.shader.get_location<StorageQualifier::Attribute>("instanceModelMatrix"));
                     // material.shader.set_divisor("instanceModelMatrix", 1);
                 });
-                draw_instanced(mesh, material, vao, model_matrices.size(), camera);
+                draw_instanced(mesh, material, std::move(vao), model_matrices.size(), camera);
 
                 // 描画を終えたモデル行列のキューは空に
                 model_matrices.clear();
