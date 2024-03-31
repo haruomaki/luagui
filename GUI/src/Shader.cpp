@@ -56,20 +56,6 @@ void ProgramObject::use() const {
     glUseProgram(program_id_);
 }
 
-template <>
-GLint ProgramObject::get_location<Attribute>(const string &name) const {
-    auto loc = glGetAttribLocation(program_id_, name.c_str());
-    if (loc == -1) warn("Attribute変数名 \"", name, "\" は無効です");
-    return loc;
-}
-
-template <>
-GLint ProgramObject::get_location<Uniform>(const string &name) const {
-    auto loc = glGetUniformLocation(program_id_, name.c_str());
-    if (loc == -1) warn("Uniform変数名 \"", name, "\" は無効です");
-    return loc;
-}
-
 // template <StorageQualifier q>
 // GLint ProgramObject::get_location(const string &name) const {
 //     GLint location;

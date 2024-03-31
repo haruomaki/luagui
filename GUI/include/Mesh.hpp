@@ -161,6 +161,7 @@ struct MeshDrawManager {
             } else {
                 size_t vertices_length = mesh.n_;
                 // glDrawArrays(mesh.draw_mode, 0, GLsizei(vertices_length));
+                debug(count_instances);
                 glDrawArraysInstanced(mesh.draw_mode, 0, GLsizei(vertices_length), GLsizei(count_instances));
             }
             glBindTexture(GL_TEXTURE_2D, 0); // テクスチャのバインドを解除
@@ -208,19 +209,25 @@ struct MeshDrawManager {
                 // 毎フレームVAOを生成
                 auto vao = generate_vao(mesh, material.shader);
 
-                // auto model_matrices_vbo = VertexBufferObject::gen(sizeof(glm::mat4) * model_matrices.size(), model_matrices.data(), GL_STATIC_DRAW);
-                auto model_matrices_vbo = VertexBufferObject::gen(64, model_matrices.data(), GL_STATIC_DRAW);
+                auto model_matrices_vbo = VertexBufferObject::gen(sizeof(glm::mat4) * model_matrices.size(), model_matrices.data(), GL_STATIC_DRAW);
                 vao.bind([&] {
                     // glEnableVertexAttribArray(3);
                     model_matrices_vbo.bind([&] {
                         print("始");
                         getErrors();
-                        material.shader.set_attribute("instanceModelMatrix", 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), nullptr);
+
+                        // material.shader.set_attribute("instanceModelMatrix", 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), nullptr);
+                        material.shader.mat4_attribute("instanceModelMatrix");
+
                         getErrors();
                         print("終");
                     });
                     // glVertexAttribDivisor(3, 1);
-                    material.shader.set_divisor("instanceModelMatrix", 1);
+                    // debug(material.shader.get_location<StorageQualifier::Attribute>("position"));
+                    // debug(material.shader.get_location<StorageQualifier::Attribute>("uv"));
+                    // debug(material.shader.get_location<StorageQualifier::Attribute>("color"));
+                    // debug(material.shader.get_location<StorageQualifier::Attribute>("instanceModelMatrix"));
+                    // material.shader.set_divisor("instanceModelMatrix", 1);
                 });
                 draw_instanced(mesh, material, vao, model_matrices.size(), camera);
 
