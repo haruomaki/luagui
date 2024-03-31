@@ -93,17 +93,42 @@ class VertexArrayObject {
 
 template <GLenum target>
 class BufferObject {
-    GLuint buffer_{};
+    // はじめはゼロ初期化。INFO: あくまで仮の初期値であり、使う際はgenしないと無意味
+    GLuint buffer_;
 
   public:
-    // glGenBuffers() + glBufferData()
-    static inline BufferObject gen(size_t size, const void *data, GLenum usage) {
-        BufferObject xbo;
-        glGenBuffers(1, &xbo.buffer_); // BOの生成
-        xbo.bind([&] {
+    BufferObject(int /*dummy*/)
+        : buffer_(0) {
+        print("ゼロ0");
+    }
+    BufferObject(size_t size, const void *data, GLenum usage)
+        : buffer_([&] {
+            GLuint buffer;
+            glGenBuffers(1, &buffer); // BOの生成
+            return buffer;
+        }()) {
+        print("じぇん", this->buffer_);
+        this->bind([&] {
             glBufferData(target, GLsizeiptr(size), data, usage); // バインド中にデータを設定
         });
-        return xbo;
+    }
+    ~BufferObject() {
+        if (buffer_ != 0) {
+            glDeleteBuffers(1, &buffer_);
+        }
+    }
+    BufferObject(const BufferObject &) = delete;
+    BufferObject &operator=(const BufferObject &) const = delete;
+    BufferObject(BufferObject &&other) noexcept
+        : buffer_(other.buffer_) {
+        other.buffer_ = 0;
+    }
+    BufferObject &operator=(BufferObject &&other) noexcept {
+        if (this != &other) {
+            this->buffer_ = other.buffer_;
+            other.buffer_ = 0;
+        }
+        return *this;
     }
 
     // バッファ内容を更新する

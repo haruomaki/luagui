@@ -25,13 +25,13 @@ class StaticMesh : virtual public Resource {
     void regenerate_vbo() {
         print("VBO生成");
         // 空のVBOを生成
-        vbo_ = VertexBufferObject::gen(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, usage_);
+        this->vbo_ = VertexBufferObject(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, usage_);
         vao_should_regen_ = true;
     }
 
     void regenerate_ibo() {
         print("IBO生成");
-        this->ebo_ = ElementBufferObject::gen(sizeof(int) * indices.size(), indices.data(), usage_);
+        this->ebo_ = ElementBufferObject(sizeof(int) * indices.size(), indices.data(), usage_);
         vao_should_regen_ = true;
     }
 
@@ -42,7 +42,9 @@ class StaticMesh : virtual public Resource {
     std::vector<int> indices;
 
     StaticMesh(GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
-        : usage_(usage)
+        : vbo_(888)
+        , ebo_(888)
+        , usage_(usage)
         , n_(coords.size())
         , capacity_(coords.capacity())
         , draw_mode(draw_mode) {
@@ -209,7 +211,7 @@ struct MeshDrawManager {
                 // 毎フレームVAOを生成
                 auto vao = generate_vao(mesh, material.shader);
 
-                auto model_matrices_vbo = VertexBufferObject::gen(sizeof(glm::mat4) * model_matrices.size(), model_matrices.data(), GL_STATIC_DRAW);
+                auto model_matrices_vbo = VertexBufferObject(sizeof(glm::mat4) * model_matrices.size(), model_matrices.data(), GL_STATIC_DRAW);
                 vao.bind([&] {
                     // glEnableVertexAttribArray(3);
                     model_matrices_vbo.bind([&] {

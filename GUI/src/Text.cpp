@@ -12,7 +12,8 @@ constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 Font::Font()
     : shader_(ProgramObject{
           create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
-          create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))}) {
+          create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))})
+    , vbo_(888) {
     // FreeTypeを初期化
     FT_Library ft;
     if (FT_Init_FreeType(&ft) != 0) {
@@ -70,7 +71,7 @@ Font::Font()
     FT_Done_FreeType(ft);
 
     this->vao_ = VertexArrayObject::gen();
-    this->vbo_ = VertexBufferObject::gen(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
+    this->vbo_ = VertexBufferObject(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     this->vao_.bind([&] {
         this->vbo_.bind([&] {
             this->shader_.set_attribute("vertex", 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
