@@ -62,10 +62,12 @@ class ProgramObject {
         glEnableVertexAttribArray(pos2);
         glEnableVertexAttribArray(pos3);
         glEnableVertexAttribArray(pos4);
-        glVertexAttribPointer(pos1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4 * 4, (void *)(0));
-        glVertexAttribPointer(pos2, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4 * 4, (void *)(sizeof(float) * 4));
-        glVertexAttribPointer(pos3, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4 * 4, (void *)(sizeof(float) * 8));
-        glVertexAttribPointer(pos4, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4 * 4, (void *)(sizeof(float) * 12));
+        // NOLINTBEGIN(performance-no-int-to-ptr)
+        glVertexAttribPointer(pos1, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4 * 4, nullptr);
+        glVertexAttribPointer(pos2, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4 * 4, reinterpret_cast<void *>(sizeof(float) * 4));
+        glVertexAttribPointer(pos3, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4 * 4, reinterpret_cast<void *>(sizeof(float) * 8));
+        glVertexAttribPointer(pos4, 4, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 4 * 4, reinterpret_cast<void *>(sizeof(float) * 12));
+        // NOLINTEND(performance-no-int-to-ptr)
         glVertexAttribDivisor(pos1, 1);
         glVertexAttribDivisor(pos2, 1);
         glVertexAttribDivisor(pos3, 1);
@@ -121,7 +123,6 @@ class BufferObject {
         : buffer_([&] {
             GLuint buffer;
             glGenBuffers(1, &buffer); // BOの生成
-            print("じぇん", buffer);
             return buffer;
         }()) {
         this->bind([&] {

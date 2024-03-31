@@ -104,7 +104,6 @@ struct MeshDrawManager {
     std::map<std::tuple<const StaticMesh *, const Material *, const ProgramObject *>, std::pair<char /*FIXME: ダミー*/, vector<glm::mat4>>> vao_modelmatrices{};
 
     static VertexArrayObject generate_vao(const StaticMesh &mesh, const ProgramObject &shader) {
-        print("VAO生成");
         auto vao = VertexArrayObject();
 
         // VAOに頂点の座標と色を関連付ける
@@ -160,8 +159,6 @@ struct MeshDrawManager {
                 glDrawElements(mesh.draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
             } else {
                 size_t vertices_length = mesh.n_;
-                // glDrawArrays(mesh.draw_mode, 0, GLsizei(vertices_length));
-                debug(count_instances);
                 glDrawArraysInstanced(mesh.draw_mode, 0, GLsizei(vertices_length), GLsizei(count_instances));
             }
             glBindTexture(GL_TEXTURE_2D, 0); // テクスチャのバインドを解除
@@ -211,23 +208,9 @@ struct MeshDrawManager {
 
                 auto model_matrices_vbo = VertexBufferObject(sizeof(glm::mat4) * model_matrices.size(), model_matrices.data(), GL_STATIC_DRAW);
                 vao.bind([&] {
-                    // glEnableVertexAttribArray(3);
                     model_matrices_vbo.bind([&] {
-                        print("始");
-                        getErrors();
-
-                        // material.shader.set_attribute("instanceModelMatrix", 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), nullptr);
                         material.shader.mat4_attribute("instanceModelMatrix");
-
-                        getErrors();
-                        print("終");
                     });
-                    // glVertexAttribDivisor(3, 1);
-                    // debug(material.shader.get_location<StorageQualifier::Attribute>("position"));
-                    // debug(material.shader.get_location<StorageQualifier::Attribute>("uv"));
-                    // debug(material.shader.get_location<StorageQualifier::Attribute>("color"));
-                    // debug(material.shader.get_location<StorageQualifier::Attribute>("instanceModelMatrix"));
-                    // material.shader.set_divisor("instanceModelMatrix", 1);
                 });
                 draw_instanced(mesh, material, std::move(vao), model_matrices.size(), camera);
 
