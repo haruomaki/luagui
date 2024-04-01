@@ -12,7 +12,7 @@ int main() {
     auto &camera = main_world.append_child<MobileNormalCamera>();
     camera.position = {0, 0, 10};
     camera.rotate = ANGLE_Y(M_PIf);
-    camera.scale = 1;
+    camera.scale = 10;
     camera.set_active();
 
     auto &cube = new_mesh(main_world);

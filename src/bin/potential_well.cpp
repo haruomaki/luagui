@@ -97,7 +97,7 @@ int main() {
     auto &camera = main_world.append_child<MobileNormalCamera>();
     camera.position = {0, 1, 10};
     camera.rotate = ANGLE_Y(M_PIf);
-    camera.scale = 1;
+    camera.scale = 10;
     camera.set_active();
 
     Font migmix_font;
