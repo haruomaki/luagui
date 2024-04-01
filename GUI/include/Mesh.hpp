@@ -101,13 +101,13 @@ class MeshObject : public Draw {
 };
 
 struct MeshDrawManager {
-    // メッシュ・マテリアル・シェーダの組ごとに一つモデル行列のvectorが決まる。
+    // メッシュ・マテリアル・シェーダの三項組ごとに一つモデル行列のvectorが決まる。
     // この行列キューごとに一回ドローコールを行う
     std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, vector<glm::mat4>> modelmatrices_storage{};
     // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
     std::unordered_map<const glm::mat4 *, std::pair<VertexBufferObject, VertexArrayObject>> previous_vbovao{};
 
-    static VertexArrayObject generate_vao(StaticMesh &mesh, const ProgramObject &shader) {
+    static VertexArrayObject generate_vao(StaticMesh &mesh, const ProgramObject &shader, const VertexBufferObject &model_matrices_vbo) {
         print("VAO生成");
         auto vao = VertexArrayObject();
 
@@ -119,6 +119,9 @@ struct MeshDrawManager {
                 shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
             });
             mesh.ebo_.keep_bind();
+            model_matrices_vbo.bind([&] {
+                shader.mat4_attribute("instanceModelMatrix");
+            });
             getErrors();
         });
 
@@ -179,8 +182,8 @@ struct MeshDrawManager {
         const ProgramObject *sp = &shader;
         const auto key = std::make_tuple(mp, tp, sp); // メッシュとシェーダの組をキーとする
 
+        // 新規キーのとき
         if (!modelmatrices_storage.contains(key)) {
-            // キャッシュに未登録ならば新規作成
             modelmatrices_storage[key] = std::vector<glm::mat4>(0);
         }
 
@@ -217,16 +220,11 @@ struct MeshDrawManager {
                 // キャッシュが無い、もしくはメッシュのVBO更新等で再生成が必要ならば空のVBO&VAOを新規作成
                 // TODO: メッシュのVBO更新の際はVAOの再生成だけで十分。model_matrices_vboの再生成は必要ない
                 model_matrices_vbo = VertexBufferObject(sizeof(glm::mat4) * model_matrices.capacity(), nullptr, GL_DYNAMIC_DRAW);
-                batch_vao = generate_vao(mesh, material.shader);
-                batch_vao.bind([&] { // TODO: generate_vbo内に移動
-                    model_matrices_vbo.bind([&] {
-                        material.shader.mat4_attribute("instanceModelMatrix");
-                    });
-                });
+                batch_vao = generate_vao(mesh, material.shader, model_matrices_vbo);
             }
 
             // VBOに毎フレーム値をコピー
-            model_matrices_vbo.subdata(0, sizeof(glm::mat4) * model_matrices.capacity(), model_matrices.data());
+            model_matrices_vbo.subdata(0, sizeof(glm::mat4) * model_matrices.size(), model_matrices.data());
 
             // 描画
             draw_instanced(mesh, material, batch_vao, model_matrices.size(), camera);
