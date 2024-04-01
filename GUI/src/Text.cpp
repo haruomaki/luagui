@@ -69,8 +69,7 @@ Font::Font()
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    this->vao_ = VertexArrayObject::gen();
-    this->vbo_ = VertexBufferObject::gen(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
+    this->vbo_ = VertexBufferObject(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     this->vao_.bind([&] {
         this->vbo_.bind([&] {
             this->shader_.set_attribute("vertex", 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);

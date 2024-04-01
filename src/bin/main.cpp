@@ -19,7 +19,7 @@ int main() {
     auto &camera = main_world.append_child<MobileNormalCamera>();
     camera.position = {0, 0, 1000};
     camera.rotate = ANGLE_Y(M_PIf);
-    camera.scale = 100;
+    camera.scale = 2000; // 速度調整
     camera.set_active();
 
     Font migmix_font;
@@ -92,31 +92,6 @@ int main() {
         {0.1, 0.4, 0.7, 0.5},
         {0.1, 0.4, 0.7, 1},
     };
-
-    // const auto &shader = hello_shader;
-    auto vbo = VertexBufferObject::gen(sizeof(glm::vec3) * 4, vertices.data(), GL_STATIC_DRAW);
-    auto vbo_color = VertexBufferObject::gen(sizeof(RGBA) * 4, colors.data(), GL_STATIC_DRAW);
-
-    // VAOを作成。頂点の座標と色、uvを関連付ける
-    auto vao = VertexArrayObject::gen();
-    vao.bind([&] {
-        vbo.bind([&] {
-            main_shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr); // 位置
-        });
-        vbo_color.bind([&] {
-            main_shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(RGBA), nullptr); // 位置
-        });
-        getErrors();
-    });
-
-    main_world.draws.set_function([&](const auto &camera) {
-        main_shader.use();
-        main_shader.set_uniform("modelViewMatrix", camera.get_view_matrix());
-        main_shader.set_uniform("is_tex", GL_FALSE);
-        vao.bind([&] {
-            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-        });
-    });
 
     auto &cube = new_mesh(main_world);
     auto &mesh = cube.mesh;

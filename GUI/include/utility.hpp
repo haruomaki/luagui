@@ -102,10 +102,10 @@ class MobileNormalCamera : public Camera, protected Update {
         }
         if (window.get_key(GLFW_KEY_Z)) {
             // 移動速度が変わる
-            scale /= 1.01;
+            scale *= 1.01;
         }
         if (window.get_key(GLFW_KEY_X)) {
-            scale *= 1.01;
+            scale /= 1.01;
         }
         if (window.get_key(GLFW_KEY_Q)) {
             window.close();

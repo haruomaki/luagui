@@ -65,7 +65,7 @@ int main() {
     auto &brick_material = MaterialBuilder().texture(brick_texture).build(window);
     auto &brick_mesh = create_brick_mesh(window);
 
-    constexpr int num_x = 10, num_y = 100;
+    constexpr int num_x = 100, num_y = 100;
     auto bricks = std::vector(num_x, std::vector<MeshObject *>(num_y));
     for (int x = 0; x < num_x; x++) {
         for (int y = 0; y < num_y; y++) {

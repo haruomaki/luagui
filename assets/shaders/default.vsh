@@ -6,6 +6,7 @@ in vec4 color;
 in mat4 instanceModelMatrix;
 out vec2 vuv;
 out vec4 vColor;
+// uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
