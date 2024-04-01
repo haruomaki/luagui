@@ -101,9 +101,14 @@ class MeshObject : public Draw {
 };
 
 struct MeshDrawManager {
-    std::map<std::tuple<const StaticMesh *, const Material *, const ProgramObject *>, std::pair<char /*FIXME: ダミー*/, vector<glm::mat4>>> vao_modelmatrices{};
+    // メッシュ・マテリアル・シェーダの組ごとに一つモデル行列のvectorが決まる。
+    // この行列キューごとに一回ドローコールを行う
+    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, vector<glm::mat4>> modelmatrices_storage{};
+    // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
+    std::unordered_map<const glm::mat4 *, std::pair<VertexBufferObject, VertexArrayObject>> previous_vbovao{};
 
-    static VertexArrayObject generate_vao(const StaticMesh &mesh, const ProgramObject &shader) {
+    static VertexArrayObject generate_vao(StaticMesh &mesh, const ProgramObject &shader) {
+        print("VAO生成");
         auto vao = VertexArrayObject();
 
         // VAOに頂点の座標と色を関連付ける
@@ -117,11 +122,11 @@ struct MeshDrawManager {
             getErrors();
         });
 
-        // mesh.vao_should_regen_ = false; // VAOの再生成が完了
+        mesh.vao_should_regen_ = false; // VAOの再生成が完了
         return vao;
     }
 
-    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const VertexArrayObject vao, size_t count_instances, const Camera &camera) {
+    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const VertexArrayObject &vao, size_t count_instances, const Camera &camera) {
         // シェーダを有効化
         const auto &shader = material.shader;
         shader.use();
@@ -169,55 +174,70 @@ struct MeshDrawManager {
         auto &mesh = obj.mesh;
         const Material &material = *obj.material;
         const auto &shader = material.shader;
-        const StaticMesh *mp = &mesh;
+        StaticMesh *mp = &mesh;
         const Material *tp = &material; // = obj.material
         const ProgramObject *sp = &shader;
-        const auto key = std::make_tuple(mp, tp, sp); // メッシュ・マテリア・シェーダの三項組をキーとする
+        const auto key = std::make_tuple(mp, tp, sp); // メッシュとシェーダの組をキーとする
 
-        // if (!vao_modelmatrices.contains(key)) {
-        //     // キャッシュに未登録ならばVAOを新規作成する
-        //     auto vao = regenerate_vao(mesh, shader);
-        //     vao_modelmatrices[key] = std::make_pair(vao, std::vector<glm::mat4>(0));
-        // } else if (mesh.vao_should_regen_) {
-        //     // もしくはVBOの更新などでVAOの再生成が必要な場合もある
-        //     vao_modelmatrices[key].first = regenerate_vao(mesh, shader);
-        // }
-        if (!vao_modelmatrices.contains(key)) {
-            vao_modelmatrices[key] = std::make_pair('?' /*ダミー*/, std::vector<glm::mat4>(0));
+        if (!modelmatrices_storage.contains(key)) {
+            // キャッシュに未登録ならば新規作成
+            modelmatrices_storage[key] = std::vector<glm::mat4>(0);
         }
 
         // モデル行列をキューに追加
         const glm::mat4 &model_matrix = obj.get_absolute_transform();
-        vao_modelmatrices[key].second.push_back(model_matrix);
+        modelmatrices_storage[key].push_back(model_matrix);
     }
 
     void draw_all_registered_objects(const Camera &camera) {
-        for (auto it = vao_modelmatrices.begin(); it != vao_modelmatrices.end();) {
-            auto &[key, value] = *it;
-            const StaticMesh &mesh = *std::get<0>(key);
-            const Material &material = *std::get<1>(key);
-            // const VertexArrayObject vao = value.first;
-            std::vector<glm::mat4> &model_matrices = value.second;
+        std::unordered_map<const glm::mat4 *, std::pair<VertexBufferObject, VertexArrayObject>> current_vbovao{};
 
-            // もはや使われなくなったVAOは削除し、次のキーへ
+        // モデル行列キューの一覧を走査
+        for (auto it = modelmatrices_storage.begin(); it != modelmatrices_storage.end();) {
+            StaticMesh &mesh = *std::get<0>(it->first);
+            const Material &material = *std::get<1>(it->first);
+            auto &model_matrices = it->second; // モデル行列キュー
+
+            // もはや使われなくなったモデル行列キューは削除し、次のキーへ
             if (model_matrices.size() == 0) {
-                it = vao_modelmatrices.erase(it);
-            } else {
-                // 毎フレームVAOを生成
-                auto vao = generate_vao(mesh, material.shader);
+                it = modelmatrices_storage.erase(it);
+                continue;
+            }
 
-                auto model_matrices_vbo = VertexBufferObject(sizeof(glm::mat4) * model_matrices.size(), model_matrices.data(), GL_STATIC_DRAW);
-                vao.bind([&] {
+            VertexBufferObject model_matrices_vbo;
+            VertexArrayObject batch_vao;
+
+            const glm::mat4 *ptr = model_matrices.data(); // vector内部の生ポインタ
+            if (previous_vbovao.contains(ptr) && !mesh.vao_should_regen_) {
+                // 前回のキャッシュがあればそれを使用
+                auto vv = std::move(previous_vbovao[ptr]);
+                model_matrices_vbo = std::move(vv.first);
+                batch_vao = std::move(vv.second);
+            } else {
+                // キャッシュが無い、もしくはメッシュのVBO更新等で再生成が必要ならば空のVBO&VAOを新規作成
+                // TODO: メッシュのVBO更新の際はVAOの再生成だけで十分。model_matrices_vboの再生成は必要ない
+                model_matrices_vbo = VertexBufferObject(sizeof(glm::mat4) * model_matrices.capacity(), nullptr, GL_DYNAMIC_DRAW);
+                batch_vao = generate_vao(mesh, material.shader);
+                batch_vao.bind([&] { // TODO: generate_vbo内に移動
                     model_matrices_vbo.bind([&] {
                         material.shader.mat4_attribute("instanceModelMatrix");
                     });
                 });
-                draw_instanced(mesh, material, std::move(vao), model_matrices.size(), camera);
-
-                // 描画を終えたモデル行列のキューは空に
-                model_matrices.clear();
-                it++;
             }
+
+            // VBOに毎フレーム値をコピー
+            model_matrices_vbo.subdata(0, sizeof(glm::mat4) * model_matrices.capacity(), model_matrices.data());
+
+            // 描画
+            draw_instanced(mesh, material, batch_vao, model_matrices.size(), camera);
+
+            // 描画を終えたモデル行列のキューは空に
+            model_matrices.clear();
+            current_vbovao[ptr] = std::make_pair(std::move(model_matrices_vbo), std::move(batch_vao));
+            it++; // 忘れずに
         }
+
+        // VBOとVAOのキャッシュを次のフレームに持ち越し
+        previous_vbovao = std::move(current_vbovao); // VertexBufferObjectクラスがコピー不可なのでムーブ
     }
 };
