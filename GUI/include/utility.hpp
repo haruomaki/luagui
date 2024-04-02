@@ -136,11 +136,11 @@ class MobileNormalCamera : public Camera, protected Update {
     }
 };
 
-inline MeshObject &new_mesh(WorldObject &parent) {
+inline MeshObject &new_mesh(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
     mesh.use_index = true;
-    auto &obj = parent.append_child<MeshObject>(mesh);
+    auto &obj = parent.append_child<MeshObject>(mesh, material);
     return obj;
 }
 
@@ -149,18 +149,18 @@ inline Mesh &new_mesh(Window &window, GLenum draw_mode = GL_TRIANGLE_STRIP, cons
     return mesh;
 }
 
-inline MeshObject &new_points(WorldObject &parent) {
+inline MeshObject &new_points(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshObject>(mesh);
+    auto &obj = parent.append_child<MeshObject>(mesh, material);
     mesh.draw_mode = GL_POINTS;
     return obj;
 }
 
-inline MeshObject &new_line(WorldObject &parent) {
+inline MeshObject &new_line(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshObject>(mesh);
+    auto &obj = parent.append_child<MeshObject>(mesh, material);
     mesh.draw_mode = GL_LINE_STRIP;
     return obj;
 }
@@ -169,7 +169,8 @@ inline MeshObject &new_line(WorldObject &parent) {
 class GridGround : public WorldObject {
   public:
     GridGround() {
-        auto &grid = new_line(*this);
+        auto &material = MaterialBuilder().line_width(1).build(this->get_world().window);
+        auto &grid = new_line(*this, &material);
         for (int i = -10; i <= 10; i++) {
             constexpr RGBA grid_color = {0.1, 0.1, 0.1, 1};
             grid.mesh.vertices.push_back(InterleavedVertexInfo{{i, 0, -10}, grid_color});
@@ -178,7 +179,6 @@ class GridGround : public WorldObject {
             grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
         }
         grid.mesh.draw_mode = GL_LINES;
-        grid.material = &MaterialBuilder().line_width(1).build(this->get_world().window);
         grid.scale = 1;
     }
 };

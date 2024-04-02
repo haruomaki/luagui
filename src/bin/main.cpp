@@ -103,7 +103,7 @@ int main() {
     mesh.vertices.colors = std::vector(8, RGBA{0.46, 0.85, 0.84, 0.9});
     mesh.draw_mode = GL_LINE_STRIP;
     mesh.draw_mode = GL_TRIANGLE_STRIP;
-    cube.material->line_width = 10;
+    cube.material.line_width = 10;
     cube.scale = 200;
     cube.position = {100, 100, 500};
 
@@ -117,7 +117,7 @@ int main() {
         grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
     }
     grid.mesh.draw_mode = GL_LINES;
-    grid.material->line_width = 6;
+    grid.material.line_width = 6;
     grid.scale = 100;
 
     // レンダリングループ

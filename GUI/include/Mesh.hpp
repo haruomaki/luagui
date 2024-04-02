@@ -93,7 +93,7 @@ class Mesh : public StaticMesh, public ResourceUpdate {
 class MeshObject : public Draw {
   public:
     StaticMesh &mesh;
-    Material *material;
+    Material &material;
 
     MeshObject(StaticMesh &mesh, Material *material = nullptr);
 
@@ -174,7 +174,7 @@ struct MeshDrawManager {
 
     void register_to_draw(const MeshObject &obj) {
         auto &mesh = obj.mesh;
-        const Material &material = *obj.material;
+        const Material &material = obj.material;
         const auto &shader = material.shader;
         StaticMesh *mp = &mesh;
         const Material *tp = &material; // = obj.material
