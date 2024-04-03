@@ -14,6 +14,7 @@ class World : public WorldObject {
     // メッシュ描画を一元管理するクラス
     friend class MeshObject;
     MeshDrawManager mesh_draw_manager_;
+    friend class WorldObject; // mesh_draw_manager_にアクセスするため
 
   public:
     Window &window;
@@ -53,6 +54,7 @@ class World : public WorldObject {
         }
 
         // メッシュを描画
+        this->mesh_draw_manager_.step();
         this->mesh_draw_manager_.draw_all_registered_objects(*active_camera());
     }
 

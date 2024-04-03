@@ -90,22 +90,116 @@ class Mesh : public StaticMesh, public ResourceUpdate {
         : StaticMesh(draw_mode, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
 };
 
-class MeshObject : public Draw {
+class MeshObject : virtual public WorldObject {
   public:
     StaticMesh &mesh;
     Material &material;
 
     MeshObject(StaticMesh &mesh, Material *material = nullptr);
-
-    void draw(const Camera &camera) const override;
 };
 
 struct MeshDrawManager {
     // メッシュ・マテリアル・シェーダの三項組ごとに一つモデル行列のvectorが決まる。
     // この行列キューごとに一回ドローコールを行う
+    // TODO: valueを一つの構造体にまとめる
     std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, vector<glm::mat4>> modelmatrices_storage{};
+    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::unordered_map<const MeshObject *, size_t>> object_index_maps{};
+    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::vector<const MeshObject *>> initial_lists;
+    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::vector<const MeshObject *>> delete_lists;
     // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
     std::unordered_map<const glm::mat4 *, std::pair<VertexBufferObject, VertexArrayObject>> previous_vbovao{};
+
+    static inline std::tuple<StaticMesh *, const Material *, const ProgramObject *> key_from(const MeshObject *obj) {
+        StaticMesh *mesh = &obj->mesh;
+        const Material *material = &obj->material;
+        const ProgramObject *shader = &obj->material.shader;
+        auto key = std::make_tuple(mesh, material, shader);
+        return key;
+    }
+
+    void set_model_matrix(const MeshObject *obj, const glm::mat4 &model_matrix) {
+        auto key = key_from(obj);
+
+        if (object_index_maps.contains(key)) {
+            auto &obj_ix_map = object_index_maps[key];
+
+            if (obj_ix_map.contains(obj)) {
+                // すでに登録済みのメッシュオブジェクトの場合、ただちに書き換え
+                auto index = obj_ix_map[obj];
+                modelmatrices_storage[key][index] = model_matrix;
+            } else {
+                // 新たなメッシュオブジェクトの場合、一旦initial_valuesに蓄えておく
+                if (!initial_lists.contains(key)) {
+                    initial_lists[key] = std::vector<const MeshObject *>();
+                }
+                initial_lists[key].emplace_back(obj);
+            }
+        } else {
+            // そもそも初めてのkeyのオブジェクトだった場合
+            assert(!modelmatrices_storage.contains(key));
+            modelmatrices_storage[key] = std::vector<glm::mat4>();
+            object_index_maps[key] = std::unordered_map<const MeshObject *, size_t>();
+            if (!initial_lists.contains(key)) {
+                initial_lists[key] = std::vector<const MeshObject *>();
+            }
+            initial_lists[key].emplace_back(obj);
+        }
+    }
+
+    void delete_model_matrix(const MeshObject *obj) {
+        auto key = key_from(obj);
+        if (!delete_lists.contains(key)) {
+            delete_lists[key] = std::vector<const MeshObject *>();
+        }
+        delete_lists[key].push_back(obj);
+    }
+
+    void step() {
+        // initial_lists[key]が空でないすべてのキーについてモデル行列キューを再生成
+        for (auto &[key, initial_list] : initial_lists) {
+            assert(object_index_maps.contains(key));
+
+            auto &obj_ix_map = object_index_maps[key];
+
+            // 登録予定キーを追加
+            for (const auto *ptr : initial_list) {
+                obj_ix_map[ptr] = 0; // ダミーの値を入れておく
+            }
+
+            // 削除予定キーを削除
+            if (delete_lists.contains(key)) {
+                auto &delete_list = delete_lists[key];
+                for (const auto *ptr : delete_list) {
+                    obj_ix_map.erase(ptr);
+                }
+            }
+
+            // インデックスの振り直しとモデル行列キューの再生成を同時に行う
+            auto queue_size = obj_ix_map.size();
+            modelmatrices_storage[key] = std::vector<glm::mat4>(queue_size);
+            size_t counter = 0;
+            for (auto &[obj, index] : obj_ix_map) {
+                auto model_matrix = obj->get_absolute_transform();
+                index = counter++;
+                modelmatrices_storage[key][index] = model_matrix;
+            }
+        }
+
+        // 各キューを削除
+        initial_lists = std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::vector<const MeshObject *>>();
+        delete_lists = std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::vector<const MeshObject *>>();
+
+        // 使われなくなったモデル行列キューは削除する
+        for (auto it = modelmatrices_storage.begin(); it != modelmatrices_storage.end();) {
+            const auto &model_matrices = it->second;
+            if (model_matrices.size() == 0) {
+                assert(object_index_maps[it->first].size() == 0);
+                it = modelmatrices_storage.erase(it);
+            } else {
+                it++;
+            }
+        }
+    }
 
     static VertexArrayObject generate_vao(StaticMesh &mesh, const ProgramObject &shader, const VertexBufferObject &model_matrices_vbo) {
         print("VAO生成");
@@ -172,25 +266,6 @@ struct MeshDrawManager {
         });
     }
 
-    void register_to_draw(const MeshObject &obj) {
-        auto &mesh = obj.mesh;
-        const Material &material = obj.material;
-        const auto &shader = material.shader;
-        StaticMesh *mp = &mesh;
-        const Material *tp = &material; // = obj.material
-        const ProgramObject *sp = &shader;
-        const auto key = std::make_tuple(mp, tp, sp); // メッシュとシェーダの組をキーとする
-
-        // 新規キーのとき
-        if (!modelmatrices_storage.contains(key)) {
-            modelmatrices_storage[key] = std::vector<glm::mat4>(0);
-        }
-
-        // モデル行列をキューに追加
-        const glm::mat4 &model_matrix = obj.get_absolute_transform();
-        modelmatrices_storage[key].push_back(model_matrix);
-    }
-
     void draw_all_registered_objects(const Camera &camera) {
         std::unordered_map<const glm::mat4 *, std::pair<VertexBufferObject, VertexArrayObject>> current_vbovao{};
 
@@ -201,6 +276,7 @@ struct MeshDrawManager {
             auto &model_matrices = it->second; // モデル行列キュー
 
             // もはや使われなくなったモデル行列キューは削除し、次のキーへ
+            // FIXME: これ要らない
             if (model_matrices.size() == 0) {
                 it = modelmatrices_storage.erase(it);
                 continue;
