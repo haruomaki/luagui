@@ -21,7 +21,7 @@ void WorldObject::refresh_absolute_transform() {
     // メッシュオブジェクトの場合は描画のための更新
     const auto *obj = dynamic_cast<MeshObject *>(this);
     if (obj != nullptr) {
-        this->world_.mesh_draw_manager_.set_model_matrix(obj, abs_transform_);
+        this->world_.mesh_draw_manager_.set_model_matrix(obj);
     }
 
     for (auto const &child : children_) {
@@ -43,11 +43,12 @@ WorldObject::WorldObject()
     }())
     , world_(this->parent_->world_) {
 
-    // メッシュオブジェクトの場合は描画のための登録 TODO: 不要？
-    const auto *obj = dynamic_cast<MeshObject *>(this);
-    if (obj != nullptr) {
-        this->world_.mesh_draw_manager_.set_model_matrix(obj, abs_transform_);
-    }
+    // // メッシュオブジェクトの場合は描画のための登録
+    // const auto *obj = dynamic_cast<MeshObject *>(this);
+    // if (obj != nullptr) {
+    //     this->world_.mesh_draw_manager_.set_model_matrix(obj);
+    // }
+    // NOTE: 上記をコメントアウトしていると、MeshObjectの位置を一度更新するまで描画されないことに注意。
 }
 
 WorldObject::~WorldObject() {

@@ -98,14 +98,17 @@ class MeshObject : virtual public WorldObject {
     MeshObject(StaticMesh &mesh, Material *material = nullptr);
 };
 
+struct ModelMatricesObservation {
+    vector<glm::mat4> model_matrices{};
+    std::unordered_map<const MeshObject *, size_t> object_index_map{};
+    std::vector<const MeshObject *> initial_list{};
+    std::vector<const MeshObject *> delete_list{};
+};
+
 struct MeshDrawManager {
     // メッシュ・マテリアル・シェーダの三項組ごとに一つモデル行列のvectorが決まる。
     // この行列キューごとに一回ドローコールを行う
-    // TODO: valueを一つの構造体にまとめる
-    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, vector<glm::mat4>> modelmatrices_storage{};
-    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::unordered_map<const MeshObject *, size_t>> object_index_maps{};
-    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::vector<const MeshObject *>> initial_lists;
-    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::vector<const MeshObject *>> delete_lists;
+    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, ModelMatricesObservation> observations{};
     // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
     std::unordered_map<const glm::mat4 *, std::pair<VertexBufferObject, VertexArrayObject>> previous_vbovao{};
 
@@ -117,88 +120,71 @@ struct MeshDrawManager {
         return key;
     }
 
-    void set_model_matrix(const MeshObject *obj, const glm::mat4 &model_matrix) {
+    void set_model_matrix(const MeshObject *obj) {
         auto key = key_from(obj);
 
-        if (object_index_maps.contains(key)) {
-            auto &obj_ix_map = object_index_maps[key];
+        if (observations.contains(key)) {
+            auto &obj_ix_map = observations[key].object_index_map;
 
             if (obj_ix_map.contains(obj)) {
                 // すでに登録済みのメッシュオブジェクトの場合、ただちに書き換え
-                auto index = obj_ix_map[obj];
-                modelmatrices_storage[key][index] = model_matrix;
+                size_t index = obj_ix_map[obj];
+                const auto &model_matrix = obj->get_absolute_transform();
+                observations[key].model_matrices[index] = model_matrix;
             } else {
                 // 新たなメッシュオブジェクトの場合、一旦initial_valuesに蓄えておく
-                if (!initial_lists.contains(key)) {
-                    initial_lists[key] = std::vector<const MeshObject *>();
-                }
-                initial_lists[key].emplace_back(obj);
+                observations[key].initial_list.emplace_back(obj);
             }
         } else {
-            // そもそも初めてのkeyのオブジェクトだった場合
-            assert(!modelmatrices_storage.contains(key));
-            modelmatrices_storage[key] = std::vector<glm::mat4>();
-            object_index_maps[key] = std::unordered_map<const MeshObject *, size_t>();
-            if (!initial_lists.contains(key)) {
-                initial_lists[key] = std::vector<const MeshObject *>();
-            }
-            initial_lists[key].emplace_back(obj);
+            // そもそも初めてのkeyのオブジェクトだった場合、キーを追加してやはりinitial_valuesに蓄える
+            observations[key] = ModelMatricesObservation{};
+            observations[key].initial_list.emplace_back(obj);
         }
     }
 
     void delete_model_matrix(const MeshObject *obj) {
         auto key = key_from(obj);
-        if (!delete_lists.contains(key)) {
-            delete_lists[key] = std::vector<const MeshObject *>();
-        }
-        delete_lists[key].push_back(obj);
+        assert(observations.contains(key)); // 一度も登録されていないキーを持つオブジェクトの削除要求
+        observations[key].delete_list.push_back(obj);
     }
 
     void step() {
-        // initial_lists[key]が空でないすべてのキーについてモデル行列キューを再生成
-        for (auto &[key, initial_list] : initial_lists) {
-            assert(object_index_maps.contains(key));
+        // initial_listとdelete_listのいずれかが空でないすべてのキーについてモデル行列キューを再生成
+        for (auto &[key, obs] : observations) {
+            if (obs.initial_list.size() != 0 || obs.delete_list.size() != 0) {
+                auto &obj_ix_map = obs.object_index_map;
 
-            auto &obj_ix_map = object_index_maps[key];
+                // 登録予定キーを追加
+                for (const auto *ptr : obs.initial_list) {
+                    obj_ix_map.insert_or_assign(ptr, 0); // ダミーの値を入れておく
+                }
 
-            // 登録予定キーを追加
-            for (const auto *ptr : initial_list) {
-                obj_ix_map[ptr] = 0; // ダミーの値を入れておく
-            }
-
-            // 削除予定キーを削除
-            if (delete_lists.contains(key)) {
-                auto &delete_list = delete_lists[key];
-                for (const auto *ptr : delete_list) {
+                // 削除予定キーを削除
+                for (const auto *ptr : obs.delete_list) {
                     obj_ix_map.erase(ptr);
+                }
+
+                // インデックスの振り直しとモデル行列キューの再生成を一挙に行う
+                auto queue_size = obj_ix_map.size();
+                obs.model_matrices = std::vector<glm::mat4>(queue_size); // モデル行列キュー再生成
+                size_t counter = 0;
+                for (auto &[obj, index] : obj_ix_map) {
+                    const auto &model_matrix = obj->get_absolute_transform();
+                    index = counter++;
+                    obs.model_matrices[index] = model_matrix;
                 }
             }
 
-            // インデックスの振り直しとモデル行列キューの再生成を同時に行う
-            auto queue_size = obj_ix_map.size();
-            modelmatrices_storage[key] = std::vector<glm::mat4>(queue_size);
-            size_t counter = 0;
-            for (auto &[obj, index] : obj_ix_map) {
-                auto model_matrix = obj->get_absolute_transform();
-                index = counter++;
-                modelmatrices_storage[key][index] = model_matrix;
-            }
+            // 各キューを削除
+            obs.initial_list = std::vector<const MeshObject *>();
+            obs.delete_list = std::vector<const MeshObject *>();
         }
-
-        // 各キューを削除
-        initial_lists = std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::vector<const MeshObject *>>();
-        delete_lists = std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, std::vector<const MeshObject *>>();
 
         // 使われなくなったモデル行列キューは削除する
-        for (auto it = modelmatrices_storage.begin(); it != modelmatrices_storage.end();) {
-            const auto &model_matrices = it->second;
-            if (model_matrices.size() == 0) {
-                assert(object_index_maps[it->first].size() == 0);
-                it = modelmatrices_storage.erase(it);
-            } else {
-                it++;
-            }
-        }
+        std::erase_if(observations, [](const auto &item) {
+            const auto &[key, obs] = item;
+            return (obs.model_matrices.size() == 0); // 必ず obs.object_index_map == 0 でもあるはず
+        });
     }
 
     static VertexArrayObject generate_vao(StaticMesh &mesh, const ProgramObject &shader, const VertexBufferObject &model_matrices_vbo) {
@@ -270,17 +256,10 @@ struct MeshDrawManager {
         std::unordered_map<const glm::mat4 *, std::pair<VertexBufferObject, VertexArrayObject>> current_vbovao{};
 
         // モデル行列キューの一覧を走査
-        for (auto it = modelmatrices_storage.begin(); it != modelmatrices_storage.end();) {
-            StaticMesh &mesh = *std::get<0>(it->first);
-            const Material &material = *std::get<1>(it->first);
-            auto &model_matrices = it->second; // モデル行列キュー
-
-            // もはや使われなくなったモデル行列キューは削除し、次のキーへ
-            // FIXME: これ要らない
-            if (model_matrices.size() == 0) {
-                it = modelmatrices_storage.erase(it);
-                continue;
-            }
+        for (const auto &[key, obs] : observations) {
+            StaticMesh &mesh = *std::get<0>(key);
+            const Material &material = *std::get<1>(key);
+            const auto &model_matrices = obs.model_matrices; // モデル行列キュー
 
             VertexBufferObject model_matrices_vbo;
             VertexArrayObject batch_vao;
@@ -304,10 +283,8 @@ struct MeshDrawManager {
             // 描画
             draw_instanced(mesh, material, batch_vao, model_matrices.size(), camera);
 
-            // 描画を終えたモデル行列のキューは空に
-            model_matrices.clear();
+            // VBOとVAOのキャッシュを記録
             current_vbovao[ptr] = std::make_pair(std::move(model_matrices_vbo), std::move(batch_vao));
-            it++; // 忘れずに
         }
 
         // VBOとVAOのキャッシュを次のフレームに持ち越し
