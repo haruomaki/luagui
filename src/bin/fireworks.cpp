@@ -97,6 +97,8 @@ int main() {
 
     // world.append_child<SparkEffect<GlassBall>>(3, 60);
     world.append_child<Hiyoko>();
+    // auto h = Hiyoko();
+    // Hiyoko g(h);
     world.append_child<SparkEffect<WorldObject>>(3, 60);
 
     gui.mainloop();

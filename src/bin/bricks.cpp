@@ -21,8 +21,12 @@ class GlassBall : public MeshObject, Update {
     GlassBall(Window &window)
         : MeshObject(gen_mesh(window), &gen_material(window)) {}
 
+    // クローンコンストラクタ
+    GlassBall(const GlassBall &other)
+        : MeshObject(other) {}
+
     double t = 0;
-    const double cycle = 30;
+    double cycle = 30;
 
     void update() override {
         position = glm::vec3{0.1 * cos(t / cycle), 0.1 * sin(t / cycle), 0.1};
@@ -65,7 +69,7 @@ int main() {
     auto &brick_material = MaterialBuilder().texture(brick_texture).build(window);
     auto &brick_mesh = create_brick_mesh(window);
 
-    constexpr int num_x = 1000, num_y = 500;
+    constexpr int num_x = 100, num_y = 50;
     auto bricks = std::vector(num_x, std::vector<MeshObject *>(num_y));
     for (int x = 0; x < num_x; x++) {
         for (int y = 0; y < num_y; y++) {
@@ -75,6 +79,8 @@ int main() {
     }
 
     auto &ball = world.append_child<GlassBall>(window);
+    auto &ball2 = world.append_child<GlassBall>(ball);
+    ball2.cycle = 40;
 
     gui.mainloop();
 }

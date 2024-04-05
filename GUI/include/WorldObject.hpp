@@ -47,11 +47,11 @@ class WorldObject {
     // }
     // }
 
-    // コピー禁止
-    WorldObject(const WorldObject &) = delete;
-    WorldObject &operator=(const WorldObject &) const = delete;
+    // クローンは可能
+    WorldObject(const WorldObject &);
+    WorldObject &operator=(const WorldObject &) const = delete; // コピー代入は消す
 
-    // ムーブも禁止
+    // ムーブは禁止
     WorldObject(WorldObject &&) = delete;
     WorldObject &operator=(WorldObject &&) const = delete;
 
@@ -163,3 +163,11 @@ class WorldObject {
     PropertyGetSet<&WorldObject::get_scale_prop, &WorldObject::set_scale_prop> scale_prop{this};
     PropertyGetSet<&WorldObject::get_rotate, &WorldObject::set_rotate> rotate{this};
 };
+
+// template <class T>
+// T &clone(T& obj) {
+// void clone(WorldObject& obj) {
+//     auto parent = obj.get_parent();
+//     assert(parent != nullptr);
+//     parent->append_child<T>(Args &&args...)
+// }

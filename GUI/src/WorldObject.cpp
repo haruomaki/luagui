@@ -58,3 +58,15 @@ WorldObject::~WorldObject() {
         this->world_.mesh_draw_manager_.delete_model_matrix(obj);
     }
 }
+
+WorldObject::WorldObject(const WorldObject &other)
+    : pos_(other.pos_)
+    , rotate_(other.rotate_)
+    , scale_(other.scale_)
+    , abs_transform_(other.abs_transform_)
+    , parent_([&] {
+        auto *parent = other.parent_;
+        assert(parent != nullptr);
+        return parent;
+    }())
+    , world_(other.world_) {}
