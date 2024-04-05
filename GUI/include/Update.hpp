@@ -10,7 +10,7 @@ class Update : virtual public WorldObject {
     virtual void update() = 0;
     Update();
     ~Update() override;
-    Update(const Update &) = delete;
+    Update(const Update &);
     Update &operator=(const Update &) const = delete;
     Update(Update &&) = delete;
     Update &operator=(Update &&) const = delete;

@@ -18,16 +18,8 @@ class GlassBall : public MeshObject, Update {
     }
 
   public:
-    GlassBall(Window &window)
-        : MeshObject(gen_mesh(window), &gen_material(window)) {}
-
-    // クローンコンストラクタ
-    GlassBall(const GlassBall &other)
-        : MeshObject(other) {}
-    GlassBall &operator=(const GlassBall &) = delete;
-    GlassBall(const GlassBall &&) = delete;
-    GlassBall &operator=(const GlassBall &&) = delete;
-    ~GlassBall() override = default;
+    GlassBall()
+        : MeshObject(gen_mesh(this->get_world().window), &gen_material(this->get_world().window)) {}
 
     double t = 0;
     double cycle = 30;
@@ -82,9 +74,9 @@ int main() {
         }
     }
 
-    auto &ball = world.append_child<GlassBall>(window);
+    auto &ball = world.append_child<GlassBall>();
     auto &ball2 = world.append_child<GlassBall>(ball);
-    ball2.cycle = 37;
+    ball2.cycle = 47;
 
     gui.mainloop();
 }
