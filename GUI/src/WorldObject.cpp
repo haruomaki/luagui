@@ -64,9 +64,11 @@ WorldObject::WorldObject(const WorldObject &other)
     , rotate_(other.rotate_)
     , scale_(other.scale_)
     , abs_transform_(other.abs_transform_)
-    , parent_([&] {
-        auto *parent = other.parent_;
-        assert(parent != nullptr);
+    , parent_([] {
+        auto *parent = get_parent_static();
+        if (parent == nullptr) {
+            throw std::runtime_error("WorldObjectの親の設定に失敗");
+        }
         return parent;
     }())
     , world_(other.world_) {}

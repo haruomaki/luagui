@@ -24,6 +24,10 @@ class GlassBall : public MeshObject, Update {
     // クローンコンストラクタ
     GlassBall(const GlassBall &other)
         : MeshObject(other) {}
+    GlassBall &operator=(const GlassBall &) = delete;
+    GlassBall(const GlassBall &&) = delete;
+    GlassBall &operator=(const GlassBall &&) = delete;
+    ~GlassBall() override = default;
 
     double t = 0;
     double cycle = 30;
@@ -80,7 +84,7 @@ int main() {
 
     auto &ball = world.append_child<GlassBall>(window);
     auto &ball2 = world.append_child<GlassBall>(ball);
-    ball2.cycle = 40;
+    ball2.cycle = 37;
 
     gui.mainloop();
 }
