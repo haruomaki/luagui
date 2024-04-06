@@ -71,4 +71,12 @@ WorldObject::WorldObject(const WorldObject &other)
         }
         return parent;
     }())
-    , world_(other.world_) {}
+    , world_(other.world_) {
+    print("コピーコンストラクタ");
+    for (const auto &child : other.children_) {
+        // const auto &r = *child;
+        // const auto *type_name = typeid(r).name();
+        // debug(type_name);
+        parent_->append_child<WorldObject>(*child); // FIXME: 派生クラスのコピーコンストラクタを呼ぶ必要がある
+    }
+}
