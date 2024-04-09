@@ -78,8 +78,8 @@ int main() {
     auto &block = ball.append_child<MeshObject>(brick_mesh, &brick_material);
     block.position = {0.02, -0.02, 0};
 
-    auto &ball2 = world.append_child<GlassBall>(ball);
-    ball2.cycle = 47;
+    // auto &ball2 = world.append_child<GlassBall>(ball);
+    // ball2.cycle = 47;
 
     gui.mainloop();
 }

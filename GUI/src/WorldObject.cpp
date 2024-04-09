@@ -59,24 +59,24 @@ WorldObject::~WorldObject() {
     }
 }
 
-WorldObject::WorldObject(const WorldObject &other)
-    : pos_(other.pos_)
-    , rotate_(other.rotate_)
-    , scale_(other.scale_)
-    , abs_transform_(other.abs_transform_)
-    , parent_([] {
-        auto *parent = get_parent_static();
-        if (parent == nullptr) {
-            throw std::runtime_error("WorldObjectの親の設定に失敗");
-        }
-        return parent;
-    }())
-    , world_(other.world_) {
-    print("コピーコンストラクタ");
-    for (const auto &child : other.children_) {
-        // const auto &r = *child;
-        // const auto *type_name = typeid(r).name();
-        // debug(type_name);
-        parent_->append_child<WorldObject>(*child); // FIXME: 派生クラスのコピーコンストラクタを呼ぶ必要がある
-    }
-}
+// WorldObject::WorldObject(const WorldObject &other)
+//     : pos_(other.pos_)
+//     , rotate_(other.rotate_)
+//     , scale_(other.scale_)
+//     , abs_transform_(other.abs_transform_)
+//     , parent_([] {
+//         auto *parent = get_parent_static();
+//         if (parent == nullptr) {
+//             throw std::runtime_error("WorldObjectの親の設定に失敗");
+//         }
+//         return parent;
+//     }())
+//     , world_(other.world_) {
+//     print("コピーコンストラクタ");
+//     for (const auto &child : other.children_) {
+//         // const auto &r = *child;
+//         // const auto *type_name = typeid(r).name();
+//         // debug(type_name);
+//         child->clone();
+//     }
+// }

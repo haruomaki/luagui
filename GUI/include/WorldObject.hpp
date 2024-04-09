@@ -47,8 +47,8 @@ class WorldObject {
     // }
     // }
 
-    // クローンは可能
-    WorldObject(const WorldObject &);
+    // クローン可能
+    WorldObject(const WorldObject &) = delete;
     WorldObject &operator=(const WorldObject &) const = delete; // コピー代入は消す
 
     // ムーブは禁止
@@ -87,6 +87,10 @@ class WorldObject {
             ++it;
         }
         return false;
+    }
+
+    virtual WorldObject *clone() {
+        // 親クラスのcloneも明示的に呼ばなければいけない（一般にコンストラクタで親コンストラクタを呼ばなければならないのと同じ問題）
     }
 
     // void showAbsolutePositionRecursively(int depth) const {
