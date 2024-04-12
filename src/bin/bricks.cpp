@@ -44,9 +44,9 @@ int main() {
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
     World &world = window.create_world();
-    // auto &camera = world.append_child<MobileOrthoCamera>();
-    auto &camera = world.append_child<MobileNormalCamera>();
-    camera.rotate = ANGLE_Y(M_PIf);
+    auto &camera = world.append_child<MobileOrthoCamera>();
+    // auto &camera = world.append_child<MobileNormalCamera>();
+    // camera.rotate = ANGLE_Y(M_PIf);
     camera.set_active();
 
     // 三角形の表示
@@ -74,12 +74,16 @@ int main() {
         }
     }
 
-    auto &ball = world.append_child<GlassBall>();
-    auto &block = ball.append_child<MeshObject>(brick_mesh, &brick_material);
-    block.position = {0.02, -0.02, 0};
+    auto gen = [&](double cycle) {
+        auto &ball = world.append_child<GlassBall>();
+        auto &block = ball.append_child<MeshObject>(brick_mesh, &brick_material);
+        block.position = {0.015, -0.005, -0.001};
+        ball.cycle = cycle;
+    };
 
-    auto &ball2 = world.append_child<GlassBall>(ball);
-    ball2.cycle = 47;
+    gen(30);
+    gen(47);
+    gen(-25);
 
     gui.mainloop();
 }
