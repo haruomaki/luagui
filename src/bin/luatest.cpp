@@ -11,6 +11,19 @@ int main() {
     // 明示的に標準ライブラリの読み込み
     luaL_openlibs(state);
 
+    lua_register(state, "twice", [](lua_State *pL) -> int {
+        // Luaからの引数を取得する
+        const lua_Number ret = lua_tonumber(pL, 1);
+        lua_pop(pL, lua_gettop(pL));
+
+        // Luaに渡す戻り値を詰める
+        const int val = static_cast<int>(ret) * 2;
+        lua_pushinteger(pL, val);
+
+        const int returnLuaNum = 1; // Luaに渡す戻り値の数
+        return returnLuaNum;
+    });
+
     // Luaスクリプトを読み込む
     if (luaL_loadfile(state, "assets/scripts/luatest.lua") || lua_pcall(state, 0, 0, 0)) {
         cerr << "Error: " << lua_tostring(state, -1) << endl;
