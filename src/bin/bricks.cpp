@@ -10,7 +10,7 @@ class GlassBall : public MeshObject, Update {
     static StaticMesh &gen_mesh(Window &window) {
         auto &mesh = window.append_resource<StaticMesh>();
         mesh.use_index = false;
-        mesh.vertices.coords = {{0, 0, 0}, {0.02, 0, 0}, {0.02, 0.02, 0}, {0, 0.02, 0}};
+        mesh.vertices.coords = {{-0.1, -0.1, 0}, {0.1, -0.1, 0}, {0.1, 0.1, 0}, {-0.1, 0.1, 0}};
         mesh.vertices.uvs = {{0, 1}, {1, 1}, {1, 0}, {0, 0}};
         mesh.draw_mode = GL_TRIANGLE_FAN;
         mesh.sync_vram();
@@ -40,6 +40,14 @@ static StaticMesh &create_brick_mesh(Window &window) {
     return brick_mesh;
 }
 
+inline void flick_ball(glm::vec3 power_point, GlassBall &ball) {
+    glm::vec2 direction = glm::vec2{ball.get_position() - power_point};
+    auto distance = glm::length(direction);
+    auto power = double(2 * exp(-distance));
+    auto velocity2d = direction / distance * power;
+    ball.velocity = {velocity2d.x, velocity2d.y, 0};
+}
+
 int main() {
     constexpr int width = 600, height = 500;
     GUI gui;
@@ -48,6 +56,8 @@ int main() {
     // auto &camera = world.append_child<MobileOrthoCamera>();
     auto &camera = world.append_child<MobileNormalCamera>();
     camera.rotate = ANGLE_Y(M_PIf);
+    camera.position = {0, 0, 2};
+    camera.scale = 10;
     camera.set_active();
 
     // 三角形の表示
@@ -75,19 +85,34 @@ int main() {
         }
     }
 
-    auto gen = [&](glm::vec3 v) {
-        auto &ball = world.append_child<GlassBall>();
+    auto &stage = world.append_child<WorldObject>();
+    stage.position = {0, 0, 0.1};
+
+    auto gen = [&](glm::vec3 v) -> GlassBall & {
+        auto &ball = stage.append_child<GlassBall>();
         auto &block = ball.append_child<MeshObject>(brick_mesh, &brick_material);
         block.position = {0.015, -0.005, -0.001};
         ball.position = {0, 0, 0.1};
         ball.velocity = v;
+        return ball;
     };
 
-    gen({0.06, 0, 0});
-    gen({0.03, 0.18, 0});
-    gen({-0.01, -0.03, 0});
+    auto &ball1 = gen({0.6, 0, 0});
+    auto &ball2 = gen({0.3, 0.8, 0});
+    auto &ball3 = gen({-0.1, -0.3, 0});
 
-    new_rect(world, {{-1, -1, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}}, {0.5, 1, 1, 1});
+    world.timer.task(2.0, [&] {
+        auto power_point = camera.get_position();
+        flick_ball(power_point, ball1);
+        flick_ball(power_point, ball2);
+        flick_ball(power_point, ball3);
+    });
+
+    auto stage_color = glm::vec4{0.5, 0.7, 0.7, 1};
+    new_rect(stage, {{-1, 1, 0}, {1, 1, 0}, {1.1, 1.1, 0}, {-1.1, 1.1, 0}}, stage_color);
+    new_rect(stage, {{-1.1, -1.1, 0}, {-1, -1, 0}, {-1, 1, 0}, {-1.1, 1.1, 0}}, stage_color);
+    new_rect(stage, {{-1.1, -1.1, 0}, {1.1, -1.1, 0}, {1, -1, 0}, {-1, -1, 0}}, stage_color);
+    new_rect(stage, {{1, -1, 0}, {1.1, -1.1, 0}, {1.1, 1.1, 0}, {1, 1, 0}}, stage_color);
 
     gui.mainloop();
 }
