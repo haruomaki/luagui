@@ -48,17 +48,17 @@ class Window {
     // Window(Window &&) = default;
     // Window &operator=(Window &&) = default;
 
-    [[nodiscard]] GLFWwindow *get_glfw() const;
-    [[nodiscard]] pair<int, int> get_window_size() const;
-    [[nodiscard]] pair<int, int> get_frame_buffer_size() const;
-    [[nodiscard]] pair<float, float> get_window_content_scale() const;
+    [[nodiscard]] GLFWwindow *glfw() const;
+    [[nodiscard]] pair<int, int> window_size() const;
+    [[nodiscard]] pair<int, int> frame_buffer_size() const;
+    [[nodiscard]] pair<float, float> window_content_scale() const;
     void close() const;
 
     // glfwGetKeyのラッパー。GLFW_PRESSのときtrue、GLFW_RELEASEのときfalse
-    [[nodiscard]] bool get_key(int key) const;
+    [[nodiscard]] bool key(int key) const;
 
     // glfwGetCursorPos()のラッパー
-    [[nodiscard]] pair<double, double> get_cursor_pos() const;
+    [[nodiscard]] pair<double, double> cursor_pos() const;
 
     template <typename T, typename... Args>
         requires std::is_constructible_v<T, Args...> && // ArgsはTのコンストラクタの引数

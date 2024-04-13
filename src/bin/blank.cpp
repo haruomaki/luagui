@@ -7,7 +7,7 @@ int main() {
     Window &window = gui.create_window(1280, 720, "blank");
     World &main_world = window.create_world();
 
-    glfwSetInputMode(window.get_glfw(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window.glfw(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     auto &camera = main_world.append_child<MobileNormalCamera>();
     camera.position = {0, 0, 10};

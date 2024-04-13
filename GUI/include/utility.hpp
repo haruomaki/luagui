@@ -32,25 +32,25 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
         constexpr float speed = 0.002;
         const Window &window = this->get_world().window;
 
-        if (window.get_key(GLFW_KEY_RIGHT)) {
+        if (window.key(GLFW_KEY_RIGHT)) {
             position += get_left() * speed;
         }
-        if (window.get_key(GLFW_KEY_LEFT)) {
+        if (window.key(GLFW_KEY_LEFT)) {
             position += get_right() * speed;
         }
-        if (window.get_key(GLFW_KEY_DOWN)) {
+        if (window.key(GLFW_KEY_DOWN)) {
             position += get_down() * speed;
         }
-        if (window.get_key(GLFW_KEY_UP)) {
+        if (window.key(GLFW_KEY_UP)) {
             position += get_up() * speed;
         }
-        if (window.get_key(GLFW_KEY_Z)) {
+        if (window.key(GLFW_KEY_Z)) {
             scale /= 1.01F;
         }
-        if (window.get_key(GLFW_KEY_X)) {
+        if (window.key(GLFW_KEY_X)) {
             scale *= 1.01F;
         }
-        if (window.get_key(GLFW_KEY_Q)) {
+        if (window.key(GLFW_KEY_Q)) {
             window.close();
         }
 
@@ -70,48 +70,48 @@ class MobileNormalCamera : public Camera, protected Update {
     void update() override {
         const Window &window = this->get_world().window;
 
-        if (window.get_key(GLFW_KEY_W)) {
+        if (window.key(GLFW_KEY_W)) {
             position += get_front() * speed;
         }
-        if (window.get_key(GLFW_KEY_A)) {
+        if (window.key(GLFW_KEY_A)) {
             position += get_left() * speed;
         }
-        if (window.get_key(GLFW_KEY_S)) {
+        if (window.key(GLFW_KEY_S)) {
             position += get_back() * speed;
         }
-        if (window.get_key(GLFW_KEY_D)) {
+        if (window.key(GLFW_KEY_D)) {
             position += get_right() * speed;
         }
-        if (window.get_key(GLFW_KEY_SPACE)) {
+        if (window.key(GLFW_KEY_SPACE)) {
             position += get_up() * speed;
         }
-        if (window.get_key(GLFW_KEY_LEFT_SHIFT)) {
+        if (window.key(GLFW_KEY_LEFT_SHIFT)) {
             position += get_down() * speed;
         }
-        if (window.get_key(GLFW_KEY_RIGHT)) {
+        if (window.key(GLFW_KEY_RIGHT)) {
             rotate *= ANGLE_Y(-angle_speed);
         }
-        if (window.get_key(GLFW_KEY_LEFT)) {
+        if (window.key(GLFW_KEY_LEFT)) {
             rotate *= ANGLE_Y(angle_speed);
         }
-        if (window.get_key(GLFW_KEY_DOWN)) {
+        if (window.key(GLFW_KEY_DOWN)) {
             camera_head_.rotate *= ANGLE_X(angle_speed);
         }
-        if (window.get_key(GLFW_KEY_UP)) {
+        if (window.key(GLFW_KEY_UP)) {
             camera_head_.rotate *= ANGLE_X(-angle_speed);
         }
-        if (window.get_key(GLFW_KEY_Z)) {
+        if (window.key(GLFW_KEY_Z)) {
             // 移動速度が変わる
             scale *= 1.01;
         }
-        if (window.get_key(GLFW_KEY_X)) {
+        if (window.key(GLFW_KEY_X)) {
             scale /= 1.01;
         }
-        if (window.get_key(GLFW_KEY_Q)) {
+        if (window.key(GLFW_KEY_Q)) {
             window.close();
         }
 
-        auto [new_x, new_y] = window.get_cursor_pos();
+        auto [new_x, new_y] = window.cursor_pos();
         auto dx = new_x - this->cursor_pos.first;
         auto dy = new_y - this->cursor_pos.second;
         rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.1f);
@@ -122,7 +122,7 @@ class MobileNormalCamera : public Camera, protected Update {
   public:
     float speed = 0.003;
     float angle_speed = 0.02;
-    pair<double, double> cursor_pos = this->get_world().window.get_cursor_pos();
+    pair<double, double> cursor_pos = this->get_world().window.cursor_pos();
 
     MobileNormalCamera(const Viewport *viewport = nullptr)
         : camera_head_(this->append_child<NormalCamera>(viewport)) {}

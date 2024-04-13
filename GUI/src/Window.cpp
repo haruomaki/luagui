@@ -90,23 +90,23 @@ Window::~Window() {
     // glfwSetKeyCallback(gwin_, nullptr);
 }
 
-GLFWwindow *Window::get_glfw() const {
+GLFWwindow *Window::glfw() const {
     return this->gwin_;
 }
 
-pair<int, int> Window::get_window_size() const {
+pair<int, int> Window::window_size() const {
     int width, height;
     glfwGetWindowSize(gwin_, &width, &height);
     return {width, height};
 }
 
-pair<int, int> Window::get_frame_buffer_size() const {
+pair<int, int> Window::frame_buffer_size() const {
     int width, height;
     glfwGetFramebufferSize(gwin_, &width, &height);
     return {width, height};
 }
 
-pair<float, float> Window::get_window_content_scale() const {
+pair<float, float> Window::window_content_scale() const {
     float xscale, yscale;
     glfwGetWindowContentScale(gwin_, &xscale, &yscale);
     return {xscale, yscale};
@@ -116,11 +116,11 @@ void Window::close() const {
     glfwSetWindowShouldClose(gwin_, GL_TRUE);
 }
 
-bool Window::get_key(int key) const {
+bool Window::key(int key) const {
     return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
 }
 
-pair<double, double> Window::get_cursor_pos() const {
+pair<double, double> Window::cursor_pos() const {
     double x, y;
     glfwGetCursorPos(this->gwin_, &x, &y);
     return {x, y};

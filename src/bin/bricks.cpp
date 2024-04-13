@@ -21,12 +21,13 @@ class GlassBall : public MeshObject, Update {
     GlassBall()
         : MeshObject(gen_mesh(this->get_world().window), &gen_material(this->get_world().window)) {}
 
-    double t = 0;
-    double cycle = 30;
+    glm::vec3 velocity{0, 0, 0};
+    double decay = 0.99;
 
     void update() override {
-        position = glm::vec3{0.1 * cos(t / cycle), 0.1 * sin(t / cycle), 0.1};
-        t++;
+        int fps = get_world().window.gui.video_mode().refreshRate;
+        position += velocity / fps;
+        velocity *= decay;
     }
 };
 
@@ -74,16 +75,17 @@ int main() {
         }
     }
 
-    auto gen = [&](double cycle) {
+    auto gen = [&](glm::vec3 v) {
         auto &ball = world.append_child<GlassBall>();
         auto &block = ball.append_child<MeshObject>(brick_mesh, &brick_material);
         block.position = {0.015, -0.005, -0.001};
-        ball.cycle = cycle;
+        ball.position = {0, 0, 0.1};
+        ball.velocity = v;
     };
 
-    gen(30);
-    gen(47);
-    gen(-25);
+    gen({0.06, 0, 0});
+    gen({0.03, 0.18, 0});
+    gen({-0.01, -0.03, 0});
 
     gui.mainloop();
 }
