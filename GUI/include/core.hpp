@@ -5,7 +5,7 @@
 
 struct InterleavedVertexInfo {
     glm::vec3 coord = {0, 0, 0};
-    RGBA color = {0, 0, 0, 0};
+    RGBA color = {1, 1, 1, 1};
     glm::vec2 uv = {0, 0};
 };
 

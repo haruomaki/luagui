@@ -20,7 +20,6 @@ class StaticMesh : virtual public Resource {
     size_t indices_n_ = 0;
     size_t capacity_ = 0;
     size_t indices_capacity_ = 0;
-    static constexpr RGBA default_color{0.8f, 0.8f, 0.8f, 1};
 
     void regenerate_vbo() {
         print("VBO生成");
@@ -46,12 +45,11 @@ class StaticMesh : virtual public Resource {
         , n_(coords.size())
         , capacity_(coords.capacity())
         , draw_mode(draw_mode) {
-        vector<InterleavedVertexInfo> vers = {};
+        vector<InterleavedVertexInfo> vers(n_);
         for (size_t i = 0; i < n_; i++) {
-            glm::vec3 coord = coords[i];
-            RGBA color = (i < colors.size() ? colors[i] : default_color); // 色情報がないときは白色に
-            glm::vec2 uv = (i < uvs.size() ? uvs[i] : glm::vec2{0, 0});   // uv情報がないときは(0,0)に
-            vers.push_back({coord, color, uv});
+            vers[i].coord = coords[i];
+            if (i < colors.size()) vers[i].color = colors[i]; // 色情報がないときは白色に
+            if (i < uvs.size()) vers[i].uv = uvs[i];          // uv情報がないときは(0,0)に
         }
         vertices = vers;
 
@@ -239,6 +237,7 @@ struct MeshDrawManager {
         // モデルの描画
         GLuint tex_id = material.texture.value_or(0);
         shader.set_uniform("is_tex", (tex_id == 0 ? GL_FALSE : GL_TRUE));
+        shader.set_uniform("baseColor", material.base_color);
         vao.bind([&] {
             glBindTexture(GL_TEXTURE_2D, tex_id); // テクスチャを指定
             if (mesh.use_index) {
