@@ -1,4 +1,4 @@
-#include "utility.hpp"
+#include "utility2.hpp"
 #include <master.hpp>
 
 class GlassBall : public MeshObject, Update {
@@ -45,9 +45,9 @@ int main() {
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
     World &world = window.create_world();
-    auto &camera = world.append_child<MobileOrthoCamera>();
-    // auto &camera = world.append_child<MobileNormalCamera>();
-    // camera.rotate = ANGLE_Y(M_PIf);
+    // auto &camera = world.append_child<MobileOrthoCamera>();
+    auto &camera = world.append_child<MobileNormalCamera>();
+    camera.rotate = ANGLE_Y(M_PIf);
     camera.set_active();
 
     // 三角形の表示
@@ -86,6 +86,8 @@ int main() {
     gen({0.06, 0, 0});
     gen({0.03, 0.18, 0});
     gen({-0.01, -0.03, 0});
+
+    new_rect(world);
 
     gui.mainloop();
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Camera.hpp"
 #include "Mesh.hpp"
 #include "Update.hpp"

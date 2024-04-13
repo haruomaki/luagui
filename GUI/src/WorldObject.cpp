@@ -48,7 +48,8 @@ WorldObject::WorldObject()
     // if (obj != nullptr) {
     //     this->world_.mesh_draw_manager_.set_model_matrix(obj);
     // }
-    // NOTE: 上記をコメントアウトしていると、MeshObjectの位置を一度更新するまで描画されないことに注意。
+    // NOTE: MeshObjectの位置を一度更新するまで描画されないことに注意。
+    // WARNING: コンストラクタ中ではdynamic_castが動かない。なんとかして位置を更新せずとも描画されるようにする方法を考えたい。
 }
 
 WorldObject::~WorldObject() {
