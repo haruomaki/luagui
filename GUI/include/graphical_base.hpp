@@ -29,6 +29,7 @@ std::ostream &operator<<(std::ostream &os, const glm::mat<c, r, T, q> input_mat)
 } // namespace base
 
 // これより上に書かないと動かない
+#include "logger.hpp"
 #include <base.hpp>
 
 // base.hppのインクルードのあとでも問題無い処理
