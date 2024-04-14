@@ -109,9 +109,12 @@ int main() {
     });
 
     int counter = 0;
-    UpdateObject &up = world.append_child<UpdateObject>([&counter, &up] {
-        if (counter++ > 100) {
-            up.erase();
+
+    world.append_child<UpdateObject>([&counter](auto &self) {
+        debug(counter++);
+        if (counter > 100) {
+            // self.position = {1, 1, 1};
+            self.erase();
         }
     });
 

@@ -5,8 +5,9 @@ class UpdateObject : virtual public WorldObject {
     FunctionId id_;
 
   public:
-    UpdateObject(std::function<void()> &&f) {
-        auto id = this->get_world().updates.set_function(std::move(f));
+    UpdateObject(std::function<void(UpdateObject &)> &&f) {
+        auto func = [f, this] { f(*this); };
+        auto id = this->get_world().updates.set_function(std::move(func));
         this->id_ = id;
     }
     ~UpdateObject() override {
