@@ -30,9 +30,9 @@ Window::Window(GUI &gui, int width, int height, const char *title)
         throw std::runtime_error("GLEWの初期化に失敗しました");
     }
 
-    debug(glGetString(GL_VERSION));
-    debug(glGetString(GL_VENDOR));
-    debug(glGetString(GL_RENDERER));
+    dump(glGetString(GL_VERSION));
+    dump(glGetString(GL_VENDOR));
+    dump(glGetString(GL_RENDERER));
 
     // ブレンド（透明処理）の設定
     glEnable(GL_BLEND);
