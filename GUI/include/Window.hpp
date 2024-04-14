@@ -15,8 +15,7 @@ class Viewport;
 class Window {
     GLFWwindow *gwin_ = nullptr;
     std::set<std::unique_ptr<Resource>> window_objects_;
-    FunctionSet<void(int, int)> size_callbacks_;
-    std::set<std::function<void(int, int)> *> key_callbacks_;
+    FunctionSet<void(int, int)> size_callbacks_; // TODO: key_callbackに合わせてpublicにしてもいい
     std::vector<std::unique_ptr<World>> worlds_ = {};
 
     friend class SizeCallback;
@@ -36,6 +35,8 @@ class Window {
     Material *default_material = nullptr;
     Viewport *default_viewport = nullptr;
     FunctionSet<void()> resource_updates;
+
+    FunctionSet<void(int key, int action)> key_callbacks;
 
     Window(GUI &gui, int width, int height, const char *title);
     ~Window();

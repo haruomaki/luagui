@@ -101,20 +101,12 @@ int main() {
     auto &ball2 = gen({0.3, 0.8, 0});
     auto &ball3 = gen({-0.1, -0.3, 0});
 
-    world.timer.task(2.0, [&] {
-        auto power_point = camera.get_position();
-        flick_ball(power_point, ball1);
-        flick_ball(power_point, ball2);
-        flick_ball(power_point, ball3);
-    });
-
-    int counter = 0;
-
-    world.append_child<UpdateObject>([&counter](auto &self) {
-        debug(counter++);
-        if (counter > 100) {
-            // self.position = {1, 1, 1};
-            self.erase();
+    window.key_callbacks.set_function([&](int key, int action) {
+        if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
+            auto power_point = camera.get_position();
+            flick_ball(power_point, ball1);
+            flick_ball(power_point, ball2);
+            flick_ball(power_point, ball3);
         }
     });
 
