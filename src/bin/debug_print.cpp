@@ -1,20 +1,15 @@
-#include <graphical_base.hpp>
+#include <iostream>
+#include <source_location>
 
-#include <base.hpp>
-
-struct MyC {
-    friend ostream &operator<<(ostream &os, const MyC &input) {
-        os << "MyCだおw";
-        return os;
+template <int n, typename... Ts>
+void log(std::source_location loc, Ts... args) {
+    std::cout << loc.file_name() << ":" << loc.line() << ":" << loc.column() << " ";
+    for (size_t i = 0; i < n; i++) {
+        (std::cout << ... << args) << std::endl;
     }
-};
+}
 
 int main() {
-    debug(234);
-
-    MyC myc;
-    debug(myc);
-
-    auto v = glm::vec3{1, 2, 3};
-    debug(v);
+    log<5>(std::source_location::current(), "Hello", " ", "World!"); // 非型引数Nを10として指定し、型引数は推論される
+    return 0;
 }

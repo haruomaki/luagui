@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <iostream>
 #include <source_location>
 
@@ -32,8 +33,11 @@
 // -DDEBUGを指定したときだけ有効になる
 // -----------------------------------
 
-inline void print_headline(const char *icon, const char *file, int line) {
-    std::cerr << icon << "(" << file << ":" << line << ")";
+inline void print_headline(const char *icon, const char *file, uint line) {
+    std::cerr << icon << " " << file << ":" << line << "]";
+}
+inline void print_headline(const char *icon, std::source_location loc) {
+    print_headline(icon, loc.file_name(), loc.line());
 }
 
 // 引数を任意の区切り文字で標準エラーに出力
@@ -44,9 +48,16 @@ inline void print_impl(const char *sep, const T &arg, const Args &...args) {
     ((std::cerr << sep << args), ...);
 }
 
-template <typename... Args>
-inline void print_pre(const char *icon, const char *file, int line, const Args &...args) {
-    print_headline(icon, file, line);
+// template <typename... Args>
+// inline void print_pre(const char *icon, const char *file, int line, const Args &...args) {
+//     print_headline(icon, file, line);
+// }
+
+template <int n, typename... Ts>
+inline void log(std::source_location loc, Ts... args) {
+    // std::cout << loc.file_name() << ":" << loc.line() << ":" << loc.column() << " ";
+    constexpr std::array<const char *, 3> icons = {"ℹ️", "✅", "🐝"};
+    print_headline(icons[n], loc);
     if constexpr (sizeof...(args) > 0) {
         std::cerr << " ";
         print_impl("", args...);
@@ -90,8 +101,8 @@ inline void time_pre(const char *file, int line, Func &&func) {
 }
 
 #ifdef DEBUG
-#define print(...) print_pre("✅", __FILE__, __LINE__ __VA_OPT__(, __VA_ARGS__))       // NOLINT(cppcoreguidelines-macro-usage)
-#define warn(...) print_pre("🐝", __FILE__, __LINE__ __VA_OPT__(, __VA_ARGS__))        // NOLINT(cppcoreguidelines-macro-usage)
+#define print(...) log<1>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))   // NOLINT(cppcoreguidelines-macro-usage)
+#define warn(...) log<2>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))    // NOLINT(cppcoreguidelines-macro-usage)
 #define dump(...) dump_pre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
 #define time(...) time_pre(__FILE__, __LINE__, [&] { __VA_ARGS__; })                   // NOLINT(cppcoreguidelines-macro-usage)
 #else
