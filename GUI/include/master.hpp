@@ -16,3 +16,5 @@
 #include <World.hpp>
 #include <WorldObject.hpp>
 #include <graphical_base.hpp>
+
+#include "UpdateObject.hpp"

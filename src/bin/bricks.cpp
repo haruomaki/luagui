@@ -108,6 +108,13 @@ int main() {
         flick_ball(power_point, ball3);
     });
 
+    int counter = 0;
+    UpdateObject &up = world.append_child<UpdateObject>([&counter, &up] {
+        if (counter++ > 100) {
+            up.erase();
+        }
+    });
+
     auto stage_color = glm::vec4{0.5, 0.7, 0.7, 1};
     new_rect(stage, {{-1, 1, 0}, {1, 1, 0}, {1.1, 1.1, 0}, {-1.1, 1.1, 0}}, stage_color);
     new_rect(stage, {{-1.1, -1.1, 0}, {-1, -1, 0}, {-1, 1, 0}, {-1.1, 1.1, 0}}, stage_color);
