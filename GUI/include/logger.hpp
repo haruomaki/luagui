@@ -1,6 +1,31 @@
 #pragma once
 
 #include <iostream>
+#include <source_location>
+
+// enum class LogLevel {
+//     Trace,
+//     Warn,
+// };
+
+// constexpr LogLevel log_level = LogLevel::Trace;
+
+// struct LogLevelWithLocation {
+//     int value;
+//     std::source_location loc;
+
+//     LogLevelWithLocation(int log_level,
+//                          const std::source_location &l = std::source_location::current())
+//         : value(log_level)
+//         , loc(l) {}
+// };
+
+// template <typename... Args>
+// void debug(LogLevelWithLocation lv, Args &&...args) {
+//     printf("%s:%d] ", lv.loc.file_name(), lv.loc.line());
+//     ((std::cout << std::forward<Args>(args) << " "), ...);
+//     std::cout << std::endl;
+// }
 
 // -----------------------------------
 // デバッグ系
@@ -73,3 +98,17 @@ inline void time_pre(const char *file, int line, Func &&func) {
 #define debug(...)
 #define time(...) __VA_ARGS__
 #endif
+
+// template <int log_level, typename... Ts>
+// struct new_print {
+//     new_print(Ts &&...ts, const std::source_location &loc = std::source_location::current()) {
+//         if constexpr (log_level >= 3) {
+//             std::cout << loc.function_name() << " line " << loc.line() << ": ";
+//             ((std::cout << std::forward<Ts>(ts) << " "), ...);
+//             std::cout << std::endl;
+//         }
+//     }
+// };
+
+// template <typename... Ts>
+// new_print(Ts &&...) -> new_print<4, Ts...>;

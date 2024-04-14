@@ -177,11 +177,9 @@ void Window::update_routine() {
     }
 
     // 各ワールドの更新処理
-    print("updateはじめ");
     for (const auto &world : this->worlds_) {
         world->master_update();
     }
-    print("updateおわり");
 }
 
 // World::draw_priority_に基づき、worlds_を昇順に並べ替える

@@ -113,6 +113,9 @@ int main() {
         }
     });
 
+    // debug(34, "hello {}!", "world"); // compile now
+    // debug3("hello {}!", "world");    // compile now
+
     auto stage_color = glm::vec4{0.5, 0.7, 0.7, 1};
     new_rect(stage, {{-1, 1, 0}, {1, 1, 0}, {1.1, 1.1, 0}, {-1.1, 1.1, 0}}, stage_color);
     new_rect(stage, {{-1.1, -1.1, 0}, {-1, -1, 0}, {-1, 1, 0}, {-1.1, 1.1, 0}}, stage_color);

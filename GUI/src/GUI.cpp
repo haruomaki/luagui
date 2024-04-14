@@ -22,20 +22,15 @@ void GUI::mainloop() {
         // this->windows_.push_back(vvv);
 
         // 閉じるべきウィンドウを見つけてvectorから削除
-        print("d1");
         auto remove_begin = std::remove_if(this->windows_.begin(), this->windows_.end(), [](const auto &window) {
             return glfwWindowShouldClose(window->gwin_) != 0;
         });
         this->windows_.erase(remove_begin, this->windows_.end());
-        print("d2");
 
         // 生きている各ウィンドウに対して更新および描画
         for (const auto &window : this->windows_) {
-            print("p1");
             window->update_routine();
-            print("p2");
             window->draw_routine();
-            print("p3");
         }
 
         // 受け取ったイベント（キーボードやマウス入力）を処理する
