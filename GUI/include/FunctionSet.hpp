@@ -32,7 +32,13 @@ class FunctionSet {
         return this->functions_.at(id);
     }
 
-    // 範囲ベースforで回せるように
-    auto begin() const { return this->functions_.begin(); }
-    auto end() const { return this->functions_.end(); }
+    // ループ中に要素の追加や削除をしても問題ないようなforeach文
+    template <typename Proc>
+        requires std::is_invocable_v<Proc, Func>
+    void safe_foreach(Proc &&proc) {
+        for (auto it = this->functions_.begin(); it != this->functions_.end(); it++) {
+            const auto &function = it->second;
+            proc(function);
+        }
+    }
 };

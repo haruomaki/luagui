@@ -52,18 +52,18 @@ Window::Window(GUI &gui, int width, int height, const char *title)
         // debug(window->getViewMatrix());
 
         // 登録されたコールバック関数たちを実行
-        for (const auto &[id, size_callback] : window->size_callbacks_) {
+        window->size_callbacks_.safe_foreach([&](auto size_callback) {
             size_callback(width, height);
-        }
+        });
     });
 
     // キーコールバック
     // INFO: キャラを一定速度で動かしたいなどの際は、1フレームごとにgetKeyメソッドを呼び出す方がいい
     glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int /*scancode*/, int action, int /*mods*/) {
         auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
-        for (const auto &[id, key_callback] : window->key_callbacks) {
+        window->key_callbacks.safe_foreach([&](auto key_callback) {
             key_callback(key, action);
-        }
+        });
     });
 
     // デフォルトシェーダの設定
@@ -172,9 +172,9 @@ void Window::update_routine() {
     // world_object_root_.refreshAbsolutePosition();
 
     // リソースの更新処理
-    for (const auto &[id, update] : this->resource_updates) {
+    this->resource_updates.safe_foreach([](const auto update) {
         update();
-    }
+    });
 
     // 各ワールドの更新処理
     for (const auto &world : this->worlds_) {

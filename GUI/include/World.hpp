@@ -28,7 +28,7 @@ class World : public WorldObject {
         , window(window) {}
 
     ~World() override {
-        print("Worldのデストラクタ");
+        info("Worldのデストラクタ");
         this->children_.clear(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
     }
 
@@ -38,9 +38,9 @@ class World : public WorldObject {
     World &operator=(World &&) const = delete;
 
     void master_update() {
-        for (const auto &[id, update] : this->updates) {
+        this->updates.safe_foreach([&](const auto update) {
             update();
-        }
+        });
 
         this->timer.step(); // タイマーを進める
     }
@@ -49,9 +49,9 @@ class World : public WorldObject {
         if (this->active_camera_ == nullptr) {
             print("警告: アクティブなカメラが存在しません");
         }
-        for (const auto &[id, draw] : this->draws) {
+        this->draws.safe_foreach([&](const auto draw) {
             draw(*this->active_camera_);
-        }
+        });
 
         // メッシュを描画
         this->mesh_draw_manager_.step();
