@@ -22,14 +22,14 @@ class StaticMesh : virtual public Resource {
     size_t indices_capacity_ = 0;
 
     void regenerate_vbo() {
-        print("VBO生成");
+        info("VBO生成");
         // 空のVBOを生成
         this->vbo_ = VertexBufferObject(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, usage_);
         vao_should_regen_ = true;
     }
 
     void regenerate_ibo() {
-        print("IBO生成");
+        info("IBO生成");
         this->ebo_ = ElementBufferObject(sizeof(int) * indices.size(), indices.data(), usage_);
         vao_should_regen_ = true;
     }
@@ -186,7 +186,7 @@ struct MeshDrawManager {
     }
 
     static VertexArrayObject generate_vao(StaticMesh &mesh, const ProgramObject &shader, const VertexBufferObject &model_matrices_vbo) {
-        print("VAO生成");
+        info("VAO生成");
         auto vao = VertexArrayObject();
 
         // VAOに頂点の座標と色を関連付ける

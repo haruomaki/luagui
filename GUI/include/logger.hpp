@@ -4,29 +4,15 @@
 #include <iostream>
 #include <source_location>
 
-// enum class LogLevel {
-//     Trace,
-//     Warn,
-// };
-
-// constexpr LogLevel log_level = LogLevel::Trace;
-
-// struct LogLevelWithLocation {
-//     int value;
-//     std::source_location loc;
-
-//     LogLevelWithLocation(int log_level,
-//                          const std::source_location &l = std::source_location::current())
-//         : value(log_level)
-//         , loc(l) {}
-// };
-
-// template <typename... Args>
-// void debug(LogLevelWithLocation lv, Args &&...args) {
-//     printf("%s:%d] ", lv.loc.file_name(), lv.loc.line());
-//     ((std::cout << std::forward<Args>(args) << " "), ...);
-//     std::cout << std::endl;
-// }
+enum class LogLevel {
+    Off,
+    Warn,
+    Print,
+    Info,
+    Trace,
+};
+constexpr std::array<const char *, 5> icons = {"", "🐝", "✅", "ℹ️", "🏞️"};
+constexpr LogLevel default_log_level = LogLevel::Print;
 
 // -----------------------------------
 // デバッグ系
@@ -48,22 +34,24 @@ inline void print_impl(const char *sep, const T &arg, const Args &...args) {
     ((std::cerr << sep << args), ...);
 }
 
-// template <typename... Args>
-// inline void print_pre(const char *icon, const char *file, int line, const Args &...args) {
-//     print_headline(icon, file, line);
-// }
-
-template <int n, typename... Ts>
+template <LogLevel level, typename... Ts>
 inline void log(std::source_location loc, Ts... args) {
-    // std::cout << loc.file_name() << ":" << loc.line() << ":" << loc.column() << " ";
-    constexpr std::array<const char *, 3> icons = {"ℹ️", "✅", "🐝"};
-    print_headline(icons[n], loc);
+#ifdef DEBUG
+    if constexpr (level > default_log_level) return;
+
+    print_headline(icons[int(level)], loc);
     if constexpr (sizeof...(args) > 0) {
         std::cerr << " ";
         print_impl("", args...);
     }
     std::cerr << std::endl;
+#endif
 }
+
+#define warn(...) log<LogLevel::Warn>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))   // NOLINT(cppcoreguidelines-macro-usage)
+#define print(...) log<LogLevel::Print>(std::source_location::current() __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
+#define info(...) log<LogLevel::Info>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))   // NOLINT(cppcoreguidelines-macro-usage)
+#define trace(...) log<LogLevel::Trace>(std::source_location::current() __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
 
 template <class... Args> // NOTE: 未初期化変数の警告に対応するためconst T&を受け取る
 inline void dump_pre(const char *file, int line, const char *argnames, const Args &...args) {
@@ -101,8 +89,6 @@ inline void time_pre(const char *file, int line, Func &&func) {
 }
 
 #ifdef DEBUG
-#define print(...) log<1>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))   // NOLINT(cppcoreguidelines-macro-usage)
-#define warn(...) log<2>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))    // NOLINT(cppcoreguidelines-macro-usage)
 #define dump(...) dump_pre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
 #define time(...) time_pre(__FILE__, __LINE__, [&] { __VA_ARGS__; })                   // NOLINT(cppcoreguidelines-macro-usage)
 #else
