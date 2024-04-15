@@ -109,7 +109,8 @@ int main() {
             flick_ball(power_point, ball3);
         }
         if (key == GLFW_KEY_U) {
-            stage.position += glm::vec3{1, 0, 0};
+            // stage.position += glm::vec3{1, 0, 0};
+            stage.erase(); // FIXME: 描画されたままになる
         }
     });
 

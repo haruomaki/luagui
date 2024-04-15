@@ -58,9 +58,24 @@ class FunctionSet {
     template <typename Proc>
         requires std::is_invocable_v<Proc, Func>
     void safe_foreach(Proc &&proc) {
+        this->locked_ = true;
+
+        // foreachを実行
         for (auto it = this->functions_.begin(); it != this->functions_.end(); it++) {
             const auto &function = it->second;
             proc(function);
         }
+
+        // 追加 / 削除キューをリフレッシュ
+        for (auto [id, func] : this->set_queue_) {
+            this->set_function(id, std::move(func));
+        }
+        for (auto id : this->erase_queue_) {
+            this->erase_function(id);
+        }
+        this->set_queue_.clear();
+        this->erase_queue_.clear();
+
+        this->locked_ = false;
     }
 };
