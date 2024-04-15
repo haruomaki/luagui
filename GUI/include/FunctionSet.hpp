@@ -33,7 +33,6 @@ class FunctionSet {
     FunctionId request_set_function(std::function<Func> &&func) {
         auto id = this->function_id_counter_++;
         if (this->locked_) {
-            warn("locked!");
             this->set_queue_.emplace_back(id, std::move(func));
         } else {
             this->set_function(id, std::move(func));
@@ -43,7 +42,6 @@ class FunctionSet {
 
     void request_erase_function(FunctionId function_id) {
         if (this->locked_) {
-            warn("locked!");
             this->erase_queue_.emplace_back(function_id);
         } else {
             this->erase_function(function_id);

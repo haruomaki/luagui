@@ -94,6 +94,7 @@ class MeshObject : virtual public WorldObject {
     Material &material;
 
     MeshObject(StaticMesh &mesh, Material *material = nullptr);
+    ~MeshObject() override;
 };
 
 struct ModelMatricesObservation {

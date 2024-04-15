@@ -53,11 +53,6 @@ WorldObject::WorldObject()
 }
 
 WorldObject::~WorldObject() {
-    // メッシュオブジェクトの場合は描画の登録解除
-    const auto *obj = dynamic_cast<MeshObject *>(this);
-    if (obj != nullptr) {
-        this->world_.mesh_draw_manager_.delete_model_matrix(obj);
-    }
 }
 
 WorldObject::WorldObject(const WorldObject &other)
