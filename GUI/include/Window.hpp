@@ -88,7 +88,7 @@ class Window {
 
     template <>
     void set_callback<CallbackKind::Size>(std::function<void(int, int)> &&callback) {
-        this->size_callbacks_.set_function(std::move(callback));
+        this->size_callbacks_.request_set_function(std::move(callback));
     }
 
     // // コールバックを削除する関数群

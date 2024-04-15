@@ -11,11 +11,12 @@ template <typename Func>
 class FunctionSet {
     std::map<FunctionId, std::function<Func>> functions_ = {};
     FunctionId function_id_counter_ = 0;
+    bool locked_ = false;
+    std::vector<std::pair<FunctionId, std::function<Func>>> set_queue_{};
+    std::vector<FunctionId> erase_queue_{};
 
-  public:
-    FunctionId set_function(std::function<Func> &&func) {
-        this->functions_[this->function_id_counter_] = std::move(func);
-        return function_id_counter_++;
+    void set_function(FunctionId id, std::function<Func> &&func) {
+        this->functions_[id] = std::move(func);
     }
 
     bool erase_function(FunctionId function_id) {
@@ -26,6 +27,27 @@ class FunctionSet {
         }
         this->functions_.erase(pos);
         return true;
+    }
+
+  public:
+    FunctionId request_set_function(std::function<Func> &&func) {
+        auto id = this->function_id_counter_++;
+        if (this->locked_) {
+            warn("locked!");
+            this->set_queue_.emplace_back(id, std::move(func));
+        } else {
+            this->set_function(id, std::move(func));
+        }
+        return id;
+    }
+
+    void request_erase_function(FunctionId function_id) {
+        if (this->locked_) {
+            warn("locked!");
+            this->erase_queue_.emplace_back(function_id);
+        } else {
+            this->erase_function(function_id);
+        }
     }
 
     const std::function<Func> &at(FunctionId id) {

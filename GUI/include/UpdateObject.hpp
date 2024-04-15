@@ -7,12 +7,12 @@ class UpdateObject : virtual public WorldObject {
   public:
     UpdateObject(std::function<void(UpdateObject &)> &&f) {
         auto func = [f, this] { f(*this); };
-        auto id = this->get_world().updates.set_function(std::move(func));
+        auto id = this->get_world().updates.request_set_function(std::move(func));
         this->id_ = id;
     }
     ~UpdateObject() override {
         auto id = this->id_;
-        this->get_world().updates.erase_function(id);
+        this->get_world().updates.request_erase_function(id);
     }
 
     UpdateObject(const UpdateObject &) = delete;
@@ -26,12 +26,12 @@ class KeyCallbackObject : virtual public WorldObject {
 
   public:
     KeyCallbackObject(std::function<void(int key, int action)> &&f) {
-        auto id = this->get_world().window.key_callbacks.set_function(std::move(f));
+        auto id = this->get_world().window.key_callbacks.request_set_function(std::move(f));
         this->id_ = id;
     }
     ~KeyCallbackObject() override {
         auto id = this->id_;
-        this->get_world().window.key_callbacks.erase_function(id);
+        this->get_world().window.key_callbacks.request_erase_function(id);
     }
 
     KeyCallbackObject(const KeyCallbackObject &) = delete;

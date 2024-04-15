@@ -55,7 +55,7 @@ int main() {
         points_num = (points_num - 90) % 200 + 100; // 100〜300を繰り返す
     });
 
-    world.updates.set_function([&] {
+    world.updates.request_set_function([&] {
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);

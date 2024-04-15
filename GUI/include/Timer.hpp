@@ -21,7 +21,7 @@ class Timer {
         // mapのイテレーション最中に要素を削除してはいけない
         for (auto &&id : this->ids_to_erase_) {
             this->task_infos_.erase(id);
-            this->tasks_.erase_function(id);
+            this->tasks_.request_erase_function(id);
         }
         this->ids_to_erase_.clear();
 
@@ -38,7 +38,7 @@ class Timer {
 
   public:
     FunctionId task(double interval, std::function<void()> &&callback) {
-        auto id = this->tasks_.set_function(std::forward<std::function<void()>>(callback));
+        auto id = this->tasks_.request_set_function(std::forward<std::function<void()>>(callback));
         this->task_infos_.emplace(std::piecewise_construct,
                                   std::forward_as_tuple(id),
                                   std::forward_as_tuple(std::chrono::duration<double>(interval), std::chrono::high_resolution_clock::time_point()));
