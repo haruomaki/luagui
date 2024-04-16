@@ -115,11 +115,12 @@ int main() {
     });
 
     auto stage_color = glm::vec4{0.5, 0.7, 0.7, 1};
-    new_rect(stage, {{-1, 1, 0}, {1, 1, 0}, {1.1, 1.1, 0}, {-1.1, 1.1, 0}}, stage_color);
-    new_rect(stage, {{-1.1, -1.1, 0}, {-1, -1, 0}, {-1, 1, 0}, {-1.1, 1.1, 0}}, stage_color);
-    new_rect(stage, {{-1.1, -1.1, 0}, {1.1, -1.1, 0}, {1, -1, 0}, {-1, -1, 0}}, stage_color);
-    new_rect(stage, {{1, -1, 0}, {1.1, -1.1, 0}, {1.1, 1.1, 0}, {1, 1, 0}}, stage_color);
-    new_rect(stage, {{-1, -1, 0}, {1, -1, 0}, {1, 1, 0}, {-1, 1, 0}}, {0.9, 0.6, 0.5, 1});
+    auto &stage_material = MaterialBuilder().base_color(stage_color).priority(-1).build(window);
+    new_rect(stage, {{-1, 1, 0}, {1, 1, 0}, {1.1, 1.1, 0}, {-1.1, 1.1, 0}}, stage_material);
+    new_rect(stage, {{-1.1, -1.1, 0}, {-1, -1, 0}, {-1, 1, 0}, {-1.1, 1.1, 0}}, stage_material);
+    new_rect(stage, {{-1.1, -1.1, 0}, {1.1, -1.1, 0}, {1, -1, 0}, {-1, -1, 0}}, stage_material);
+    new_rect(stage, {{1, -1, 0}, {1.1, -1.1, 0}, {1.1, 1.1, 0}, {1, 1, 0}}, stage_material);
+    new_rect(stage, {{-1, -1, 0}, {1, -1, 0}, {1, 1, 0}, {-1, 1, 0}}, MaterialBuilder().base_color({0.9, 0.6, 0.5, 1}).priority(-1).build(window));
 
     gui.mainloop();
 }

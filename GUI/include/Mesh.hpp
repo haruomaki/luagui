@@ -281,8 +281,20 @@ struct MeshDrawManager {
     }
 
     void draw_all_registered_objects(const Camera &camera) {
-        // モデル行列キューの一覧を走査
+        // マテリアルの優先度に基づいてキーをソート
+        std::vector<KeyType> sorted_keys{};
+        sorted_keys.reserve(observations.size());
         for (const auto &[key, obs] : observations) {
+            sorted_keys.push_back(key);
+        }
+        std::sort(sorted_keys.begin(), sorted_keys.end(), [](const auto &key1, const auto &key2) {
+            const Material &material1 = *std::get<1>(key1);
+            const Material &material2 = *std::get<1>(key2);
+            return material1.priority < material2.priority;
+        });
+
+        // モデル行列キューの一覧を走査
+        for (const auto &key : sorted_keys) {
             draw_observation(key, camera);
         }
     }

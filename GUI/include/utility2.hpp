@@ -2,10 +2,9 @@
 
 #include <utility.hpp>
 
-inline MeshObject &new_rect(WorldObject &parent, const std::vector<glm::vec3> &coords, const glm::vec4 &base_color) {
+inline MeshObject &new_rect(WorldObject &parent, const std::vector<glm::vec3> &coords, Material &material) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<StaticMesh>();
-    auto &material = MaterialBuilder().base_color(base_color).build(window);
     auto &obj = parent.append_child<MeshObject>(mesh, &material);
 
     mesh.vertices.coords = coords;

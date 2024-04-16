@@ -6,13 +6,15 @@ class ProgramObject;
 
 struct Material : public Resource {
     const ProgramObject &shader;
+    int priority;
     glm::vec4 base_color;
     std::optional<GLuint> texture;
     double point_size;
     double line_width;
 
-    Material(const ProgramObject *shader, const glm::vec4 &color, std::optional<GLuint> texture, double point_size, double line_width)
+    Material(const ProgramObject *shader, int priority, const glm::vec4 &color, std::optional<GLuint> texture, double point_size, double line_width)
         : shader(shader == nullptr ? *this->get_window().default_shader : *shader)
+        , priority(priority)
         , base_color(color)
         , texture(texture)
         , point_size(point_size)
@@ -22,6 +24,7 @@ struct Material : public Resource {
 
 class MaterialBuilder {
     const ProgramObject *shader_ = nullptr;
+    int priority_ = 0;
     glm::vec4 base_color_ = {1, 1, 1, 1};
     std::optional<GLuint> texture_ = std::nullopt;
     double point_size_ = 4;
@@ -30,6 +33,11 @@ class MaterialBuilder {
   public:
     MaterialBuilder shader(const ProgramObject &shader) {
         this->shader_ = &shader;
+        return *this;
+    }
+
+    MaterialBuilder priority(int priority) {
+        this->priority_ = priority;
         return *this;
     }
 
@@ -54,7 +62,7 @@ class MaterialBuilder {
     }
 
     Material &build(Window &window) {
-        auto &material = window.append_resource<Material>(shader_, base_color_, texture_, point_size_, line_width_);
+        auto &material = window.append_resource<Material>(shader_, priority_, base_color_, texture_, point_size_, line_width_);
         return material;
     }
 };
