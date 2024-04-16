@@ -13,6 +13,5 @@ inline MeshObject &new_rect(WorldObject &parent, const std::vector<glm::vec3> &c
     mesh.sync_vram();
     mesh.draw_mode = GL_TRIANGLE_FAN;
     mesh.use_index = false;
-    obj.position = {0, 0, 0};
     return obj;
 }

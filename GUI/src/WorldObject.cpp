@@ -42,37 +42,30 @@ WorldObject::WorldObject()
         return p;
     }())
     , world_(this->parent_->world_) {
-
-    // // メッシュオブジェクトの場合は描画のための登録
-    // const auto *obj = dynamic_cast<MeshObject *>(this);
-    // if (obj != nullptr) {
-    //     this->world_.mesh_draw_manager_.set_model_matrix(obj);
-    // }
-    // NOTE: MeshObjectの位置を一度更新するまで描画されないことに注意。
-    // WARNING: コンストラクタ中ではdynamic_castが動かない。なんとかして位置を更新せずとも描画されるようにする方法を考えたい。
 }
 
 WorldObject::~WorldObject() {
 }
 
-WorldObject::WorldObject(const WorldObject &other)
-    : pos_(other.pos_)
-    , rotate_(other.rotate_)
-    , scale_(other.scale_)
-    , abs_transform_(other.abs_transform_)
-    , parent_([] {
-        auto *parent = get_parent_static();
-        if (parent == nullptr) {
-            throw std::runtime_error("WorldObjectの親の設定に失敗");
-        }
-        return parent;
-    }())
-    , world_(other.world_) {
-    print("コピーコンストラクタ");
-    for (const auto &child : other.children_) {
-        // const auto &r = *child;
-        // const auto *type_name = typeid(r).name();
-        // debug(type_name);
-        parent_->append_child<WorldObject>(*child); // FIXME: 派生クラスのコピーコンストラクタを呼ぶ必要がある
-    }
-}
+// NOTE: 現状、オブジェクトのクローンは不可能
+// WorldObject::WorldObject(const WorldObject &other)
+//     : pos_(other.pos_)
+//     , rotate_(other.rotate_)
+//     , scale_(other.scale_)
+//     , abs_transform_(other.abs_transform_)
+//     , parent_([] {
+//         auto *parent = get_parent_static();
+//         if (parent == nullptr) {
+//             throw std::runtime_error("WorldObjectの親の設定に失敗");
+//         }
+//         return parent;
+//     }())
+//     , world_(other.world_) {
+//     print("コピーコンストラクタ");
+//     for (const auto &child : other.children_) {
+//         // const auto &r = *child;
+//         // const auto *type_name = typeid(r).name();
+//         // debug(type_name);
+//         parent_->append_child<WorldObject>(*child); // FIXME: 派生クラスのコピーコンストラクタを呼ぶ必要がある
+//     }
+// }

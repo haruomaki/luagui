@@ -3,7 +3,10 @@
 
 MeshObject::MeshObject(StaticMesh &mesh, Material *material)
     : mesh(mesh)
-    , material(material == nullptr ? *this->get_world().window.default_material : *material) {}
+    , material(material == nullptr ? *this->get_world().window.default_material : *material) {
+    // 描画のための登録
+    this->get_world().mesh_draw_manager_.set_model_matrix(this);
+}
 
 MeshObject::~MeshObject() {
     // 描画の登録解除
