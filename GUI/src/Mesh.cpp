@@ -4,8 +4,8 @@
 MeshObject::MeshObject(StaticMesh &mesh, Material *material)
     : mesh(mesh)
     , material(material == nullptr ? *this->get_world().window.default_material : *material) {
-    // 描画のための登録
-    this->get_world().mesh_draw_manager_.set_model_matrix(this);
+    // 描画のための位置初期設定
+    this->position = this->get_position();
 }
 
 MeshObject::~MeshObject() {
