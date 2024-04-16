@@ -31,6 +31,15 @@ class MaterialBuilder {
     double line_width_ = 4;
 
   public:
+    MaterialBuilder() = default;
+    MaterialBuilder(Material &src)
+        : shader_(&src.shader)
+        , priority_(src.priority)
+        , base_color_(src.base_color)
+        , texture_(src.texture)
+        , point_size_(src.point_size)
+        , line_width_(src.line_width) {}
+
     MaterialBuilder shader(const ProgramObject &shader) {
         this->shader_ = &shader;
         return *this;
