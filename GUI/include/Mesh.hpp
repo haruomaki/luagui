@@ -102,16 +102,19 @@ struct ModelMatricesObservation {
     std::unordered_map<const MeshObject *, size_t> object_index_map{};
     std::vector<const MeshObject *> initial_list{};
     std::vector<const MeshObject *> delete_list{};
+
+    // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
+    const glm::mat4 *matrices_raw = nullptr;
+    std::pair<VertexBufferObject, VertexArrayObject> vbovao{};
 };
 
 struct MeshDrawManager {
     // メッシュ・マテリアル・シェーダの三項組ごとに一つモデル行列のvectorが決まる。
+    using KeyType = std::tuple<StaticMesh *, const Material *, const ProgramObject *>;
     // この行列キューごとに一回ドローコールを行う
-    std::map<std::tuple<StaticMesh *, const Material *, const ProgramObject *>, ModelMatricesObservation> observations{};
-    // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
-    std::unordered_map<const glm::mat4 *, std::pair<VertexBufferObject, VertexArrayObject>> previous_vbovao{};
+    std::map<KeyType, ModelMatricesObservation> observations{};
 
-    static inline std::tuple<StaticMesh *, const Material *, const ProgramObject *> key_from(const MeshObject *obj) {
+    static inline KeyType key_from(const MeshObject *obj) {
         StaticMesh *mesh = &obj->mesh;
         const Material *material = &obj->material;
         const ProgramObject *shader = &obj->material.shader;
@@ -252,42 +255,35 @@ struct MeshDrawManager {
         });
     }
 
-    void draw_all_registered_objects(const Camera &camera) {
-        std::unordered_map<const glm::mat4 *, std::pair<VertexBufferObject, VertexArrayObject>> current_vbovao{};
+    void draw_observation(KeyType key, const Camera &camera) {
+        auto &obs = observations[key];
+        StaticMesh &mesh = *std::get<0>(key);
+        const Material &material = *std::get<1>(key);
+        const auto &model_matrices = obs.model_matrices; // モデル行列キュー
 
-        // モデル行列キューの一覧を走査
-        for (const auto &[key, obs] : observations) {
-            StaticMesh &mesh = *std::get<0>(key);
-            const Material &material = *std::get<1>(key);
-            const auto &model_matrices = obs.model_matrices; // モデル行列キュー
-
-            VertexBufferObject model_matrices_vbo;
-            VertexArrayObject batch_vao;
-
-            const glm::mat4 *ptr = model_matrices.data(); // vector内部の生ポインタ
-            if (previous_vbovao.contains(ptr) && !mesh.vao_should_regen_) {
-                // 前回のキャッシュがあればそれを使用
-                auto vv = std::move(previous_vbovao[ptr]);
-                model_matrices_vbo = std::move(vv.first);
-                batch_vao = std::move(vv.second);
-            } else {
-                // キャッシュが無い、もしくはメッシュのVBO更新等で再生成が必要ならば空のVBO&VAOを新規作成
-                // TODO: メッシュのVBO更新の際はVAOの再生成だけで十分。model_matrices_vboの再生成は必要ない
-                model_matrices_vbo = VertexBufferObject(sizeof(glm::mat4) * model_matrices.capacity(), nullptr, GL_DYNAMIC_DRAW);
-                batch_vao = generate_vao(mesh, material.shader, model_matrices_vbo);
-            }
-
-            // VBOに毎フレーム値をコピー
-            model_matrices_vbo.subdata(0, sizeof(glm::mat4) * model_matrices.size(), model_matrices.data());
-
-            // 描画
-            draw_instanced(mesh, material, batch_vao, model_matrices.size(), camera);
-
-            // VBOとVAOのキャッシュを記録
-            current_vbovao[ptr] = std::make_pair(std::move(model_matrices_vbo), std::move(batch_vao));
+        // モデル行列vectorのメモリ再確保、もしくはメッシュのVBO更新等で再生成が必要ならば空のVBO&VAOを新規作成
+        // TODO: メッシュのVBO更新の際はVAOの再生成だけで十分。model_matrices_vboの再生成は必要ない
+        if (obs.matrices_raw != model_matrices.data() || mesh.vao_should_regen_) {
+            obs.matrices_raw = model_matrices.data();
+            auto model_matrices_vbo = VertexBufferObject(sizeof(glm::mat4) * model_matrices.capacity(), nullptr, GL_DYNAMIC_DRAW);
+            auto batch_vao = generate_vao(mesh, material.shader, model_matrices_vbo);
+            obs.vbovao = std::make_pair(std::move(model_matrices_vbo), std::move(batch_vao));
         }
 
-        // VBOとVAOのキャッシュを次のフレームに持ち越し
-        previous_vbovao = std::move(current_vbovao); // VertexBufferObjectクラスがコピー不可なのでムーブ
+        VertexBufferObject &model_matrices_vbo = obs.vbovao.first;
+        const VertexArrayObject &batch_vao = obs.vbovao.second;
+
+        // VBOに毎フレーム値をコピー
+        model_matrices_vbo.subdata(0, sizeof(glm::mat4) * model_matrices.size(), model_matrices.data());
+
+        // 描画
+        draw_instanced(mesh, material, batch_vao, model_matrices.size(), camera);
+    }
+
+    void draw_all_registered_objects(const Camera &camera) {
+        // モデル行列キューの一覧を走査
+        for (const auto &[key, obs] : observations) {
+            draw_observation(key, camera);
+        }
     }
 };
