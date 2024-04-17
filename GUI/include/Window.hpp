@@ -25,6 +25,7 @@ class Window {
     friend class GUI;
     void draw_routine();
     void update_routine();
+    void physics_routine();
 
     friend class World;
     void refresh_world_order();

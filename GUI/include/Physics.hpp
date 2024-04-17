@@ -1,6 +1,13 @@
+#pragma once
+
 #include <WorldObject.hpp>
 
 class Rigidbody : virtual public WorldObject {
+  public:
+    std::optional<std::function<void()>> callback;
+
+    Rigidbody();
+    ~Rigidbody() override;
 };
 
 class AABB2d : public Rigidbody {
@@ -9,6 +16,6 @@ class AABB2d : public Rigidbody {
     float width = 0;
     float height = 0;
 
-    AABB2d() {
-    }
+    // AABB2d() {
+    // }
 };

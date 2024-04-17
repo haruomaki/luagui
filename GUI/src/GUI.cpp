@@ -34,8 +34,10 @@ void GUI::mainloop() {
             trace("mainloop p1");
             window->update_routine();
             trace("mainloop p2");
-            window->draw_routine();
+            window->physics_routine();
             trace("mainloop p3");
+            window->draw_routine();
+            trace("mainloop p4");
         }
 
         // 受け取ったイベント（キーボードやマウス入力）を処理する

@@ -2,6 +2,7 @@
 
 #include "Camera.hpp"
 #include "Mesh.hpp"
+#include "Physics.hpp"
 #include "Timer.hpp"
 #include "Window.hpp"
 
@@ -21,6 +22,7 @@ class World : public WorldObject {
     Timer timer;
     FunctionSet<void(const Camera &)> draws;
     FunctionSet<void()> updates;
+    std::set<const Rigidbody *> rigidbodies;
 
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
@@ -43,6 +45,14 @@ class World : public WorldObject {
         });
 
         this->timer.step(); // タイマーを進める
+    }
+
+    void master_physics() {
+        print("物理演算");
+        for (const auto &rigidbody : this->rigidbodies) {
+            dump(typeid(rigidbody).name());
+        }
+        dump(typeid(AABB2d).name());
     }
 
     void master_draw() {
