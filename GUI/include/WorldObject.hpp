@@ -126,6 +126,13 @@ class WorldObject {
     [[nodiscard]] glm::vec3 get_left() const { return abs_transform_ * glm::vec4{1, 0, 0, 0}; }
     [[nodiscard]] glm::vec3 get_up() const { return abs_transform_ * glm::vec4{0, 1, 0, 0}; }
     [[nodiscard]] glm::vec3 get_down() const { return abs_transform_ * glm::vec4{0, -1, 0, 0}; }
+    [[nodiscard]] glm::vec3 get_absolute_position() const {
+        return {abs_transform_[3]};
+    }
+    [[nodiscard]] float get_absolute_scale_prop() const {
+        glm::mat3 scale_rotate = {abs_transform_};
+        return std::cbrtf(glm::determinant(scale_rotate));
+    }
 
     void set_position(const glm::vec3 &pos) {
         pos_ = pos;

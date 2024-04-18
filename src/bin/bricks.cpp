@@ -143,5 +143,8 @@ int main() {
     bound3.width = 1;
     bound3.height = 1;
 
+    dump(bound1.get_absolute_scale_prop());
+    dump(bound1.get_absolute_position());
+
     gui.mainloop();
 }

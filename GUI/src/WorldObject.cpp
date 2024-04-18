@@ -42,6 +42,8 @@ WorldObject::WorldObject()
         return p;
     }())
     , world_(this->parent_->world_) {
+    // オブジェクトを生成したばかりでも絶対位置が機能するように
+    this->refresh_absolute_transform();
 }
 
 WorldObject::~WorldObject() {
