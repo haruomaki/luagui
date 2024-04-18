@@ -157,4 +157,45 @@ class BufferedSet {
         erase_all();
         this->locked_ = false;
     }
+
+    template <typename Proc>
+        requires std::is_invocable_v<Proc, T, T>
+    void foreach_flush_combination(Proc &&proc) {
+        this->locked_ = true;
+        set_all();
+        erase_all();
+
+        auto proc_row = [&](auto it1) -> auto {
+            for (auto it2 = std::next(it1); it2 != this->elems_.end();) {
+                // もしも1つ目の値が削除要請されていたらただちに中断
+                auto search1 = this->outs_.find(*it1);
+                if (search1 != this->outs_.end()) {
+                    auto next_it1 = this->elems_.erase(it1);
+                    this->outs_.erase(search1); // 削除リスト自体からも削除
+                    return next_it1;
+                }
+
+                // もしも2つ目の値が削除要請されていたらそこだけスキップ
+                auto search2 = this->outs_.find(*it2);
+                if (search2 != this->outs_.end()) {
+                    it2 = this->elems_.erase(it2);
+                    this->outs_.erase(search2); // 削除リスト自体からも削除
+                    continue;
+                }
+
+                // どちらも削除しなくてよいのならprocを実行
+                proc(*it1, *it2++);
+            }
+            return ++it1;
+        };
+
+        // 削除リストを反映させながらforeachを二重に実行
+        for (auto it1 = this->elems_.begin(); it1 != this->elems_.end();) {
+            it1 = proc_row(it1);
+        }
+
+        set_all();
+        erase_all();
+        this->locked_ = false;
+    }
 };

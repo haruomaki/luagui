@@ -49,6 +49,16 @@ inline void flick_ball(glm::vec3 power_point, GlassBall &ball) {
 }
 
 int main() {
+    BufferedSet<int> bset;
+    bset.request_set(3);
+    bset.request_set(5);
+    bset.request_set(8);
+    bset.request_set(9);
+    bset.request_set(11);
+    bset.foreach_flush_combination([](int a, int b) {
+        dump(a, b);
+    });
+
     constexpr int width = 600, height = 500;
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
