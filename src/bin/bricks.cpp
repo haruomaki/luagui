@@ -134,17 +134,14 @@ int main() {
     new_rect(stage, {{-1, -1, 0}, {1, -1, 0}, {1, 1, 0}, {-1, 1, 0}}, board_material);
 
     auto &bound1 = ball1.append_child<AABB2d>();
-    bound1.width = 1;
-    bound1.height = 1;
+    bound1.width = 0.2;
+    bound1.height = 0.2;
     auto &bound2 = ball2.append_child<AABB2d>();
-    bound2.width = 1;
-    bound2.height = 1;
+    bound2.width = 0.2;
+    bound2.height = 0.2;
     auto &bound3 = ball3.append_child<AABB2d>();
-    bound3.width = 1;
-    bound3.height = 1;
-
-    dump(bound1.get_absolute_scale_prop());
-    dump(bound1.get_absolute_position());
+    bound3.width = 0.2;
+    bound3.height = 0.2;
 
     gui.mainloop();
 }
