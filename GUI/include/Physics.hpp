@@ -28,11 +28,11 @@ class AABB2d : public Rigidbody {
     void collide(Rigidbody &rb) override {
         rb.collide_aabb2d(*this);
     }
-    void collide_aabb2d(AABB2d &rb) override {
-        print("AABB2Dのcollide_aabb2dです");
+    void collide_aabb2d(AABB2d & /*rb*/) override {
+        info("AABB2Dのcollide_aabb2dです");
     }
-    void collide_circle(Circle &rb) override {
-        print("AABB2Dのcollide_circleです");
+    void collide_circle(Circle & /*rb*/) override {
+        info("AABB2Dのcollide_circleです");
     }
 };
 
@@ -46,10 +46,10 @@ class Circle : public Rigidbody {
     void collide(Rigidbody &rb) override {
         rb.collide_circle(*this);
     }
-    void collide_aabb2d(AABB2d &rb) override {
-        print("Circleのcollide_aabb2dです");
+    void collide_aabb2d(AABB2d & /*rb*/) override {
+        info("Circleのcollide_aabb2dです");
     }
-    void collide_circle(Circle &rb) override {
-        print("Circleのcollide_circleです");
+    void collide_circle(Circle & /*rb*/) override {
+        info("Circleのcollide_circleです");
     }
 };

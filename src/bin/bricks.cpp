@@ -49,6 +49,37 @@ inline void flick_ball(glm::vec3 power_point, GlassBall &ball) {
 }
 
 int main() {
+    // std::unordered_set<int> uset{2, 3, 6, 8, 14};
+    // int ctr = 3;
+    // for (auto v : uset) {
+    //     // if (ctr-- <= 0) {
+    //     uset.erase(2);
+    //     // }
+    //     print(v);
+    //     dump(uset.size());
+    // }
+
+    BufferedSet<int> bset{};
+    bset.request_set(3);
+    bset.request_set(8);
+    bset.request_set(4);
+    int counter = 100;
+    bset.foreach_flush([&](auto v) {
+        print(v);
+        bset.request_set(counter++);
+    });
+
+    print("二回目");
+    bset.foreach_flush([&](auto v) {
+        print(v);
+        bset.request_erase(counter--);
+    });
+
+    print("三回目");
+    bset.foreach_flush([&](auto v) {
+        print(v);
+    });
+
     constexpr int width = 600, height = 500;
     GUI gui;
     Window &window = gui.create_window(width, height, "ウィンドウタイトル");
