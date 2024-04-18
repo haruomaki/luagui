@@ -55,7 +55,7 @@ int main() {
         points_num = (points_num - 90) % 200 + 100; // 100〜300を繰り返す
     });
 
-    world.updates.request_set_function([&] {
+    auto proc = std::make_unique<std::function<void()>>([&] {
         sample_text.text_ = to_str(gui.tick);
 
         const auto xs = linspace(-9, 9, points_num);
@@ -64,6 +64,7 @@ int main() {
         line_mesh.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100) + t; });
         line_mesh.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
     });
+    world.updates.request_set(proc.get());
 
     gui.mainloop();
 }

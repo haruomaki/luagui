@@ -35,7 +35,7 @@ class Window {
     std::optional<ProgramObject> default_shader;
     Material *default_material = nullptr;
     Viewport *default_viewport = nullptr;
-    FunctionSet<void()> resource_updates;
+    BufferedSet<std::function<void()> *> resource_updates;
 
     FunctionSet<void(int key, int action)> key_callbacks;
 

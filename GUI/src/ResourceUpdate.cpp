@@ -2,9 +2,9 @@
 #include "Window.hpp"
 
 ResourceUpdate::ResourceUpdate() {
-    auto func = [this] { this->update(); };
-    this->func_id_ = this->get_window().resource_updates.request_set_function(std::move(func));
+    this->func_ = [this] { this->update(); };
+    this->get_window().resource_updates.request_set(&this->func_);
 }
 ResourceUpdate::~ResourceUpdate() {
-    this->get_window().resource_updates.request_erase_function(this->func_id_);
+    this->get_window().resource_updates.request_erase(&this->func_);
 }

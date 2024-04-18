@@ -20,7 +20,7 @@ class World : public WorldObject {
   public:
     Window &window;
     Timer timer;
-    FunctionSet<void(const Camera &)> draws;
+    BufferedSet<std::function<void(const Camera &)> *> draws;
     BufferedSet<std::function<void()> *> updates;
     std::set<Rigidbody *> rigidbodies;
 
@@ -59,8 +59,8 @@ class World : public WorldObject {
         if (this->active_camera_ == nullptr) {
             print("警告: アクティブなカメラが存在しません");
         }
-        this->draws.safe_foreach([&](const auto draw) {
-            draw(*this->active_camera_);
+        this->draws.foreach_flush([&](const auto *draw) {
+            (*draw)(*this->active_camera_);
         });
 
         // メッシュを描画

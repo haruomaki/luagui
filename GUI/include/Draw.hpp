@@ -5,9 +5,8 @@
 
 class Camera;
 
-// TODO: Drawに改名
 class Draw : virtual public WorldObject {
-    FunctionId func_id_;
+    std::function<void(const Camera &)> func_;
     virtual void draw(const Camera &camera) const = 0;
 
   public:

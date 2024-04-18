@@ -4,7 +4,7 @@
 #include "Resource.hpp"
 
 class ResourceUpdate : virtual public Resource {
-    FunctionId func_id_;
+    std::function<void()> func_;
 
   public:
     virtual void update() = 0;
