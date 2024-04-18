@@ -4,7 +4,7 @@
 #include "WorldObject.hpp"
 
 class Update : virtual public WorldObject {
-    FunctionId func_id_;
+    std::function<void()> func_;
 
   public:
     virtual void update() = 0;

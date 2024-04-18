@@ -21,7 +21,7 @@ class World : public WorldObject {
     Window &window;
     Timer timer;
     FunctionSet<void(const Camera &)> draws;
-    FunctionSet<void()> updates;
+    BufferedSet<std::function<void()> *> updates;
     std::set<Rigidbody *> rigidbodies;
 
     World(Window &window, int draw_priority)
@@ -40,8 +40,8 @@ class World : public WorldObject {
     World &operator=(World &&) const = delete;
 
     void master_update() {
-        this->updates.safe_foreach([&](const auto update) {
-            update();
+        this->updates.foreach_flush([&](const auto update) {
+            (*update)();
         });
 
         this->timer.step(); // タイマーを進める
