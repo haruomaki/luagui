@@ -133,9 +133,15 @@ int main() {
     new_rect(stage, {{1, -1, 0}, {1.1, -1.1, 0}, {1.1, 1.1, 0}, {1, 1, 0}}, stage_material);
     new_rect(stage, {{-1, -1, 0}, {1, -1, 0}, {1, 1, 0}, {-1, 1, 0}}, board_material);
 
-    world.append_child<AABB2d>();
-    world.append_child<AABB2d>();
-    world.append_child<Circle>();
+    auto &bound1 = ball1.append_child<AABB2d>();
+    bound1.width = 1;
+    bound1.height = 1;
+    auto &bound2 = ball2.append_child<AABB2d>();
+    bound2.width = 1;
+    bound2.height = 1;
+    auto &bound3 = ball3.append_child<AABB2d>();
+    bound3.width = 1;
+    bound3.height = 1;
 
     gui.mainloop();
 }

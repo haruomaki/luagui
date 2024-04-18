@@ -22,7 +22,7 @@ class World : public WorldObject {
     Timer timer;
     BufferedSet<std::function<void(const Camera &)> *> draws;
     BufferedSet<std::function<void()> *> updates;
-    std::set<Rigidbody *> rigidbodies;
+    BufferedSet<Rigidbody *> rigidbodies;
 
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
@@ -48,11 +48,9 @@ class World : public WorldObject {
     }
 
     void master_physics() {
-        for (auto it1 = this->rigidbodies.begin(); it1 != this->rigidbodies.end(); it1++) {
-            for (auto it2 = std::next(it1); it2 != this->rigidbodies.end(); it2++) {
-                (**it1).collide(**it2);
-            }
-        }
+        this->rigidbodies.foreach_flush_combination([](auto *rb1, auto *rb2) {
+            (*rb1).collide(*rb2);
+        });
     }
 
     void master_draw() {
