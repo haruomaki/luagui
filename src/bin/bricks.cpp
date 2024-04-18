@@ -124,6 +124,8 @@ int main() {
     new_rect(stage, {{-1, -1, 0}, {1, -1, 0}, {1, 1, 0}, {-1, 1, 0}}, board_material);
 
     world.append_child<AABB2d>();
+    world.append_child<AABB2d>();
+    world.append_child<Circle>();
 
     gui.mainloop();
 }

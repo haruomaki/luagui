@@ -22,7 +22,7 @@ class World : public WorldObject {
     Timer timer;
     FunctionSet<void(const Camera &)> draws;
     FunctionSet<void()> updates;
-    std::set<const Rigidbody *> rigidbodies;
+    std::set<Rigidbody *> rigidbodies;
 
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
@@ -48,11 +48,11 @@ class World : public WorldObject {
     }
 
     void master_physics() {
-        print("物理演算");
-        for (const auto &rigidbody : this->rigidbodies) {
-            dump(typeid(rigidbody).name());
+        for (auto it1 = this->rigidbodies.begin(); it1 != this->rigidbodies.end(); it1++) {
+            for (auto it2 = std::next(it1); it2 != this->rigidbodies.end(); it2++) {
+                (**it1).collide(**it2);
+            }
         }
-        dump(typeid(AABB2d).name());
     }
 
     void master_draw() {
