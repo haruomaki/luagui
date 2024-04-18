@@ -1,6 +1,5 @@
 #pragma once
 
-#include "FunctionSet.hpp"
 #include "WorldObject.hpp"
 
 class Camera;

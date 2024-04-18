@@ -4,6 +4,7 @@
 
 #include <chrono>
 
+// FIXME: FunctionSetへの依存を無くすために全面的に書き換える
 class Timer {
     struct TaskInfo {
         const std::chrono::duration<double> interval;

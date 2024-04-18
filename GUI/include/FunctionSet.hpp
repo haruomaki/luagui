@@ -7,6 +7,7 @@
 
 using FunctionId = int;
 
+// FIXME: BufferedSetで完全に置き換える
 template <typename Func>
 class FunctionSet {
     std::map<FunctionId, std::function<Func>> functions_ = {};
