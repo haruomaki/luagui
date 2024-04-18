@@ -11,10 +11,19 @@ struct AbsAABB2d {
 
 class Rigidbody : virtual public WorldObject {
   public:
-    std::optional<std::function<void()>> callback;
+    std::optional<std::function<void(Rigidbody &self, Rigidbody &other)>> callback;
 
     Rigidbody();
     ~Rigidbody() override;
+
+    static void invoke_callbacks(Rigidbody &rb1, Rigidbody &rb2) {
+        if (rb1.callback.has_value()) {
+            rb1.callback.value()(rb1, rb2);
+        }
+        if (rb2.callback.has_value()) {
+            rb2.callback.value()(rb2, rb1);
+        }
+    }
 
     virtual void collide(Rigidbody &) = 0;
     virtual void collide_aabb2d(AABB2d &) = 0;
@@ -38,14 +47,14 @@ class AABB2d : public Rigidbody {
         rb.collide_aabb2d(*this);
     }
     void collide_aabb2d(AABB2d &rb) override {
-        print("AABB2Dのcollide_aabb2dです");
+        info("AABB2Dのcollide_aabb2dです");
         auto obj1 = to_abs(*this, {this->get_absolute_position()}, this->get_absolute_scale_prop());
         auto obj2 = to_abs(rb, {rb.get_absolute_position()}, rb.get_absolute_scale_prop());
 
         bool judge = obj1.x1 < obj2.x2 && obj1.x2 > obj2.x1 &&
                      obj1.y1 < obj2.y2 && obj1.y2 > obj2.y1;
         if (judge) {
-            print("ぶつかってるよ！");
+            invoke_callbacks(*this, rb);
         }
     }
     void collide_circle(Circle & /*rb*/) override {

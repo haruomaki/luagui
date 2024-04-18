@@ -143,5 +143,9 @@ int main() {
     bound3.width = 0.2;
     bound3.height = 0.2;
 
+    bound1.callback = [](Rigidbody &self, auto & /*other*/) {
+        print("衝突！現在の位置は ", self.get_absolute_position());
+    };
+
     gui.mainloop();
 }
