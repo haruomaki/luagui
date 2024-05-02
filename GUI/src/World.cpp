@@ -1,5 +1,6 @@
 #include "World.hpp"
 #include "GUI.hpp"
+#include "Physics.hpp"
 
 void World::master_physics() {
     // まず速度や加速度を適用して時間を1tick進める

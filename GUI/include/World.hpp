@@ -1,11 +1,10 @@
 #pragma once
 
-// TODO: 可能なものは.cppへ移動
-#include "Camera.hpp"
 #include "Mesh.hpp"
-#include "Physics.hpp"
 #include "Timer.hpp"
-#include "Window.hpp"
+
+class Camera;
+class Rigidbody;
 
 class World : public WorldObject {
     Camera *active_camera_ = nullptr;
