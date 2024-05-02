@@ -1,7 +1,7 @@
 #include "utility2.hpp"
 #include <master.hpp>
 
-class GlassBall : public MeshObject, Update {
+class GlassBall : public MeshObject, public AABB2d {
     static Material &gen_material(Window &window) {
         GLuint tex = create_texture_from_png_file("assets/images/青いガラス玉.png");
         return MaterialBuilder().texture(tex).build(window);
@@ -20,15 +20,6 @@ class GlassBall : public MeshObject, Update {
   public:
     GlassBall()
         : MeshObject(gen_mesh(this->get_world().window), &gen_material(this->get_world().window)) {}
-
-    glm::vec3 velocity{0, 0, 0};
-    double decay = 0.99;
-
-    void update() override {
-        int fps = get_world().window.gui.video_mode().refreshRate;
-        position += velocity / fps;
-        velocity *= decay;
-    }
 };
 
 static StaticMesh &create_brick_mesh(Window &window) {
@@ -104,6 +95,8 @@ int main() {
         block.position = {0.015, -0.005, -0.001};
         ball.position = {0, 0, 0.1};
         ball.velocity = v;
+        ball.width = 0.2;
+        ball.height = 0.2;
         return ball;
     };
 
@@ -133,17 +126,7 @@ int main() {
     new_rect(stage, {{1, -1, 0}, {1.1, -1.1, 0}, {1.1, 1.1, 0}, {1, 1, 0}}, stage_material);
     new_rect(stage, {{-1, -1, 0}, {1, -1, 0}, {1, 1, 0}, {-1, 1, 0}}, board_material);
 
-    auto &bound1 = ball1.append_child<AABB2d>();
-    bound1.width = 0.2;
-    bound1.height = 0.2;
-    auto &bound2 = ball2.append_child<AABB2d>();
-    bound2.width = 0.2;
-    bound2.height = 0.2;
-    auto &bound3 = ball3.append_child<AABB2d>();
-    bound3.width = 0.2;
-    bound3.height = 0.2;
-
-    bound1.callback = [](Rigidbody &self, auto & /*other*/) {
+    ball1.callback = [](Rigidbody &self, auto & /*other*/) {
         print("衝突！現在の位置は ", self.get_absolute_position());
     };
 

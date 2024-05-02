@@ -1,5 +1,6 @@
 #pragma once
 
+// TODO: 可能なものは.cppへ移動
 #include "Camera.hpp"
 #include "Mesh.hpp"
 #include "Physics.hpp"
@@ -47,11 +48,7 @@ class World : public WorldObject {
         this->timer.step(); // タイマーを進める
     }
 
-    void master_physics() {
-        this->rigidbodies.foreach_flush_combination([](auto *rb1, auto *rb2) {
-            (*rb1).collide(*rb2);
-        });
-    }
+    void master_physics();
 
     void master_draw() {
         if (this->active_camera_ == nullptr) {

@@ -12,6 +12,7 @@ struct AbsAABB2d {
 class Rigidbody : virtual public WorldObject {
   public:
     std::optional<std::function<void(Rigidbody &self, Rigidbody &other)>> callback;
+    glm::vec3 velocity;
 
     Rigidbody();
     ~Rigidbody() override;
@@ -43,6 +44,11 @@ class AABB2d : public Rigidbody {
         return AbsAABB2d{center.x - mx, center.y - my, center.x + mx, center.y + my};
     }
 
+    static inline bool test(float l1, float r1, float l2, float r2) {
+        // ¬ (l1 < l2 || r2 < l1)
+        return r1 > l2 && r2 > l1;
+    }
+
     void collide(Rigidbody &rb) override {
         rb.collide_aabb2d(*this);
     }
@@ -51,8 +57,7 @@ class AABB2d : public Rigidbody {
         auto obj1 = to_abs(*this, {this->get_absolute_position()}, this->get_absolute_scale_prop());
         auto obj2 = to_abs(rb, {rb.get_absolute_position()}, rb.get_absolute_scale_prop());
 
-        bool judge = obj1.x1 < obj2.x2 && obj1.x2 > obj2.x1 &&
-                     obj1.y1 < obj2.y2 && obj1.y2 > obj2.y1;
+        bool judge = test(obj1.x1, obj1.x2, obj2.x1, obj2.x2) && test(obj1.y1, obj1.y2, obj2.y1, obj2.y2);
         if (judge) {
             invoke_callbacks(*this, rb);
         }
