@@ -1,6 +1,6 @@
 #pragma once
 
-#include <WorldObject.hpp>
+#include "World.hpp"
 
 class AABB2d;
 class Circle;
@@ -11,8 +11,9 @@ struct AbsAABB2d {
 
 class Rigidbody : virtual public WorldObject {
   public:
-    std::optional<std::function<void(Rigidbody &self, Rigidbody &other)>> callback;
-    glm::vec3 velocity;
+    std::optional<std::function<void(Rigidbody &self, Rigidbody &other)>> callback{};
+    glm::vec3 velocity{0, 0, 0};
+    bool moving = true;
 
     Rigidbody();
     ~Rigidbody() override;
@@ -26,12 +27,22 @@ class Rigidbody : virtual public WorldObject {
         }
     }
 
+    virtual void tick() {
+        // 速度や加速度を適用して時間を1tick進める
+        int fps = this->get_world().window.refresh_rate();
+        this->position += this->velocity / fps;
+        this->velocity *= 0.99;
+    }
+
     virtual void collide(Rigidbody &) = 0;
     virtual void collide_aabb2d(AABB2d &) = 0;
     virtual void collide_circle(Circle &) = 0;
 };
 
 class AABB2d : public Rigidbody {
+    AbsAABB2d current_abs_{};
+    AbsAABB2d previous_abs_{}; // 衝突方向の判定のために1フレーム前の位置を記憶しておく
+
   public:
     glm::vec2 center{0, 0};
     float width = 0;
@@ -49,19 +60,21 @@ class AABB2d : public Rigidbody {
         return r1 > l2 && r2 > l1;
     }
 
+    void tick() override {
+        // static_cast<Rigidbody *>(this)->tick(); // 速度に基づいて移動などは引き続き行う
+        // FIXME: スーパークラスの仮想関数を呼びたい
+        int fps = this->get_world().window.refresh_rate();
+        this->position += this->velocity / fps;
+        this->velocity *= 0.99;
+
+        this->previous_abs_ = this->current_abs_;
+        this->current_abs_ = to_abs(*this, {this->get_absolute_position()}, this->get_absolute_scale_prop());
+    }
+
     void collide(Rigidbody &rb) override {
         rb.collide_aabb2d(*this);
     }
-    void collide_aabb2d(AABB2d &rb) override {
-        info("AABB2Dのcollide_aabb2dです");
-        auto obj1 = to_abs(*this, {this->get_absolute_position()}, this->get_absolute_scale_prop());
-        auto obj2 = to_abs(rb, {rb.get_absolute_position()}, rb.get_absolute_scale_prop());
-
-        bool judge = test(obj1.x1, obj1.x2, obj2.x1, obj2.x2) && test(obj1.y1, obj1.y2, obj2.y1, obj2.y2);
-        if (judge) {
-            invoke_callbacks(*this, rb);
-        }
-    }
+    void collide_aabb2d(AABB2d &rb) override;
     void collide_circle(Circle & /*rb*/) override {
         info("AABB2Dのcollide_circleです");
     }

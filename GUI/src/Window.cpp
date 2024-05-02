@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "GUI.hpp"
 #include "Material.hpp"
 #include "Viewport.hpp"
 #include "World.hpp"
@@ -111,6 +112,10 @@ pair<float, float> Window::window_content_scale() const {
     float xscale, yscale;
     glfwGetWindowContentScale(gwin_, &xscale, &yscale);
     return {xscale, yscale};
+}
+
+int Window::refresh_rate() const {
+    return this->gui.video_mode().refreshRate;
 }
 
 void Window::close() const {

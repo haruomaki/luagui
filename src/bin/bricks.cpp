@@ -126,9 +126,5 @@ int main() {
     new_rect(stage, {{1, -1, 0}, {1.1, -1.1, 0}, {1.1, 1.1, 0}, {1, 1, 0}}, stage_material);
     new_rect(stage, {{-1, -1, 0}, {1, -1, 0}, {1, 1, 0}, {-1, 1, 0}}, board_material);
 
-    ball1.callback = [](Rigidbody &self, auto & /*other*/) {
-        print("衝突！現在の位置は ", self.get_absolute_position());
-    };
-
     gui.mainloop();
 }

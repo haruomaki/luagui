@@ -54,6 +54,7 @@ class Window {
     [[nodiscard]] pair<int, int> window_size() const;
     [[nodiscard]] pair<int, int> frame_buffer_size() const;
     [[nodiscard]] pair<float, float> window_content_scale() const;
+    [[nodiscard]] int refresh_rate() const;
     void close() const;
 
     // glfwGetKeyのラッパー。GLFW_PRESSのときtrue、GLFW_RELEASEのときfalse

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "FunctionSet.hpp"
 #include "Resource.hpp"
 
 class ResourceUpdate : virtual public Resource {
