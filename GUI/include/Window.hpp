@@ -14,7 +14,7 @@ class Viewport;
 // 一つのウィンドウを表すクラス
 class Window {
     GLFWwindow *gwin_ = nullptr;
-    std::set<std::unique_ptr<Resource>> window_objects_;
+    std::set<std::unique_ptr<Resource>> resources_;
     FunctionSet<void(int, int)> size_callbacks_; // TODO: key_callbackに合わせてpublicにしてもいい
     std::vector<std::unique_ptr<World>> worlds_ = {};
 
@@ -73,7 +73,7 @@ class Window {
         auto ptr = std::make_unique<T>(std::forward<Args>(args)...); // NOTE: &&やforwardは必要かよく分からない
         Resource::set_window_static(nullptr);
 
-        auto [it, inserted] = this->window_objects_.insert(std::move(ptr));
+        auto [it, inserted] = this->resources_.insert(std::move(ptr));
         if (!inserted) {
             throw std::runtime_error("make_childに失敗");
         }

@@ -10,7 +10,7 @@ enum class CallbackKind {
     Key,
 };
 
-// ユーザはこのクラス（をpublic継承したクラス）を必ずwindow.make_child経由でインスタンス化する
+// ユーザはこのクラス（をpublic継承したクラス）を必ずwindow.append_resource()経由でインスタンス化する
 class Resource {
     friend class Window;
     Window *window_; // コンストラクト後は変更されない
@@ -20,6 +20,8 @@ class Resource {
     static void set_window_static(Window *window);
 
   public:
+    std::string id{};
+
     // このクラスのコンストラクタは呼ぶ直前にsetWindowStatic()を実行しておかなければならない
     Resource()
         : window_(get_window_static()) {

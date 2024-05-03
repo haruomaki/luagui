@@ -79,8 +79,8 @@ Window::Window(GUI &gui, int width, int height, const char *title)
 }
 
 Window::~Window() {
-    this->worlds_.clear();         // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
-    this->window_objects_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
+    this->worlds_.clear();    // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
+    this->resources_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
 
     // print("Windowのデストラクタです");
     // debug(this->size_callbacks_.size());

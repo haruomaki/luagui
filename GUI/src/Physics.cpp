@@ -27,9 +27,11 @@ void AABB2d::collide_aabb2d(AABB2d &rb) {
 
         if (!judge_x_prev && judge_x) {
             print("x軸方向に衝突！");
+            std::swap(this->velocity.x, rb.velocity.x); // TODO: 質量を考慮
         }
         if (!judge_y_prev && judge_y) {
             print("y軸方向に衝突！");
+            std::swap(this->velocity.y, rb.velocity.y);
         }
     }
 
