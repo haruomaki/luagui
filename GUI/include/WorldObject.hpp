@@ -56,8 +56,8 @@ class WorldObject {
     WorldObject &operator=(WorldObject &&) const = delete;
 
     template <typename T, typename... Args>
-        requires std::is_constructible_v<T, Args...> &&    // ArgsはTのコンストラクタの引数
-                 std::is_convertible_v<T *, WorldObject *> // TはWorldObjectの派生クラス
+        requires std::constructible_from<T, Args...> &&  // ArgsはTのコンストラクタの引数
+                 std::convertible_to<T *, WorldObject *> // TはWorldObjectの派生クラス
     T &append_child(Args &&...args) {
         // WorldObjectのコンストラクタを呼ぶ直前には必ずset_parent_staticを呼び、直後nullptrにリセット
         WorldObject::set_parent_static(this);

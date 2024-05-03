@@ -14,7 +14,7 @@ class GlassBall : public MeshObject, public AABB2d {
 
   public:
     GlassBall()
-        : MeshObject(gen_mesh(this->get_world().window), dynamic_cast<Material *>(this->get_world().window.find_resource("ガラス玉のマテリアル"))) {}
+        : MeshObject(gen_mesh(this->get_world().window), this->get_world().window.find_resource<Material>("ガラス玉のマテリアル")) {}
 };
 
 static StaticMesh &create_brick_mesh(Window &window) {
