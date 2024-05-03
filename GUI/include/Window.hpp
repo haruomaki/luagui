@@ -81,6 +81,15 @@ class Window {
         return *ptr2;
     }
 
+    Resource *find_resource(const std::string &name) {
+        // NOTE: 虱潰しに検索するので簡潔だが非効率
+        // 名前とリソースの対応を表すmapを新たに作りたいが、リソースの追加・削除によるバグが怖い
+        for (const auto &rc : this->resources_) {
+            if (rc->name_ == name) return rc.get();
+        }
+        return nullptr;
+    }
+
     // 各種コールバックを設定する関数群
     // TODO: テンプレートを駆使して短く記述
     template <CallbackKind callback_kind>

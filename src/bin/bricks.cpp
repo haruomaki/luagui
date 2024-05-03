@@ -2,11 +2,6 @@
 #include <master.hpp>
 
 class GlassBall : public MeshObject, public AABB2d {
-    static Material &gen_material(Window &window) {
-        GLuint tex = create_texture_from_png_file("assets/images/青いガラス玉.png");
-        return MaterialBuilder().texture(tex).build(window);
-    }
-
     static StaticMesh &gen_mesh(Window &window) {
         auto &mesh = window.append_resource<StaticMesh>();
         mesh.use_index = false;
@@ -19,7 +14,7 @@ class GlassBall : public MeshObject, public AABB2d {
 
   public:
     GlassBall()
-        : MeshObject(gen_mesh(this->get_world().window), &gen_material(this->get_world().window)) {}
+        : MeshObject(gen_mesh(this->get_world().window), dynamic_cast<Material *>(this->get_world().window.find_resource("ガラス玉のマテリアル"))) {}
 };
 
 static StaticMesh &create_brick_mesh(Window &window) {
@@ -75,6 +70,7 @@ int main() {
     // レンガの表示
     GLuint brick_texture = create_texture_from_png_file("assets/images/ピンクレンガ.png");
     auto &brick_material = MaterialBuilder().texture(brick_texture).build(window);
+    brick_material.name = "レンガのマテリアル";
     auto &brick_mesh = create_brick_mesh(window);
 
     constexpr int num_x = 100, num_y = 50;
@@ -88,6 +84,11 @@ int main() {
 
     auto &stage = world.append_child<WorldObject>();
     stage.position = {0, 0, 0.1};
+
+    // ガラス玉のマテリアルを準備
+    GLuint tex = create_texture_from_png_file("assets/images/青いガラス玉.png");
+    auto &glass_ball_material = MaterialBuilder().texture(tex).build(window);
+    glass_ball_material.name = "ガラス玉のマテリアル";
 
     auto gen = [&](glm::vec3 v) -> GlassBall & {
         auto &ball = stage.append_child<GlassBall>();

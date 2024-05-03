@@ -15,13 +15,13 @@ class Resource {
     friend class Window;
     Window *window_; // コンストラクト後は変更されない
 
+    std::string name_{};
+
     // コンストラクタのかわりにグローバル変数を利用してwindow_を初期化するための内部関数
     static Window *get_window_static();
     static void set_window_static(Window *window);
 
   public:
-    std::string id{};
-
     // このクラスのコンストラクタは呼ぶ直前にsetWindowStatic()を実行しておかなければならない
     Resource()
         : window_(get_window_static()) {
@@ -36,6 +36,15 @@ class Resource {
         return *this->window_;
     }
     PropertyGet<&Resource::get_window> window{this};
+
+    // 名前を読み取り/更新するプロパティ
+    const std::string &get_name() {
+        return this->name_;
+    }
+    void set_name(const std::string &name) {
+        this->name_ = name;
+    }
+    PropertyGetSet<&Resource::get_name, &Resource::set_name> name{this};
 };
 
 // class SizeCallback : public WindowObject {
