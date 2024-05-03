@@ -17,14 +17,24 @@ class GlassBall : public MeshObject, public AABB2d {
         : MeshObject(gen_mesh(this->get_world().window), this->get_world().window.find_resource<Material>("ガラス玉のマテリアル")) {}
 };
 
-static StaticMesh &create_brick_mesh(Window &window) {
-    auto &brick_mesh = window.append_resource<StaticMesh>();
-    brick_mesh.vertices.coords = {{0, 0, 0}, {0.02, 0, 0}, {0.02, 0.01, 0}, {0, 0.01, 0}};
-    brick_mesh.vertices.uvs = {{0, 1}, {1, 1}, {1, 0}, {0, 0}};
-    brick_mesh.draw_mode = GL_TRIANGLE_FAN;
-    brick_mesh.sync_vram();
-    return brick_mesh;
-}
+class Brick : public MeshObject, public AABB2d {
+    static StaticMesh &gen_mesh(Window &window) {
+        auto &mesh = window.append_resource<StaticMesh>();
+        mesh.vertices.coords = {{0, 0, 0}, {0.2, 0, 0}, {0.2, 0.1, 0}, {0, 0.1, 0}};
+        mesh.vertices.uvs = {{0, 1}, {1, 1}, {1, 0}, {0, 0}};
+        mesh.draw_mode = GL_TRIANGLE_FAN;
+        mesh.sync_vram();
+        return mesh;
+    }
+
+  public:
+    Brick()
+        : MeshObject(gen_mesh(this->get_world().window), this->get_world().window.find_resource<Material>("レンガのマテリアル")) {
+        this->center = {0.1, 0.05};
+        this->width = 0.2;
+        this->height = 0.1;
+    }
+};
 
 inline void flick_ball(glm::vec3 power_point, GlassBall &ball) {
     glm::vec2 direction = glm::vec2{ball.get_position() - power_point};
@@ -67,23 +77,22 @@ int main() {
     my_triangle.scale = 0.1;
     my_triangle.position = {-0.1, 0, 0};
 
+    auto &stage = world.append_child<WorldObject>();
+    stage.position = {0, 0, 0.1};
+
     // レンガの表示
     GLuint brick_texture = create_texture_from_png_file("assets/images/ピンクレンガ.png");
     auto &brick_material = MaterialBuilder().texture(brick_texture).build(window);
     brick_material.name = "レンガのマテリアル";
-    auto &brick_mesh = create_brick_mesh(window);
 
-    constexpr int num_x = 100, num_y = 50;
+    constexpr int num_x = 10, num_y = 5;
     auto bricks = std::vector(num_x, std::vector<MeshObject *>(num_y));
     for (int x = 0; x < num_x; x++) {
         for (int y = 0; y < num_y; y++) {
-            bricks[x][y] = &world.append_child<MeshObject>(brick_mesh, &brick_material);
-            bricks[x][y]->position = {0.02 * x, 0.01 * y, 0};
+            bricks[x][y] = &stage.append_child<Brick>();
+            bricks[x][y]->position = {0.2 * x, 0.1 * y, 0.1};
         }
     }
-
-    auto &stage = world.append_child<WorldObject>();
-    stage.position = {0, 0, 0.1};
 
     // ガラス玉のマテリアルを準備
     GLuint tex = create_texture_from_png_file("assets/images/青いガラス玉.png");
@@ -92,8 +101,6 @@ int main() {
 
     auto gen = [&](glm::vec3 v) -> GlassBall & {
         auto &ball = stage.append_child<GlassBall>();
-        auto &block = ball.append_child<MeshObject>(brick_mesh, &brick_material);
-        block.position = {0.015, -0.005, -0.001};
         ball.position = {0, 0, 0.1};
         ball.velocity = v;
         ball.width = 0.2;
