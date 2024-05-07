@@ -1,6 +1,20 @@
 #include "GUI.hpp"
 #include "Window.hpp"
 
+GUI::GUI() {
+    // ライブラリglfw の初期化
+    if (glfwInit() == 0) {
+        throw std::runtime_error("GLFWの初期化に失敗しました");
+    }
+
+    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+    monitor_ = glfwGetPrimaryMonitor();
+}
+
+GUI::~GUI() {
+    glfwTerminate();
+}
+
 Window &GUI::create_window(int width, int height, const std::string &title) {
     auto window = std::make_unique<Window>(*this, width, height, title.c_str());
     this->windows_.push_back(std::move(window));

@@ -12,17 +12,8 @@ class GUI {
   public:
     int tick = 0;
 
-    GUI() {
-        // ライブラリglfw の初期化
-        if (glfwInit() == 0) {
-            throw std::runtime_error("GLFWの初期化に失敗しました");
-        }
-
-        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-        monitor_ = glfwGetPrimaryMonitor();
-    }
-
-    ~GUI() { glfwTerminate(); }
+    GUI();
+    ~GUI();
 
     // コピーコンストラクタ、コピー代入演算子を削除
     GUI(const GUI &) = delete;

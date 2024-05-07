@@ -6,6 +6,8 @@
 #include "ResourceUpdate.hpp"
 #include "core.hpp"
 
+#include <algorithm>
+
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
 class StaticMesh : virtual public Resource {
     friend class MeshObject;
