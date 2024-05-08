@@ -1,41 +1,56 @@
 #include <box2d.h>
 
+#include <print>
+#include <thread>
+
+using namespace std::chrono_literals;
+
 int main() {
-    // Box2D world initialization
+    // Box2Dワールドの初期化
     b2Vec2 gravity(0.0f, -9.8f);
     b2World world(gravity);
 
-    // Create a box shape
+    // 地面となるボックスを作成
+    b2BodyDef ground_body_def;
+    ground_body_def.position.Set(0.0f, -10.0f);
+
+    b2Body *ground_body = world.CreateBody(&ground_body_def);
+
+    b2PolygonShape ground_box;
+    ground_box.SetAsBox(50.0f, 10.0f);
+    ground_body->CreateFixture(&ground_box, 0.0f);
+
+    // 動くボックスを作成
     b2BodyDef body_def;
-    body_def.type = b2_dynamicBody;
-
-    b2PolygonShape box_shape;
-    box_shape.SetAsBox(0.5f, 0.5f);
-
-    // Create a body and attach the shape
+    body_def.type = b2_dynamicBody; // 力を受けて動くように
+    body_def.position.Set(0.0f, 4.0f);
+    body_def.angle = 0.5;
     b2Body *body = world.CreateBody(&body_def);
-    body->CreateFixture(&box_shape, 1.0f);
 
-    // Apply a force to the body
-    b2Vec2 force(5.0f, 5.0f);
-    body->ApplyForceToCenter(force, true);
+    b2PolygonShape dynamic_box;
+    dynamic_box.SetAsBox(1.0f, 1.0f);
 
-    // Step the simulation
+    b2FixtureDef fixture_def;
+    fixture_def.shape = &dynamic_box;
+    fixture_def.density = 1.0f;
+    fixture_def.friction = 0.3f;
+    body->CreateFixture(&fixture_def);
+
+    // ワールドのシミュレーション
     float time_step = 1.0f / 60.0f;
     int32 velocity_iterations = 8;
     int32 position_iterations = 3;
 
-    world.Step(time_step, velocity_iterations, position_iterations);
+    for (size_t i = 0; i < 200; i++) {
+        world.Step(time_step, velocity_iterations, position_iterations);
 
-    // Get the body's position and rotation
-    b2Vec2 position = body->GetPosition();
-    float angle = body->GetAngle();
+        // bodyの位置と回転を取得
+        b2Vec2 position = body->GetPosition();
+        float angle = body->GetAngle();
+        std::println("position: ({}, {}), angle: {}", position.x, position.y, angle);
 
-    // std::cout << position.x << std::endl;
-    // std::print("Hello {} World\n", 42);
-
-    // Clean up
-    // delete &world;
+        std::this_thread::sleep_for(1s / 60.0f);
+    }
 
     return 0;
 }
