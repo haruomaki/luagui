@@ -47,7 +47,7 @@ int main() {
         // bodyの位置と回転を取得
         b2Vec2 position = body->GetPosition();
         float angle = body->GetAngle();
-        std::println("position: ({}, {}), angle: {}", position.x, position.y, angle);
+        std::println("position: ({:4.2f}, {:4.2f}), angle: {:4.2f}", position.x, position.y, angle);
 
         std::this_thread::sleep_for(1s / 60.0f);
     }
