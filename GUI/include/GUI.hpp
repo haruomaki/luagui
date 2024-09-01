@@ -23,8 +23,30 @@ class GUI {
     GUI(GUI &&) = delete;
     GUI &operator=(GUI &&) const = delete;
 
+    // ウィンドウを新規作成する。
     Window &create_window(int width, int height, const std::string &title);
-    void mainloop();
+
+    // 毎フレーム呼び出してウィンドウの更新＆イベント処理を行う。
+    // 直接触らず、`mainloop()`関数から呼び出すことを推奨。
+    void refresh_windows();
+
+    // メインループに制御を移す。
+    template <typename F = void (*)()>
+    void mainloop(F &&custom_routine = [] {}) {
+        if (looping_) {
+            throw std::runtime_error("すでにメインループが始まっています");
+        }
+        looping_ = true;
+
+        // 描画のループ
+        while (!this->windows_.empty()) {
+            tick++;
+            this->refresh_windows();
+            custom_routine();
+        }
+
+        looping_ = false;
+    }
 
     // 戻り値の参照は指定したモニターが切断されるか、ライブラリが終了するまで有効
     [[nodiscard]] const GLFWvidmode &video_mode() const {

@@ -10,25 +10,28 @@ inline void mikan() {
 }
 
 // Luaから呼び出せるようにラップした関数
-int lua_create_window(lua_State *L) {
+inline int lua_create_window(lua_State *state) {
     // Luaスタックから引数を取得
-    const char *title = luaL_checkstring(L, 1);
-    int width = luaL_checkinteger(L, 2);
-    int height = luaL_checkinteger(L, 3);
+    int width = int(luaL_checkinteger(state, 1));
+    int height = int(luaL_checkinteger(state, 2));
+    const char *title = luaL_checkstring(state, 3);
 
     // C++の関数を呼び出す
     mikan();
     GUI gui;
-    Window &window = gui.create_window(width, height, "ウィンドウタイトル");
-    gui.mainloop();
+    gui.create_window(width, height, title);
+
+    int counter = 0;
+    gui.mainloop([&] {
+        if (counter % 60 == 0) {
+            cout << "counter = " << counter << "\n";
+        }
+        counter++;
+    });
 
     // 結果をLuaに返す（ここではポインタをlightuserdata形式で返している）
     // lua_pushlightuserdata(L, window);
     return 0; // 戻り値の数（0個）
-}
-
-// Lua側に関数を登録する
-void register_lua_functions(lua_State *L) {
 }
 
 inline int run_lua(const char *filename) {

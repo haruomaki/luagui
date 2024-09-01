@@ -1,2 +1,2 @@
 print("Hello, Lua!")
-create_window("er", 2, 6)
+create_window(400, 300, "Lua Window")
