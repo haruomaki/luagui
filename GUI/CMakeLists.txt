@@ -23,6 +23,7 @@ target_link_libraries(GUI PRIVATE ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLFW_L
 find_package(PNG REQUIRED)
 target_include_directories(GUI SYSTEM PRIVATE ${PNG_INCLUDE_DIRS}) # SYSTEMを指定して警告対象から除外
 target_link_libraries(GUI PRIVATE ${PNG_LIBRARIES})
+# message("libpng: ${PNG_FOUND} ${PNG_INCLUDE_DIRS} ${PNG_LIBRARIES}")
 
 # FreeType
 find_package(Freetype REQUIRED)
