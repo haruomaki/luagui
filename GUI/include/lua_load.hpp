@@ -3,6 +3,34 @@
 #include <base.hpp>
 #include <lua.hpp>
 
+#include <master.hpp>
+
+inline void mikan() {
+    cout << "みかん🍊" << endl;
+}
+
+// Luaから呼び出せるようにラップした関数
+int lua_create_window(lua_State *L) {
+    // Luaスタックから引数を取得
+    const char *title = luaL_checkstring(L, 1);
+    int width = luaL_checkinteger(L, 2);
+    int height = luaL_checkinteger(L, 3);
+
+    // C++の関数を呼び出す
+    mikan();
+    GUI gui;
+    Window &window = gui.create_window(width, height, "ウィンドウタイトル");
+    gui.mainloop();
+
+    // 結果をLuaに返す（ここではポインタをlightuserdata形式で返している）
+    // lua_pushlightuserdata(L, window);
+    return 0; // 戻り値の数（0個）
+}
+
+// Lua側に関数を登録する
+void register_lua_functions(lua_State *L) {
+}
+
 inline int run_lua(const char *filename) {
     // Luaステートの作成
     lua_State *state = luaL_newstate();
@@ -10,6 +38,8 @@ inline int run_lua(const char *filename) {
     // 明示的に標準ライブラリの読み込み
     luaL_openlibs(state);
 
+    // GUI関連の関数の登録
+    lua_register(state, "create_window", lua_create_window);
     lua_register(state, "twice", [](lua_State *pL) -> int {
         // Luaからの引数を取得する
         const lua_Number ret = lua_tonumber(pL, 1);
