@@ -5,18 +5,32 @@
 
 #include <master.hpp>
 
-// Luaから呼び出せるようにラップした関数
+// void*（またはT*など）をT&に変換する。
+template <typename T, typename Ptr>
+inline T &dereference(Ptr *ptr) {
+    if (!ptr) {
+        throw std::runtime_error("Null pointer exception");
+    }
+    return *static_cast<T *>(ptr);
+}
+
+// ウィンドウを一つ作成し、メインループを開始する
 inline int lua_create_window(lua_State *state) {
+    print("lua_create_window開始");
+
     // Luaスタックから引数を取得
     int width = int(luaL_checkinteger(state, 1));
     int height = int(luaL_checkinteger(state, 2));
     const char *title = luaL_checkstring(state, 3);
     luaL_checktype(state, 4, LUA_TFUNCTION); // 第4引数が関数であることを確認
 
-    // C++側でウィンドウを作成
-    // FIXME: 複数回create_windowを呼ぶと毎回OpenGL初期化
+    // C++側でウィンドウを作成し、Luaのグローバル変数に保持する
+    print("ウィンドウ作成開始");
     GUI gui;
     Window &window = gui.create_window(width, height, title);
+    print("ウィンドウ作成完了");
+    lua_pushlightuserdata(state, &window);
+    lua_setglobal(state, "window");
 
     // Luaの関数をコルーチンとして作成
     lua_State *co = lua_newthread(state);
@@ -26,6 +40,7 @@ inline int lua_create_window(lua_State *state) {
     bool coroutine_finished = false;
 
     // フレームごとにコルーチンを進める。コルーチンが最後まで到達したら速やかにウィンドウを閉じる。
+    // ウィンドウ一つごとに一つのメインループ。
     gui.mainloop([state, co, ref, &coroutine_finished, &window]() {
         if (!coroutine_finished) {
             lua_rawgeti(state, LUA_REGISTRYINDEX, ref); // 保存した関数を取得
@@ -77,6 +92,15 @@ inline int run_lua(const char *filename) {
 
         const int returnLuaNum = 1; // Luaに渡す戻り値の数
         return returnLuaNum;
+    });
+    lua_register(state, "draw_line", [](lua_State *state) -> int {
+        // Luaステートからwindowポインタを取得
+        lua_getglobal(state, "window");
+        auto &window = dereference<Window>(lua_touserdata(state, -1));
+
+        dump(window.window_size());
+
+        return 0;
     });
 
     // Luaスクリプトを読み込む

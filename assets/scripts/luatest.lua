@@ -22,6 +22,7 @@ end
 
 create_window(400, 300, "Lua Window", function()
     title()    -- ゲームのタイトルを表示
+    draw_line();
     play()     -- ゲームをプレイ
     gameover() -- ゲームオーバー画面を表示
 end)
