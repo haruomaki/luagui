@@ -10,7 +10,7 @@ local function play()
 
 
     local game_time = 0
-    while game_time < 600 do -- 10秒間ゲームプレイ？
+    while game_time < 60000 do -- 10秒間ゲームプレイ？
         if game_time % 60 == 0 then
             print("Game time: " .. game_time)
         end

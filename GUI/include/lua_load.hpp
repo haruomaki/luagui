@@ -128,6 +128,9 @@ inline int run_lua(const char *filename) {
         auto &camera = world.append_child<MobileOrthoCamera>();
         camera.set_active();
 
+        auto &line_obj = new_line(world);
+        line_obj.mesh.vertices.setCoords({{0, 0, 0}, {16, 0, 0}});
+
         luaL_getmetatable(state, "World");
         lua_setmetatable(state, -2);
 
