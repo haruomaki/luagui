@@ -33,6 +33,8 @@ inline int lua_create_window(lua_State *state) {
     lua_pushlightuserdata(state, &window);
     lua_setglobal(state, "window");
 
+    dump(gui.dpi());
+
     // Luaの関数をコルーチンとして作成
     lua_State *co = lua_newthread(state);
     lua_pushvalue(state, 4);                      // 第4引数の関数をコピー
@@ -129,7 +131,8 @@ inline int run_lua(const char *filename) {
         camera.set_active();
 
         auto &line_obj = new_line(world);
-        line_obj.mesh.vertices.setCoords({{0, 0, 0}, {16, 0, 0}});
+        line_obj.mesh.vertices.setCoords({{0, 0, 0}, {0.05, 0, 0}});
+        dump(window.window_content_scale());
 
         luaL_getmetatable(state, "World");
         lua_setmetatable(state, -2);

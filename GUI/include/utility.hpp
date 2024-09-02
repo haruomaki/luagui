@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera.hpp"
+#include "GUI.hpp" // TODO: px_meter()をWindowへ移行できたらこの行は消せる
 #include "Mesh.hpp"
 #include "Update.hpp"
 #include "World.hpp"
@@ -14,8 +15,9 @@ class StickyPointTopLeft : public Update {
 
     void update() override {
         const auto size = viewport_.get_size();
-        const auto width = float(size.x) * px_meter;
-        const auto height = float(size.y) * px_meter;
+        auto [px_meter_x, px_meter_y] = this->get_world().window.gui.px_meter();
+        const auto width = float(size.x) * px_meter_x;
+        const auto height = float(size.y) * px_meter_y;
 
         set_position({-width / 2, height / 2, 0});
     }

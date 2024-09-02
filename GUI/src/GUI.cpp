@@ -1,5 +1,6 @@
 #include "GUI.hpp"
 #include "Window.hpp"
+#include "constants.hpp"
 
 GUI::GUI() {
     // ライブラリglfw の初期化
@@ -9,6 +10,14 @@ GUI::GUI() {
 
     glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
     monitor_ = glfwGetPrimaryMonitor();
+
+    // DPIを計算
+    auto [width_mm, height_mm] = this->monitor_physical_size();
+    auto vm = this->video_mode();
+    dpi_ = {float(vm.width) / float(width_mm) * 1000.f * inch_meter, float(vm.height) / float(height_mm) * 1000.f * inch_meter};
+
+    // DPIに基づいて、実スケールでのピクセル寸法を計算する
+    px_meter_ = {inch_meter / dpi_.first, inch_meter / dpi_.second};
 }
 
 GUI::~GUI() {
