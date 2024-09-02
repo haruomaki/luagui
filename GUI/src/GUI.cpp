@@ -18,6 +18,10 @@ GUI::GUI() {
 
     // DPIに基づいて、実スケールでのピクセル寸法を計算する
     px_meter_ = {inch_meter / dpi_.first, inch_meter / dpi_.second};
+
+    // vpixelも計算する
+    auto [xscale, yscale] = this->monitor_content_scale();
+    vpixel_ = {px_meter_.first / xscale, px_meter_.second / yscale};
 }
 
 GUI::~GUI() {

@@ -10,11 +10,13 @@ class GUI {
     GLFWmonitor *monitor_ = nullptr; // 初期化時のプライマリモニターを保持
                                      // NOTE: モニターはプログラム初期化時のものをずっとメインとみなす。
 
-    // TODO: const化。もしくはWindowクラスへ移動
+    // INFO: Windowクラスへ移動したいが、ウィンドウ自身に今いるモニターを認識させる機能がなさそうなため、このままでいいかも。
     std::pair<float, float> dpi_; // ディスプレイのDPI。プログラムを通して、初期化時に算出した値をずっと使い回す。
                                   // 描画のたびにDPIを再計算してもいいが、パフォーマンス上の懸念が拭えず、マルチモニターや途中のDPI変更などの際は結局多少なりとも乱れてしまうだろうから、シンプルなこの方式が最良と判断。
 
     std::pair<float, float> px_meter_; // モニターの物理的サイズと画素密度に基づいて、1ピクセルが何メートル四方かを計算した値。
+    std::pair<float, float> vpixel_;   // px_meter_にシステムの画面拡大率を乗算した値。
+                                       // vpixelを使うと、HiDPIなどで画面のスケールを変えているときに対応できる。
 
   public:
     int tick = 0;
@@ -79,4 +81,6 @@ class GUI {
     [[nodiscard]] std::pair<float, float> dpi() const { return dpi_; }
     // 計算済みのピクセル寸法を取得する。
     [[nodiscard]] std::pair<float, float> px_meter() const { return px_meter_; }
+    // 計算済みのvpixel(px_meter✕画面拡大率)を取得する。
+    [[nodiscard]] std::pair<float, float> vpixel() const { return vpixel_; }
 };

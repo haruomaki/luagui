@@ -36,9 +36,9 @@ glm::mat4 OrthoCamera::get_projection_matrix() const {
     int width = size.x;
     int height = size.y;
 
-    auto [px_meter_x, px_meter_y] = this->get_world().window.gui.px_meter();
-    const auto w = float(width) * px_meter_x;
-    const auto h = float(height) * px_meter_y;
+    auto [vpixel_x, vpixel_y] = this->get_world().window.gui.vpixel();
+    const auto w = float(width) * vpixel_x;
+    const auto h = float(height) * vpixel_y;
     const auto r = this->scale_prop;
     const auto projection_matrix = glm::ortho<float>(-w / 2, w / 2, -h / 2, h / 2, -1000.F * r, 1000.F * r);
     return projection_matrix;

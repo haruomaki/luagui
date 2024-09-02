@@ -2,7 +2,6 @@
 
 #include "Viewport.hpp"
 #include "WorldObject.hpp"
-#include "constants.hpp"
 
 // ビュー行列と射影行列を与える機能を持つワールドオブジェクト
 class Camera : virtual public WorldObject {
@@ -25,7 +24,7 @@ class NormalCamera : public Camera {
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;
 };
 
-// 1ピクセルがfloat値0.0003528のスケールの正射影カメラ
+// float値1が物理ディスプレイ上での1mというスケールの正射影カメラ
 class OrthoCamera : public Camera {
     const Viewport &viewport_;
 
