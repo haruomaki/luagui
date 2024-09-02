@@ -4,6 +4,7 @@
 #include <lua.hpp>
 
 #include <master.hpp>
+#include <utility2.hpp>
 
 // void*（またはT*など）をT&に変換する。
 template <typename T, typename Ptr>
@@ -72,6 +73,29 @@ inline int lua_create_window(lua_State *state) {
     return 0; // 戻り値の数（0個）
 }
 
+inline World *check_world(lua_State *L, int index) {
+    void *userdata = luaL_checkudata(L, index, "World");
+    luaL_argcheck(L, userdata != nullptr, index, "'World' expected");
+    return *(World **)userdata;
+}
+
+inline int world_hoge(lua_State *L) {
+    World *world = check_world(L, 1);
+    print("hogeです");
+    return 0;
+}
+
+void register_world(lua_State *L) {
+    std::array<luaL_Reg, 2> world_methods = {
+        {{"hoge", world_hoge}}};
+
+    luaL_newmetatable(L, "World");
+    lua_pushvalue(L, -1);
+    lua_setfield(L, -2, "__index");
+    luaL_setfuncs(L, world_methods.data(), 0);
+    lua_pop(L, 1);
+}
+
 inline int run_lua(const char *filename) {
     // Luaステートの作成
     lua_State *state = luaL_newstate();
@@ -93,6 +117,24 @@ inline int run_lua(const char *filename) {
         const int returnLuaNum = 1; // Luaに渡す戻り値の数
         return returnLuaNum;
     });
+    lua_register(state, "create_world", [](lua_State *state) -> int {
+        lua_getglobal(state, "window");
+        auto &window = dereference<Window>(lua_touserdata(state, -1));
+
+        auto &world = window.create_world();
+        auto **world_ptr = static_cast<World **>(lua_newuserdata(state, sizeof(World *)));
+        *world_ptr = &world;
+
+        auto &camera = world.append_child<MobileOrthoCamera>();
+        camera.set_active();
+
+        luaL_getmetatable(state, "World");
+        lua_setmetatable(state, -2);
+
+        return 1;
+    });
+    register_world(state);
+
     lua_register(state, "draw_line", [](lua_State *state) -> int {
         // Luaステートからwindowポインタを取得
         lua_getglobal(state, "window");
