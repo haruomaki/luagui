@@ -1,16 +1,7 @@
-#include <lua.hpp>
+#include <lua_base.hpp>
 
 #include <World.hpp>
 #include <utility2.hpp>
-
-// void*（またはT*など）をT&に変換する。
-template <typename T, typename Ptr>
-inline T &dereference(Ptr *ptr) {
-    if (!ptr) {
-        throw std::runtime_error("Null pointer exception");
-    }
-    return *static_cast<T *>(ptr);
-}
 
 inline World *check_world(lua_State *state, int index) {
     void *userdata = luaL_checkudata(state, index, "World");
