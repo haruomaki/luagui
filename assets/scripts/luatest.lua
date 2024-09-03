@@ -1,7 +1,7 @@
 local function title()
     print("Title screen", window)
     local world = create_world()
-    world:hoge()
+    world:draw_line()
     print(type(world))
 end
 
