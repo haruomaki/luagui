@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.11)
 
 # srcディレクトリ内の.cppファイルを取得
 file(GLOB_RECURSE SOURCES "src/*.cpp")
-add_library(GUI STATIC ${SOURCES})
+add_library(GUI SHARED ${SOURCES})
+# 動的リンクのためにSHAREDを指定。このとき、いくつかのtarget_link_librariesをPUBLICにする必要がある。
+# TODO: 静的リンクと動的リンクの両対応
 
 target_include_directories(GUI PUBLIC include)
 
@@ -17,7 +19,7 @@ find_package(GLEW REQUIRED)
 pkg_check_modules(GLFW REQUIRED glfw3)  # .pcファイルを読み込む
 # message("${GLFW_FOUND} ${GLFW_INCLUDE_DIRS} ${GLFW_LIBRARIES} ふ")
 target_include_directories(GUI SYSTEM PRIVATE ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS})
-target_link_libraries(GUI PRIVATE ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLFW_LIBRARIES})
+target_link_libraries(GUI PUBLIC ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLFW_LIBRARIES}) # 動的リンクでPUBLIC
 
 # libpng
 find_package(PNG REQUIRED)
@@ -37,7 +39,7 @@ target_link_libraries(GUI PRIVATE box2d)
 # Lua
 find_package(Lua REQUIRED)
 target_include_directories(GUI SYSTEM PRIVATE ${LUA_INCLUDE_DIRS})
-target_link_libraries(GUI PRIVATE ${LUA_LIBRARIES})
+target_link_libraries(GUI PUBLIC ${LUA_LIBRARIES}) # 動的リンクでPUBLIC
 
 
 # 変数のダンプ
