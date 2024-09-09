@@ -1,7 +1,10 @@
+// #include <GUI.hpp>
 #include <luagui.hpp>
-#include <print>
 
 int testfunc() {
-    std::println("testfuncです");
+    // GUI gui;
+    // gui.create_window(200, 200, "ぴえん");
+    // gui.mainloop();
+
     return 7;
 }
