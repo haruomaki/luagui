@@ -39,6 +39,7 @@ set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")
 set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG -march=x86-64 -mtune=generic")
 
 add_subdirectory(GUI)
+add_subdirectory(LuaGUI)
 
 # src/binディレクトリ内の.cppファイルを取得
 file(GLOB_RECURSE SOURCES "src/bin/*.cpp")
@@ -48,5 +49,5 @@ foreach(SOURCE_FILE ${SOURCES})
     # ファイル名から拡張子とディレクトリを削除してターゲット名を作成
     get_filename_component(TARGET_NAME ${SOURCE_FILE} NAME_WE)
     add_executable(${TARGET_NAME} ${SOURCE_FILE})
-    target_link_libraries(${TARGET_NAME} PRIVATE GUI)
+    target_link_libraries(${TARGET_NAME} PRIVATE GUI LuaGUI)
 endforeach()
