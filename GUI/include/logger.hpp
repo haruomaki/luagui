@@ -30,8 +30,9 @@ inline void print_headline(const char *icon, std::source_location loc) {
 // 注意：改行しない、0引数は受け付けない
 template <typename T, typename... Args>
 inline void print_impl(const char *sep, const T &arg, const Args &...args) {
-    std::cerr << arg;
-    ((std::cerr << sep << args), ...);
+    // FIXME: プリコンパイル済みヘッダを作ろうとするとエラー
+    // std::cerr << arg;
+    // ((std::cerr << sep << args), ...);
 }
 
 template <LogLevel level, typename... Ts>

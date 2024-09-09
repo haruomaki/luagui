@@ -42,6 +42,10 @@ target_include_directories(GUI SYSTEM PRIVATE ${LUA_INCLUDE_DIRS})
 target_link_libraries(GUI PUBLIC ${LUA_LIBRARIES}) # 動的リンクでPUBLIC
 
 
+# コンパイル済みヘッダの設定
+target_precompile_headers(GUI PUBLIC ./include/master.hpp)
+
+
 # 変数のダンプ
 # get_cmake_property(_variableNames VARIABLES)
 # list (SORT _variableNames)
