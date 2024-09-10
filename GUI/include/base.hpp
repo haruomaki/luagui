@@ -1,67 +1,15 @@
 #pragma once
 
-#include <array>
 #include <chrono>
 #include <fstream>
 #include <functional> // 関数型 std::function
-#include <iostream>
-#include <map>
 #include <memory>
-#include <set>
-#include <span>
 #include <sstream>   // 文字列のストリーム
 #include <stdexcept> // 例外はとりあえずこれ std::runime_error
-#include <vector>
 
-using std::ostream, std::stringstream, std::vector, std::pair, std::array, std::set, std::string, std::cout, std::cerr, std::endl, std::function;
+using std::ostream, std::stringstream, std::vector, std::pair, std::string, std::cout, std::cerr, std::endl, std::function;
 
 namespace base {
-
-template <typename T1, typename T2>
-ostream &operator<<(ostream &os, const pair<T1, T2> &input) {
-    os << "(" << input.first << ", " << input.second << ")";
-    return os;
-}
-
-template <typename T, size_t n>
-ostream &operator<<(ostream &os, const array<T, n> &input) {
-    os << "[";
-    for (auto it = input.cbegin(); it != input.cend();) {
-        os << *it++ << (it == input.cend() ? "" : ", ");
-    }
-    os << "]";
-    return os;
-}
-
-template <typename T>
-ostream &operator<<(ostream &os, const vector<T> &input) {
-    os << "[";
-    for (auto it = input.cbegin(); it != input.cend();) {
-        os << *it++ << (it == input.cend() ? "" : ", ");
-    }
-    os << "]";
-    return os;
-}
-
-template <typename T, size_t extent>
-ostream &operator<<(ostream &os, const std::span<T, extent> &input) {
-    os << "[";
-    for (auto it = input.begin(); it != input.end();) {
-        os << *it++ << (it == input.end() ? "" : ", ");
-    }
-    os << "]";
-    return os;
-}
-
-template <typename T>
-ostream &operator<<(ostream &os, const set<T> &input) {
-    os << "{";
-    for (auto it = input.cbegin(); it != input.cend();) {
-        os << *it++ << (it == input.cend() ? "" : ", ");
-    }
-    os << "}";
-    return os;
-}
 
 template <typename T>
 string to_str(const T &val) {

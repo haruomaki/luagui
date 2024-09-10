@@ -2,6 +2,8 @@
 
 #include <array>
 #include <iostream>
+// #include <print>
+#include <extra_formatter.hpp>
 #include <source_location>
 
 enum class LogLevel {
@@ -31,8 +33,10 @@ inline void print_headline(const char *icon, std::source_location loc) {
 template <typename T, typename... Args>
 inline void print_impl(const char *sep, const T &arg, const Args &...args) {
     // FIXME: プリコンパイル済みヘッダを作ろうとするとエラー
-    // std::cerr << arg;
-    // ((std::cerr << sep << args), ...);
+    std::cerr << arg;
+    ((std::cerr << sep << args), ...);
+    // std::print("{}", arg);
+    // ((std::print("{}{}", sep, args)), ...);
 }
 
 template <LogLevel level, typename... Ts>
