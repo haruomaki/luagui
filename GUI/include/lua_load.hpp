@@ -25,7 +25,7 @@ inline int lua_create_window(lua_State *state) {
     lua_pushlightuserdata(state, &window);
     lua_setglobal(state, "window");
 
-    dump(gui.dpi());
+    debug(gui.dpi());
 
     // Luaの関数をコルーチンとして作成
     lua_State *co = lua_newthread(state);

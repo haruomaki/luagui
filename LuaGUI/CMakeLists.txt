@@ -10,3 +10,9 @@ add_library(LuaGUI SHARED src/luagui.cpp)
 target_link_libraries(LuaGUI PRIVATE GUI)
 
 target_include_directories(LuaGUI PUBLIC include)
+
+# solのインクルードパス
+target_include_directories(LuaGUI SYSTEM PUBLIC ../external)
+
+# コンパイル済みヘッダの設定
+target_precompile_headers(LuaGUI PUBLIC ../external/sol/sol.hpp)
