@@ -9,3 +9,12 @@ function twice(x) end
 ---@param title string ウィンドウタイトル
 ---@param scenario function ゲームロジックなどのコルーチン
 function create_window(width, height, title, scenario) end
+
+---@return World
+function create_world() end
+
+---@class World
+local World = {}
+
+---@param points table<number, table<number, number>> 頂点の座標
+function World:draw_line(points) end
