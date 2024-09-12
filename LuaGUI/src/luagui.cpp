@@ -1,6 +1,8 @@
 #include <GUI.hpp>
 #include <luagui.hpp>
 
+#include "World.hpp"
+
 int testfunc() {
     sol::state lua;
     int x = 0;
@@ -66,4 +68,6 @@ LuaGUI::LuaGUI() {
     lua.set_function("create_window", [this](int width, int height, const std::string &title, sol::function func) {
         create_window(this->lua, width, height, title, std::move(func));
     });
+
+    register_world(lua);
 }
