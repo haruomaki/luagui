@@ -10,11 +10,12 @@
 --         coroutine.yield()
 --     end
 -- end)
-function coro_func()
-    for i = 1, 5 do
-        print("Step: " .. i)
+
+create_window(800, 600, "Test Window", function()
+    for i = 0, 300 do
+        if i % 60 == 0 then
+            print("Step: " .. i)
+        end
         coroutine.yield() -- コルーチンを一時停止
     end
-end
-
-create_window(800, 600, "Test Window", coro_func)
+end)

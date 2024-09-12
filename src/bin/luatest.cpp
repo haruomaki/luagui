@@ -1,13 +1,13 @@
-#include <lua_load.hpp>
+// #include <lua_load.hpp>
 #include <luagui.hpp>
 
 int main() {
     LuaGUI luagui;
     luagui.run("assets/scripts/luatest2.lua");
 
-    testfunc();
+    // testfunc();
 
-    run_lua("assets/scripts/luatest.lua");
+    // run_lua("assets/scripts/luatest.lua");
 }
 
 // #include <sol/sol.hpp>
