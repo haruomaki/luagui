@@ -63,7 +63,7 @@ static void create_window(sol::state &lua, int width, int height, const std::str
 }
 
 LuaGUI::LuaGUI() {
-    lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::package, sol::lib::coroutine);
+    lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math, sol::lib::package, sol::lib::coroutine);
 
     // requireで検索するパスを追加
     lua["package"]["path"] = lua["package"]["path"].get<std::string>() + ";./assets/scripts/?.lua";

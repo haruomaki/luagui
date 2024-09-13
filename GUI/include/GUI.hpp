@@ -50,8 +50,8 @@ class GUI {
         // 描画のループ
         while (!this->windows_.empty()) {
             tick++;
-            this->refresh_windows();
             custom_routine();
+            this->refresh_windows();
         }
 
         looping_ = false;
