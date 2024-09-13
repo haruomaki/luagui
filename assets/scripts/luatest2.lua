@@ -1,11 +1,10 @@
--- require("coroutines") C++側で読み込むので不要
-
 create_window(800, 600, "Test Window", function()
     local world = create_world()
-    print(world)
 
     local arr = { { 0, 0 }, { 0.03, 0.01 }, { 0.01, 0.03 }, { 0, 0 } }
     world:draw_line(arr)
+    world:draw_circle({ 0, 0 }, 0.04)
+    world:draw_circle({ -0.01, 0 }, 0.03)
 
-    Wait(5)
+    Wait(30)
 end)
