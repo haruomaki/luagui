@@ -1,4 +1,4 @@
----@meta
+---@meta MeshObject
 
 ---@class MeshObject
 local MeshObject = {}

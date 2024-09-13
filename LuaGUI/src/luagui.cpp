@@ -3,18 +3,14 @@
 
 #include "World.hpp"
 
-int testfunc() {
-    sol::state lua;
-    int x = 0;
-    lua.set_function("beep", [&x] { x += 234; });
-    lua.script("beep()");
-    debug(x);
-
-    GUI gui;
-    gui.create_window(200, 200, "ぴえん");
-    gui.mainloop();
-
-    return 7;
+// 時刻関連の関数を登録
+static void register_chrono(sol::state &lua) {
+    lua.set_function("get_time", []() -> double {
+        auto now = std::chrono::high_resolution_clock::now();
+        auto duration = now.time_since_epoch();
+        auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
+        return seconds;
+    });
 }
 
 static void create_window(sol::state &lua, int width, int height, const std::string &title, sol::function func) {
@@ -75,5 +71,6 @@ LuaGUI::LuaGUI() {
         create_window(this->lua, width, height, title, std::move(func));
     });
 
+    register_chrono(lua);
     register_world(lua);
 }

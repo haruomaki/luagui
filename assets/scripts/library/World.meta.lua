@@ -1,4 +1,4 @@
----@meta
+---@meta World
 
 ---@return World
 function create_world() end
