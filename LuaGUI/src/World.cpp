@@ -25,6 +25,8 @@ static MeshObject &draw_circle(World &world, std::vector<float> center, float ra
     auto &line_obj = new_line(world);
     line_obj.mesh.vertices.setCoords(coords);
 
+    line_obj.add_component<UpdateComponent>([]([[maybe_unused]] UpdateComponent &self) { print("UpdateComponentからの出力です✨️"); });
+
     return line_obj;
 }
 
