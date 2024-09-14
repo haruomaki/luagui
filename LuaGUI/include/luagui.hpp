@@ -1,7 +1,5 @@
 #include <sol/sol.hpp>
 
-int testfunc();
-
 class LuaGUI {
 
   public:
