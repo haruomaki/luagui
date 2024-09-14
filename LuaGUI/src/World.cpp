@@ -25,15 +25,6 @@ static MeshObject &draw_circle(World &world, std::vector<float> center, float ra
     auto &line_obj = new_line(world);
     line_obj.mesh.vertices.setCoords(coords);
 
-    auto count = std::make_shared<int>(0);
-    line_obj.add_component<UpdateComponent>([count](UpdateComponent &self) {
-        print("UpdateComponentからの出力です✨️ ", *count);
-        if ((*count)++ == 10) {
-            print("10になりました");
-            self.erase();
-        }
-    });
-
     return line_obj;
 }
 
