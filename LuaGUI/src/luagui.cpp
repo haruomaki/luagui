@@ -2,6 +2,7 @@
 #include <luagui.hpp>
 
 #include "World.hpp"
+#include "WorldObject.hpp"
 
 // 時刻関連の関数を登録
 static void register_chrono(sol::state &lua) {
@@ -73,4 +74,5 @@ LuaGUI::LuaGUI() {
 
     register_chrono(lua);
     register_world(lua);
+    register_world_object(lua);
 }

@@ -50,6 +50,4 @@ void register_world(sol::state &lua) {
     });
 
     lua.new_usertype<World>("World", "draw_line", draw_line, "draw_circle", draw_circle);
-
-    lua.new_usertype<MeshObject>("MeshObject", "get_position", [](MeshObject *obj) { return obj->get_position(); }, "set_position", [](MeshObject &obj, std::vector<float> pos) { obj.set_position({pos[0], pos[1], 0}); });
 }
