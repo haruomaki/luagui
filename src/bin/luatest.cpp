@@ -1,35 +1,48 @@
-// cmake --build build --target luatest && ./build/Debug/luatest
-// Lua入門: https://www.amusement-creators.info/articles/advent_calendar/2019/06_0/
-
-#include <base.hpp>
-#include <lua.hpp>
+// #include <lua_load.hpp>
+#include <luagui.hpp>
 
 int main() {
-    // Luaステートの作成
-    lua_State *state = luaL_newstate();
+    LuaGUI luagui;
+    luagui.run("assets/scripts/luatest2.lua");
 
-    // 明示的に標準ライブラリの読み込み
-    luaL_openlibs(state);
+    // testfunc();
 
-    lua_register(state, "twice", [](lua_State *pL) -> int {
-        // Luaからの引数を取得する
-        const lua_Number ret = lua_tonumber(pL, 1);
-        lua_pop(pL, lua_gettop(pL));
-
-        // Luaに渡す戻り値を詰める
-        const int val = static_cast<int>(ret) * 2;
-        lua_pushinteger(pL, val);
-
-        const int returnLuaNum = 1; // Luaに渡す戻り値の数
-        return returnLuaNum;
-    });
-
-    // Luaスクリプトを読み込む
-    if (luaL_loadfile(state, "assets/scripts/luatest.lua") || lua_pcall(state, 0, 0, 0)) {
-        cerr << "Error: " << lua_tostring(state, -1) << endl;
-        return 1;
-    }
-
-    // Luaステートの破棄
-    lua_close(state);
+    // run_lua("assets/scripts/luatest.lua");
 }
+
+// #include <sol/sol.hpp>
+
+// #include <iostream>
+
+// int main() {
+//     std::cout << "=== coroutine ===" << std::endl;
+
+//     sol::state lua;
+
+//     lua.open_libraries(sol::lib::base, sol::lib::coroutine);
+
+//     lua.set_function("start_task",
+//                      [&lua](
+//                          sol::function f) {
+//                          // You must ALWAYS get the current state
+//                          sol::thread runner_thread = sol::thread::create(lua);
+//                          sol::state_view runner_thread_state = runner_thread.state();
+//                          sol::coroutine f_on_runner_thread(runner_thread_state, f);
+
+//                          f_on_runner_thread();
+//                          f_on_runner_thread();
+//                      });
+
+//     lua.script(
+//         R"(
+// function main()
+// 	print("りんご")
+// 	coroutine.yield(20)
+// 	print("みかん")
+// end
+
+// 	start_task(main)
+// )");
+
+//     return 0;
+// }

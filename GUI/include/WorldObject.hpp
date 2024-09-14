@@ -1,5 +1,8 @@
 #pragma once
 
+#include <typeindex>
+
+#include <Component.hpp>
 #include <Property.hpp>
 #include <graphical_base.hpp>
 
@@ -13,6 +16,7 @@ class WorldObject {
     glm::mat4 abs_transform_;
     WorldObject *const parent_;
     std::set<std::unique_ptr<WorldObject>> children_;
+    std::unordered_multimap<std::type_index, std::unique_ptr<Component>> components_;
     World &world_; // parent_より後にする
 
     void refresh_absolute_transform();
@@ -169,6 +173,28 @@ class WorldObject {
     PropertyGetSet<&WorldObject::get_scale, &WorldObject::set_scale, &WorldObject::set_scale_one> scale{this};
     PropertyGetSet<&WorldObject::get_scale_prop, &WorldObject::set_scale_prop> scale_prop{this};
     PropertyGetSet<&WorldObject::get_rotate, &WorldObject::set_rotate> rotate{this};
+
+    // ------------------
+    // コンポーネント操作
+    // ------------------
+
+    friend class Component; // get_parent_static()のため
+
+    template <typename T, typename... Args>
+        requires std::derived_from<T, Component>
+    T *add_component(Args &&...args) {
+        // コンポーネントの実体をヒープ上に生成
+        WorldObject::set_parent_static(this); // componentのコンストラクタにthisを伝えるため
+        auto component = std::make_unique<T>(std::forward<Args>(args)...);
+        WorldObject::set_parent_static(nullptr);
+
+        T *component_ptr = component.get();
+        components_.emplace(std::type_index(typeid(T)), std::move(component)); // unique_ptrのムーブコンストラクタ。
+        return component_ptr;
+        // WorldObject::set_parent_static(this);
+        // auto it = components_.emplace(std::type_index(typeid(T)), std::forward<Args>(args)...); // NOTE: ムーブコンストラクタ。components_内に直接構築した方がいいかも
+        // return &(*it);
+    }
 };
 
 // template <class T>

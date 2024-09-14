@@ -1,0 +1,76 @@
+#include <GUI.hpp>
+#include <luagui.hpp>
+
+#include "World.hpp"
+
+// 時刻関連の関数を登録
+static void register_chrono(sol::state &lua) {
+    lua.set_function("get_time", []() -> double {
+        auto now = std::chrono::high_resolution_clock::now();
+        auto duration = now.time_since_epoch();
+        auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
+        return seconds;
+    });
+}
+
+static void create_window(sol::state &lua, int width, int height, const std::string &title, sol::function func) {
+    std::cout << "Creating window: " << title << " (" << width << "x" << height << ")" << std::endl;
+
+    sol::thread runner_thread = sol::thread::create(lua);
+    sol::state_view runner_thread_state = runner_thread.state();
+    sol::coroutine co(runner_thread_state, func);
+
+    // C++側でウィンドウを作成し、Luaのグローバル変数に保持する
+    print("ウィンドウ作成開始");
+    GUI gui;
+    Window &window = gui.create_window(width, height, title);
+    print("ウィンドウ作成完了");
+    lua["window"] = &window;
+
+    debug(gui.dpi());
+
+    bool coroutine_finished = false;
+
+    // フレームごとにコルーチンを進める。コルーチンが最後まで到達したら速やかにウィンドウを閉じる。
+    // ウィンドウ一つごとに一つのメインループ。
+    gui.mainloop([&co, &coroutine_finished, &window]() {
+        if (!coroutine_finished) {
+            auto result = co();
+            auto status = result.status();
+
+            if (status == sol::call_status::yielded) {
+                // コルーチンが yield した
+            } else if (status == sol::call_status::ok) {
+                // コルーチンが終了した
+                std::cout << "Game loop finished" << std::endl;
+                coroutine_finished = true;
+                window.close();
+            } else {
+                // エラーが発生した
+                sol::error err = result;
+                std::cerr << "Error in Lua coroutine: " << err.what() << std::endl;
+                coroutine_finished = true;
+                window.close();
+            }
+        }
+    });
+
+    std::cout << "Window closed: " << title << std::endl;
+}
+
+LuaGUI::LuaGUI() {
+    lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math, sol::lib::package, sol::lib::coroutine);
+
+    // requireで検索するパスを追加
+    lua["package"]["path"] = lua["package"]["path"].get<std::string>() + ";./assets/scripts/?.lua";
+
+    // コルーチンまわりの関数を読み込み
+    lua.script_file("assets/scripts/coroutines.lua");
+
+    lua.set_function("create_window", [this](int width, int height, const std::string &title, sol::function func) {
+        create_window(this->lua, width, height, title, std::move(func));
+    });
+
+    register_chrono(lua);
+    register_world(lua);
+}

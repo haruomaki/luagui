@@ -2,6 +2,8 @@
 
 #include <array>
 #include <iostream>
+// #include <print>
+#include <extra_formatter.hpp>
 #include <source_location>
 
 enum class LogLevel {
@@ -30,8 +32,11 @@ inline void print_headline(const char *icon, std::source_location loc) {
 // 注意：改行しない、0引数は受け付けない
 template <typename T, typename... Args>
 inline void print_impl(const char *sep, const T &arg, const Args &...args) {
+    // FIXME: プリコンパイル済みヘッダを作ろうとするとエラー
     std::cerr << arg;
     ((std::cerr << sep << args), ...);
+    // std::print("{}", arg);
+    // ((std::print("{}{}", sep, args)), ...);
 }
 
 template <LogLevel level, typename... Ts>
@@ -54,7 +59,7 @@ inline void log(std::source_location loc, Ts... args) {
 #define trace(...) log<LogLevel::Trace>(std::source_location::current() __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
 
 template <class... Args> // NOTE: 未初期化変数の警告に対応するためconst T&を受け取る
-inline void dump_pre(const char *file, int line, const char *argnames, const Args &...args) {
+inline void debug_pre(const char *file, int line, const char *argnames, const Args &...args) {
     print_headline("📦", file, line);
     // argsの要素数 0 or 1 or それ以上
     constexpr size_t len = sizeof...(args);
@@ -89,8 +94,8 @@ inline void time_pre(const char *file, int line, Func &&func) {
 }
 
 #ifdef DEBUG
-#define dump(...) dump_pre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
-#define time(...) time_pre(__FILE__, __LINE__, [&] { __VA_ARGS__; })                   // NOLINT(cppcoreguidelines-macro-usage)
+#define debug(...) debug_pre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
+#define time(...) time_pre(__FILE__, __LINE__, [&] { __VA_ARGS__; })                     // NOLINT(cppcoreguidelines-macro-usage)
 #else
 #define debug(...)
 #define time(...) __VA_ARGS__
