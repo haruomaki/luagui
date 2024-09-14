@@ -9,6 +9,6 @@ create_window(800, 600, "Test Window", function()
     local radius = 0.01
     WaitWith(10, function(t)
         local theta = 2 * math.pi * (t / 2)
-        c2:set_position({ radius * math.cos(theta), radius * math.sin(theta), 0 })
+        c2.position = { radius * math.cos(theta), radius * math.sin(theta) }
     end)
 end)
