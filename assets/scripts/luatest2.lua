@@ -7,11 +7,17 @@ create_window(800, 600, "Test Window", function()
     local c2 = world:draw_circle({ -0.01, 0 }, 0.03)
 
     c2:add_update_component(function()
-        -- while true do
-        --     print("あいうえお")
-        --     Yield()
-        -- end
-        print("あいうえお")
+        print("3...")
+        Wait(1.7)
+        print("2...")
+        Wait(1.2)
+        print("1...")
+        Wait(0.9)
+        print("0!")
+
+        Interval(function()
+            print("あいうえお")
+        end, 100)
     end)
 
     local radius = 0.01

@@ -3,14 +3,11 @@
 #include <utility>
 
 static void add_update_component(sol::state &lua, WorldObject *obj, sol::function f) {
-    print("add_update_componentです");
     sol::thread runner_thread = sol::thread::create(lua);
     sol::state_view runner_thread_state = runner_thread.state();
     auto co = std::make_shared<sol::coroutine>(runner_thread_state, f);
 
-    auto count = std::make_shared<int>(0);
-    print("add_update_component途中2");
-    auto func = [count, co](UpdateComponent &self) {
+    auto runner = [co](UpdateComponent &self) {
         auto result = (*co)();
         auto status = result.status();
 
@@ -18,7 +15,6 @@ static void add_update_component(sol::state &lua, WorldObject *obj, sol::functio
             // コルーチンが yield した
         } else if (status == sol::call_status::ok) {
             // コルーチンが終了した
-            std::cout << "コルーチンが終了しました" << std::endl;
             self.erase();
         } else {
             // エラーが発生した
@@ -26,18 +22,9 @@ static void add_update_component(sol::state &lua, WorldObject *obj, sol::functio
             std::cerr << "Error in Lua coroutine: " << err.what() << std::endl;
             self.erase();
         }
-
-        if (*count % 60 == 0) {
-            print("add_update_componentのテスト出力です… count: ", *count);
-        }
-
-        if ((*count)++ >= 300) {
-            print("300カウント経ったので終了します。");
-            self.erase();
-        }
     };
 
-    obj->add_component<UpdateComponent>(func);
+    obj->add_component<UpdateComponent>(runner);
 }
 
 void register_world_object(sol::state &lua) {

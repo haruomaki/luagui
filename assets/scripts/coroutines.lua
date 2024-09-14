@@ -34,3 +34,16 @@ function WaitUntil(condition)
         coroutine.yield()
     end
 end
+
+--- 指定の時間間隔で永久に実行する
+---@param action fun() 実行する関数
+---@param interval number 実行間隔（秒）
+function Interval(action, interval)
+    while true do
+        local start = get_time()
+        action()
+        while get_time() - start < interval do
+            coroutine.yield()
+        end
+    end
+end
