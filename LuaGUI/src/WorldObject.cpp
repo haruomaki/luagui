@@ -3,11 +3,12 @@
 #include <utility>
 
 static void add_update_component(sol::state &lua, WorldObject *obj, sol::function f) {
-    sol::thread runner_thread = sol::thread::create(lua);
-    sol::state_view runner_thread_state = runner_thread.state();
-    auto co = std::make_shared<sol::coroutine>(runner_thread_state, f);
+    // fをコルーチンとして毎フレーム実行し、コルーチンが終了したらコンポーネントも削除する
+    auto runner_thread = std::make_shared<sol::thread>(sol::thread::create(lua));
+    auto co = std::make_shared<sol::coroutine>(runner_thread->state(), f);
 
-    auto runner = [co](UpdateComponent &self) {
+    // INFO: runner_threadもキャプチャしておかないとSEGV
+    auto runner = [runner_thread, co](UpdateComponent &self) {
         auto result = (*co)();
         auto status = result.status();
 

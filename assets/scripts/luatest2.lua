@@ -17,7 +17,7 @@ create_window(800, 600, "Test Window", function()
 
         Interval(function()
             print("あいうえお")
-        end, 100)
+        end, 2)
     end)
 
     local radius = 0.01
