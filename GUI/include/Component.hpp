@@ -14,8 +14,10 @@ class Component {
     Component();
     virtual ~Component() = default;
 
-    // void set_owner(WorldObject *new_owner) { owner_ = new_owner; }
     [[nodiscard]] WorldObject *get_owner() const { return owner_; }
+
+    // コンポーネントを削除する。
+    bool erase();
 };
 
 class UpdateComponent : public Component {
