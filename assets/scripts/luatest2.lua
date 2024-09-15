@@ -5,8 +5,8 @@ create_window(800, 600, "Test Window", function()
 
     local arr = { { 0, 0 }, { 0.03, 0.01 }, { 0.01, 0.03 }, { 0, 0 } }
     local line_obj = world:draw_line(arr)
-    local rbc = line_obj:add_rigidbody_component() -- 物理演算を追加
-    rbc.body:add_shape({})                         -- 衝突形状を追加
+    local rbc = line_obj:add_rigidbody_component()          -- 物理演算を追加
+    rbc.body:add_shape({ shape = "circle", radius = 0.01 }) -- 衝突形状を追加
 
     world:draw_circle({ 0, 0 }, 0.04)
     local c2 = world:draw_circle({ -0.01, 0 }, 0.03)

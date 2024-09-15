@@ -8,16 +8,29 @@ static std::function<void(b2::World *, const sol::table &)> wrap_table(void (b2:
     };
 }
 
-static void add_shape(b2::Body *body, const sol::table & /*tbl*/) {
-    // TODO: tblにはShapeを作るときのオプション（形状の種類とそれに必要なパラメータ）を指定できる
+static void add_shape(b2::Body *body, const sol::table &tbl) {
+    // tblにはShapeを作るときのオプション（形状の種類とそれに必要なパラメータ）を指定できる
 
-    b2::Shape::Params shape_params;
-    shape_params.friction = 100.f;
+    // shape（衝突形状）を取得
+    std::string shape = tbl["shape"].get_or<const char *>("circle");
 
-    body->CreateShape(
-        b2::DestroyWithParent,
-        shape_params,
-        b2Circle{.center = b2Vec2(), .radius = 10});
+    if (shape == "circle") {
+        std::vector<float> center = tbl["center"].get_or(std::vector<float>{0, 0});
+        auto x = center.at(0);
+        auto y = center.at(1);
+
+        float radius = tbl["radius"].get<float>();
+
+        b2::Shape::Params shape_params;
+        // shape_params.friction = 100.f;
+
+        body->CreateShape(
+            b2::DestroyWithParent,
+            shape_params,
+            b2Circle{.center = b2Vec2{x, y}, .radius = radius});
+    } else {
+        warn("未知の形状種です: ", shape);
+    }
 }
 
 void register_box2d(sol::state &lua) {
