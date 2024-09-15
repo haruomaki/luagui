@@ -32,9 +32,9 @@ find_package(Freetype REQUIRED)
 target_include_directories(GUI SYSTEM PRIVATE ${FREETYPE_INCLUDE_DIRS}) # SYSTEMを指定して警告対象から除外
 target_link_libraries(GUI PRIVATE ${FREETYPE_LIBRARIES})
 
-# Box2D
-target_include_directories(GUI SYSTEM PUBLIC /usr/include/box2d) # TODO: PRIVATEでもいい
-target_link_libraries(GUI PRIVATE box2d)
+# Box2D & box2cpp Worldから直接扱えるようにPUBLIC
+target_include_directories(GUI SYSTEM PUBLIC ../external/box2cpp/include)
+target_link_libraries(GUI PUBLIC box2d)
 
 # Lua
 find_package(Lua REQUIRED)
