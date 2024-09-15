@@ -8,7 +8,7 @@ static std::function<void(b2::World *, const sol::table &)> wrap_table(void (b2:
     };
 }
 
-static void add_shape(b2::Body *body, const sol::table &tbl) {
+static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
     // tblにはShapeを作るときのオプション（形状の種類とそれに必要なパラメータ）を指定できる
 
     // shape（衝突形状）を取得
@@ -24,7 +24,7 @@ static void add_shape(b2::Body *body, const sol::table &tbl) {
         b2::Shape::Params shape_params;
         // shape_params.friction = 100.f;
 
-        body->CreateShape(
+        rbc->b2body.CreateShape(
             b2::DestroyWithParent,
             shape_params,
             b2Circle{.center = b2Vec2{x, y}, .radius = radius});
@@ -36,17 +36,13 @@ static void add_shape(b2::Body *body, const sol::table &tbl) {
 void register_box2d(sol::state &lua) {
     // Rigidbodyコンポーネント
     lua.new_usertype<RigidbodyComponent>(
-        "RigidbodyComponent",
-        "body", sol::readonly_property([](RigidbodyComponent *rbc) { return &rbc->b2body; }));
+        "Rigidbody",
+        "add_shape", add_shape);
 
     // Box2Dの各型
     lua.new_usertype<b2::World>(
         "b2World",
         "gravity", sol::property(&b2::World::GetGravity, wrap_table(&b2::World::SetGravity)));
-
-    lua.new_usertype<b2::Body>(
-        "b2Body",
-        "add_shape", add_shape);
 
     lua.new_usertype<b2Vec2>(
         "b2Vec2",
