@@ -28,6 +28,9 @@ static void add_update_component(sol::state &lua, WorldObject *obj, sol::functio
     obj->add_component<UpdateComponent>(runner);
 }
 
+// static void add_rigidbody_component(sol::state &lua, WorldObject *obj) {
+// }
+
 void register_world_object(sol::state &lua) {
     lua.new_usertype<WorldObject>(
         "WorldObject",

@@ -38,6 +38,6 @@ class RigidbodyComponent : public Component {
   public:
     b2::Body b2body;
 
-    RigidbodyComponent();
+    RigidbodyComponent(b2::Body::Params body_params = {});
     ~RigidbodyComponent() override;
 };
