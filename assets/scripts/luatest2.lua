@@ -4,7 +4,9 @@ create_window(800, 600, "Test Window", function()
     print(world.b2world.gravity)
 
     local arr = { { 0, 0 }, { 0.03, 0.01 }, { 0.01, 0.03 }, { 0, 0 } }
-    world:draw_line(arr)
+    local line_obj = world:draw_line(arr)
+    line_obj:add_rigidbody_component()
+
     world:draw_circle({ 0, 0 }, 0.04)
     local c2 = world:draw_circle({ -0.01, 0 }, 0.03)
 

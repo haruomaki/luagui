@@ -28,8 +28,18 @@ static void add_update_component(sol::state &lua, WorldObject *obj, sol::functio
     obj->add_component<UpdateComponent>(runner);
 }
 
-// static void add_rigidbody_component(sol::state &lua, WorldObject *obj) {
-// }
+static RigidbodyComponent *add_rigidbody_component(WorldObject *obj, const std::optional<sol::table> & /*tbl_opt*/) {
+    // TODO: tblにはb2::Body::Paramsで設定できる要素が適宜入れられる予定
+
+    b2::Body::Params body_params;
+    body_params.type = b2_dynamicBody;
+    body_params.position = {0, 0};
+    body_params.linearVelocity = {-0.01, 0.02};
+    body_params.sleepThreshold = 0.0005f; // スリープ状態を防ぐ
+
+    auto *rbc = obj->add_component<RigidbodyComponent>(body_params);
+    return rbc;
+}
 
 void register_world_object(sol::state &lua) {
     lua.new_usertype<WorldObject>(
@@ -39,7 +49,10 @@ void register_world_object(sol::state &lua) {
         sol::property([](WorldObject *obj) { return obj->get_position(); }, [](WorldObject *obj, std::vector<float> pos) { obj->set_position({pos[0], pos[1], 0}); }),
 
         "add_update_component",
-        [&lua](WorldObject *obj, sol::function f) { add_update_component(lua, obj, std::move(f)); });
+        [&lua](WorldObject *obj, sol::function f) { add_update_component(lua, obj, std::move(f)); },
+
+        "add_rigidbody_component",
+        add_rigidbody_component);
 
     lua.new_usertype<MeshObject>("MeshObject", sol::base_classes, sol::bases<WorldObject>());
 }
