@@ -3,6 +3,8 @@
 #include "Mesh.hpp"
 #include "Timer.hpp"
 
+#include <box2cpp/box2cpp.h>
+
 class Camera;
 class Rigidbody;
 
@@ -23,11 +25,18 @@ class World : public WorldObject {
     BufferedSet<std::function<void(const Camera &)> *> draws;
     BufferedSet<std::function<void()> *> updates;
     BufferedSet<Rigidbody *> rigidbodies;
+    BufferedSet<RigidbodyComponent *> rigidbody_components;
+    b2::World b2world{};
 
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
         , draw_priority_(draw_priority)
-        , window(window) {}
+        , window(window) {
+        // Box2Dの世界を生成
+        b2::World::Params world_params;
+        world_params.gravity = {0, 0};
+        b2world = b2::World(world_params);
+    }
 
     ~World() override {
         info("Worldのデストラクタ");

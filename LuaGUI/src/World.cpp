@@ -9,6 +9,8 @@ static MeshObject &draw_line(World &world, std::vector<std::vector<float>> point
     auto &line_obj = new_line(world);
     line_obj.mesh.vertices.setCoords(coords);
 
+    line_obj.add_component<RigidbodyComponent>();
+
     return line_obj;
 }
 

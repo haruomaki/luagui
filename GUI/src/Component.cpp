@@ -30,3 +30,36 @@ UpdateComponent::UpdateComponent(std::function<void(UpdateComponent &)> &&f) {
 UpdateComponent::~UpdateComponent() {
     get_owner()->get_world().updates.request_erase(&this->func_);
 }
+
+// ---------------------
+// RigidbodyComponent
+// ---------------------
+
+RigidbodyComponent::RigidbodyComponent() {
+    print("RigidbodyComponentのコンストラクタです");
+
+    // Worldのrigidbodyリストに追加
+    get_owner()->get_world().rigidbody_components.request_set(this);
+
+    // 球その１
+    b2::Body::Params bp1;
+    bp1.type = b2_dynamicBody;
+    bp1.position = {0, 0};
+    bp1.linearVelocity = {-0.045, 0.02};
+
+    auto &b2world = get_owner()->get_world().b2world;
+    b2::Body ball1 = b2world.CreateBody(b2::OwningHandle, bp1);
+    b2body = std::move(ball1);
+
+    b2body.CreateShape(
+        b2::DestroyWithParent,
+        b2::Shape::Params{},
+        b2Circle{.center = b2Vec2(), .radius = 1});
+}
+
+RigidbodyComponent::~RigidbodyComponent() {
+    print("RigidbodyComponentのデストラクタです");
+
+    // Worldのrigidbodyリストから削除
+    get_owner()->get_world().rigidbody_components.request_erase(this);
+}

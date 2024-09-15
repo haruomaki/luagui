@@ -13,7 +13,9 @@ int main() {
     bp1.position = {0, 0};
     bp1.linearVelocity = {1, 0};
 
-    b2::Body ball1 = w.CreateBody(b2::OwningHandle, bp1);
+    b2::Body ball1;
+    b2::Body ball_tmp = w.CreateBody(b2::OwningHandle, bp1);
+    ball1 = std::move(ball_tmp);
 
     ball1.CreateShape(
         b2::DestroyWithParent,

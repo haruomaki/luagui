@@ -2,6 +2,8 @@
 
 #include <graphical_base.hpp>
 
+#include <box2cpp/box2cpp.h>
+
 class WorldObject;
 
 // コンポーネントの基底クラス。
@@ -30,4 +32,12 @@ class UpdateComponent : public Component {
     UpdateComponent &operator=(const UpdateComponent &) const = delete;
     UpdateComponent(UpdateComponent &&) = delete;
     UpdateComponent &operator=(UpdateComponent &&) const = delete;
+};
+
+class RigidbodyComponent : public Component {
+  public:
+    b2::Body b2body;
+
+    RigidbodyComponent();
+    ~RigidbodyComponent() override;
 };
