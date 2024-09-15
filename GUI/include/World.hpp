@@ -34,6 +34,7 @@ class World : public WorldObject {
         , window(window) {
         // Box2Dの世界を生成
         b2::World::Params world_params;
+        world_params.gravity = b2Vec2{};
         b2world = b2::World(world_params);
     }
 

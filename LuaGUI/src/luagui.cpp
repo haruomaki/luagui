@@ -1,6 +1,7 @@
 #include <GUI.hpp>
 #include <luagui.hpp>
 
+#include "Box2D.hpp"
 #include "World.hpp"
 #include "WorldObject.hpp"
 
@@ -75,4 +76,5 @@ LuaGUI::LuaGUI() {
     register_chrono(lua);
     register_world(lua);
     register_world_object(lua);
+    register_box2d(lua);
 }
