@@ -45,16 +45,20 @@ RigidbodyComponent::RigidbodyComponent() {
     b2::Body::Params bp1;
     bp1.type = b2_dynamicBody;
     bp1.position = {0, 0};
-    bp1.linearVelocity = {-0.045, 0.02};
+    bp1.linearVelocity = {-0.01, 0.02};
+    bp1.sleepThreshold = 0.0005f; // スリープ状態を防ぐ
 
     auto &b2world = get_owner()->get_world().b2world;
     b2::Body ball1 = b2world.CreateBody(b2::OwningHandle, bp1);
     b2body = std::move(ball1);
 
+    b2::Shape::Params shape_params;
+    shape_params.friction = 100.f;
+
     b2body.CreateShape(
         b2::DestroyWithParent,
-        b2::Shape::Params{},
-        b2Circle{.center = b2Vec2(), .radius = 1});
+        shape_params,
+        b2Circle{.center = b2Vec2(), .radius = 10});
 }
 
 RigidbodyComponent::~RigidbodyComponent() {

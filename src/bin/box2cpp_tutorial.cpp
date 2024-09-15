@@ -11,7 +11,7 @@ int main() {
     b2::Body::Params bp1;
     bp1.type = b2_dynamicBody;
     bp1.position = {0, 0};
-    bp1.linearVelocity = {1, 0};
+    bp1.linearVelocity = {0.01, 0};
 
     b2::Body ball1;
     b2::Body ball_tmp = w.CreateBody(b2::OwningHandle, bp1);
@@ -26,7 +26,7 @@ int main() {
     b2::Body::Params bp2;
     bp2.type = b2_dynamicBody;
     bp2.position = {10, 0};
-    bp2.linearVelocity = {-1, 0};
+    bp2.linearVelocity = {-0.01, 0};
 
     b2::Body ball2 = w.CreateBody(b2::OwningHandle, bp2);
 
@@ -35,9 +35,13 @@ int main() {
         b2::Shape::Params{},
         b2Circle{.center = {}, .radius = 5});
 
+    ball2.SetLinearDamping(0.3f);
+    ball2.SetSleepThreshold(0.0005f);
+
     for (int i = 0; i < 100; i++) {
         w.Step(1 / 60.f, 4);
         std::cout << ball1.GetPosition().x << " " << ball2.GetPosition().x << "\n";
+        // std::cout << ball1.GetLinearVelocity().x << " " << ball2.GetLinearVelocity().x << "\n";
     }
 
     // No cleanup needed, everything is destroyed automatically.

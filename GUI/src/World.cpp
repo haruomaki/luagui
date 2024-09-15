@@ -17,7 +17,6 @@ void World::master_physics() {
     // 物理演算結果をWorldObjectに反映
     rigidbody_components.foreach_flush([](RigidbodyComponent *rbc) {
         auto physics_position = rbc->b2body.GetPosition();
-        debug(physics_position.x, physics_position.y);
         rbc->get_owner()->position = {physics_position.x, physics_position.y, 0};
     });
 
