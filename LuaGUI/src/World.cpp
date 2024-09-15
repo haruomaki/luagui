@@ -9,14 +9,6 @@ static MeshObject &draw_line(World &world, std::vector<std::vector<float>> point
     auto &line_obj = new_line(world);
     line_obj.mesh.vertices.setCoords(coords);
 
-    // b2::Shape::Params shape_params;
-    // shape_params.friction = 100.f;
-
-    // rbc->b2body.CreateShape(
-    //     b2::DestroyWithParent,
-    //     shape_params,
-    //     b2Circle{.center = b2Vec2(), .radius = 10});
-
     return line_obj;
 }
 

@@ -7,14 +7,6 @@ function create_world() end
 ---@field b2world b2World
 local World = {}
 
--- TODO: 別ファイルに移動
----@class b2World
----@field gravity b2Vec2 重力加速度のベクトル
-local b2World = {}
-
----@class b2Vec2
-local b2Vec2 = {}
-
 ---直線を描画する。
 ---@param points table<number, table<number, number>> 頂点の座標
 ---@return MeshObject
