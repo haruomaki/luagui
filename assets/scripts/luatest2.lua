@@ -1,5 +1,7 @@
 create_window(800, 600, "Test Window", function()
     local world = create_world()
+    world.b2world.gravity = { 0, -0.03 }
+    print(world.b2world.gravity)
 
     local arr = { { 0, 0 }, { 0.03, 0.01 }, { 0.01, 0.03 }, { 0, 0 } }
     world:draw_line(arr)

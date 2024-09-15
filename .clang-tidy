@@ -33,6 +33,7 @@ HeaderFilterRegex: 'source.*\.(hpp|h)'
 FormatStyle: file
 CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor: true # デストラクタをデフォルトのままvirtual指定したとき、その他の暗黙の関数の警告を出さない
+  performance-unnecessary-value-param.AllowedTypes: "sol::table"  # 引数で受け取るときに、const参照ではなく実体コピーを許可する。luaとの受け渡しでは実体である必要があるため。
   readability-braces-around-statements.ShortStatementLines: 1  # 単一行のif文（やその他構文）は中括弧付与を免除
   readability-identifier-naming.ClassCase: CamelCase
   readability-identifier-naming.EnumCase: CamelCase
