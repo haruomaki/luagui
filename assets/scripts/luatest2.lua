@@ -1,3 +1,11 @@
+---丸を生成
+---@param world World
+local function maru(world, x, y)
+    local obj = world:draw_circle({ x, y }, 0.01)
+    local rb = obj:add_rigidbody_component()
+    rb:add_shape({ shape = "circle", radius = 0.01 })
+end
+
 create_window(800, 600, "Test Window", function()
     local world = create_world()
     world.b2world.gravity = { 0, -0.03 }
@@ -13,10 +21,16 @@ create_window(800, 600, "Test Window", function()
 
     c2:add_update_component(function()
         print("3...")
+        maru(world, -0.02, 0.02)
+
         Wait(1.7)
         print("2...")
+        maru(world, 0.01, 0)
+
         Wait(1.2)
         print("1...")
+        maru(world, 0.02, 0)
+
         Wait(0.9)
         print("0!")
 

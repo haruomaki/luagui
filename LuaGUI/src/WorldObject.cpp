@@ -34,7 +34,6 @@ static RigidbodyComponent *add_rigidbody_component(WorldObject *obj, const std::
     b2::Body::Params body_params;
     body_params.type = b2_dynamicBody;
     body_params.position = {0, 0};
-    body_params.linearVelocity = {-0.01, 0.02};
     body_params.sleepThreshold = 0.0005f; // スリープ状態を防ぐ
 
     auto *rbc = obj->add_component<RigidbodyComponent>(body_params);
