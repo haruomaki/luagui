@@ -8,4 +8,4 @@ function twice(x) end
 ---@param height integer ウィンドウの高さ
 ---@param title string ウィンドウタイトル
 ---@param scenario function ゲームロジックなどのコルーチン
-function create_window(width, height, title, scenario) end
+function run_window(width, height, title, scenario) end

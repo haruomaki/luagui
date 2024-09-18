@@ -1,4 +1,4 @@
--- coroutines.lua
+---@meta coroutines
 
 ---coroutine.yield()と同じ
 ---@param ...any コルーチン呼び出し元に返す値

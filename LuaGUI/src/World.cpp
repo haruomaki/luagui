@@ -31,7 +31,7 @@ static MeshObject &draw_circle(World &world, std::vector<float> center, float ra
 
 void register_world(sol::state &lua) {
     lua.set_function("create_world", [&]() -> World & {
-        Window &window = lua["window"];
+        Window &window = lua["__CurrentWindow"];
 
         auto &world = window.create_world();
 

@@ -18,7 +18,7 @@ local function sen(world, p1, p2)
     rb:add_shape({ shape = "edge", points = { p1, p2 } })
 end
 
-create_window(800, 600, "Test Window", function()
+run_window(800, 600, "Test Window", function()
     local world = create_world()
     world.b2world.gravity = { 0, -0.2 }
     print(world.b2world.gravity)

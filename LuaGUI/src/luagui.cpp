@@ -2,6 +2,7 @@
 #include <luagui.hpp>
 
 #include "Box2D.hpp"
+#include "Window.hpp"
 #include "World.hpp"
 #include "WorldObject.hpp"
 
@@ -15,7 +16,7 @@ static void register_chrono(sol::state &lua) {
     });
 }
 
-static void create_window(sol::state &lua, int width, int height, const std::string &title, sol::function func) {
+static void run_window(sol::state &lua, int width, int height, const std::string &title, sol::function func) {
     std::cout << "Creating window: " << title << " (" << width << "x" << height << ")" << std::endl;
 
     sol::thread runner_thread = sol::thread::create(lua);
@@ -27,7 +28,7 @@ static void create_window(sol::state &lua, int width, int height, const std::str
     GUI gui;
     Window &window = gui.create_window(width, height, title);
     print("ウィンドウ作成完了");
-    lua["window"] = &window;
+    lua["__CurrentWindow"] = &window;
 
     debug(gui.dpi());
 
@@ -69,11 +70,12 @@ LuaGUI::LuaGUI() {
     // コルーチンまわりの関数を読み込み
     lua.script_file("assets/scripts/coroutines.lua");
 
-    lua.set_function("create_window", [this](int width, int height, const std::string &title, sol::function func) {
-        create_window(this->lua, width, height, title, std::move(func));
+    lua.set_function("run_window", [this](int width, int height, const std::string &title, sol::function func) {
+        run_window(this->lua, width, height, title, std::move(func));
     });
 
     register_chrono(lua);
+    register_window(lua);
     register_world(lua);
     register_world_object(lua);
     register_box2d(lua);
