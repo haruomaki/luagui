@@ -14,6 +14,8 @@ class Viewport;
 // 一つのウィンドウを表すクラス
 class Window {
     GLFWwindow *gwin_ = nullptr;
+    using KeyArray = std::array<bool, 512>;
+    KeyArray key_down_{}, key_up_{};
     std::set<std::unique_ptr<Resource>> resources_;
     FunctionSet<void(int, int)> size_callbacks_; // TODO: key_callbackに合わせてpublicにしてもいい
     std::vector<std::unique_ptr<World>> worlds_ = {};
@@ -26,6 +28,7 @@ class Window {
     void draw_routine();
     void update_routine();
     void physics_routine();
+    void post_process();
 
     friend class World;
     void refresh_world_order();
@@ -62,6 +65,12 @@ class Window {
 
     // glfwGetCursorPos()のラッパー
     [[nodiscard]] pair<double, double> cursor_pos() const;
+
+    // 現在フレームにおける、キー変更イベント（押した）の有無を表す
+    [[nodiscard]] const KeyArray &key_down() const { return key_down_; }
+
+    // 現在フレームにおける、キー変更イベント（離した）の有無を表す
+    [[nodiscard]] const KeyArray &key_up() const { return key_up_; }
 
     template <typename T, typename... Args>
         requires std::constructible_from<T, Args...> && // ArgsはTのコンストラクタの引数

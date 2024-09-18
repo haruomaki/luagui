@@ -67,6 +67,16 @@ Window::Window(GUI &gui, int width, int height, const char *title)
         });
     });
 
+    // 押した/離した瞬間を記録するためのキーコールバック。key_down()/keu_up()に必要
+    glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int /*scancode*/, int action, int /*mods*/) {
+        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        if (action == GLFW_PRESS) {
+            window->key_down_[key] = true;
+        } else if (action == GLFW_RELEASE) {
+            window->key_up_[key] = true;
+        }
+    });
+
     // デフォルトシェーダの設定
     this->default_shader.emplace({create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
                                   create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))});
@@ -192,6 +202,12 @@ void Window::physics_routine() {
     for (const auto &world : this->worlds_) {
         world->master_physics();
     }
+}
+
+void Window::post_process() {
+    // 今フレームのキーイベント発生状況を0にリセットする
+    key_down_.fill(false);
+    key_up_.fill(false);
 }
 
 // World::draw_priority_に基づき、worlds_を昇順に並べ替える

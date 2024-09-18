@@ -7,6 +7,7 @@ Checks:
   - concurrency-*
   - cppcoreguidelines-*
   - -cppcoreguidelines-avoid-magic-numbers # マジックナンバー
+  - -cppcoreguidelines-pro-bounds-constant-array-index # std::arrayの添え字として変数を許容
   - -cppcoreguidelines-pro-type-union-access # TODO: vec3の要素にアクセスできるように？
   - -cppcoreguidelines-avoid-const-or-ref-data-members # TODO: 参照型のメンバ変数を許容
   - -cppcoreguidelines-init-variables # 変数宣言時の未初期化を許容
