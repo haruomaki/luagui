@@ -21,6 +21,6 @@ function WorldObject:add_rigidbody_component(body_params) end
 
 ---物体に付いているコンポーネントを取得する
 ---@generic T : Component
----@param component_type `T`
----@return T
-function WorldObject:get_component(component_type) end
+---@param typename `T` 取得したいコンポーネント名（型名を文字列で）
+---@return T component
+function WorldObject:get_component(typename) end
