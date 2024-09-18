@@ -47,3 +47,25 @@ function Interval(action, interval)
         end
     end
 end
+
+---ただひたすら無限ループを実行する
+function Forever()
+    while true do
+        coroutine.yield()
+    end
+end
+
+---指定の時間が経過するまで、x秒おきに関数を実行する
+---@param action fun() 実行する関数
+---@param interval number 実行間隔（秒）
+---@param duration number 総実行時間（秒）
+function RepeatUntil(action, interval, duration)
+    local startTime = get_time()
+    while get_time() - startTime < duration do
+        local iterationStart = get_time()
+        action()
+        while get_time() - iterationStart < interval do
+            coroutine.yield()
+        end
+    end
+end

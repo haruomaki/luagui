@@ -52,6 +52,7 @@ void register_box2d(sol::state &lua) {
     // Rigidbodyコンポーネント
     lua.new_usertype<RigidbodyComponent>(
         "Rigidbody",
+        "linear_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetLinearVelocity(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetLinearVelocity({pos[0], pos[1]}); }),
         "add_shape", add_shape);
 
     // Box2Dの各型
