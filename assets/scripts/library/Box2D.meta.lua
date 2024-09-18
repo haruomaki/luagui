@@ -33,9 +33,12 @@ local b2Vec2 = {}
 
 ---add_shapeに指定できるオプション集
 ---@class ShapeOptions
----@field shape string? 形状のタイプ（"circle" または "rect"）。
+---@field shape ShapeType? 形状のタイプ
 ---@field radius number? 円の半径（shapeが"circle"の場合に必要）。
 ---@field center table? 円の中心座標（shapeが"circle"の場合に必要）。
 ---@field halfWidth number? 矩形の半幅（shapeが"rect"の場合に必要）。
 ---@field halfHeight number? 矩形の半高さ（shapeが"rect"の場合に必要）。
 local ShapeOptions = {}
+
+---衝突形状の種類
+---@alias ShapeType "circle" | "rect" | "edge"

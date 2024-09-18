@@ -22,7 +22,7 @@ create_window(800, 600, "Test Window", function()
     -- 床と壁の剛体を作成
     local yuka_obj = world:draw_line({ { -1, -0.04 }, { 1, -0.04 } })
     local yuka_rb = yuka_obj:add_rigidbody_component()
-    yuka_rb:add_shape({ shape = "line" })
+    yuka_rb:add_shape({ shape = "edge" })
 
     -- c2:add_update_component(function()
     --     print("3...")
