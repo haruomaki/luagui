@@ -22,17 +22,32 @@ static const Keymap &keymap() {
     return *keymap_inner;
 }
 
+static inline std::optional<int> from_name(const char *name) {
+    std::string_view name_view(name);
+    auto it = keymap().find(name_view);
+    if (it == keymap().end()) {
+        warn("キー名が不正です: ", name);
+        return std::nullopt;
+    }
+    return it->second;
+}
+
 void register_window(sol::state &lua) {
     lua.set_function("GetKey", [&lua](const char *key) -> bool {
         Window &window = lua["__CurrentWindow"];
+        auto keycode = from_name(key);
+        return keycode.has_value() ? window.key(*keycode) : false;
+    });
 
-        std::string_view key_view(key);
-        auto it = keymap().find(key_view);
-        if (it == keymap().end()) {
-            warn("キー名が不正です: ", key);
-            return false;
-        }
-        int keycode = it->second;
-        return window.key(keycode);
+    lua.set_function("GetKeyDown", [&lua](const char *key) -> bool {
+        Window &window = lua["__CurrentWindow"];
+        auto keycode = from_name(key);
+        return keycode.has_value() ? window.key_down()[*keycode] : false;
+    });
+
+    lua.set_function("GetKeyUp", [&lua](const char *key) -> bool {
+        Window &window = lua["__CurrentWindow"];
+        auto keycode = from_name(key);
+        return keycode.has_value() ? window.key_up()[*keycode] : false;
     });
 }

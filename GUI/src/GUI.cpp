@@ -39,10 +39,6 @@ void GUI::refresh_windows() {
     // this->windows_.clear();
     // this->windows_.push_back(vvv);
 
-    // 受け取ったイベント（キーボードやマウス入力）を処理する
-    // キー押下の瞬間などを捉えるために、ユーザ処理よりも前に置く
-    glfwPollEvents();
-
     // 閉じるべきウィンドウを見つけてvectorから削除
     trace("mainloop starts deleting windows");
     auto remove_begin = std::remove_if(this->windows_.begin(), this->windows_.end(), [](const auto &window) {

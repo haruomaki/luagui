@@ -73,9 +73,16 @@ run_window(800, 600, "Test Window", function()
 
     Wait(1)
 
-    RepeatUntil(function()
-        obj:get_component("Rigidbody").linear_velocity = { 0.01, 0.1 }
-
-        print("Aキー:", GetKey('A'))
-    end, 1, 10)
+    Forever(function()
+        if GetKeyDown('Space') then
+            local vx = 0
+            if GetKey('Right') then
+                vx = 0.02
+            end
+            if GetKey('Left') then
+                vx = -0.02
+            end
+            obj:get_component("Rigidbody").linear_velocity = { vx, 0.1 }
+        end
+    end)
 end)

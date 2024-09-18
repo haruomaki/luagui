@@ -23,3 +23,13 @@ __CurrentWindow = {}
 ---@param key Keys キーの名前
 ---@return boolean pressed 押されていればtrue
 function GetKey(key) end
+
+--- キーを押したイベントをチェックする関数
+---@param key Keys キーの名前
+---@return boolean pressed 今フレームに初めて押されればtrue
+function GetKeyDown(key) end
+
+--- キーを離したイベントをチェックする関数
+---@param key Keys キーの名前
+---@return boolean released 今フレームに初めて離されればtrue
+function GetKeyUp(key) end

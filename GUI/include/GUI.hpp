@@ -50,7 +50,12 @@ class GUI {
         // 描画のループ
         while (!this->windows_.empty()) {
             tick++;
-            custom_routine();
+
+            // 受け取ったイベント（キーボードやマウス入力）を処理する
+            // キー押下の瞬間などを捉えるために、ユーザ処理よりも前に置く
+            glfwPollEvents();
+
+            custom_routine(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
             this->refresh_windows();
         }
 
