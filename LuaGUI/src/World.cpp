@@ -20,9 +20,10 @@ static MeshObject &draw_circle(World &world, std::vector<float> center, float ra
         float theta = 2 * M_PIf * float(i) / float(segments); // 角度を計算
         float x = radius * cosf(theta);                       // x座標
         float y = radius * sinf(theta);                       // y座標
-        coords[i] = glm::vec3(center[0] + x, center[1] + y, 0);
+        coords[i] = glm::vec3(x, y, 0);
     }
     auto &line_obj = new_line(world);
+    line_obj.position = {center[0], center[1], 0};
     line_obj.mesh.vertices.setCoords(coords);
 
     return line_obj;

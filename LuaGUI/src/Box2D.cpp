@@ -22,12 +22,23 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         float radius = tbl["radius"].get<float>();
 
         b2::Shape::Params shape_params;
-        // shape_params.friction = 100.f;
+        shape_params.friction = 0.00001f;
 
         rbc->b2body.CreateShape(
             b2::DestroyWithParent,
             shape_params,
             b2Circle{.center = b2Vec2{x, y}, .radius = radius});
+    } else if (shape == "line") {
+        // std::vector<float> center = tbl["center"].get_or(std::vector<float>{0, 0});
+        // auto x = center.at(0);
+        // auto y = center.at(1);
+
+        // float radius = tbl["radius"].get<float>();
+
+        rbc->b2body.CreateShape(
+            b2::DestroyWithParent,
+            b2::Shape::Params{},
+            b2Segment{{-1, -0.04}, {1, -0.04}});
     } else {
         warn("未知の形状種です: ", shape);
     }
