@@ -75,5 +75,7 @@ run_window(800, 600, "Test Window", function()
 
     RepeatUntil(function()
         obj:get_component("Rigidbody").linear_velocity = { 0.01, 0.1 }
+
+        print("Aキー:", GetKey('A'))
     end, 1, 10)
 end)
