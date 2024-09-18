@@ -8,7 +8,7 @@ function create_world() end
 local World = {}
 
 ---直線を描画する。
----@param points table<number, table<number, number>> 頂点の座標
+---@param points Points 頂点の座標
 ---@return MeshObject
 function World:draw_line(points) end
 

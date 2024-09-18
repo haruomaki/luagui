@@ -6,9 +6,19 @@ local function maru(world, x, y)
     rb:add_shape({ shape = "circle", radius = 0.01 })
 end
 
+---直線を生成
+---@param world World
+---@param p1 Point
+---@param p2 Point
+local function sen(world, p1, p2)
+    local obj = world:draw_line({ p1, p2 })
+    local rb = obj:add_rigidbody_component()
+    rb:add_shape({ shape = "edge", points = { p1, p2 } })
+end
+
 create_window(800, 600, "Test Window", function()
     local world = create_world()
-    world.b2world.gravity = { 0, -0.1 }
+    world.b2world.gravity = { 0, -0.2 }
     print(world.b2world.gravity)
 
     -- local arr = { { 0, 0 }, { 0.03, 0.01 }, { 0.01, 0.03 }, { 0, 0 } }
@@ -20,9 +30,8 @@ create_window(800, 600, "Test Window", function()
     -- local c2 = world:draw_circle({ -0.01, 0 }, 0.03)
 
     -- 床と壁の剛体を作成
-    local yuka_obj = world:draw_line({ { -1, -0.04 }, { 1, -0.04 } })
-    local yuka_rb = yuka_obj:add_rigidbody_component()
-    yuka_rb:add_shape({ shape = "edge" })
+    sen(world, { -0.5, 0 }, { 0, -0.04 })
+    sen(world, { 0, -0.04 }, { 0.5, 0 })
 
     -- c2:add_update_component(function()
     --     print("3...")

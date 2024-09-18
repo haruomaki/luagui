@@ -38,6 +38,7 @@ local b2Vec2 = {}
 ---@field center table? 円の中心座標（shapeが"circle"の場合に必要）。
 ---@field halfWidth number? 矩形の半幅（shapeが"rect"の場合に必要）。
 ---@field halfHeight number? 矩形の半高さ（shapeが"rect"の場合に必要）。
+---@field points Points? 辺の端点（shapeが"edge"の場合に必要）。
 local ShapeOptions = {}
 
 ---衝突形状の種類
