@@ -41,6 +41,14 @@ static RigidbodyComponent *add_rigidbody_component(WorldObject *obj, const std::
     return rbc;
 }
 
+static sol::object get_component(sol::state &lua, WorldObject *obj, const std::string &component_type) {
+    if (component_type == "Rigidbody") {
+        auto *rbc = obj->get_component<RigidbodyComponent>();
+        return sol::make_object(lua, rbc);
+    }
+    return sol::nil;
+}
+
 void register_world_object(sol::state &lua) {
     lua.new_usertype<WorldObject>(
         "WorldObject",
@@ -52,7 +60,10 @@ void register_world_object(sol::state &lua) {
         [&lua](WorldObject *obj, sol::function f) { add_update_component(lua, obj, std::move(f)); },
 
         "add_rigidbody_component",
-        add_rigidbody_component);
+        add_rigidbody_component,
+
+        "get_component",
+        [&lua](WorldObject *obj, const std::string &component_type) { return get_component(lua, obj, component_type); });
 
     lua.new_usertype<MeshObject>("MeshObject", sol::base_classes, sol::bases<WorldObject>());
 }

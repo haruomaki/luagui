@@ -1,11 +1,11 @@
 ---丸を生成
 ---@param world World
----@return Rigidbody # TODO: MeshObjectを返す＆MeshObjectからRigidbodyに簡単にアクセスできるようにする
+---@return MeshObject
 local function maru(world, x, y)
     local obj = world:draw_circle({ x, y }, 0.01)
     local rb = obj:add_rigidbody_component()
     rb:add_shape({ shape = "circle", radius = 0.01 })
-    return rb
+    return obj
 end
 
 ---直線を生成
@@ -61,7 +61,7 @@ create_window(800, 600, "Test Window", function()
     --     c2.position = { radius * math.cos(theta), radius * math.sin(theta) }
     -- end)
 
-    local rb = maru(world, 0, 0)
+    local obj = maru(world, 0, 0)
 
     Wait(1)
 
@@ -74,7 +74,6 @@ create_window(800, 600, "Test Window", function()
     Wait(1)
 
     RepeatUntil(function()
-        -- print(rb.linear_velocity)
-        rb.linear_velocity = { 0.01, 0.1 }
+        obj:get_component("Rigidbody").linear_velocity = { 0.01, 0.1 }
     end, 1, 10)
 end)

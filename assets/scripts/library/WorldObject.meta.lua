@@ -18,3 +18,9 @@ function WorldObject:add_update_component(f) end
 ---@param body_params? table b2::Bodyを作成するときに指定するオプション。位置や速度、摩擦など。
 ---@return Rigidbody rbc
 function WorldObject:add_rigidbody_component(body_params) end
+
+---物体に付いているコンポーネントを取得する
+---@generic T : Component
+---@param component_type `T`
+---@return T
+function WorldObject:get_component(component_type) end

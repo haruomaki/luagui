@@ -191,9 +191,26 @@ class WorldObject {
         T *component_ptr = component.get();
         components_.emplace(std::type_index(typeid(T)), std::move(component)); // unique_ptrのムーブコンストラクタ。
         return component_ptr;
-        // WorldObject::set_parent_static(this);
-        // auto it = components_.emplace(std::type_index(typeid(T)), std::forward<Args>(args)...); // NOTE: ムーブコンストラクタ。components_内に直接構築した方がいいかも
-        // return &(*it);
+    }
+
+    template <typename T>
+        requires std::derived_from<T, Component>
+    T *get_component() {
+        auto range = components_.equal_range(std::type_index(typeid(T)));
+        if (range.first != range.second) {
+            return static_cast<T *>(range.first->second.get());
+        }
+        return nullptr;
+    }
+
+    template <typename T>
+    std::vector<T *> get_components() {
+        std::vector<T *> result;
+        auto range = components_.equal_range(std::type_index(typeid(T)));
+        for (auto it = range.first; it != range.second; ++it) {
+            result.push_back(static_cast<T *>(it->second.get()));
+        }
+        return result;
     }
 };
 

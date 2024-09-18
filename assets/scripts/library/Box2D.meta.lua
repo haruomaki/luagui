@@ -5,7 +5,7 @@
 -------------
 
 ---コンポーネントおよび剛体そのものを表すクラス。RigidbodyComponentとb2::Bodyの機能を統合する。
----@class Rigidbody
+---@class Rigidbody : Component
 ---@field linear_velocity b2Vec2 速度ベクトル
 local Rigidbody = {}
 
