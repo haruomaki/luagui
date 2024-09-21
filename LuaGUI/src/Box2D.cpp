@@ -23,6 +23,7 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 
         b2::Shape::Params shape_params;
         shape_params.friction = 0.1f;
+        shape_params.restitution = 0.9f;
 
         rbc->b2body.CreateShape(
             b2::DestroyWithParent,
@@ -38,11 +39,13 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 
         b2::Shape::Params shape_params;
         shape_params.friction = 0.1f;
+        shape_params.restitution = 0.9f;
 
-        rbc->b2body.CreateShape(
+        auto sss = rbc->b2body.CreateShape(
             b2::DestroyWithParent,
             shape_params,
             b2Segment{{x1, y1}, {x2, y2}});
+        debug(sss.GetRestitution());
     } else {
         warn("未知の形状種です: ", shape);
     }
