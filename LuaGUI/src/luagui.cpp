@@ -62,13 +62,22 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 }
 
 LuaGUI::LuaGUI() {
-    lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::math, sol::lib::package, sol::lib::coroutine);
+    lua.open_libraries(
+        sol::lib::base,
+        sol::lib::os,
+        sol::lib::string,
+        sol::lib::math,
+        sol::lib::package,
+        sol::lib::coroutine);
 
     // requireで検索するパスを追加
     lua["package"]["path"] = lua["package"]["path"].get<std::string>() + ";./assets/scripts/?.lua";
 
     // コルーチンまわりの関数を読み込み
     lua.script_file("assets/scripts/coroutines.lua");
+
+    // その他ユーティリティ関数などを読み込み
+    lua.script_file("assets/scripts/misc.lua");
 
     lua.set_function("run_window", [this](int width, int height, const std::string &title, sol::function func) {
         run_window(this->lua, width, height, title, std::move(func));

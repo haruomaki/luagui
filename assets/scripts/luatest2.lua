@@ -16,8 +16,8 @@ local function sen(p1, p2)
     rb:add_shape({
         shape = "edge",
         points = { p1, p2 },
-        on_collision_enter = function()
-            print("ほげー")
+        on_collision_enter = function(self, other)
+            printf("衝突しました！ %d,%d", self.index, other.index)
         end
     })
 end

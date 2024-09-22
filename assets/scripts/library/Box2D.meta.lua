@@ -13,6 +13,11 @@ local Rigidbody = {}
 ---@param shape_options ShapeOptions
 function Rigidbody:add_shape(shape_options) end
 
+---衝突判定体を表すクラス。
+---@class Collider : Component
+---@field index integer Shapeのインデックス番号
+local Collider = {}
+
 -------------
 -- box2cppから
 -------------
@@ -40,7 +45,7 @@ local b2Vec2 = {}
 ---@field halfWidth number? 矩形の半幅（shapeが"rect"の場合に必要）。
 ---@field halfHeight number? 矩形の半高さ（shapeが"rect"の場合に必要）。
 ---@field points Points? 辺の端点（shapeが"edge"の場合に必要）。
----@field on_collision_enter fun()? 衝突したときに実行するコールバック関数。
+---@field on_collision_enter fun(self: Collider, other: Collider)? 衝突したときに実行するコールバック関数。
 local ShapeOptions = {}
 
 ---衝突形状の種類

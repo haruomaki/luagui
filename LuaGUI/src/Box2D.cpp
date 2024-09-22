@@ -45,12 +45,10 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         warn("未知の形状種です: ", shape);
     }
 
+    // 衝突時のコールバックを設定
     if (cc != nullptr && tbl["on_collision_enter"].valid()) {
         sol::function callback = tbl["on_collision_enter"];
-        cc->on_collision_enter = [callback](ColliderComponent &self, ColliderComponent &other) { print("ほぎゃー"); };
-        // cc->on_collision_enter = [](ColliderComponent &self, ColliderComponent &other) {
-        //     print("衝突しました！ ", self.shape_ref_.Handle().index1, ",", other.shape_ref_.Handle().index1);
-        // };
+        cc->on_collision_enter = [callback](ColliderComponent &self, ColliderComponent &other) { callback(self, other); };
     }
 }
 
@@ -60,6 +58,11 @@ void register_box2d(sol::state &lua) {
         "Rigidbody",
         "linear_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetLinearVelocity(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetLinearVelocity({pos[0], pos[1]}); }),
         "add_shape", add_shape);
+
+    // Colliderコンポーネント
+    lua.new_usertype<ColliderComponent>(
+        "Collider",
+        "index", sol::readonly_property([](ColliderComponent *cc) { return cc->shape_ref_.Handle().index1; }));
 
     // Box2Dの各型
     lua.new_usertype<b2::World>(
