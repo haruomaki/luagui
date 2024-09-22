@@ -63,7 +63,16 @@ void register_world_object(sol::state &lua) {
         add_rigidbody_component,
 
         "get_component",
-        [&lua](WorldObject *obj, const std::string &component_type) { return get_component(lua, obj, component_type); });
+        [&lua](WorldObject *obj, const std::string &component_type) { return get_component(lua, obj, component_type); },
+
+        "erase",
+        [](WorldObject *obj) { obj->erase(); });
+
+    // Componentクラス
+    lua.new_usertype<Component>(
+        "Component",
+        "owner", sol::readonly_property([](Component *comp) { return comp->get_owner(); }),
+        "erase", [](Component *comp) { comp->erase(); });
 
     lua.new_usertype<MeshObject>("MeshObject", sol::base_classes, sol::bases<WorldObject>());
 }

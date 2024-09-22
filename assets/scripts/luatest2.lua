@@ -10,15 +10,14 @@ end
 ---直線を生成
 ---@param p1 Point
 ---@param p2 Point
-local function sen(p1, p2)
+---@param on_collision_enter? fun(self: Collider, other: Collider)
+local function sen(p1, p2, on_collision_enter)
     local obj = CurrentWorld:draw_line({ p1, p2 })
     local rb = obj:add_rigidbody_component()
     rb:add_shape({
         shape = "edge",
         points = { p1, p2 },
-        on_collision_enter = function(self, other)
-            printf("衝突しました！ %d,%d", self.index, other.index)
-        end
+        on_collision_enter = on_collision_enter
     })
 end
 
@@ -33,7 +32,10 @@ run_window(800, 600, "Test Window", function()
     sen({ 0.1, 0 }, { 0, -0.02 })
 
     -- 落下判定を作成
-    sen({ -0.5, -0.04 }, { 0.5, -0.04 })
+    sen({ -0.5, -0.04 }, { 0.5, -0.04 }, function(self, other)
+        printf("衝突しました！ %d,%d", self.index, other.index)
+        other.owner:erase()
+    end)
 
     Forever(function()
         if GetKeyDown('Space') then

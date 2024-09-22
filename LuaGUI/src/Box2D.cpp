@@ -57,12 +57,14 @@ void register_box2d(sol::state &lua) {
     lua.new_usertype<RigidbodyComponent>(
         "Rigidbody",
         "linear_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetLinearVelocity(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetLinearVelocity({pos[0], pos[1]}); }),
-        "add_shape", add_shape);
+        "add_shape", add_shape,
+        sol::base_classes, sol::bases<Component>());
 
     // Colliderコンポーネント
     lua.new_usertype<ColliderComponent>(
         "Collider",
-        "index", sol::readonly_property([](ColliderComponent *cc) { return cc->shape_ref_.Handle().index1; }));
+        "index", sol::readonly_property([](ColliderComponent *cc) { return cc->shape_ref_.Handle().index1; }),
+        sol::base_classes, sol::bases<Component>());
 
     // Box2Dの各型
     lua.new_usertype<b2::World>(

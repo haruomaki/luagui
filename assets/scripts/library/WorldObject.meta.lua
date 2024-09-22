@@ -7,8 +7,16 @@ local WorldObject = {}
 ---@class MeshObject : WorldObject
 local MeshObject = {}
 
+---コンポーネント基底クラス
+---@class Component
+---@field owner WorldObject コンポーネントが所属するオブジェクト
+local Component = {}
+
 ---@class vec3
 local vec3 = {}
+
+---オブジェクトを削除する
+function WorldObject:erase() end
 
 ---Updateコンポーネントを追加する。（＝毎フレーム実行してほしい処理を追加する）
 ---@param f fun(self: WorldObject) 毎フレームresumeされるコルーチン。このコルーチンが終了したらコンポーネントも削除される。
@@ -24,3 +32,6 @@ function WorldObject:add_rigidbody_component(body_params) end
 ---@param typename `T` 取得したいコンポーネント名（型名を文字列で）
 ---@return T component
 function WorldObject:get_component(typename) end
+
+---コンポーネントを削除する
+function Component:erase() end
