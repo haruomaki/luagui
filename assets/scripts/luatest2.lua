@@ -13,7 +13,13 @@ end
 local function sen(p1, p2)
     local obj = CurrentWorld:draw_line({ p1, p2 })
     local rb = obj:add_rigidbody_component()
-    rb:add_shape({ shape = "edge", points = { p1, p2 } })
+    rb:add_shape({
+        shape = "edge",
+        points = { p1, p2 },
+        on_collision_enter = function()
+            print("ほげー")
+        end
+    })
 end
 
 run_window(800, 600, "Test Window", function()

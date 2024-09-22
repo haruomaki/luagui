@@ -11,6 +11,8 @@ static std::function<void(b2::World *, const sol::table &)> wrap_table(void (b2:
 static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
     // tblにはShapeを作るときのオプション（形状の種類とそれに必要なパラメータ）を指定できる
 
+    ColliderComponent *cc = nullptr;
+
     // shape（衝突形状）を取得
     std::string shape = tbl["shape"].get_or<const char *>("circle");
 
@@ -25,7 +27,7 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         shape_params.friction = 0.1f;
         shape_params.restitution = 0.9f;
 
-        rbc->get_owner()->add_component<ColliderComponent>(b2Circle{.center = b2Vec2{x, y}, .radius = radius}, shape_params);
+        cc = rbc->get_owner()->add_component<ColliderComponent>(b2Circle{.center = b2Vec2{x, y}, .radius = radius}, shape_params);
     } else if (shape == "edge") {
         using Points = std::vector<std::vector<float>>;
         Points points = tbl["points"].get_or(Points{});
@@ -38,9 +40,17 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         shape_params.friction = 0.1f;
         shape_params.restitution = 0.9f;
 
-        rbc->get_owner()->add_component<ColliderComponent>(b2Segment{{x1, y1}, {x2, y2}}, shape_params);
+        cc = rbc->get_owner()->add_component<ColliderComponent>(b2Segment{{x1, y1}, {x2, y2}}, shape_params);
     } else {
         warn("未知の形状種です: ", shape);
+    }
+
+    if (cc != nullptr && tbl["on_collision_enter"].valid()) {
+        sol::function callback = tbl["on_collision_enter"];
+        cc->on_collision_enter = [callback](ColliderComponent &self, ColliderComponent &other) { print("ほぎゃー"); };
+        // cc->on_collision_enter = [](ColliderComponent &self, ColliderComponent &other) {
+        //     print("衝突しました！ ", self.shape_ref_.Handle().index1, ",", other.shape_ref_.Handle().index1);
+        // };
     }
 }
 

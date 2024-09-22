@@ -80,11 +80,6 @@ ColliderComponent::ColliderComponent(ShapeVariant shape, b2::Shape::Params shape
             shape_ref_ = rbc.b2body.CreateShape(b2::DestroyWithParent, shape_params, s);
         },
         shape);
-
-    // FIXME: テスト用
-    on_collision_enter = [](ColliderComponent &self, ColliderComponent &other) {
-        print("衝突しました！ ", self.shape_ref_.Handle().index1, ",", other.shape_ref_.Handle().index1);
-    };
 }
 
 ColliderComponent::~ColliderComponent() {
