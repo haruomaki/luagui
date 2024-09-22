@@ -25,10 +25,7 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         shape_params.friction = 0.1f;
         shape_params.restitution = 0.9f;
 
-        rbc->b2body.CreateShape(
-            b2::DestroyWithParent,
-            shape_params,
-            b2Circle{.center = b2Vec2{x, y}, .radius = radius});
+        rbc->get_owner()->add_component<ColliderComponent<b2Circle>>(b2Circle{.center = b2Vec2{x, y}, .radius = radius}, shape_params);
     } else if (shape == "edge") {
         using Points = std::vector<std::vector<float>>;
         Points points = tbl["points"].get_or(Points{});
@@ -41,11 +38,7 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         shape_params.friction = 0.1f;
         shape_params.restitution = 0.9f;
 
-        auto sss = rbc->b2body.CreateShape(
-            b2::DestroyWithParent,
-            shape_params,
-            b2Segment{{x1, y1}, {x2, y2}});
-        debug(sss.GetRestitution());
+        rbc->get_owner()->add_component<ColliderComponent<b2Segment>>(b2Segment{{x1, y1}, {x2, y2}}, shape_params);
     } else {
         warn("未知の形状種です: ", shape);
     }

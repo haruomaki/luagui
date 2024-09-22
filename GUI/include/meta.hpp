@@ -68,3 +68,12 @@ template <template <class = void> typename Op, auto x, auto y>
 static constexpr auto apply_operator = Op()(x, y); // staticがないとWmissing-variable-declarationsの警告
 
 static_assert(apply_operator<std::plus, 8, 5> == 13); // 8 + 5 = 13 をコンパイル時に計算
+
+// リストにTが入っているかを判定するメタ関数
+template <typename T, typename... Types>
+struct IsAnyOf : std::false_type {};
+template <typename T, typename First, typename... Rest>
+struct IsAnyOf<T, First, Rest...>
+    : std::conditional_t<std::is_same_v<T, First>, std::true_type, IsAnyOf<T, Rest...>> {};
+template <typename T, typename... Types>
+static constexpr bool is_any_of = IsAnyOf<T, Types...>::value;
