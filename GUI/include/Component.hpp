@@ -50,9 +50,10 @@ using ShapeVariant = std::variant<b2Circle, b2Segment>;
 class ColliderComponent : public Component {
   public:
     // NOLINTNEXTLINE(readability-identifier-naming)
-    b2::Shape shape_; // publicだが直接触るのは非推奨
+    b2::ShapeRef shape_ref_; // publicだが直接触るのは非推奨
+    std::optional<std::function<void(ColliderComponent &self, ColliderComponent &other)>> on_collision_enter = std::nullopt;
 
-    ColliderComponent(ShapeVariant shape, const b2::Shape::Params &shape_params);
+    ColliderComponent(ShapeVariant shape, b2::Shape::Params shape_params);
 
     ~ColliderComponent() override;
 };

@@ -20,6 +20,7 @@ add_compile_options(
     -Wno-shadow-field # メンバ変数と同名の引数
     -Wno-shadow-field-in-constructor # メンバ変数と同名のコンストラクタ引数
     -Wno-unused-macros # ヘッダで定義するマクロ
+    -Wno-unsafe-buffer-usage # 変数を添字にしてstd::arrayにアクセスするのを許可
     
     # 書きやすさに関する警告
     -Wno-implicit-float-conversion # float値リテラルのfを省略

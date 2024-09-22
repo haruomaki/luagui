@@ -143,6 +143,15 @@ decltype(auto) map(const vector<T> &vec, Fn &&f) {
     return result;
 }
 
+// void*（またはT*など）をT&に変換する。
+template <typename T, typename Ptr>
+inline T &dereference(Ptr *ptr) {
+    if (!ptr) {
+        throw std::runtime_error("Null pointer exception");
+    }
+    return *static_cast<T *>(ptr);
+}
+
 } // namespace base
 
 using namespace base;

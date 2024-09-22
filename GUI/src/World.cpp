@@ -20,10 +20,13 @@ void World::master_physics() {
         rbc->get_owner()->position = {physics_position.x, physics_position.y, 0};
     });
 
-    // 衝突を出力
+    // 衝突を検出してコールバックを実行
     auto contact_events = b2world.GetContactEvents();
     for (int i = 0; i < contact_events.beginCount; i++) {
         auto event = contact_events.beginEvents[i]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        print("衝突しました！ ", event.shapeIdA.index1, ",", event.shapeIdB.index1);
+        auto &cca = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdA));
+        auto &ccb = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdB));
+        if (cca.on_collision_enter.has_value()) cca.on_collision_enter.value()(cca, ccb);
+        if (ccb.on_collision_enter.has_value()) ccb.on_collision_enter.value()(ccb, cca);
     }
 }
