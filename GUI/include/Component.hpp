@@ -1,6 +1,7 @@
 #pragma once
 
-#include <WorldObject.hpp>
+#include <variant>
+
 #include <graphical_base.hpp>
 
 #include <box2cpp/box2cpp.h>
@@ -43,17 +44,15 @@ class RigidbodyComponent : public Component {
     ~RigidbodyComponent() override;
 };
 
-// Box2DのShapeの型であるかを判定するコンセプト
-template <typename ShapeType>
-concept ShapeTypes = is_any_of<ShapeType, b2Circle, b2Segment>;
+// Box2DのShapeたちをまとめるタグ付きユニオン
+using ShapeVariant = std::variant<b2Circle, b2Segment>;
 
-template <ShapeTypes ShapeType>
 class ColliderComponent : public Component {
   public:
-    b2::Shape shape_; // NOLINT(readability-identifier-naming)
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    b2::Shape shape_; // publicだが直接触るのは非推奨
 
-    // ColliderComponent(b2Circle circle, b2::Shape::Params shape_params = {});
-    ColliderComponent(ShapeType shape, b2::Shape::Params shape_params);
+    ColliderComponent(ShapeVariant shape, const b2::Shape::Params &shape_params);
 
     ~ColliderComponent() override;
 };

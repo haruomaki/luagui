@@ -64,37 +64,23 @@ RigidbodyComponent::~RigidbodyComponent() {
 // ColliderComponent
 // ---------------------
 
-template <ShapeTypes ShapeType>
-static RigidbodyComponent &get_rigidbody(ColliderComponent<ShapeType> *self) {
+static RigidbodyComponent &get_rigidbody(ColliderComponent *self) {
     auto rbcs = self->get_owner()->template get_components<RigidbodyComponent>();
     if (rbcs.empty()) throw std::runtime_error("Rigidbodyが付いていません");
     if (rbcs.size() > 1) throw std::runtime_error("Rigidbodyが複数付いています");
     return *rbcs[0];
 }
 
-template <ShapeTypes ShapeType>
-ColliderComponent<ShapeType>::ColliderComponent(ShapeType shape, b2::Shape::Params shape_params) {
-    // // Worldのrigidbodyリストに追加
-    // get_owner()->get_world().rigidbody_components.request_set(this);
-
-    // auto &b2world = get_owner()->get_world().b2world;
-    // b2::Body tmp_body = b2world.CreateBody(b2::OwningHandle, body_params);
-    // b2body = std::move(tmp_body);
-
-    auto &rbc = get_rigidbody(this);
-
-    // rbc->b2body.CreateShape(
-    //     b2::DestroyWithParent,
-    //     shape_params,
-    //     b2Circle{.center = b2Vec2{x, y}, .radius = radius});
-    rbc.b2body.CreateShape(b2::DestroyWithParent, shape_params, shape);
+ColliderComponent::ColliderComponent(ShapeVariant shape, const b2::Shape::Params &shape_params) {
+    // どの型が代入されていたとしても、共通のインタフェースを呼び出す
+    std::visit(
+        [&](auto &s) {
+            auto &rbc = get_rigidbody(this);
+            rbc.b2body.CreateShape(b2::DestroyWithParent, shape_params, s);
+        },
+        shape);
 }
 
-template <ShapeTypes ShapeType>
-ColliderComponent<ShapeType>::~ColliderComponent() {
+ColliderComponent::~ColliderComponent() {
     this->shape_.Destroy();
 }
-
-// 明示的に実体化
-template class ColliderComponent<b2Circle>;
-template class ColliderComponent<b2Segment>;
