@@ -1,7 +1,7 @@
 ---丸を生成
 ---@return MeshObject
 local function maru(x, y)
-    local obj = CurrentWorld:draw_circle({ x, y }, 0.01)
+    local obj = __CurrentWorld:draw_circle({ x, y }, 0.01)
     local rb = obj:add_rigidbody_component()
     rb:add_shape({ shape = "circle", radius = 0.01, restitution = 0.9 })
     return obj
@@ -10,7 +10,7 @@ end
 ---四角を生成
 ---@return MeshObject
 local function shikaku(hx, hy)
-    local obj = CurrentWorld:draw_rect(hx, hy)
+    local obj = __CurrentWorld:draw_rect(hx, hy)
     local rb = obj:add_rigidbody_component()
     rb:add_shape({ shape = "rect", halfWidth = hx, halfHeight = hy })
     return obj
@@ -21,7 +21,7 @@ end
 ---@param p2 Point
 ---@param on_collision_enter? fun(self: Collider, other: Collider)
 local function sen(p1, p2, on_collision_enter)
-    local obj = CurrentWorld:draw_line({ p1, p2 })
+    local obj = __CurrentWorld:draw_line({ p1, p2 })
     local rb = obj:add_rigidbody_component()
     rb:add_shape({
         shape = "edge",
@@ -34,7 +34,6 @@ run_window(800, 600, "Test Window", function()
     local world = create_world()
     world.b2world.gravity = { 0, -0.2 }
     print(world.b2world.gravity)
-    CurrentWorld = world
 
     shikaku(0.003, 0.01)
 

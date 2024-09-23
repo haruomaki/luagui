@@ -42,6 +42,7 @@ void register_world(sol::state &lua) {
         Window &window = lua["__CurrentWindow"];
 
         auto &world = window.create_world();
+        lua["__CurrentWorld"] = &world;
 
         auto &camera = world.append_child<MobileOrthoCamera>();
         camera.set_active();

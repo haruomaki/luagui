@@ -7,6 +7,9 @@ function create_world() end
 ---@field b2world b2World
 local World = {}
 
+---@type World
+__CurrentWorld = nil
+
 ---直線を描画する。
 ---@param points Points 頂点の座標
 ---@return MeshObject
