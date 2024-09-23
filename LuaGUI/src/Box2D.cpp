@@ -13,6 +13,11 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 
     ColliderComponent *cc = nullptr;
 
+    // Shape間に共通のパラメータをパースする
+    b2::Shape::Params shape_params;
+    shape_params.friction = tbl["friction"].get_or(0.1f);
+    shape_params.restitution = tbl["restitution"].get_or(0.3f);
+
     // shape（衝突形状）を取得
     std::string shape = tbl["shape"].get_or<const char *>("circle");
 
@@ -23,10 +28,6 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 
         float radius = tbl["radius"].get<float>();
 
-        b2::Shape::Params shape_params;
-        shape_params.friction = 0.1f;
-        shape_params.restitution = 0.9f;
-
         cc = rbc->get_owner()->add_component<ColliderComponent>(b2Circle{.center = b2Vec2{x, y}, .radius = radius}, shape_params);
     } else if (shape == "edge") {
         using Points = std::vector<std::vector<float>>;
@@ -35,10 +36,6 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         auto y1 = points.at(0).at(1);
         auto x2 = points.at(1).at(0);
         auto y2 = points.at(1).at(1);
-
-        b2::Shape::Params shape_params;
-        shape_params.friction = 0.1f;
-        shape_params.restitution = 0.9f;
 
         cc = rbc->get_owner()->add_component<ColliderComponent>(b2Segment{{x1, y1}, {x2, y2}}, shape_params);
     } else {

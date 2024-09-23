@@ -47,6 +47,16 @@ WorldObject::WorldObject()
 }
 
 WorldObject::~WorldObject() {
+    print("WorldObjectのデストラクタです");
+    // オブジェクトの寿命はコンポーネントの寿命より長い（コンポーネントのデストラクタでget_owner()が無効にならないようにする）
+    // for (auto &[idx, comp] : components_) {
+    //     comp->erase();
+    // }
+    // FIXME: components_のイテレート中に要素を削除できるようにする
+    components_.clear();
+    // get_component<ColliderComponent>()->erase();
+    // get_component<RigidbodyComponent>()->erase();
+    print("WorldObjectのデストラクタおわり");
 }
 
 // NOTE: 現状、オブジェクトのクローンは不可能

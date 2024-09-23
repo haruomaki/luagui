@@ -50,14 +50,23 @@ RigidbodyComponent::~RigidbodyComponent() {
     print("RigidbodyComponentのデストラクタです");
 
     // 関連するShapeをすべて削除
-    // TODO: 型違いのColliderComponentを列挙する方法が分からない
-    // get_owner()->get_components<ColliderComponent<ShapeTypes ShapeType>>()
+    // print("んにゃ");
+    // debug(get_owner());
+    // print("こにゃにゃ");
+    auto ccs = get_owner()->get_components<ColliderComponent>();
+    // debug(ccs);
+    for (auto *cc : ccs) {
+        print("けすよ", cc->shape_ref_.Handle().index1);
+        cc->erase();
+    }
+    print("RigidbodyComponentのデストラクタ途中");
 
     // Box2D上で物体を削除
     this->b2body.Destroy();
 
     // Worldのrigidbodyリストから削除
     get_owner()->get_world().rigidbody_components.request_erase(this);
+    print("RigidbodyComponentのデストラクタおわりです");
 }
 
 // ---------------------

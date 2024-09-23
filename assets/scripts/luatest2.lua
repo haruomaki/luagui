@@ -3,7 +3,7 @@
 local function maru(x, y)
     local obj = CurrentWorld:draw_circle({ x, y }, 0.01)
     local rb = obj:add_rigidbody_component()
-    rb:add_shape({ shape = "circle", radius = 0.01 })
+    rb:add_shape({ shape = "circle", radius = 0.01, restitution = 0.9 })
     return obj
 end
 
