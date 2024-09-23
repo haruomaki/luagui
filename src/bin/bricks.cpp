@@ -52,7 +52,7 @@ int main() {
     bset.request_set(9);
     bset.request_set(11);
     bset.foreach_flush_combination([](int a, int b) {
-        dump(a, b);
+        debug(a, b);
     });
 
     constexpr int width = 600, height = 500;
