@@ -1,4 +1,5 @@
 #include <utility.hpp>
+#include <utility2.hpp>
 
 static MeshObject &draw_line(World &world, std::vector<std::vector<float>> points) { // NOLINT(performance-unnecessary-value-param)
     std::vector<glm::vec3> coords(points.size());
@@ -29,6 +30,13 @@ static MeshObject &draw_circle(World &world, std::vector<float> center, float ra
     return line_obj;
 }
 
+static MeshObject &draw_rect(World &world, float hx, float hy) { // NOLINT(performance-unnecessary-value-param)
+    std::vector<glm::vec3> coords = {{-hx, -hy, 0}, {hx, -hy, 0}, {hx, hy, 0}, {-hx, hy, 0}};
+    auto &rect_obj = new_rect(world, coords, MaterialBuilder().build(world.window));
+
+    return rect_obj;
+}
+
 void register_world(sol::state &lua) {
     lua.set_function("create_world", [&]() -> World & {
         Window &window = lua["__CurrentWindow"];
@@ -45,5 +53,6 @@ void register_world(sol::state &lua) {
         "World",
         "draw_line", draw_line,
         "draw_circle", draw_circle,
+        "draw_rect", draw_rect,
         "b2world", sol::readonly_property([](World *world) { return &world->b2world; }));
 }

@@ -45,7 +45,7 @@ class RigidbodyComponent : public Component {
 };
 
 // Box2DのShapeたちをまとめるタグ付きユニオン
-using ShapeVariant = std::variant<b2Circle, b2Segment>;
+using ShapeVariant = std::variant<b2Circle, b2Segment, b2Polygon>;
 
 class ColliderComponent : public Component {
   public:

@@ -12,6 +12,12 @@ local World = {}
 ---@return MeshObject
 function World:draw_line(points) end
 
+---矩形を描画する。
+---@param hx number 横幅の半分
+---@param hy number 縦幅の半分
+---@return MeshObject
+function World:draw_rect(hx, hy) end
+
 ---円を描画する。
 ---@param center table<number, number> 中心の座標
 ---@param radius number 半径

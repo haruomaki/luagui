@@ -38,6 +38,12 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         auto y2 = points.at(1).at(1);
 
         cc = rbc->get_owner()->add_component<ColliderComponent>(b2Segment{{x1, y1}, {x2, y2}}, shape_params);
+    } else if (shape == "rect") {
+        float hx = tbl["halfWidth"].get_or(0.01f);
+        float hy = tbl["halfHeight"].get_or(0.01f);
+
+        auto poly = b2MakeBox(hx, hy);
+        cc = rbc->get_owner()->add_component<ColliderComponent>(poly, shape_params);
     } else {
         warn("未知の形状種です: ", shape);
     }
