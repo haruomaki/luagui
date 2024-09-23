@@ -28,11 +28,16 @@ static void add_update_component(sol::state &lua, WorldObject *obj, sol::functio
     obj->add_component<UpdateComponent>(runner);
 }
 
-static RigidbodyComponent *add_rigidbody_component(WorldObject *obj, const std::optional<sol::table> & /*tbl_opt*/) {
-    // TODO: tblにはb2::Body::Paramsで設定できる要素が適宜入れられる予定
+static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject *obj, const sol::optional<sol::table> &tbl_opt) {
+    // tblにはb2::Body::Paramsで設定できる要素が入れられる
+    sol::table tbl = tbl_opt.value_or(lua.create_table());
 
     b2::Body::Params body_params;
-    body_params.type = b2_dynamicBody;
+
+    // 演算タイプ
+    auto ts = tbl["type"].get_or<std::string_view>("");
+    body_params.type = (ts == "static" ? b2_staticBody : (ts == "kinematic" ? b2_kinematicBody : b2_dynamicBody));
+
     auto pos = obj->get_absolute_position();
     body_params.position = {pos.x, pos.y};
     body_params.sleepThreshold = 0.0005f; // スリープ状態を防ぐ
@@ -60,7 +65,7 @@ void register_world_object(sol::state &lua) {
         [&lua](WorldObject *obj, sol::function f) { add_update_component(lua, obj, std::move(f)); },
 
         "add_rigidbody_component",
-        add_rigidbody_component,
+        [&lua](WorldObject *obj, const sol::optional<sol::table> &tbl_opt) { return add_rigidbody_component(lua, obj, tbl_opt); },
 
         "get_component",
         [&lua](WorldObject *obj, const std::string &component_type) { return get_component(lua, obj, component_type); },

@@ -41,6 +41,11 @@ function b2SetLengthUnitsPerMeter(lengthUnits) end
 -- その他
 -------------
 
+---add_rigidbody_componentに指定できるオプション集
+---@class BodyOptions
+---@field type "static"|"kinematic"|"dynamic"? 演算タイプ
+local BodyOptions = {}
+
 ---add_shapeに指定できるオプション集
 ---@class ShapeOptions
 ---@field shape ShapeType? 形状のタイプ

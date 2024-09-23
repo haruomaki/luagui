@@ -16,6 +16,16 @@ local function shikaku(hx, hy)
     return obj
 end
 
+---ブロックを生成
+---@return MeshObject
+local function block(x, y)
+    local obj = __CurrentWorld:draw_rect(0.01, 0.005)
+    obj.position = { x, y }
+    local rb = obj:add_rigidbody_component({ type = "static" })
+    rb:add_shape({ shape = "rect", halfWidth = 0.01, halfHeight = 0.005 })
+    return obj
+end
+
 ---直線を生成
 ---@param p1 Point
 ---@param p2 Point
@@ -36,7 +46,7 @@ run_window(800, 600, "Test Window", function()
     world.b2world.gravity = { 0, -0.2 }
     print(world.b2world.gravity)
 
-    shikaku(0.003, 0.01)
+    block(0.003, 0.01)
 
     -- 床と壁の剛体を作成
     sen({ -0.1, 0 }, { 0, -0.02 })
