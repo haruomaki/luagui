@@ -12,15 +12,14 @@ bool Component::erase() {
 
     // 生ポインタを使用して要素を削除する
     auto &candidates = get_owner()->components_;
-    auto it = candidates.begin();
-    while (it != candidates.end()) {
-        if (it->second.get() == ptr_to_erase) {
-            it = candidates.erase(it);
-            return true;
+    bool success = false;
+    candidates.foreach_flush([&](auto key, Component &comp) {
+        if (&comp == ptr_to_erase) {
+            candidates.request_delete(key, &comp);
+            success = true;
         }
-        ++it;
-    }
-    return false;
+    });
+    return success;
 }
 
 UpdateComponent::UpdateComponent(std::function<void(UpdateComponent &)> &&f) {

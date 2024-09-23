@@ -4,6 +4,7 @@
 
 #include <Component.hpp>
 #include <Property.hpp>
+#include <buffered_container.hpp>
 #include <graphical_base.hpp>
 
 class World;
@@ -16,7 +17,7 @@ class WorldObject {
     glm::mat4 abs_transform_;
     WorldObject *const parent_;
     std::set<std::unique_ptr<WorldObject>> children_;
-    std::unordered_multimap<std::type_index, std::unique_ptr<Component>> components_;
+    BufferedMultimap<std::type_index, Component> components_;
     World &world_; // parent_より後にする
 
     void refresh_absolute_transform();
@@ -189,27 +190,24 @@ class WorldObject {
         WorldObject::set_parent_static(nullptr);
 
         T *component_ptr = component.get();
-        components_.emplace(std::type_index(typeid(T)), std::move(component)); // unique_ptrのムーブコンストラクタ。
+        components_.request_insert(std::type_index(typeid(T)), std::move(component)); // unique_ptrのムーブコンストラクタ。
         return component_ptr;
     }
 
     template <typename T>
         requires std::derived_from<T, Component>
     T *get_component() {
-        auto range = components_.equal_range(std::type_index(typeid(T)));
-        if (range.first != range.second) {
-            return static_cast<T *>(range.first->second.get());
-        }
-        return nullptr;
+        Component *comp = components_.at(std::type_index(typeid(T)));
+        return static_cast<T *>(comp);
     }
 
     template <typename T>
     std::vector<T *> get_components() {
         std::vector<T *> result;
-        auto range = components_.equal_range(std::type_index(typeid(T)));
-        for (auto it = range.first; it != range.second; ++it) {
-            result.push_back(static_cast<T *>(it->second.get()));
-        }
+
+        components_.foreach_equal(std::type_index(typeid(T)), [&](Component &comp) {
+            result.push_back(static_cast<T *>(&comp));
+        });
         return result;
     }
 };

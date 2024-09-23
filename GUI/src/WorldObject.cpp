@@ -53,7 +53,7 @@ WorldObject::~WorldObject() {
     //     comp->erase();
     // }
     // FIXME: components_のイテレート中に要素を削除できるようにする
-    components_.clear();
+    // components_.clear();
     // get_component<ColliderComponent>()->erase();
     // get_component<RigidbodyComponent>()->erase();
     print("WorldObjectのデストラクタおわり");

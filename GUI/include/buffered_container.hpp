@@ -188,5 +188,31 @@ class BufferedMultimap {
         locked_ = false;
     }
 
-    // 他の必要なメソッド（検索、サイズ取得など）をここに追加
+    template <typename Func>
+    void foreach_equal(const Key &key, Func &&func) {
+        locked_ = true;
+        apply_insertions();
+        apply_deletions();
+
+        auto range = elements_.equal_range(key);
+        for (auto it = range.first; it != range.second;) {
+            auto current = it++;
+            func(*(current->second));
+        }
+
+        apply_insertions();
+        apply_deletions();
+        locked_ = false;
+    }
+
+    Value *at(const Key &key) {
+        auto it = elements_.find(key);
+        if (it == elements_.end()) return nullptr;
+        return it->second.get();
+    }
+
+    // const Value &at(const Key &key) const {
+    //     // const_cast を使用して、非const版の at() を呼び出す
+    //     return const_cast<BufferedMultimap *>(this)->at(key);
+    // }
 };
