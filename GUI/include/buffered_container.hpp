@@ -172,7 +172,7 @@ class BufferedMultimap {
         }
     }
 
-    template <typename Func>
+    template <Fn<void(Key, Value &)> Func>
     void foreach_flush(Func &&func) {
         locked_ = true;
         apply_insertions();
@@ -188,7 +188,7 @@ class BufferedMultimap {
         locked_ = false;
     }
 
-    template <typename Func>
+    template <Fn<void(Value &)> Func>
     void foreach_equal(const Key &key, Func &&func) {
         locked_ = true;
         apply_insertions();
@@ -214,13 +214,5 @@ class BufferedMultimap {
     // const Value &at(const Key &key) const {
     //     // const_cast を使用して、非const版の at() を呼び出す
     //     return const_cast<BufferedMultimap *>(this)->at(key);
-    // }
-
-    // FIXME: 危険なので消していい
-    // void clear_flush() {
-    //     if (locked_) throw std::runtime_error("ロック中にclear_flushはできません");
-    //     apply_insertions();
-    //     apply_deletions();
-    //     elements_.clear();
     // }
 };

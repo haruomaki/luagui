@@ -77,3 +77,7 @@ struct IsAnyOf<T, First, Rest...>
     : std::conditional_t<std::is_same_v<T, First>, std::true_type, IsAnyOf<T, Rest...>> {};
 template <typename T, typename... Types>
 static constexpr bool is_any_of = IsAnyOf<T, Types...>::value;
+
+// RustのFnトレイトの類似品。指定の関数シグネチャを持つか判定するコンセプト。
+template <typename Func, typename FnType>
+concept Fn = std::convertible_to<Func, std::function<FnType>>;

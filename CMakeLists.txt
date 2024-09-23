@@ -33,7 +33,7 @@ add_compile_options(
     -Wno-header-hygiene # ヘッダファイルでusing namespaceしてはいけないという警告。TODO: これはONでもよさそう
 )
 endif()
-set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1 -fcolor-diagnostics")
+set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1 -fcolor-diagnostics -ferror-limit=100")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -march=x86-64 -mtune=generic")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")
