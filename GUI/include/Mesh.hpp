@@ -7,6 +7,7 @@
 #include "core.hpp"
 
 #include <algorithm>
+#include <map>
 
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
 class StaticMesh : virtual public Resource {
