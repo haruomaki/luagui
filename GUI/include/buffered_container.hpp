@@ -215,4 +215,12 @@ class BufferedMultimap {
     //     // const_cast を使用して、非const版の at() を呼び出す
     //     return const_cast<BufferedMultimap *>(this)->at(key);
     // }
+
+    // FIXME: 危険なので消していい
+    // void clear_flush() {
+    //     if (locked_) throw std::runtime_error("ロック中にclear_flushはできません");
+    //     apply_insertions();
+    //     apply_deletions();
+    //     elements_.clear();
+    // }
 };
