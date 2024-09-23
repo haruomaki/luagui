@@ -56,6 +56,9 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 }
 
 void register_box2d(sol::state &lua) {
+    // Box2Dのシミュレーション縮尺を設定する関数
+    lua.set_function("b2SetLengthUnitsPerMeter", b2SetLengthUnitsPerMeter);
+
     // Rigidbodyコンポーネント
     lua.new_usertype<RigidbodyComponent>(
         "Rigidbody",

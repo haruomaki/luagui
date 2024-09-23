@@ -33,6 +33,10 @@ local b2World = {}
 ---@class b2Vec2
 local b2Vec2 = {}
 
+---Box2Dにおける単位系（長さの単位）を指定する。
+---@param lengthUnits number 単位長さ
+function b2SetLengthUnitsPerMeter(lengthUnits) end
+
 -------------
 -- その他
 -------------
