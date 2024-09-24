@@ -1,0 +1,5 @@
+{
+    "search.exclude": {
+        "**/external": true // 全体検索から除外
+    }
+}

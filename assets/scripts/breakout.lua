@@ -1,3 +1,7 @@
+-- ブロックの大きさ
+BlockHalfWidth = 0.01
+BlockHalfHeight = 0.005
+
 ---丸を生成
 ---@return MeshObject
 local function maru(x, y)
@@ -19,10 +23,17 @@ end
 ---ブロックを生成
 ---@return MeshObject
 local function block(x, y)
-    local obj = __CurrentWorld:draw_rect(0.01, 0.005)
+    local obj = __CurrentWorld:draw_rect(BlockHalfWidth, BlockHalfHeight)
     obj.position = { x, y }
-    local rb = obj:add_rigidbody_component({ type = "static" })
-    rb:add_shape({ shape = "rect", halfWidth = 0.01, halfHeight = 0.005 })
+    local rb = obj:add_rigidbody_component({ type = "dynamic" })
+    rb:add_shape({
+        shape = "rect",
+        halfWidth = BlockHalfWidth,
+        halfHeight = BlockHalfHeight,
+        on_collision_enter = function(self, other)
+            print("ブロックにぶつかりました", other.index)
+        end
+    })
     return obj
 end
 
