@@ -45,7 +45,7 @@ class RigidbodyComponent : public Component {
 };
 
 // Box2DのShapeたちをまとめるタグ付きユニオン
-using ShapeVariant = std::variant<b2Circle, b2Capsule, b2Segment, b2Polygon, b2SmoothSegment>;
+using ShapeVariant = std::variant<b2Circle, b2Capsule, b2Segment, b2Polygon>;
 
 class ColliderComponent : public Component {
   public:
@@ -56,4 +56,14 @@ class ColliderComponent : public Component {
     ColliderComponent(ShapeVariant shape, b2::Shape::Params shape_params);
 
     ~ColliderComponent() override;
+};
+
+class ChainColliderComponent : public Component {
+  public:
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    b2::ChainRef chain_ref_; // publicだが直接触るのは非推奨
+    std::optional<std::function<void(ColliderComponent &self, ColliderComponent &other)>> on_collision_enter = std::nullopt;
+
+    ChainColliderComponent(b2::Chain::Params chain_params);
+    ~ChainColliderComponent() override;
 };

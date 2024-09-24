@@ -44,6 +44,13 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 
         auto poly = b2MakeBox(hx, hy);
         cc = rbc->get_owner()->add_component<ColliderComponent>(poly, shape_params);
+
+        // TODO: テスト用なので消す
+        const b2Vec2 points[5] = {{0.03, 0.03}, {0.02, 0.01}, {0.01, 0}, {0, 0}, {0, 0.01}};
+        auto chain_params = b2::Chain::Params();
+        chain_params.points = points;
+        chain_params.count = 5;
+        rbc->get_owner()->add_component<ChainColliderComponent>(chain_params);
     } else {
         warn("未知の形状種です: ", shape);
     }

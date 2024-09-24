@@ -30,6 +30,7 @@ void World::master_physics() {
     auto contact_events = b2world.GetContactEvents();
     for (int i = 0; i < contact_events.beginCount; i++) {
         auto event = contact_events.beginEvents[i]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        // TODO: Chainかどうかで分岐
         auto &cca = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdA));
         auto &ccb = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdB));
         if (cca.on_collision_enter.has_value()) cca.on_collision_enter.value()(cca, ccb);
