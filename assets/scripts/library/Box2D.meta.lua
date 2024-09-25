@@ -7,6 +7,7 @@
 ---コンポーネントおよび剛体そのものを表すクラス。RigidbodyComponentとb2::Bodyの機能を統合する。
 ---@class Rigidbody : Component
 ---@field linear_velocity b2Vec2 速度ベクトル
+---@field angular_velocity number 角速度のz軸成分
 local Rigidbody = {}
 
 ---剛体に衝突形状を追加する。

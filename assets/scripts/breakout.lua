@@ -11,15 +11,6 @@ local function maru(x, y)
     return obj
 end
 
----四角を生成
----@return MeshObject
-local function shikaku(hx, hy)
-    local obj = __CurrentWorld:draw_rect(hx, hy)
-    local rb = obj:add_rigidbody_component()
-    rb:add_shape({ shape = "rect", halfWidth = hx, halfHeight = hy })
-    return obj
-end
-
 ---ブロックを生成
 ---@return MeshObject
 local function block(x, y)
@@ -42,14 +33,16 @@ end
 ---@param p1 Point
 ---@param p2 Point
 ---@param on_collision_enter? fun(self: Collider, other: Collider)
+---@return MeshObject
 local function sen(p1, p2, on_collision_enter)
     local obj = __CurrentWorld:draw_line({ p1, p2 })
-    local rb = obj:add_rigidbody_component()
+    local rb = obj:add_rigidbody_component({ type = "dynamic" })
     rb:add_shape({
         shape = "edge",
         points = { p1, p2 },
         on_collision_enter = on_collision_enter
     })
+    return obj
 end
 
 ---折れ線を生成
@@ -101,8 +94,14 @@ run_window(800, 600, "Test Window", function()
         other.owner:erase()
     end)
 
-    -- Wait(1)
-    -- b:erase()
+    -- フリッパーを作成
+    local flipper_left_obj = sen({ 0, 0 }, { 0.04, 0.04 })
+    local flipper_left_rb = flipper_left_obj:get_component("Rigidbody")
+    flipper_left_rb.angular_velocity = 4
+
+    local flipper_right_obj = sen({ 0, 0 }, { -0.04, 0.04 })
+    local flipper_right_rb = flipper_right_obj:get_component("Rigidbody")
+    flipper_right_rb.angular_velocity = -4
 
     Forever(function()
         if GetKeyDown('Space') then

@@ -90,6 +90,7 @@ void register_box2d(sol::state &lua) {
     lua.new_usertype<RigidbodyComponent>(
         "Rigidbody",
         "linear_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetLinearVelocity(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetLinearVelocity({pos[0], pos[1]}); }),
+        "angular_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetAngularVelocity(); }, [](RigidbodyComponent *rbc, float av) { rbc->b2body.SetAngularVelocity(av); }),
         "add_shape", add_shape,
         "add_chain", add_chain,
         sol::base_classes, sol::bases<Component>());
