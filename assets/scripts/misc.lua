@@ -22,3 +22,21 @@ function slice(tbl, first, last, step)
 
     return sliced
 end
+
+---カメラを作成する
+---@return Camera camera
+function supercamera_2d()
+    local camera = __CurrentWorld:create_camera()
+    __CurrentCamera = camera
+
+    camera:add_update_component(function(self)
+        Forever(function()
+            -- TODO: Qキーでウィンドウを閉じるように
+            if GetKeyDown("A") then
+                print("Aキーです")
+            end
+        end)
+    end)
+
+    return camera
+end

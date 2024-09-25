@@ -2,6 +2,7 @@
 
 ---@class WorldObject
 ---@field position vec3 物体の位置
+---@field scale_prop number 物体の幾何平均スケール
 local WorldObject = {}
 
 ---@class MeshObject : WorldObject
@@ -43,3 +44,6 @@ function Component:erase() end
 ---カメラオブジェクトを表すクラス。
 ---@class Camera : WorldObject
 local Camera = {}
+
+---@type Camera
+__CurrentCamera = nil
