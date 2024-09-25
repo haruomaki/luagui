@@ -73,6 +73,10 @@ static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
     // ループするかどうか取得
     chain_params.isLoop = tbl["isLoop"].get_or(false);
 
+    // 摩擦と反発
+    chain_params.friction = tbl["friction"].get_or(0.1f);
+    chain_params.restitution = tbl["restitution"].get_or(0.3f);
+
     auto *ccc = rbc->get_owner()->add_component<ChainColliderComponent>(chain_params);
 
     // 衝突時のコールバックを設定

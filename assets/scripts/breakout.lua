@@ -19,6 +19,7 @@ local function block(x, y)
     local rb = obj:add_rigidbody_component({ type = "static" })
     rb:add_shape({
         shape = "rect",
+        restitution = 1,
         halfWidth = BlockHalfWidth,
         halfHeight = BlockHalfHeight,
         on_collision_enter = function(self, other)
@@ -65,6 +66,7 @@ local function wakka(points, on_collision_enter)
     local rb = obj:add_rigidbody_component()
     rb:add_chain({
         points = points,
+        restitution = 1,
         isLoop = true,
         on_collision_enter = on_collision_enter
     })
@@ -76,7 +78,7 @@ run_window(800, 600, "Test Window", function()
     local camera = supercamera_2d("quit")
     camera.position = { 0, 0.05 }
     camera.scale_prop = 3.5
-    world.b2world.gravity = { 0, -0.2 }
+    world.b2world.gravity = { 0, 0 }
     print(world.b2world.gravity)
 
     for i = 0, 5, 1 do
@@ -94,14 +96,31 @@ run_window(800, 600, "Test Window", function()
         other.owner:erase()
     end)
 
-    -- フリッパーを作成
-    local flipper_left_obj = sen({ 0, 0 }, { 0.04, 0.04 })
-    local flipper_left_rb = flipper_left_obj:get_component("Rigidbody")
-    flipper_left_rb.angular_velocity = 4
+    -- 操作バーを追加
+    local bar_obj = world:draw_rect(0.02, 0.003)
+    bar_obj.position = { 0, -0.05 }
+    local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
+    bar:add_shape({ shape = "rect", restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
+    bar_obj:add_update_component(function()
+        Forever(function()
+            if GetKey('Right') then
+                bar.linear_velocity = { 0.2, 0 }
+            elseif GetKey('Left') then
+                bar.linear_velocity = { -0.2, 0 }
+            else
+                bar.linear_velocity = { 0, 0 }
+            end
+        end)
+    end)
 
-    local flipper_right_obj = sen({ 0, 0 }, { -0.04, 0.04 })
-    local flipper_right_rb = flipper_right_obj:get_component("Rigidbody")
-    flipper_right_rb.angular_velocity = -4
+    -- フリッパーを作成
+    -- local flipper_left_obj = sen({ 0, 0 }, { 0.04, 0.04 })
+    -- local flipper_left_rb = flipper_left_obj:get_component("Rigidbody")
+    -- flipper_left_rb.angular_velocity = 4
+
+    -- local flipper_right_obj = sen({ 0, 0 }, { -0.04, 0.04 })
+    -- local flipper_right_rb = flipper_right_obj:get_component("Rigidbody")
+    -- flipper_right_rb.angular_velocity = -4
 
     Forever(function()
         if GetKeyDown('Space') then
