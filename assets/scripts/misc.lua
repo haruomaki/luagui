@@ -57,6 +57,20 @@ function supercamera_2d(...)
                 end)
             end)
         end
+
+        if option == "zoom" then
+            -- Z/Xキーでカメラを拡大縮小する
+            camera:add_update_component(function(self)
+                Forever(function()
+                    if GetKey('Z') then
+                        camera.scale_prop = camera.scale_prop * 0.99
+                    end
+                    if GetKey('X') then
+                        camera.scale_prop = camera.scale_prop * 1.01
+                    end
+                end)
+            end)
+        end
     end
 
     return camera

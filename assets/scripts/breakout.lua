@@ -7,7 +7,7 @@ BlockHalfHeight = 0.005
 local function maru(x, y)
     local obj = __CurrentWorld:draw_circle({ x, y }, 0.003)
     local rb = obj:add_rigidbody_component()
-    rb:add_shape({ shape = "circle", radius = 0.003, restitution = 0.9 })
+    rb:add_shape({ shape = "circle", radius = 0.003, friction = 0, restitution = 1 })
     return obj
 end
 
@@ -19,6 +19,7 @@ local function block(x, y)
     local rb = obj:add_rigidbody_component({ type = "static" })
     rb:add_shape({
         shape = "rect",
+        friction = 0,
         restitution = 1,
         halfWidth = BlockHalfWidth,
         halfHeight = BlockHalfHeight,
@@ -63,7 +64,7 @@ end
 ---@param on_collision_enter? fun(self: ChainCollider, collider: Collider)
 local function wakka(points, on_collision_enter)
     local obj = __CurrentWorld:draw_line(points, true)
-    local rb = obj:add_rigidbody_component()
+    local rb = obj:add_rigidbody_component({ type = "static" })
     rb:add_chain({
         points = points,
         restitution = 1,
@@ -75,7 +76,7 @@ end
 run_window(800, 600, "Test Window", function()
     b2SetLengthUnitsPerMeter(0.01)
     local world = create_world()
-    local camera = supercamera_2d("quit")
+    local camera = supercamera_2d("quit", "zoom")
     camera.position = { 0, 0.05 }
     camera.scale_prop = 3.5
     world.b2world.gravity = { 0, 0 }
@@ -100,7 +101,7 @@ run_window(800, 600, "Test Window", function()
     local bar_obj = world:draw_rect(0.02, 0.003)
     bar_obj.position = { 0, -0.05 }
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
-    bar:add_shape({ shape = "rect", restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
+    bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
     bar_obj:add_update_component(function()
         Forever(function()
             if GetKey('Right') then
@@ -125,7 +126,7 @@ run_window(800, 600, "Test Window", function()
     Forever(function()
         if GetKeyDown('Space') then
             local m = maru(0, 0.02):get_component("Rigidbody")
-            m.linear_velocity = { 0.1, 0.3 }
+            m.linear_velocity = { 0.1, 0.2 }
         end
     end)
 end)
