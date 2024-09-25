@@ -1,7 +1,9 @@
 ---@meta World
 
+---ワールドを生成する。
+---@param debug boolean デバッグ用のカメラを一緒に生成するか
 ---@return World
-function create_world() end
+function create_world(debug) end
 
 ---@class World
 ---@field b2world b2World

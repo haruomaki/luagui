@@ -31,7 +31,7 @@ local function sen(p1, p2, on_collision_enter)
 end
 
 run_window(800, 600, "Test Window", function()
-    local world = create_world()
+    local world = create_world(true)
     world.b2world.gravity = { 0, -0.2 }
     print(world.b2world.gravity)
 
