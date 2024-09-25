@@ -80,7 +80,7 @@ end
 run_window(800, 600, "Test Window", function()
     b2SetLengthUnitsPerMeter(0.01)
     local world = create_world()
-    local camera = supercamera_2d()
+    local camera = supercamera_2d("quit")
     camera.position = { 0, 0.05 }
     camera.scale_prop = 3.5
     world.b2world.gravity = { 0, -0.2 }

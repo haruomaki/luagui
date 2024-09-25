@@ -23,20 +23,41 @@ function slice(tbl, first, last, step)
     return sliced
 end
 
+---リストを集合に変換する。
+---@generic T 要素の型
+---@param list table<integer, T> リスト
+---@return table<T, boolean> set 集合
+function to_set(list)
+    local set = {}
+    for _, value in ipairs(list) do
+        set[value] = true
+    end
+    return set
+end
+
 ---カメラを作成する
+---@param ... "quit"|"move"|"zoom"
 ---@return Camera camera
-function supercamera_2d()
+function supercamera_2d(...)
     local camera = __CurrentWorld:create_camera()
     __CurrentCamera = camera
 
-    camera:add_update_component(function(self)
-        Forever(function()
-            -- TODO: Qキーでウィンドウを閉じるように
-            if GetKeyDown("A") then
-                print("Aキーです")
-            end
-        end)
-    end)
+    -- オプションに応じた機能を追加
+    -- print(to_set({ 3, 3, 5, 5, 7, 8 }))
+    local options = to_set { ... }
+    for option, _ in pairs(options) do
+        if option == "quit" then
+            -- Qキーでウィンドウを閉じる
+            camera:add_update_component(function(self)
+                Forever(function()
+                    if GetKeyDown "Q" then
+                        print("Qキーが押されたためウィンドウを閉じます")
+                        CloseWindow()
+                    end
+                end)
+            end)
+        end
+    end
 
     return camera
 end

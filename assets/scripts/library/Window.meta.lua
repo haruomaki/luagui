@@ -56,3 +56,6 @@ function GetKeyDown(key) end
 ---@param key Keys キーの名前
 ---@return boolean released 今フレームに初めて離されればtrue
 function GetKeyUp(key) end
+
+---ウィンドウを閉じるよう要求する。
+function CloseWindow() end

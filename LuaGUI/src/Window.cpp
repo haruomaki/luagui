@@ -72,4 +72,10 @@ void register_window(sol::state &lua) {
         auto keycode = from_name(key);
         return keycode.has_value() ? window.key_up()[*keycode] : false;
     });
+
+    // ウィンドウを閉じる関数
+    lua.set_function("CloseWindow", [&lua] {
+        Window &window = lua["__CurrentWindow"];
+        window.close();
+    });
 }
