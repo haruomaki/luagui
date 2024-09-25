@@ -56,8 +56,8 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 }
 
 static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
+    // Chainの頂点座標を取得
     auto points = tbl["points"].get<std::vector<std::vector<float>>>();
-    debug(points);
 
     std::vector<b2Vec2> p_array;
     p_array.reserve(points.size());
@@ -68,13 +68,15 @@ static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
     auto chain_params = b2::Chain::Params();
     chain_params.points = p_array.data();
     chain_params.count = (int)p_array.size();
-    rbc->get_owner()->add_component<ChainColliderComponent>(chain_params);
+    auto *ccc = rbc->get_owner()->add_component<ChainColliderComponent>(chain_params);
 
-    // // 衝突時のコールバックを設定
-    // if (cc != nullptr && tbl["on_collision_enter"].valid()) {
-    //     sol::function callback = tbl["on_collision_enter"];
-    //     cc->on_collision_enter = [callback](ColliderComponent &self, ColliderComponent &other) { callback(self, other); };
-    // }
+    // ccc->on_collision_enter = [](ChainColliderComponent &self, ColliderComponent &collider) { print("Chainが衝突！", collider.shape_ref_.Handle().index1); };
+
+    // 衝突時のコールバックを設定
+    if (ccc != nullptr && tbl["on_collision_enter"].valid()) {
+        sol::function callback = tbl["on_collision_enter"];
+        ccc->on_collision_enter = [callback](ChainColliderComponent &self, ColliderComponent &collider) { callback(self, collider); };
+    }
 }
 
 void register_box2d(sol::state &lua) {

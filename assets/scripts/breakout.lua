@@ -51,6 +51,18 @@ local function sen(p1, p2, on_collision_enter)
     })
 end
 
+---折れ線を生成
+---@param points Points
+---@param on_collision_enter? fun(self: ChainCollider, collider: Collider)
+local function oresen(points, on_collision_enter)
+    local obj = __CurrentWorld:draw_line(slice(points, 2, 4))
+    local rb = obj:add_rigidbody_component()
+    rb:add_chain({
+        points = points,
+        on_collision_enter = on_collision_enter
+    })
+end
+
 run_window(800, 600, "Test Window", function()
     b2SetLengthUnitsPerMeter(0.01)
     local world = create_world()
@@ -58,11 +70,17 @@ run_window(800, 600, "Test Window", function()
     print(world.b2world.gravity)
 
     local b = block(0.003, 0.01)
-    b:get_component("Rigidbody"):add_chain({ points = { { 0.03, 0.03 }, { 0.02, 0.01 }, { 0.01, 0 }, { 0, 0 }, { 0, 0.01 } } })
+    -- b:get_component("Rigidbody"):add_chain({
+    --     points = { { 0.03, 0.03 }, { 0.02, 0.01 }, { 0.01, 0 }, { 0, 0 }, { 0, 0.01 } },
+    --     on_collision_enter = function(self, collider)
+    --         print(self, collider)
+    --     end
+    -- })
 
     -- 床と壁の剛体を作成
-    sen({ -0.1, 0 }, { 0, -0.02 })
-    sen({ 0.03, -0.02 }, { 0, -0.02 })
+    -- sen({ -0.1, 0 }, { 0, -0.02 })
+    -- sen({ 0.03, -0.02 }, { 0, -0.02 })
+    oresen({ { 0.1, 0 }, { 0.07, -0.01 }, { 0, -0.02 }, { -0.07, -0.01 }, { -0.1, 0 } })
 
     -- 落下判定を作成
     sen({ -0.5, -0.04 }, { 0.5, -0.04 }, function(self, other)
