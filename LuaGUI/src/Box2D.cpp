@@ -44,13 +44,6 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 
         auto poly = b2MakeBox(hx, hy);
         cc = rbc->get_owner()->add_component<ColliderComponent>(poly, shape_params);
-
-        // TODO: テスト用なので消す
-        const b2Vec2 points[5] = {{0.03, 0.03}, {0.02, 0.01}, {0.01, 0}, {0, 0}, {0, 0.01}};
-        auto chain_params = b2::Chain::Params();
-        chain_params.points = points;
-        chain_params.count = 5;
-        rbc->get_owner()->add_component<ChainColliderComponent>(chain_params);
     } else {
         warn("未知の形状種です: ", shape);
     }
@@ -62,6 +55,28 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
     }
 }
 
+static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
+    auto points = tbl["points"].get<std::vector<std::vector<float>>>();
+    debug(points);
+
+    std::vector<b2Vec2> p_array;
+    p_array.reserve(points.size());
+    for (auto &p : points) {
+        p_array.emplace_back(p.at(0), p.at(1));
+    }
+
+    auto chain_params = b2::Chain::Params();
+    chain_params.points = p_array.data();
+    chain_params.count = (int)p_array.size();
+    rbc->get_owner()->add_component<ChainColliderComponent>(chain_params);
+
+    // // 衝突時のコールバックを設定
+    // if (cc != nullptr && tbl["on_collision_enter"].valid()) {
+    //     sol::function callback = tbl["on_collision_enter"];
+    //     cc->on_collision_enter = [callback](ColliderComponent &self, ColliderComponent &other) { callback(self, other); };
+    // }
+}
+
 void register_box2d(sol::state &lua) {
     // Box2Dのシミュレーション縮尺を設定する関数
     lua.set_function("b2SetLengthUnitsPerMeter", b2SetLengthUnitsPerMeter);
@@ -71,12 +86,19 @@ void register_box2d(sol::state &lua) {
         "Rigidbody",
         "linear_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetLinearVelocity(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetLinearVelocity({pos[0], pos[1]}); }),
         "add_shape", add_shape,
+        "add_chain", add_chain,
         sol::base_classes, sol::bases<Component>());
 
     // Colliderコンポーネント
     lua.new_usertype<ColliderComponent>(
         "Collider",
         "index", sol::readonly_property([](ColliderComponent *cc) { return cc->shape_ref_.Handle().index1; }),
+        sol::base_classes, sol::bases<Component>());
+
+    // ChainColliderコンポーネント
+    lua.new_usertype<ChainColliderComponent>(
+        "ChainCollider",
+        "index", sol::readonly_property([](ChainColliderComponent *ccc) { return ccc->chain_ref_.Handle().index1; }),
         sol::base_classes, sol::bases<Component>());
 
     // Box2Dの各型

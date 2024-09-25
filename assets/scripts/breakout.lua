@@ -58,6 +58,7 @@ run_window(800, 600, "Test Window", function()
     print(world.b2world.gravity)
 
     local b = block(0.003, 0.01)
+    b:get_component("Rigidbody"):add_chain({ points = { { 0.03, 0.03 }, { 0.02, 0.01 }, { 0.01, 0 }, { 0, 0 }, { 0, 0.01 } } })
 
     -- 床と壁の剛体を作成
     sen({ -0.1, 0 }, { 0, -0.02 })

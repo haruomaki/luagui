@@ -18,6 +18,15 @@ function Rigidbody:add_shape(shape_options) end
 ---@field index integer Shapeのインデックス番号
 local Collider = {}
 
+---Chain（折れ線形の衝突判定体）を表すクラス。
+---@class ChainCollider : Component
+---@field index integer Shapeのインデックス番号
+local ChainCollider = {}
+
+---剛体にChainを追加する。
+---@param chain_options ChainOptions
+function Rigidbody:add_chain(chain_options) end
+
 -------------
 -- box2cppから
 -------------
@@ -61,3 +70,8 @@ local ShapeOptions = {}
 
 ---衝突形状の種類
 ---@alias ShapeType "circle" | "rect" | "edge"
+
+---add_chainに指定できるオプション集
+---@class ChainOptions
+---@field points Points チェーンの座標一覧（右手側に法線）
+local ChainOptions = {}
