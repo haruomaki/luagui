@@ -57,17 +57,20 @@ run_window(800, 600, "Test Window", function()
     world.b2world.gravity = { 0, -0.2 }
     print(world.b2world.gravity)
 
-    block(0.003, 0.01)
+    local b = block(0.003, 0.01)
 
     -- 床と壁の剛体を作成
     sen({ -0.1, 0 }, { 0, -0.02 })
-    sen({ 0.1, 0 }, { 0, -0.02 })
+    sen({ 0.03, -0.02 }, { 0, -0.02 })
 
     -- 落下判定を作成
     sen({ -0.5, -0.04 }, { 0.5, -0.04 }, function(self, other)
         printf("衝突しました！ %d,%d", self.index, other.index)
         other.owner:erase()
     end)
+
+    -- Wait(1)
+    -- b:erase()
 
     Forever(function()
         if GetKeyDown('Space') then

@@ -62,7 +62,7 @@ class ChainColliderComponent : public Component {
   public:
     // NOLINTNEXTLINE(readability-identifier-naming)
     b2::ChainRef chain_ref_; // publicだが直接触るのは非推奨
-    std::optional<std::function<void(ColliderComponent &self, ColliderComponent &other)>> on_collision_enter = std::nullopt;
+    std::optional<std::function<void(ChainColliderComponent &self, ColliderComponent &collider)>> on_collision_enter = std::nullopt;
 
     ChainColliderComponent(b2::Chain::Params chain_params);
     ~ChainColliderComponent() override;
