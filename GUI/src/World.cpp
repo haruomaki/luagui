@@ -29,13 +29,12 @@ void World::master_physics() {
     // 衝突を検出してコールバックを実行
     auto contact_events = b2world.GetContactEvents();
     for (int i = 0; i < contact_events.beginCount; i++) {
-        print("衝突かいし");
+        // print("衝突かいし");
         auto event = contact_events.beginEvents[i]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto &cca = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdA));
         auto &ccb = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdB));
         auto chain_id_a = b2Shape_GetParentChain(event.shapeIdA);
         auto chain_id_b = b2Shape_GetParentChain(event.shapeIdB);
-        print("衝突途中 1");
 
         // AとBのどちらかがChainなら(Chain,Shape)の衝突、どちらもShapeなら(A,B)＆(B,A)の衝突。どちらもChainはあり得ないはず？
         if (b2Chain_IsValid(chain_id_a)) {
@@ -46,13 +45,10 @@ void World::master_physics() {
             auto &cccb = dereference<ChainColliderComponent>(b2Shape_GetUserData(event.shapeIdB));
             if (cccb.on_collision_enter.has_value()) cccb.on_collision_enter.value()(cccb, cca);
         } else {
-            print("衝突途中 2");
             if (cca.on_collision_enter.has_value()) cca.on_collision_enter.value()(cca, ccb);
-            print("衝突途中 3");
             // FIXME: コールバック中で片側のオブジェクトを消したときエラーになる
             if (ccb.on_collision_enter.has_value()) ccb.on_collision_enter.value()(ccb, cca);
-            print("衝突途中 4");
         }
-        print("衝突おわり");
+        // print("衝突おわり");
     }
 }

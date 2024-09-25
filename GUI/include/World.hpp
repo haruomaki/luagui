@@ -43,6 +43,7 @@ class World : public WorldObject {
         children_.foreach ([&](WorldObject &obj) {
             obj.erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
         });
+        children_.flush(); // 即時flushしないと子オブジェクトがメモリから消えない
     }
 
     World(const World &) = delete;

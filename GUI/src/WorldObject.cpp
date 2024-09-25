@@ -47,13 +47,13 @@ WorldObject::WorldObject()
 }
 
 WorldObject::~WorldObject() {
-    print("WorldObjectのデストラクタ開始");
+    // print("WorldObjectのデストラクタ開始");
     // オブジェクトの寿命はコンポーネントの寿命より長い（コンポーネントのデストラクタでget_owner()が無効にならないようにする）
     components_.foreach_flush([](auto, Component &comp) {
         comp.erase();
     });
 
-    print("WorldObjectのデストラクタ終了");
+    // print("WorldObjectのデストラクタ終了");
 }
 
 // NOTE: 現状、オブジェクトのクローンは不可能

@@ -46,7 +46,7 @@ RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
 }
 
 RigidbodyComponent::~RigidbodyComponent() {
-    print("RigidbodyComponentのデストラクタです");
+    // print("RigidbodyComponentのデストラクタです");
     auto ccs = get_owner()->get_components<ColliderComponent>();
     // debug(ccs);
     for (auto *cc : ccs) {
@@ -65,7 +65,7 @@ RigidbodyComponent::~RigidbodyComponent() {
 
     // Worldのrigidbodyリストから削除
     get_owner()->get_world().rigidbody_components.request_erase(this);
-    print("RigidbodyComponentのデストラクタおわりです");
+    // print("RigidbodyComponentのデストラクタおわりです");
 }
 
 // ---------------------
@@ -106,7 +106,5 @@ ChainColliderComponent::ChainColliderComponent(b2::Chain::Params chain_params) {
 }
 
 ChainColliderComponent::~ChainColliderComponent() {
-    print("ChainCCのデストラクタはじめ");
     this->chain_ref_.Destroy();
-    print("ChainCCのデストラクタおわり");
 }
