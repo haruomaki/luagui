@@ -40,7 +40,7 @@ class World : public WorldObject {
 
     ~World() override {
         info("Worldのデストラクタ");
-        children_.foreach_flush([&](WorldObject &obj) {
+        children_.foreach ([&](WorldObject &obj) {
             obj.erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
         });
     }
@@ -54,6 +54,10 @@ class World : public WorldObject {
         this->updates.foreach_flush([&](const auto update) {
             (*update)();
         });
+
+        // 子オブジェクトの追加／削除を適用
+        // TODO: 孫オブジェクトに再帰的に適用する
+        children_.flush();
 
         this->timer.step(); // タイマーを進める
     }

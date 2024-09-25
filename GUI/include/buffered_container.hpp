@@ -171,18 +171,17 @@ class UniqueBufferedSet {
     }
 
     template <Fn<void(Value &)> Func>
-    void foreach_flush(Func &&func) {
+    void foreach (Func &&func) {
         locked_ = true;
-        apply_insertions();
-        apply_deletions();
-
         for (auto it = elements_.begin(); it != elements_.end(); ++it) {
             func(**it);
         }
+        locked_ = false;
+    }
 
+    void flush() {
         apply_insertions();
         apply_deletions();
-        locked_ = false;
     }
 };
 

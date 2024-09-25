@@ -81,7 +81,7 @@ class WorldObject {
         // 生ポインタを使用して要素を削除する
         auto &candidates = this->parent_->children_;
         bool success = false;
-        candidates.foreach_flush([&](WorldObject &obj) {
+        candidates.foreach ([&](WorldObject &obj) {
             if (&obj == ptr_to_erase) {
                 candidates.request_delete(&obj);
                 success = true;

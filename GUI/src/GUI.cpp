@@ -49,10 +49,13 @@ void GUI::refresh_windows() {
 
     // 生きている各ウィンドウに対して更新および描画＆後処理
     for (const auto &window : this->windows_) {
+        // 更新処理。physicsとupdateは順不同？
         trace("mainloop p1");
-        window->update_routine();
-        trace("mainloop p2");
         window->physics_routine();
+        trace("mainloop p2");
+        window->update_routine();
+
+        // 更新処理ののち描画。
         trace("mainloop p3");
         window->draw_routine();
         trace("mainloop p4");
