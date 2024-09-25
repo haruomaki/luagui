@@ -5,9 +5,9 @@ BlockHalfHeight = 0.005
 ---丸を生成
 ---@return MeshObject
 local function maru(x, y)
-    local obj = __CurrentWorld:draw_circle({ x, y }, 0.01)
+    local obj = __CurrentWorld:draw_circle({ x, y }, 0.003)
     local rb = obj:add_rigidbody_component()
-    rb:add_shape({ shape = "circle", radius = 0.01, restitution = 0.9 })
+    rb:add_shape({ shape = "circle", radius = 0.003, restitution = 0.9 })
     return obj
 end
 
@@ -25,13 +25,14 @@ end
 local function block(x, y)
     local obj = __CurrentWorld:draw_rect(BlockHalfWidth, BlockHalfHeight)
     obj.position = { x, y }
-    local rb = obj:add_rigidbody_component({ type = "dynamic" })
+    local rb = obj:add_rigidbody_component({ type = "static" })
     rb:add_shape({
         shape = "rect",
         halfWidth = BlockHalfWidth,
         halfHeight = BlockHalfHeight,
         on_collision_enter = function(self, other)
             print("ブロックにぶつかりました", other.index)
+            self.owner:erase()
         end
     })
     return obj
@@ -82,19 +83,17 @@ run_window(800, 600, "Test Window", function()
     world.b2world.gravity = { 0, -0.2 }
     print(world.b2world.gravity)
 
-    local b = block(0.003, 0.01)
-    -- b:get_component("Rigidbody"):add_chain({
-    --     points = { { 0.03, 0.03 }, { 0.02, 0.01 }, { 0.01, 0 }, { 0, 0 }, { 0, 0.01 } },
-    --     on_collision_enter = function(self, collider)
-    --         print(self, collider)
-    --     end
-    -- })
+    for i = 0, 5, 1 do
+        for j = 0, 9, 1 do
+            block(-0.03 + 0.02 * i, 0.1 + 0.01 * j)
+        end
+    end
 
     -- 床と壁の剛体を作成
-    wakka({ { -0.1, 0 }, { -0.1, 0.2 }, { 0.1, 0.2 }, { 0.1, 0 } })
+    wakka({ { -0.1, -0.1 }, { -0.1, 0.2 }, { 0.1, 0.2 }, { 0.1, -0.1 } })
 
     -- 落下判定を作成
-    sen({ -0.5, -0.04 }, { 0.5, -0.04 }, function(self, other)
+    sen({ -0.5, -0.07 }, { 0.5, -0.07 }, function(self, other)
         printf("衝突しました！ %d,%d", self.index, other.index)
         other.owner:erase()
     end)
@@ -104,7 +103,8 @@ run_window(800, 600, "Test Window", function()
 
     Forever(function()
         if GetKeyDown('Space') then
-            maru(0, 0.02)
+            local m = maru(0, 0.02):get_component("Rigidbody")
+            m.linear_velocity = { 0.1, 0.3 }
         end
     end)
 end)
