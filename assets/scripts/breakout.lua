@@ -6,7 +6,7 @@ BlockHalfHeight = 0.005
 ---@return MeshObject
 local function maru(x, y)
     local obj = __CurrentWorld:draw_circle({ x, y }, 0.003)
-    local rb = obj:add_rigidbody_component()
+    local rb = obj:add_rigidbody_component({ type = "dynamic", isBullet = true })
     rb:add_shape({ shape = "circle", radius = 0.003, friction = 0, restitution = 1 })
     return obj
 end
@@ -16,7 +16,7 @@ end
 local function block(x, y)
     local obj = __CurrentWorld:draw_rect(BlockHalfWidth, BlockHalfHeight)
     obj.position = { x, y }
-    local rb = obj:add_rigidbody_component({ type = "static" })
+    local rb = obj:add_rigidbody_component()
     rb:add_shape({
         shape = "rect",
         friction = 0,
@@ -38,7 +38,7 @@ end
 ---@return MeshObject
 local function sen(p1, p2, on_collision_enter)
     local obj = __CurrentWorld:draw_line({ p1, p2 })
-    local rb = obj:add_rigidbody_component({ type = "dynamic" })
+    local rb = obj:add_rigidbody_component()
     rb:add_shape({
         shape = "edge",
         points = { p1, p2 },
@@ -64,7 +64,7 @@ end
 ---@param on_collision_enter? fun(self: ChainCollider, collider: Collider)
 local function wakka(points, on_collision_enter)
     local obj = __CurrentWorld:draw_line(points, true)
-    local rb = obj:add_rigidbody_component({ type = "static" })
+    local rb = obj:add_rigidbody_component()
     rb:add_chain({
         points = points,
         restitution = 1,
@@ -74,7 +74,7 @@ local function wakka(points, on_collision_enter)
 end
 
 run_window(800, 600, "Test Window", function()
-    b2SetLengthUnitsPerMeter(0.01)
+    b2SetLengthUnitsPerMeter(0.001)
     local world = create_world()
     local camera = supercamera_2d("quit", "zoom")
     camera.position = { 0, 0.05 }
@@ -82,9 +82,10 @@ run_window(800, 600, "Test Window", function()
     world.b2world.gravity = { 0, 0 }
     print(world.b2world.gravity)
 
+    -- ブロックを配置
     for i = 0, 5, 1 do
         for j = 0, 9, 1 do
-            block(-0.03 + 0.02 * i, 0.1 + 0.01 * j)
+            block(-0.03 + 0.02 * i, 0.08 + 0.01 * j)
         end
     end
 
@@ -126,7 +127,7 @@ run_window(800, 600, "Test Window", function()
     Forever(function()
         if GetKeyDown('Space') then
             local m = maru(0, 0.02):get_component("Rigidbody")
-            m.linear_velocity = { 0.1, 0.2 }
+            m.linear_velocity = { 0.05, 0.45 }
         end
     end)
 end)

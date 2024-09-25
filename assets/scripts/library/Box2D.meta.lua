@@ -54,6 +54,7 @@ function b2SetLengthUnitsPerMeter(lengthUnits) end
 ---add_rigidbody_componentに指定できるオプション集
 ---@class BodyOptions
 ---@field type "static"|"kinematic"|"dynamic"? 演算タイプ
+---@field isBullet boolean? 連続的衝突判定：CCDをdynamicBody同士で行うかどうか
 local BodyOptions = {}
 
 ---add_shapeに指定できるオプション集

@@ -36,7 +36,10 @@ static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject 
 
     // 演算タイプ
     auto ts = tbl["type"].get_or<std::string_view>("");
-    body_params.type = (ts == "static" ? b2_staticBody : (ts == "kinematic" ? b2_kinematicBody : b2_dynamicBody));
+    body_params.type = (ts == "dynamic" ? b2_dynamicBody : (ts == "kinematic" ? b2_kinematicBody : b2_staticBody));
+
+    // 連続的衝突判定：CCDをdynamicBody同士で行うかどうか
+    body_params.isBullet = tbl["isBullet"].get_or(false);
 
     auto pos = obj->get_absolute_position();
     body_params.position = {pos.x, pos.y};
