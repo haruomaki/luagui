@@ -79,7 +79,7 @@ run_window(800, 600, "Test Window", function()
     local camera = supercamera_2d("quit", "zoom")
     camera.position = { 0, 0.05 }
     camera.scale_prop = 3.5
-    world.b2world.gravity = { 0, 0 }
+    world.b2world.gravity = { 0, -0.1 }
     print(world.b2world.gravity)
 
     -- ブロックを配置
@@ -105,13 +105,10 @@ run_window(800, 600, "Test Window", function()
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
     bar_obj:add_update_component(function()
         Forever(function()
-            if GetKey('Right') then
-                bar.linear_velocity = { 0.2, 0 }
-            elseif GetKey('Left') then
-                bar.linear_velocity = { -0.2, 0 }
-            else
-                bar.linear_velocity = { 0, 0 }
-            end
+            local vx = 0
+            if GetKey('Right') then vx = vx + 0.2 end
+            if GetKey('Left') then vx = vx - 0.2 end
+            bar.linear_velocity = { vx, 0 }
         end)
     end)
 
@@ -127,7 +124,9 @@ run_window(800, 600, "Test Window", function()
     Forever(function()
         if GetKeyDown('Space') then
             local m = maru(0, 0.02):get_component("Rigidbody")
-            m.linear_velocity = { 0.05, 0.45 }
+            local theta = (math.random() - 0.5) * 0.2
+            local speed = math.random() * 0.1 + 0.2
+            m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
         end
     end)
 end)

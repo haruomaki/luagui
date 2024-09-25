@@ -6,6 +6,9 @@
 
 ---コンポーネントおよび剛体そのものを表すクラス。RigidbodyComponentとb2::Bodyの機能を統合する。
 ---@class Rigidbody : Component
+---@field position b2Vec2 《読み取り専用》位置
+---@field rotation number 《読み取り専用》回転角
+---@field transform b2Transform 剛体の空間的配置
 ---@field linear_velocity b2Vec2 速度ベクトル
 ---@field angular_velocity number 角速度のz軸成分
 local Rigidbody = {}
@@ -42,6 +45,9 @@ local b2World = {}
 
 ---@class b2Vec2
 local b2Vec2 = {}
+
+---@class b2Transform
+local b2Transform = {}
 
 ---Box2Dにおける単位系（長さの単位）を指定する。
 ---@param lengthUnits number 単位長さ

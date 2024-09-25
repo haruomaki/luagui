@@ -8,6 +8,8 @@ static std::function<void(b2::World *, const sol::table &)> wrap_table(void (b2:
     };
 }
 
+static float to_angle(b2Rot rot) { return atan2(rot.s, rot.c); }
+
 static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
     // tblにはShapeを作るときのオプション（形状の種類とそれに必要なパラメータ）を指定できる
 
@@ -93,6 +95,9 @@ void register_box2d(sol::state &lua) {
     // Rigidbodyコンポーネント
     lua.new_usertype<RigidbodyComponent>(
         "Rigidbody",
+        "position", sol::readonly_property([](RigidbodyComponent *rbc) { return rbc->b2body.GetPosition(); }),
+        "rotation", sol::readonly_property([](RigidbodyComponent *rbc) { return to_angle(rbc->b2body.GetRotation()); }),
+        "transform", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetTransform(); }, [](RigidbodyComponent *rbc, std::vector<float> pos, float angle) { rbc->b2body.SetTransform({pos[0], pos[1]}, {cos(angle), sin(angle)}); }),
         "linear_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetLinearVelocity(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetLinearVelocity({pos[0], pos[1]}); }),
         "angular_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetAngularVelocity(); }, [](RigidbodyComponent *rbc, float av) { rbc->b2body.SetAngularVelocity(av); }),
         "add_shape", add_shape,
@@ -116,6 +121,7 @@ void register_box2d(sol::state &lua) {
         "b2World",
         "gravity", sol::property(&b2::World::GetGravity, wrap_table(&b2::World::SetGravity)));
 
+    // TODO: 変数を公開（x,yにLuaからアクセスしたい）
     lua.new_usertype<b2Vec2>(
         "b2Vec2",
         // sol::constructors<b2Vec2(), b2Vec2(float, float)>(),
