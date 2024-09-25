@@ -121,6 +121,71 @@ class BufferedSet {
     }
 };
 
+template <typename Value>
+class UniqueBufferedSet {
+  private:
+    std::unordered_set<std::unique_ptr<Value>> elements_;
+    bool locked_ = false;
+    std::vector<std::unique_ptr<Value>> insertions_;
+    std::vector<Value *> deletions_;
+
+    void apply_insertions() {
+        for (auto &&v : insertions_) {
+            elements_.emplace(std::move(v));
+        }
+        insertions_.clear();
+    }
+
+    void apply_deletions() {
+        for (const auto *ptr : deletions_) {
+            for (auto it = elements_.begin(); it != elements_.end(); ++it) {
+                if (it->get() == ptr) {
+                    elements_.erase(it);
+                    break;
+                }
+            }
+        }
+        deletions_.clear();
+    }
+
+  public:
+    void request_insert(std::unique_ptr<Value> value) {
+        if (locked_) {
+            insertions_.emplace_back(std::move(value));
+        } else {
+            elements_.emplace(std::move(value));
+        }
+    }
+
+    void request_delete(Value *value) {
+        if (locked_) {
+            deletions_.emplace_back(value);
+        } else {
+            for (auto it = elements_.begin(); it != elements_.end(); ++it) {
+                if (it->get() == value) {
+                    elements_.erase(it);
+                    break;
+                }
+            }
+        }
+    }
+
+    template <Fn<void(Value &)> Func>
+    void foreach_flush(Func &&func) {
+        locked_ = true;
+        apply_insertions();
+        apply_deletions();
+
+        for (auto it = elements_.begin(); it != elements_.end(); ++it) {
+            func(**it);
+        }
+
+        apply_insertions();
+        apply_deletions();
+        locked_ = false;
+    }
+};
+
 template <typename Key, typename Value>
 class BufferedMultimap {
   private:

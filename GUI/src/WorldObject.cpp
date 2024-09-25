@@ -24,9 +24,9 @@ void WorldObject::refresh_absolute_transform() {
         this->world_.mesh_draw_manager_.set_model_matrix(obj);
     }
 
-    for (auto const &child : children_) {
-        child->refresh_absolute_transform();
-    }
+    children_.foreach_flush([](WorldObject &child) {
+        child.refresh_absolute_transform();
+    });
 }
 
 WorldObject::WorldObject()

@@ -40,7 +40,9 @@ class World : public WorldObject {
 
     ~World() override {
         info("Worldのデストラクタ");
-        this->children_.clear(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
+        children_.foreach_flush([&](WorldObject &obj) {
+            obj.erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
+        });
     }
 
     World(const World &) = delete;

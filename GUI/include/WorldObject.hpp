@@ -16,7 +16,7 @@ class WorldObject {
     glm::vec3 scale_;
     glm::mat4 abs_transform_;
     WorldObject *const parent_;
-    std::set<std::unique_ptr<WorldObject>> children_;
+    UniqueBufferedSet<WorldObject> children_;
     BufferedMultimap<std::type_index, Component> components_;
     World &world_; // parent_より後にする
 
@@ -70,11 +70,8 @@ class WorldObject {
         auto ptr = std::make_unique<T>(std::forward<Args>(args)...);
         WorldObject::set_parent_static(nullptr);
 
-        auto [it, inserted] = this->children_.insert(std::move(ptr));
-        if (!inserted) {
-            throw std::runtime_error("append_childに失敗");
-        }
-        auto raw = dynamic_cast<T *>(it->get());
+        auto raw = dynamic_cast<T *>(ptr.get());
+        this->children_.request_insert(std::move(ptr));
         return *raw;
     }
 
@@ -83,15 +80,14 @@ class WorldObject {
 
         // 生ポインタを使用して要素を削除する
         auto &candidates = this->parent_->children_;
-        auto it = candidates.begin();
-        while (it != candidates.end()) {
-            if ((*it).get() == ptr_to_erase) {
-                it = candidates.erase(it);
-                return true;
+        bool success = false;
+        candidates.foreach_flush([&](WorldObject &obj) {
+            if (&obj == ptr_to_erase) {
+                candidates.request_delete(&obj);
+                success = true;
             }
-            ++it;
-        }
-        return false;
+        });
+        return success;
     }
 
     // void showAbsolutePositionRecursively(int depth) const {
