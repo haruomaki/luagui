@@ -56,6 +56,8 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 }
 
 static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
+    auto chain_params = b2::Chain::Params();
+
     // Chainの頂点座標を取得
     auto points = tbl["points"].get<std::vector<std::vector<float>>>();
 
@@ -65,12 +67,13 @@ static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
         p_array.emplace_back(p.at(0), p.at(1));
     }
 
-    auto chain_params = b2::Chain::Params();
     chain_params.points = p_array.data();
     chain_params.count = (int)p_array.size();
-    auto *ccc = rbc->get_owner()->add_component<ChainColliderComponent>(chain_params);
 
-    // ccc->on_collision_enter = [](ChainColliderComponent &self, ColliderComponent &collider) { print("Chainが衝突！", collider.shape_ref_.Handle().index1); };
+    // ループするかどうか取得
+    chain_params.isLoop = tbl["isLoop"].get_or(false);
+
+    auto *ccc = rbc->get_owner()->add_component<ChainColliderComponent>(chain_params);
 
     // 衝突時のコールバックを設定
     if (ccc != nullptr && tbl["on_collision_enter"].valid()) {

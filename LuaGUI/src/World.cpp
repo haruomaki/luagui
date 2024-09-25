@@ -1,7 +1,7 @@
 #include <utility.hpp>
 #include <utility2.hpp>
 
-static MeshObject &draw_line(World &world, std::vector<std::vector<float>> points) { // NOLINT(performance-unnecessary-value-param)
+static MeshObject &draw_line(World &world, std::vector<std::vector<float>> points, std::optional<bool> is_loop) { // NOLINT(performance-unnecessary-value-param)
     std::vector<glm::vec3> coords(points.size());
     for (size_t i = 0; i < points.size(); i++) {
         coords[i].x = points[i][0];
@@ -9,6 +9,9 @@ static MeshObject &draw_line(World &world, std::vector<std::vector<float>> point
     }
     auto &line_obj = new_line(world);
     line_obj.mesh.vertices.setCoords(coords);
+    if (is_loop.value_or(false)) {
+        line_obj.mesh.draw_mode = GL_LINE_LOOP;
+    }
 
     return line_obj;
 }

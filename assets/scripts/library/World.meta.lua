@@ -13,7 +13,8 @@ __CurrentWorld = nil
 ---直線を描画する。
 ---@param points Points 頂点の座標
 ---@return MeshObject
-function World:draw_line(points) end
+---@param is_loop boolean? 端点をつなげてループにするかどうか
+function World:draw_line(points, is_loop) end
 
 ---矩形を描画する。
 ---@param hx number 横幅の半分

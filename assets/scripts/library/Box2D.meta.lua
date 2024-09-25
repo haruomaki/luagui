@@ -74,5 +74,6 @@ local ShapeOptions = {}
 ---add_chainに指定できるオプション集
 ---@class ChainOptions
 ---@field points Points チェーンの座標一覧（右手側に法線）
+---@field isLoop boolean? チェーンの両端を閉じるかどうか
 ---@field on_collision_enter fun(self: ChainCollider, collider: Collider)? 衝突したときに実行するコールバック関数。
 local ChainOptions = {}
