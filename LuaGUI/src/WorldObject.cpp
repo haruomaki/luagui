@@ -80,4 +80,7 @@ void register_world_object(sol::state &lua) {
         "erase", [](Component *comp) { comp->erase(); });
 
     lua.new_usertype<MeshObject>("MeshObject", sol::base_classes, sol::bases<WorldObject>());
+
+    // Cameraクラス
+    lua.new_usertype<Camera>("Camera", sol::base_classes, sol::bases<WorldObject>());
 }

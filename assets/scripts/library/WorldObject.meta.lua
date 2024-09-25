@@ -35,3 +35,11 @@ function WorldObject:get_component(typename) end
 
 ---コンポーネントを削除する
 function Component:erase() end
+
+----------
+-- カメラ
+----------
+
+---カメラオブジェクトを表すクラス。
+---@class Camera : WorldObject
+local Camera = {}

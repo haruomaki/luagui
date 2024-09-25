@@ -80,6 +80,8 @@ end
 run_window(800, 600, "Test Window", function()
     b2SetLengthUnitsPerMeter(0.01)
     local world = create_world()
+    local camera = world:create_camera()
+    camera.position = { 0.1, 0.15 }
     world.b2world.gravity = { 0, -0.2 }
     print(world.b2world.gravity)
 

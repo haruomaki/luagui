@@ -1,6 +1,12 @@
 #include <utility.hpp>
 #include <utility2.hpp>
 
+static Camera &create_camera(World &world) {
+    auto &camera = world.append_child<OrthoCamera>();
+    camera.set_active();
+    return camera;
+}
+
 static MeshObject &draw_line(World &world, std::vector<std::vector<float>> points, std::optional<bool> is_loop) { // NOLINT(performance-unnecessary-value-param)
     std::vector<glm::vec3> coords(points.size());
     for (size_t i = 0; i < points.size(); i++) {
@@ -41,20 +47,23 @@ static MeshObject &draw_rect(World &world, float hx, float hy) { // NOLINT(perfo
 }
 
 void register_world(sol::state &lua) {
-    lua.set_function("create_world", [&]() -> World & {
+    lua.set_function("create_world", [&](std::optional<bool> debug) -> World & {
         Window &window = lua["__CurrentWindow"];
 
         auto &world = window.create_world();
         lua["__CurrentWorld"] = &world;
 
-        auto &camera = world.append_child<MobileOrthoCamera>();
-        camera.set_active();
+        if (debug) {
+            auto &camera = world.append_child<MobileOrthoCamera>();
+            camera.set_active();
+        }
 
         return world;
     });
 
     lua.new_usertype<World>(
         "World",
+        "create_camera", create_camera,
         "draw_line", draw_line,
         "draw_circle", draw_circle,
         "draw_rect", draw_rect,
