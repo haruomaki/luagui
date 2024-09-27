@@ -19,7 +19,7 @@ class Window {
     KeyArray key_down_{}, key_up_{};
     std::set<std::unique_ptr<Resource>> resources_;
     FunctionSet<void(int, int)> size_callbacks_; // TODO: key_callbackに合わせてpublicにしてもいい
-    std::vector<std::unique_ptr<World>> worlds_ = {};
+    std::vector<std::unique_ptr<World>> worlds_;
 
     friend class SizeCallback;
     friend class KeyCallback;
