@@ -31,9 +31,14 @@ add_compile_options(
     # 重要さが未知数で、オンにしたほうがいいかもしれない警告
     -Wno-weak-vtables # TODO: 知識不足
     -Wno-header-hygiene # ヘッダファイルでusing namespaceしてはいけないという警告。TODO: これはONでもよさそう
+
+    # その他Clang固有のオプション
+    -ferror-limit=100
 )
 endif()
-set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1 -fcolor-diagnostics -ferror-limit=100")
+
+set(CMAKE_COLOR_DIAGNOSTICS ON)
+set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1")
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -march=x86-64 -mtune=generic")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")
