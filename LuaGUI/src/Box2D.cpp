@@ -123,11 +123,10 @@ void register_box2d(sol::state &lua) {
         "b2World",
         "gravity", sol::property(&b2::World::GetGravity, wrap_table(&b2::World::SetGravity)));
 
-    // TODO: 変数を公開（x,yにLuaからアクセスしたい）
     lua.new_usertype<b2Vec2>(
         "b2Vec2",
         // sol::constructors<b2Vec2(), b2Vec2(float, float)>(),
-        // "x", &b2Vec2::x,
-        // "y", &b2Vec2::y,
+        "x", &b2Vec2::x,
+        "y", &b2Vec2::y,
         "__tostring", [](b2Vec2 &self) { return "b2Vec2(" + std::to_string(self.x) + ", " + std::to_string(self.y) + ")"; });
 }

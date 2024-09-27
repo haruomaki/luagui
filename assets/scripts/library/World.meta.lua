@@ -1,7 +1,7 @@
 ---@meta World
 
 ---ワールドを生成する。
----@param debug boolean デバッグ用のカメラを一緒に生成するか
+---@param debug boolean? デバッグ用のカメラを一緒に生成するか
 ---@return World
 function create_world(debug) end
 

@@ -123,9 +123,10 @@ run_window(800, 600, "Test Window", function()
 
     Forever(function()
         if GetKeyDown('Space') then
-            local m = maru(0, 0.02):get_component("Rigidbody")
+            local bar_x = bar.position.x
+            local m = maru(bar_x, -0.04):get_component("Rigidbody")
             local theta = (math.random() - 0.5) * 0.2
-            local speed = math.random() * 0.1 + 0.2
+            local speed = math.random() * 0.1 + 0.25
             m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
         end
     end)

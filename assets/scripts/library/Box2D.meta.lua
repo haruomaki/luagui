@@ -44,6 +44,8 @@ local b2World = {}
 -------------
 
 ---@class b2Vec2
+---@field x number? x座標 INFO: プロパティとしてテーブルを代入するため、?を付けている
+---@field y number? y座標
 local b2Vec2 = {}
 
 ---@class b2Transform
