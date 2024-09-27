@@ -1,5 +1,9 @@
 ---@meta misc
 
+------------
+-- 汎用関数
+------------
+
 ---書式に沿って文字列を表示する。
 ---@param format string|number
 ---@param ... any
@@ -34,6 +38,25 @@ function to_set(list)
     end
     return set
 end
+
+--- 値を最小値と最大値の範囲内に制限する。
+---@param value number 制限する値
+---@param min number 最小値
+---@param max number 最大値
+---@return number 制限された値
+function math.clamp(value, min, max)
+    if value < min then
+        return min
+    elseif value > max then
+        return max
+    else
+        return value
+    end
+end
+
+-------------------------
+-- ゲームエンジン用の関数
+-------------------------
 
 ---カメラを作成する
 ---@param ... "quit"|"move"|"zoom"

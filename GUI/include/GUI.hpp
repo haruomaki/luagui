@@ -5,7 +5,7 @@
 class Window;
 
 class GUI {
-    std::vector<std::unique_ptr<Window>> windows_ = {};
+    std::vector<std::unique_ptr<Window>> windows_;
     bool looping_ = false;
     GLFWmonitor *monitor_ = nullptr; // 初期化時のプライマリモニターを保持
                                      // NOTE: モニターはプログラム初期化時のものをずっとメインとみなす。

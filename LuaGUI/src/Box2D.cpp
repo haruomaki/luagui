@@ -9,6 +9,7 @@ static std::function<void(b2::World *, const sol::table &)> wrap_table(void (b2:
 }
 
 static float to_angle(b2Rot rot) { return atan2(rot.s, rot.c); }
+static b2Rot to_rot(float angle) { return b2Rot{.c = cos(angle), .s = sin(angle)}; };
 
 static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
     // tblにはShapeを作るときのオプション（形状の種類とそれに必要なパラメータ）を指定できる
@@ -97,8 +98,8 @@ void register_box2d(sol::state &lua) {
     // Rigidbodyコンポーネント
     lua.new_usertype<RigidbodyComponent>(
         "Rigidbody",
-        "position", sol::readonly_property([](RigidbodyComponent *rbc) { return rbc->b2body.GetPosition(); }),
-        "rotation", sol::readonly_property([](RigidbodyComponent *rbc) { return to_angle(rbc->b2body.GetRotation()); }),
+        "position", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetPosition(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetTransform({pos[0], pos[1]}, rbc->b2body.GetRotation()); }),
+        "rotation", sol::property([](RigidbodyComponent *rbc) { return to_angle(rbc->b2body.GetRotation()); }, [](RigidbodyComponent *rbc, float angle) { rbc->b2body.SetTransform(rbc->b2body.GetPosition(), to_rot(angle)); }),
         "transform", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetTransform(); }, [](RigidbodyComponent *rbc, std::vector<float> pos, float angle) { rbc->b2body.SetTransform({pos[0], pos[1]}, {cos(angle), sin(angle)}); }),
         "linear_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetLinearVelocity(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetLinearVelocity({pos[0], pos[1]}); }),
         "angular_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetAngularVelocity(); }, [](RigidbodyComponent *rbc, float av) { rbc->b2body.SetAngularVelocity(av); }),

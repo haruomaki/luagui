@@ -112,10 +112,12 @@ run_window(800, 600, "Test Window", function()
     bar_obj:add_update_component(function()
         Forever(function()
             local bar_x = bar.position.x
-            local vx = 0
-            if GetKey('Right') and bar_x + BarHW < StageHW then vx = vx + 0.2 end
-            if GetKey('Left') and bar_x - BarHW > -StageHW then vx = vx - 0.2 end
-            bar.linear_velocity = { vx, 0 }
+            local dt = 1 / 60 -- TODO: フレームレートを取得
+            if GetKey('Right') then bar_x = bar_x + 0.2 * dt end
+            if GetKey('Left') then bar_x = bar_x - 0.2 * dt end
+
+            local clamped = math.clamp(bar_x, -StageHW + BarHW, StageHW - BarHW)
+            bar.position = { clamped, -0.05 }
         end)
     end)
 
