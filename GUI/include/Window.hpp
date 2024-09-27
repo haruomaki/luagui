@@ -102,16 +102,14 @@ class Window {
         return nullptr;
     }
 
-    // 各種コールバックを設定する関数群
-    // TODO: テンプレートを駆使して短く記述
+    // 各種コールバックを設定する関数。
     template <CallbackKind callback_kind>
-    void set_callback();
-    template <CallbackKind callback_kind>
-    void set_callback(std::function<void(int, int)> &&callback);
-
-    template <>
-    void set_callback<CallbackKind::Size>(std::function<void(int, int)> &&callback) {
-        this->size_callbacks_.request_set_function(std::move(callback));
+    void set_callback(std::function<void(int, int)> &&callback) {
+        if constexpr (callback_kind == CallbackKind::Size) {
+            this->size_callbacks_.request_set_function(std::move(callback));
+        } else {
+            static_assert(false, "CallbackKindが不正です");
+        }
     }
 
     // // コールバックを削除する関数群

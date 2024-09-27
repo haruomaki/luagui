@@ -21,7 +21,9 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
     shape_params.restitution = tbl["restitution"].get_or(0.3f);
 
     // shape（衝突形状）を取得
-    std::string shape = tbl["shape"].get_or<const char *>("circle");
+    // NOTE: GCCではget_or<const char*>がバグで使えない？
+    std::string shape = "circle";
+    if (tbl["shape"].valid()) shape = tbl["shape"].get<const char *>();
 
     if (shape == "circle") {
         std::vector<float> center = tbl["center"].get_or(std::vector<float>{0, 0});

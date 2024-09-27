@@ -56,21 +56,6 @@ void ProgramObject::use() const {
     glUseProgram(program_id_);
 }
 
-// template <StorageQualifier q>
-// GLint ProgramObject::get_location(const string &name) const {
-//     GLint location;
-//     if constexpr (q == Attribute) {
-//         location = glGetAttribLocation(program_id_, name.c_str());
-//     } else if constexpr (q == Uniform) {
-//         location = glGetUniformLocation(program_id_, name.c_str());
-//     } else {
-//         static_assert(false, "StorageQualifierの種類が無効ですよ");
-//     }
-//     if (location == -1) {
-//         warn("指定された変数名が無効です");
-//     }
-// }
-
 void ProgramObject::set_attribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const {
     GLint location = get_location<Attribute>(name);
     glVertexAttribPointer(location, size, type, normalized, stride, pointer);

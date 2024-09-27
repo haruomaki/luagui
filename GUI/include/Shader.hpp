@@ -29,19 +29,20 @@ class ProgramObject {
     [[nodiscard]] GLuint get_program_id() const;
     void use() const;
 
-    // 無効な名前の場合は-1が返る
+    // Attribute変数やUniform変数の通し番号を取得する。無効な名前の場合は-1が返る。
+    // NOTE: GCCにはクラス定義内で明示的特殊化ができないバグがあるため、定数ifで代用。https://stackoverflow.com/a/49707378/22234700
     template <StorageQualifier q>
-    [[nodiscard]] inline GLint get_location(const string &name) const;
-    template <>
-    inline GLint get_location<StorageQualifier::Attribute>(const string &name) const {
-        auto loc = glGetAttribLocation(program_id_, name.c_str());
-        if (loc == -1) warn("Attribute変数名 \"", name, "\" は無効です");
-        return loc;
-    }
-    template <>
-    inline GLint get_location<StorageQualifier::Uniform>(const string &name) const {
-        auto loc = glGetUniformLocation(program_id_, name.c_str());
-        if (loc == -1) warn("Uniform変数名 \"", name, "\" は無効です");
+    [[nodiscard]] inline GLint get_location(const string &name) const {
+        GLint loc;
+        if constexpr (q == StorageQualifier::Attribute) {
+            loc = glGetAttribLocation(program_id_, name.c_str());
+            if (loc == -1) warn("Attribute変数名 \"", name, "\" は無効です");
+        } else if constexpr (q == StorageQualifier::Uniform) {
+            loc = glGetUniformLocation(program_id_, name.c_str());
+            if (loc == -1) warn("Uniform変数名 \"", name, "\" は無効です");
+        } else {
+            static_assert(false, "StorageQualifierの種類が無効ですよ");
+        }
         return loc;
     }
 
