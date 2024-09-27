@@ -1,31 +1,65 @@
-local function title()
-    print("Title screen", window)
-    local world = create_world()
-    world:draw_line()
-    print(type(world))
+-- プロパティのテスト
+
+--- Point class definition
+---@class Point
+---@field x number
+---@field y number
+local Point = {}
+Point.__index = Point
+
+--- Constructor for Point
+-- @param x Initial x coordinate
+-- @param y Initial y coordinate
+-- @return New Point object
+function Point:new(x, y)
+    local point = setmetatable({}, self)
+    point.x = x or 0
+    point.y = y or 0
+    return point
 end
 
-local function play()
-    print("Game started")
+--- Hoge class definition
+---@class Hoge
+---@field position Point
+local Hoge = {}
+Hoge.__index = Hoge
 
+--- Constructor for Hoge
+-- @return New Hoge object
+function Hoge:new()
+    local obj = setmetatable({}, self)
+    obj._position = Point:new()
+    return obj
+end
 
-    local game_time = 0
-    while game_time < 60000 do -- 10秒間ゲームプレイ？
-        if game_time % 60 == 0 then
-            print("Game time: " .. game_time)
-        end
-        game_time = game_time + 1
-        coroutine.yield()
+--- __index metamethod for Hoge
+-- @param key Property name
+-- @return Property value
+function Hoge:__index(key)
+    if key == "position" then
+        return rawget(self, "_position")
+    else
+        return rawget(self, key)
     end
 end
 
-local function gameover()
-    print("Game over")
-    -- ゲームオーバー画面のロジック
+--- __newindex metamethod for Hoge
+-- @param key Property name
+-- @param value New value
+function Hoge:__newindex(key, value)
+    if key == "position" then
+        if type(value) == "table" and #value == 2 then
+            self._position = Point:new(value[1], value[2])
+        else
+            self._position = value
+        end
+    else
+        rawset(self, key, value)
+    end
 end
 
-create_window(400, 300, "Lua Window", function()
-    title()    -- ゲームのタイトルを表示
-    play()     -- ゲームをプレイ
-    gameover() -- ゲームオーバー画面を表示
-end)
+-- Usage example
+local hoge = Hoge:new()
+hoge.position = { 3, 7 }
+print(hoge.position.x) -- 3
+print(hoge.position.y) -- 7

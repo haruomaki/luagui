@@ -18,4 +18,6 @@ int main() {
 
     lua.script(R"(
     )");
+
+    lua.script_file("assets/scripts/luatest.lua");
 }
