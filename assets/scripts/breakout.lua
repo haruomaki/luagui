@@ -2,6 +2,12 @@
 BlockHalfWidth = 0.01
 BlockHalfHeight = 0.005
 
+-- ステージの大きさ
+StageHW = 0.1
+
+-- バーの長さ
+BarHW = 0.02
+
 ---丸を生成
 ---@return MeshObject
 local function maru(x, y)
@@ -90,7 +96,7 @@ run_window(800, 600, "Test Window", function()
     end
 
     -- 床と壁の剛体を作成
-    wakka({ { -0.1, -0.1 }, { -0.1, 0.2 }, { 0.1, 0.2 }, { 0.1, -0.1 } })
+    wakka({ { -StageHW, -0.1 }, { -StageHW, 0.2 }, { StageHW, 0.2 }, { StageHW, -0.1 } })
 
     -- 落下判定を作成
     sen({ -0.5, -0.07 }, { 0.5, -0.07 }, function(self, other)
@@ -99,15 +105,16 @@ run_window(800, 600, "Test Window", function()
     end)
 
     -- 操作バーを追加
-    local bar_obj = world:draw_rect(0.02, 0.003)
+    local bar_obj = world:draw_rect(BarHW, 0.003)
     bar_obj.position = { 0, -0.05 }
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
     bar_obj:add_update_component(function()
         Forever(function()
+            local bar_x = bar.position.x
             local vx = 0
-            if GetKey('Right') then vx = vx + 0.2 end
-            if GetKey('Left') then vx = vx - 0.2 end
+            if GetKey('Right') and bar_x + BarHW < StageHW then vx = vx + 0.2 end
+            if GetKey('Left') and bar_x - BarHW > -StageHW then vx = vx - 0.2 end
             bar.linear_velocity = { vx, 0 }
         end)
     end)
@@ -121,13 +128,19 @@ run_window(800, 600, "Test Window", function()
     -- local flipper_right_rb = flipper_right_obj:get_component("Rigidbody")
     -- flipper_right_rb.angular_velocity = -4
 
+    local cooldown = 0
     Forever(function()
-        if GetKeyDown('Space') then
+        if GetKey('Space') and cooldown == 0 then
+            print(bar.position.x - BarHW, bar.position.x + BarHW)
+            cooldown = 3
             local bar_x = bar.position.x
             local m = maru(bar_x, -0.04):get_component("Rigidbody")
             local theta = (math.random() - 0.5) * 0.2
             local speed = math.random() * 0.1 + 0.25
             m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
+        end
+        if cooldown > 0 then
+            cooldown = cooldown - 1
         end
     end)
 end)
