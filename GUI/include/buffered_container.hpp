@@ -171,6 +171,14 @@ class UniqueBufferedSet {
     }
 
   public:
+    std::vector<Value *> elements() {
+        std::vector<Value *> ret;
+        for (auto &ptr : elements_) {
+            ret.push_back(ptr.get());
+        }
+        return ret;
+    }
+
     void request_insert(std::unique_ptr<Value> value) {
         if (locked_) {
             insertions_.emplace_back(std::move(value));

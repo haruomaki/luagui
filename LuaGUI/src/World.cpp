@@ -67,5 +67,6 @@ void register_world(sol::state &lua) {
         "draw_line", draw_line,
         "draw_circle", draw_circle,
         "draw_rect", draw_rect,
-        "b2world", sol::readonly_property([](World *world) { return &world->b2world; }));
+        "b2world", sol::readonly_property([](World *world) { return &world->b2world; }),
+        sol::base_classes, sol::bases<WorldObject>());
 }

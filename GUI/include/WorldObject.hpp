@@ -90,6 +90,10 @@ class WorldObject {
         return success;
     }
 
+    std::vector<WorldObject *> children() {
+        return children_.elements();
+    }
+
     // void showAbsolutePositionRecursively(int depth) const {
     //     // cout << "showです。" << endl;
     //     cout << std::string(depth, ' ') << this->abspos_ << endl;

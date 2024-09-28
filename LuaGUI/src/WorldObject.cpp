@@ -61,6 +61,12 @@ void register_world_object(sol::state &lua) {
     lua.new_usertype<WorldObject>(
         "WorldObject",
 
+        "append_empty_child",
+        [](WorldObject *obj) { return &obj->append_child<WorldObject>(); },
+
+        "children",
+        [](WorldObject *obj) { return sol::as_table(obj->children()); },
+
         "position",
         sol::property([](WorldObject *obj) { return obj->get_position(); }, [](WorldObject *obj, std::vector<float> pos) { obj->set_position({pos[0], pos[1], 0}); }),
 
