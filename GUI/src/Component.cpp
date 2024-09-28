@@ -35,7 +35,7 @@ UpdateComponent::~UpdateComponent() {
 // ---------------------
 
 RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
-    trace("RigidbodyComponentのコンストラクタです");
+    trace("RigidbodyComponentのコンストラクタです。", this);
 
     // Worldのrigidbodyリストに追加
     get_owner()->get_world().rigidbody_components.request_set(this);
@@ -46,7 +46,7 @@ RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
 }
 
 RigidbodyComponent::~RigidbodyComponent() {
-    // print("RigidbodyComponentのデストラクタです");
+    // print("RigidbodyComponentのデストラクタです。", this);
     auto ccs = get_owner()->get_components<ColliderComponent>();
     // debug(ccs);
     for (auto *cc : ccs) {

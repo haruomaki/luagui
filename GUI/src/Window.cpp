@@ -208,6 +208,13 @@ void Window::post_process() {
     // 今フレームのキーイベント発生状況を0にリセットする
     key_down_.fill(false);
     key_up_.fill(false);
+
+    // rigidbody_components_（物理演算結果を物体の位置に反映するために管理）をフラッシュしておく。
+    // 次フレームに同一アドレスの別コンポーネントが作られたときに、競合しないようにするため。
+    for (std::unique_ptr<World> &world : this->worlds_) {
+        // TODO: foreach_flushではなくflsuh関数を用意してそれを使う
+        world->rigidbody_components.foreach_flush([](auto) {});
+    }
 }
 
 // World::draw_priority_に基づき、worlds_を昇順に並べ替える

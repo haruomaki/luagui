@@ -50,12 +50,15 @@ class GUI {
         // 描画のループ
         while (!this->windows_.empty()) {
             tick++;
+            trace("[mainloop] メインループ：", tick);
 
             // 受け取ったイベント（キーボードやマウス入力）を処理する
             // キー押下の瞬間などを捉えるために、ユーザ処理よりも前に置く
             glfwPollEvents();
 
+            trace("[mainloop] カスタムルーチン開始：", tick);
             custom_routine(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
+            trace("[mainloop] ウィンドウ更新開始：", tick);
             this->refresh_windows();
         }
 

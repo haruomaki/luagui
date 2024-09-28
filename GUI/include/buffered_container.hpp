@@ -26,8 +26,25 @@ class BufferedSet {
 
     // 追加リストをマージ
     void set_all() {
+        // if constexpr (std::same_as<T, RigidbodyComponent *>) {
+        //     cerr << "elems_: ";
+        //     for (auto &e : this->elems_) {
+        //         cerr << e << " ";
+        //     }
+        //     cerr << endl;
+        //     cerr << "ins_: ";
+        //     for (auto &e : this->ins_) {
+        //         cerr << e << " ";
+        //     }
+        //     cerr << endl;
+        // }
         this->elems_.merge(this->ins_);
-        if (!this->ins_.empty()) warn("BufferedSetの追加要素に重複がありました");
+        // if (!this->ins_.empty()) {
+        //     warn("BufferedSetの追加要素に重複がありました（", typeid(T).name(), "）");
+        //     for (auto &e : this->ins_) {
+        //         warn("重複: ", e);
+        //     }
+        // }
         this->ins_ = std::unordered_set<T>{};
     }
 
@@ -59,8 +76,10 @@ class BufferedSet {
         requires std::is_invocable_v<Proc, T>
     void foreach_flush(Proc &&proc) {
         this->locked_ = true;
+        // if constexpr (std::same_as<T, RigidbodyComponent *>) print("foreach_flush前半開始");
         set_all();
         erase_all();
+        // if constexpr (std::same_as<T, RigidbodyComponent *>) print("foreach_flush前半終了");
 
         // 削除リストを反映させながらforeachを実行
         for (auto it = this->elems_.begin(); it != this->elems_.end();) {

@@ -50,16 +50,16 @@ void GUI::refresh_windows() {
     // 生きている各ウィンドウに対して更新および描画＆後処理
     for (const auto &window : this->windows_) {
         // 更新処理。physicsとupdateは順不同？
-        trace("mainloop p1");
+        trace("[mainloop] p1 《physics》->update->draw->post");
         window->physics_routine();
-        trace("mainloop p2");
+        trace("[mainloop] p2 physics->《update》->draw->post");
         window->update_routine();
 
         // 更新処理ののち描画。
-        trace("mainloop p3");
+        trace("[mainloop] p3 physics->update->《draw》->post");
         window->draw_routine();
-        trace("mainloop p4");
+        trace("[mainloop] p4 physics->update->draw->《post》");
         window->post_process();
-        trace("mainloop p5");
+        trace("[mainloop] p5");
     }
 }
