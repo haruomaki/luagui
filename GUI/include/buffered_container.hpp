@@ -70,6 +70,11 @@ class BufferedSet {
         this->outs_.emplace(std::move(elem));
     }
 
+    void flush() {
+        set_all();
+        erase_all();
+    }
+
     // 追加/削除要求を適用させたのちforeachを回す
     // ループ中に要素の追加や削除をしても問題ないようなforeach文
     template <typename Proc>
@@ -77,8 +82,7 @@ class BufferedSet {
     void foreach_flush(Proc &&proc) {
         this->locked_ = true;
         // if constexpr (std::same_as<T, RigidbodyComponent *>) print("foreach_flush前半開始");
-        set_all();
-        erase_all();
+        flush();
         // if constexpr (std::same_as<T, RigidbodyComponent *>) print("foreach_flush前半終了");
 
         // 削除リストを反映させながらforeachを実行
@@ -93,8 +97,7 @@ class BufferedSet {
             proc(*it++);
         }
 
-        set_all();
-        erase_all();
+        flush();
         this->locked_ = false;
     }
 
