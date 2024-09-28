@@ -86,11 +86,9 @@ run_window(800, 600, "Test Window", function()
     camera.position = { 0, 0.05 }
     camera.scale_prop = 3.5
     world.b2world.gravity = { 0, -0.1 }
-    print(world.b2world.gravity)
 
     -- ブロックを配置
     local block_container = world:append_empty_child()
-    print(block_container)
     for i = 0, 5, 1 do
         for j = 0, 9, 1 do
             block(block_container, -0.03 + 0.02 * i, 0.08 + 0.01 * j)
@@ -102,7 +100,7 @@ run_window(800, 600, "Test Window", function()
 
     -- 落下判定を作成
     sen({ -0.5, -0.07 }, { 0.5, -0.07 }, function(self, other)
-        printf("衝突しました！ %d,%d", self.index, other.index)
+        -- printf("衝突しました！ %d,%d", self.index, other.index)
         other.owner:erase()
     end)
 
@@ -111,9 +109,11 @@ run_window(800, 600, "Test Window", function()
     bar_obj.position = { 0, -0.05 }
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
+
+    local cooldown = 0
     bar_obj:add_update_component(function()
         Forever(function()
-            print("チルドレン数", #block_container:children())
+            -- バーをキー操作で動かす
             local bar_x = bar.position.x
             local dt = 1 / Screen.refreshRate
             if GetKey('Right') then bar_x = bar_x + 0.2 * dt end
@@ -121,6 +121,20 @@ run_window(800, 600, "Test Window", function()
 
             local clamped = math.clamp(bar_x, -StageHW + BarHW, StageHW - BarHW)
             bar.position = { clamped, -0.05 }
+            bar_x = clamped
+
+            -- スペースキーで連射
+            if GetKey('Space') and cooldown == 0 then
+                -- print(bar.position.x - BarHW, bar.position.x + BarHW)
+                cooldown = 3
+                local m = maru(bar_x, -0.04):get_component("Rigidbody")
+                local theta = (math.random() - 0.5) * 0.2
+                local speed = math.random() * 0.1 + 0.25
+                m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
+            end
+            if cooldown > 0 then
+                cooldown = cooldown - 1
+            end
         end)
     end)
 
@@ -133,19 +147,10 @@ run_window(800, 600, "Test Window", function()
     -- local flipper_right_rb = flipper_right_obj:get_component("Rigidbody")
     -- flipper_right_rb.angular_velocity = -4
 
-    local cooldown = 0
-    Forever(function()
-        if GetKey('Space') and cooldown == 0 then
-            print(bar.position.x - BarHW, bar.position.x + BarHW)
-            cooldown = 3
-            local bar_x = bar.position.x
-            local m = maru(bar_x, -0.04):get_component("Rigidbody")
-            local theta = (math.random() - 0.5) * 0.2
-            local speed = math.random() * 0.1 + 0.25
-            m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
-        end
-        if cooldown > 0 then
-            cooldown = cooldown - 1
-        end
+    WaitUntil(function()
+        return #block_container:children() == 0
     end)
+
+    print("クリアー！すべてのブロックを消しました。")
+    Wait(2)
 end)
