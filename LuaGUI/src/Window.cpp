@@ -54,6 +54,8 @@ static inline std::optional<int> from_name(const char *name) {
     return it->second;
 }
 
+class Screen {};
+
 void register_window(sol::state &lua) {
     lua.set_function("GetKey", [&lua](const char *key) -> bool {
         Window &window = lua["__CurrentWindow"];
@@ -78,4 +80,12 @@ void register_window(sol::state &lua) {
         Window &window = lua["__CurrentWindow"];
         window.close();
     });
+
+    // リフレッシュレートを取得する関数
+    lua.new_usertype<Screen>(
+        "Screen",
+        "refreshRate", sol::readonly_property([&lua]() {
+            Window &window = lua["__CurrentWindow"];
+            return window.refresh_rate();
+        }));
 }

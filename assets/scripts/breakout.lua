@@ -112,7 +112,7 @@ run_window(800, 600, "Test Window", function()
     bar_obj:add_update_component(function()
         Forever(function()
             local bar_x = bar.position.x
-            local dt = 1 / 60 -- TODO: フレームレートを取得
+            local dt = 1 / Screen.refreshRate
             if GetKey('Right') then bar_x = bar_x + 0.2 * dt end
             if GetKey('Left') then bar_x = bar_x - 0.2 * dt end
 

@@ -59,3 +59,8 @@ function GetKeyUp(key) end
 
 ---ウィンドウを閉じるよう要求する。
 function CloseWindow() end
+
+---スクリーンに関するプロパティをまとめた静的クラス
+---@class Screen
+---@field refreshRate integer 《読み取り専用》ディスプレイのリフレッシュレート
+Screen = {}
