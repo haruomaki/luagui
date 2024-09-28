@@ -85,7 +85,7 @@ LuaGUI::LuaGUI() {
 
     register_chrono(lua);
     register_window(lua);
-    register_world(lua);
     register_world_object(lua);
+    register_world(lua);
     register_box2d(lua);
 }
