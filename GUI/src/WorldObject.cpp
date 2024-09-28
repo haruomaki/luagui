@@ -14,6 +14,13 @@ void WorldObject::set_parent_static(WorldObject *parent) {
     parent_static = parent;
 }
 
+void WorldObject::flush_children() {
+    children_.flush();
+    for (WorldObject *child : children_.elements()) {
+        child->flush_children();
+    }
+}
+
 void WorldObject::refresh_absolute_transform() {
     const auto &parent_abs_transform = (parent_ != nullptr ? parent_->abs_transform_ : glm::mat4(1));
     abs_transform_ = parent_abs_transform * TRANSLATE(pos_) * glm::mat4_cast(rotate_) * SCALE(scale_);

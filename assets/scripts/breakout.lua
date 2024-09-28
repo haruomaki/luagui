@@ -19,8 +19,8 @@ end
 
 ---ブロックを生成
 ---@return MeshObject
-local function block(x, y)
-    local obj = __CurrentWorld:draw_rect(BlockHalfWidth, BlockHalfHeight)
+local function block(parent, x, y)
+    local obj = parent:draw_rect(BlockHalfWidth, BlockHalfHeight)
     obj.position = { x, y }
     local rb = obj:add_rigidbody_component()
     rb:add_shape({
@@ -89,9 +89,11 @@ run_window(800, 600, "Test Window", function()
     print(world.b2world.gravity)
 
     -- ブロックを配置
+    local block_container = world:append_empty_child()
+    print(block_container)
     for i = 0, 5, 1 do
         for j = 0, 9, 1 do
-            block(-0.03 + 0.02 * i, 0.08 + 0.01 * j)
+            block(block_container, -0.03 + 0.02 * i, 0.08 + 0.01 * j)
         end
     end
 
@@ -111,6 +113,7 @@ run_window(800, 600, "Test Window", function()
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
     bar_obj:add_update_component(function()
         Forever(function()
+            print("チルドレン数", #block_container:children())
             local bar_x = bar.position.x
             local dt = 1 / Screen.refreshRate
             if GetKey('Right') then bar_x = bar_x + 0.2 * dt end

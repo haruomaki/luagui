@@ -56,9 +56,8 @@ class World : public WorldObject {
             (*update)();
         });
 
-        // 子オブジェクトの追加／削除を適用
-        // TODO: 孫オブジェクトに再帰的に適用する
-        children_.flush();
+        // 子（および子孫）オブジェクトの追加／削除を再帰的に適用
+        this->flush_children();
 
         this->timer.step(); // タイマーを進める
     }

@@ -5,9 +5,9 @@
 ---@return World
 function create_world(debug) end
 
----@class World
+---@class World : WorldObject
 ---@field b2world b2World
-local World = {}
+World = {}
 
 ---@type World
 __CurrentWorld = nil

@@ -3,18 +3,26 @@
 ---@class WorldObject
 ---@field position vec3 物体の位置
 ---@field scale_prop number 物体の幾何平均スケール
-local WorldObject = {}
+WorldObject = {}
 
 ---@class MeshObject : WorldObject
-local MeshObject = {}
+MeshObject = {}
 
 ---コンポーネント基底クラス
 ---@class Component
 ---@field owner WorldObject コンポーネントが所属するオブジェクト
-local Component = {}
+Component = {}
 
 ---@class vec3
-local vec3 = {}
+vec3 = {}
+
+---空のオブジェクトを子として追加する
+---@return WorldObject child
+function WorldObject:append_empty_child() end
+
+---子オブジェクトを列挙する
+---@return table<number, WorldObject> children
+function WorldObject:children() end
 
 ---オブジェクトを削除する
 function WorldObject:erase() end
