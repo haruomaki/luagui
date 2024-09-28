@@ -6,10 +6,10 @@
 
 ---コンポーネントおよび剛体そのものを表すクラス。RigidbodyComponentとb2::Bodyの機能を統合する。
 ---@class Rigidbody : Component
----@field position b2Vec2 《読み取り専用》位置
+---@field position Point 《読み取り専用》位置
 ---@field rotation number 《読み取り専用》回転角
 ---@field transform b2Transform 剛体の空間的配置
----@field linear_velocity b2Vec2 速度ベクトル
+---@field linear_velocity Point 速度ベクトル
 ---@field angular_velocity number 角速度のz軸成分
 local Rigidbody = {}
 
@@ -36,7 +36,7 @@ function Rigidbody:add_chain(chain_options) end
 -------------
 
 ---@class b2World
----@field gravity b2Vec2 重力加速度のベクトル
+---@field gravity Point 重力加速度のベクトル
 local b2World = {}
 
 -------------
@@ -44,8 +44,8 @@ local b2World = {}
 -------------
 
 ---@class b2Vec2
----@field x number? x座標 INFO: プロパティとしてテーブルを代入するため、?を付けている
----@field y number? y座標
+---@field x number x座標 INFO: プロパティとしてテーブルを代入するため、?を付けている
+---@field y number y座標
 local b2Vec2 = {}
 
 ---@class b2Transform
