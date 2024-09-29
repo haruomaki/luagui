@@ -15,11 +15,11 @@ enum class LogLevel {
     Trace,
 };
 
-#ifdef _WIN32
-constexpr std::array<const char *, 5> icons = {"", "<warn>", "<print>", "<info>", "<trace>"};
-#else
+// #ifdef _WIN32
+// constexpr std::array<const char *, 5> icons = {"", "<warn>", "<print>", "<info>", "<trace>"};
+// #else
 constexpr std::array<const char *, 5> icons = {"", "🐝", "✅", "ℹ️", "🏞️"};
-#endif // _WIN32
+// #endif // _WIN32
 
 constexpr LogLevel default_log_level = LogLevel::Print;
 
