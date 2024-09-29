@@ -159,15 +159,20 @@ class UniqueBufferedSet {
     }
 
     void apply_deletions() {
+        //info("apply_deletionsはじめ, ", deletions_);
         for (const auto *ptr : deletions_) {
+            //info("削除対象ポインタ: ", ptr);
             for (auto it = elements_.begin(); it != elements_.end(); ++it) {
                 if (it->get() == ptr) {
+                    //info("一致する要素を削除: ", ptr);
                     elements_.erase(it);
                     break;
                 }
             }
         }
+        //info("apply_deletionsあとクリアだけ");
         deletions_.clear();
+        //info("apply_deletionsおわり");
     }
 
   public:
@@ -244,6 +249,14 @@ class BufferedMultimap {
     }
 
   public:
+    std::vector<Value *> elements() {
+        std::vector<Value *> ret;
+        for (const auto &pair : elements_) {
+            ret.push_back(pair.second.get());
+        }
+        return ret;
+    }
+
     void request_insert(const Key &key, std::unique_ptr<Value> value) {
         if (locked_) {
             insertions_.emplace_back(key, std::move(value));
@@ -268,6 +281,7 @@ class BufferedMultimap {
 
     template <Fn<void(Key, Value &)> Func>
     void foreach_flush(Func &&func) {
+        if (locked_ == true) throw std::runtime_error("ロック中にforeach_flushが呼び出されました。（foreach_flush内部で再びforeach_flushが呼ばれた可能性）");
         locked_ = true;
         apply_insertions();
         apply_deletions();

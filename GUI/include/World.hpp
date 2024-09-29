@@ -52,14 +52,20 @@ class World : public WorldObject {
     World &operator=(World &&) const = delete;
 
     void master_update() {
+        //trace("World::master_update開始:", this);
         this->updates.foreach_flush([&](const auto update) {
             (*update)();
         });
 
+        //trace("World::master_update途中1:", this);
+
         // 子（および子孫）オブジェクトの追加／削除を再帰的に適用
         this->flush_children();
 
+        //trace("World::master_update途中2:", this);
+
         this->timer.step(); // タイマーを進める
+        //trace("World::master_update終了:", this);
     }
 
     void master_physics();

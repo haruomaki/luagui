@@ -44,7 +44,7 @@ endif()
 if (MSVC)
     # ソースファイルのエンコードをUTF-8に決め打ち
     set(CMAKE_CXX_FLAGS "/std:c++20 /Zc:preprocessor /EHsc /utf-8")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /DDEBUG")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi /Od /DDEBUG")
 else()
     set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1")
     set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
