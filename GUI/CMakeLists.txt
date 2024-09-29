@@ -16,9 +16,6 @@ endif()
 target_include_directories(GUI PUBLIC include)
 target_compile_options(GUI PRIVATE ${WARNINGS})
 
-# *.pcファイルを読み込むツール
-find_package(PkgConfig REQUIRED)
-
 # OpenGL & GLEW & GLFW
 find_package(OpenGL REQUIRED)
 # message("${OPENGL_FOUND} ${OPENGL_INCLUDE_DIRS} ${OPENGL_LIBRARIES} ぐ")
