@@ -154,4 +154,9 @@ inline T &dereference(Ptr *ptr) {
 
 } // namespace base
 
+// GNU拡張の数学定数を自力でも用意 TODO: いっそのこと定数を改めてconstexprで用意してもいい
+#ifndef M_PIf
+#define M_PIf 3.14159265358979323846f
+#endif
+
 using namespace base;

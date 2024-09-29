@@ -44,6 +44,9 @@ target_include_directories(GUI SYSTEM PRIVATE ${FREETYPE_INCLUDE_DIRS}) # SYSTEM
 target_link_libraries(GUI PRIVATE ${FREETYPE_LIBRARIES})
 
 # Box2D & box2cpp Worldから直接扱えるようにPUBLIC
+if (MSVC)
+    add_compile_options(/wd4244 /wd4018) # 暗黙の型変換＆比較の警告を抑制
+endif()
 add_subdirectory(box2d)
 target_include_directories(GUI SYSTEM PUBLIC ../external/box2cpp/include)
 target_link_libraries(GUI PUBLIC box2d)

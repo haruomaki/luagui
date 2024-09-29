@@ -45,7 +45,7 @@ class SparkEffect : public Update {
         if (--lifetime <= 0) {
             this->erase();
         }
-        dump(lifetime);
+        debug(lifetime);
         // speed -= 0.001;
         // this->position += glm::vec3{0, speed, 0};
     }

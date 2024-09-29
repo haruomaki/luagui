@@ -42,7 +42,7 @@ else()
 endif()
 
 if (MSVC)
-    set(CMAKE_CXX_FLAGS "/std:c++20")
+    set(CMAKE_CXX_FLAGS "/std:c++20 /EHsc /W0")
 else()
     set(CMAKE_CXX_FLAGS "-std=c++23 -fPIC -msse4.1")
     set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
@@ -50,6 +50,9 @@ else()
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")
     set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG -march=x86-64 -mtune=generic")
 endif()
+
+# ソースファイルのエンコードをUTF-8に決め打ち（Windows用）
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
 
 add_subdirectory(GUI)
 add_subdirectory(LuaGUI)
