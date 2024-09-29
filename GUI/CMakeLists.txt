@@ -45,11 +45,6 @@ add_subdirectory(box2d)
 target_include_directories(GUI SYSTEM PUBLIC ../external/box2cpp/include)
 target_link_libraries(GUI PUBLIC box2d)
 
-# Lua
-find_package(Lua REQUIRED)
-target_include_directories(GUI SYSTEM PRIVATE ${LUA_INCLUDE_DIRS})
-target_link_libraries(GUI PUBLIC ${LUA_LIBRARIES}) # 動的リンクでPUBLIC
-
 
 # コンパイル済みヘッダの設定
 target_precompile_headers(GUI PUBLIC ./include/master.hpp)
