@@ -14,7 +14,8 @@ enum class LogLevel {
     Info,
     Trace,
 };
-constexpr std::array<const char *, 5> icons = {"", "🐝", "✅", "ℹ️", "🏞️"};
+//constexpr std::array<const char *, 5> icons = {"", "🐝", "✅", "ℹ️", "🏞️"};
+constexpr std::array<const char *, 5> icons = {"", "be", "ch", "in", "la"};
 constexpr LogLevel default_log_level = LogLevel::Print;
 
 // -----------------------------------
@@ -22,7 +23,7 @@ constexpr LogLevel default_log_level = LogLevel::Print;
 // -DDEBUGを指定したときだけ有効になる
 // -----------------------------------
 
-inline void print_headline(const char *icon, const char *file, uint line) {
+inline void print_headline(const char *icon, const char *file, unsigned int line) {
     std::cerr << icon << " " << file << ":" << line << "]";
 }
 inline void print_headline(const char *icon, std::source_location loc) {
@@ -54,10 +55,19 @@ inline void log(std::source_location loc, Ts... args) {
 #endif
 }
 
-#define warn(...) log<LogLevel::Warn>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))   // NOLINT(cppcoreguidelines-macro-usage)
-#define print(...) log<LogLevel::Print>(std::source_location::current() __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
-#define info(...) log<LogLevel::Info>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))   // NOLINT(cppcoreguidelines-macro-usage)
-#define trace(...) log<LogLevel::Trace>(std::source_location::current() __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
+//#define warn(...) log<LogLevel::Warn>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))   // NOLINT(cppcoreguidelines-macro-usage)
+//#define print(...) log<LogLevel::Print>(std::source_location::current() __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
+//#define info(...) log<LogLevel::Info>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))   // NOLINT(cppcoreguidelines-macro-usage)
+//#define trace(...) log<LogLevel::Trace>(std::source_location::current() __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
+
+inline void hi_tmp() {
+    std::cerr << "[[logger]]\n";
+}
+#define warn(...) hi_tmp()
+#define print(...) hi_tmp()
+#define info(...) hi_tmp()
+#define trace(...) hi_tmp()
+
 
 template <class... Args> // NOTE: 未初期化変数の警告に対応するためconst T&を受け取る
 inline void debug_pre(const char *file, int line, const char *argnames, const Args &...args) {
@@ -90,7 +100,8 @@ inline std::chrono::duration<double> time_impl(Func &&func) {
 template <typename Func>
 inline void time_pre(const char *file, int line, Func &&func) {
     auto duration = timeImpl(func);
-    print_headline("⏱️", file, line);
+    //print_headline("⏱️", file, line);
+    print_headline("wa", file, line);
     std::cerr << " " << duration << std::endl;
 }
 

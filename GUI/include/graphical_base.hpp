@@ -38,7 +38,8 @@ namespace base {
 inline void get_errors_pre(const char *file, int line) {
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        print_headline("❎", file, line);
+        //print_headline("❎", file, line);
+        print_headline("cr", file, line);
         std::cerr << " " << err << std::endl;
     }
 }
@@ -46,7 +47,7 @@ inline void get_errors_pre(const char *file, int line) {
 #ifdef DEBUG
 #define getErrors() get_errors_pre(__FILE__, __LINE__) // NOLINT(cppcoreguidelines-macro-usage)
 #else
-#defile getErrors()
+#define getErrors()
 #endif
 
 struct RGB {
