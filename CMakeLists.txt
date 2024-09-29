@@ -9,34 +9,36 @@ project(cppgui CXX)
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 
 # コンパイルオプション（-Weverythingを使いたいためclangのときだけ）
-# すべてのサブディレクトリにも適用される
+# 適用したいプロジェクトに対して、target_compile_options(*** PRIVATE ${WARNINGS})とする
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-add_compile_options(
-    # -Wall
-    # -Wextra
-    -Weverything
-    -Wno-c++98-compat
-    -Wno-c++98-compat-pedantic # 列挙体のtrailingコンマ
-    -Wno-padded # 構造体にパディングが挿入されるとき
-    -Wno-ctad-maybe-unsupported # 型推論によってテンプレート引数を省略
-    -Wno-shadow-field # メンバ変数と同名の引数
-    -Wno-shadow-field-in-constructor # メンバ変数と同名のコンストラクタ引数
-    -Wno-unused-macros # ヘッダで定義するマクロ
-    -Wno-unsafe-buffer-usage # 変数を添字にしてstd::arrayにアクセスするのを許可
-    
-    # 書きやすさに関する警告
-    -Wno-implicit-float-conversion # float値リテラルのfを省略
-    -Wno-sign-conversion # unsignedありなしの暗黙キャストを許可
-    -Wno-old-style-cast # Cスタイルのキャスト記法を許可
-    -Wno-shadow # 変数などのシャドーイングを許可
-
-    # 重要さが未知数で、オンにしたほうがいいかもしれない警告
-    -Wno-weak-vtables # TODO: 知識不足
-    -Wno-header-hygiene # ヘッダファイルでusing namespaceしてはいけないという警告。TODO: これはONでもよさそう
-
-    # その他Clang固有のオプション
-    -ferror-limit=100
-)
+    set (WARNINGS
+        # -Wall
+        # -Wextra
+        -Weverything
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic # 列挙体のtrailingコンマ
+        -Wno-padded # 構造体にパディングが挿入されるとき
+        -Wno-ctad-maybe-unsupported # 型推論によってテンプレート引数を省略
+        -Wno-shadow-field # メンバ変数と同名の引数
+        -Wno-shadow-field-in-constructor # メンバ変数と同名のコンストラクタ引数
+        -Wno-unused-macros # ヘッダで定義するマクロ
+        -Wno-unsafe-buffer-usage # 変数を添字にしてstd::arrayにアクセスするのを許可
+        
+        # 書きやすさに関する警告
+        -Wno-implicit-float-conversion # float値リテラルのfを省略
+        -Wno-sign-conversion # unsignedありなしの暗黙キャストを許可
+        -Wno-old-style-cast # Cスタイルのキャスト記法を許可
+        -Wno-shadow # 変数などのシャドーイングを許可
+       
+        # 重要さが未知数で、オンにしたほうがいいかもしれない警告
+        -Wno-weak-vtables # TODO: 知識不足
+        -Wno-header-hygiene # ヘッダファイルでusing namespaceしてはいけないという警告。TODO: これはONでもよさそう
+       
+        # その他Clang固有のオプション
+        -ferror-limit=100
+    )
+else()
+    set(WARNINGS "")
 endif()
 
 set(CMAKE_COLOR_DIAGNOSTICS ON)
@@ -58,4 +60,5 @@ foreach(SOURCE_FILE ${SOURCES})
     get_filename_component(TARGET_NAME ${SOURCE_FILE} NAME_WE)
     add_executable(${TARGET_NAME} ${SOURCE_FILE})
     target_link_libraries(${TARGET_NAME} PRIVATE GUI LuaGUI)
+    target_compile_options(${TARGET_NAME} PRIVATE ${WARNINGS})
 endforeach()

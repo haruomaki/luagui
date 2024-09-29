@@ -18,6 +18,7 @@ endif()
 target_link_libraries(LuaGUI PRIVATE GUI)
 
 target_include_directories(LuaGUI PUBLIC include)
+target_compile_options(LuaGUI PRIVATE ${WARNINGS})
 
 # solのインクルードパス
 target_include_directories(LuaGUI SYSTEM PUBLIC ../external)

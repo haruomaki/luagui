@@ -14,6 +14,7 @@ else()
 endif()
 
 target_include_directories(GUI PUBLIC include)
+target_compile_options(GUI PRIVATE ${WARNINGS})
 
 # *.pcファイルを読み込むツール
 find_package(PkgConfig REQUIRED)
