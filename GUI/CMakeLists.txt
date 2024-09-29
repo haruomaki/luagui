@@ -40,6 +40,7 @@ target_include_directories(GUI SYSTEM PRIVATE ${FREETYPE_INCLUDE_DIRS}) # SYSTEM
 target_link_libraries(GUI PRIVATE ${FREETYPE_LIBRARIES})
 
 # Box2D & box2cpp Worldから直接扱えるようにPUBLIC
+add_subdirectory(box2d)
 target_include_directories(GUI SYSTEM PUBLIC ../external/box2cpp/include)
 target_link_libraries(GUI PUBLIC box2d)
 

@@ -1,3 +1,6 @@
 [submodule "external/box2cpp"]
 	path = external/box2cpp
 	url = git@github.com:haruomaki/box2cpp.git
+[submodule "GUI/box2d"]
+	path = GUI/box2d
+	url = https://github.com/erincatto/box2d.git
