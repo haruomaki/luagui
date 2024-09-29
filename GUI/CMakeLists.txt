@@ -24,10 +24,16 @@ find_package(OpenGL REQUIRED)
 # message("${OPENGL_FOUND} ${OPENGL_INCLUDE_DIRS} ${OPENGL_LIBRARIES} ぐ")
 find_package(GLEW REQUIRED)
 # message("${GLEW_FOUND} ${GLEW_INCLUDE_DIRS} ${GLEW_LIBRARIES} お")
-pkg_check_modules(GLFW REQUIRED glfw3)  # .pcファイルを読み込む
-# message("${GLFW_FOUND} ${GLFW_INCLUDE_DIRS} ${GLFW_LIBRARIES} ふ")
-target_include_directories(GUI SYSTEM PRIVATE ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS})
-target_link_libraries(GUI PUBLIC ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${GLFW_LIBRARIES}) # 動的リンクでPUBLIC
+target_include_directories(GUI SYSTEM PRIVATE ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
+target_link_libraries(GUI PUBLIC ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES}) # 動的リンクでPUBLIC
+
+# GLFW https://www.glfw.org/docs/3.3/build_guide.html#build_link_cmake_source
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE) # waylandサポートを無効化（HiDPI環境でのバグを抑制）
+add_subdirectory(glfw)
+target_link_libraries(GUI PUBLIC glfw) # これだけでインクルードパスも設定してくれるらしい
 
 # libpng
 find_package(PNG REQUIRED)

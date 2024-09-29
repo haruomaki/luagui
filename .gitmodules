@@ -4,3 +4,6 @@
 [submodule "GUI/box2d"]
 	path = GUI/box2d
 	url = https://github.com/erincatto/box2d.git
+[submodule "GUI/glfw"]
+	path = GUI/glfw
+	url = https://github.com/glfw/glfw.git
