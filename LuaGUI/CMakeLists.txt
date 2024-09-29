@@ -3,9 +3,16 @@ cmake_minimum_required(VERSION 3.11)
 # # ヘッダーファイルのディレクトリを指定（不要？）
 # include_directories(include ../GUI/include)
 
+# LuaGUIについて、動的ライブラリか静的ライブラリのどちらをビルドするか。
+option(LUAGUI_BUILD_SHARED_LIBS "build LuaGUI as a shared library" OFF)
+
 # srcディレクトリ内の.cppファイルを取得
 file(GLOB_RECURSE SOURCES "src/*.cpp")
-add_library(LuaGUI SHARED ${SOURCES}) # 動的ライブラリを作成
+if (LUAGUI_BUILD_SHARED_LIBS)
+    add_library(LuaGUI SHARED ${SOURCES}) # 動的ライブラリを作成
+else()
+    add_library(LuaGUI STATIC ${SOURCES}) # 静的ライブラリを作成
+endif()
 
 # libGUIにリンク
 target_link_libraries(LuaGUI PRIVATE GUI)

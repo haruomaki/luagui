@@ -6,6 +6,8 @@ project(cppgui CXX)
 # もしくは`cmake -DCMAKE_CXX_COMPILER=***`とする
 # vscodeのkit設定: ~/.local/share/CMakeTools/cmake-tools-kits.jsonを編集 https://qiita.com/kilo/items/05e48d22ceff55049b29
 
+option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+
 # コンパイルオプション（-Weverythingを使いたいためclangのときだけ）
 # すべてのサブディレクトリにも適用される
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

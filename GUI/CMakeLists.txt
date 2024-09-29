@@ -1,10 +1,17 @@
 cmake_minimum_required(VERSION 3.11)
 
+# GUIについて、動的ライブラリか静的ライブラリのどちらをビルドするか。
+option(GUI_BUILD_SHARED_LIBS "build GUI as a shared library" OFF)
+
 # srcディレクトリ内の.cppファイルを取得
 file(GLOB_RECURSE SOURCES "src/*.cpp")
-add_library(GUI SHARED ${SOURCES})
-# 動的リンクのためにSHAREDを指定。このとき、いくつかのtarget_link_librariesをPUBLICにする必要がある。
-# TODO: 静的リンクと動的リンクの両対応
+
+if (GUI_BUILD_SHARED_LIBS)
+    # 動的リンクのためにSHAREDを指定。このとき、いくつかのtarget_link_librariesをPUBLICにする必要がある。
+    add_library(GUI SHARED ${SOURCES})
+else()
+    add_library(GUI STATIC ${SOURCES}) # 静的ライブラリを作成
+endif()
 
 target_include_directories(GUI PUBLIC include)
 
