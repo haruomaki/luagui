@@ -23,8 +23,8 @@ class WorldObject {
     // 子孫ノードの絶対位置を再帰的に計算する関数
     void refresh_absolute_transform();
 
-    // フレーム終わりにすべての子孫ノードの追加/削除要求を再帰的に適用する関数
-    void flush_children();
+    // フレーム終わりに、すべてのコンポーネントの追加/削除および子孫ノードの追加/削除要求を再帰的に適用する関数
+    void flush_components_children();
 
     static WorldObject *get_parent_static();
     static void set_parent_static(WorldObject *parent);

@@ -14,13 +14,14 @@ void WorldObject::set_parent_static(WorldObject *parent) {
     parent_static = parent;
 }
 
-void WorldObject::flush_children() {
-    //trace("flush_childrenです:", this);
+void WorldObject::flush_components_children() {
+    // trace("flush_childrenです:", this);
+    components_.flush(); // コンポーネントとchildrenの順番はどっちでもいい？
     children_.flush();
     for (WorldObject *child : children_.elements()) {
-        child->flush_children();
+        child->flush_components_children();
     }
-    //trace("flush_childrenおわり:", this);
+    // trace("flush_childrenおわり:", this);
 }
 
 void WorldObject::refresh_absolute_transform() {
@@ -56,14 +57,15 @@ WorldObject::WorldObject()
 }
 
 WorldObject::~WorldObject() {
-     trace("WorldObjectのデストラクタ開始 components_: ", components_.elements());
+    trace("WorldObjectのデストラクタ開始 components_: ", components_.elements());
     // オブジェクトの寿命はコンポーネントの寿命より長い（コンポーネントのデストラクタでget_owner()が無効にならないようにする）
-    components_.foreach_flush([](auto, Component &comp) {
-         trace("component iteration ", &comp);
+    components_.foreach ([](auto, Component &comp) {
+        trace("component iteration ", &comp);
         comp.erase();
     });
+    components_.flush();
 
-     // print("WorldObjectのデストラクタ終了");
+    // print("WorldObjectのデストラクタ終了");
 }
 
 // NOTE: 現状、オブジェクトのクローンは不可能

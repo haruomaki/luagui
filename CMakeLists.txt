@@ -41,6 +41,8 @@ else()
     set(WARNINGS "")
 endif()
 
+set(CMAKE_COLOR_DIAGNOSTICS ON)
+
 if (MSVC)
     # ソースファイルのエンコードをUTF-8に決め打ち
     set(CMAKE_CXX_FLAGS "/std:c++20 /Zc:preprocessor /EHsc /utf-8")

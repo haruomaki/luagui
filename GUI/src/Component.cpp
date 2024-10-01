@@ -14,12 +14,12 @@ bool Component::erase() {
     // 生ポインタを使用して要素を削除する
     auto &candidates = get_owner()->components_;
     bool success = false;
-    candidates.foreach_flush([&](auto key, Component &comp) {
-        if (&comp == ptr_to_erase) {
-            candidates.request_delete(key, &comp);
+    for (auto &[key, comp] : candidates.key_values()) {
+        if (comp == ptr_to_erase) {
+            candidates.request_delete(key, comp);
             success = true;
         }
-    });
+    }
     info("eraseおわり:", this);
     return success;
 }
@@ -48,11 +48,11 @@ RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
 }
 
 RigidbodyComponent::~RigidbodyComponent() {
-     print("RigidbodyComponentのデストラクタです。", this);
+    print("RigidbodyComponentのデストラクタです。", this);
     auto ccs = get_owner()->get_components<ColliderComponent>();
-     debug(ccs);
+    debug(ccs);
     for (auto *cc : ccs) {
-         print("けすよ", cc->shape_ref_.Handle().index1, ", ",cc);
+        print("けすよ", cc->shape_ref_.Handle().index1, ", ", cc);
         cc->erase();
     }
 
@@ -68,7 +68,7 @@ RigidbodyComponent::~RigidbodyComponent() {
 
     // Worldのrigidbodyリストから削除
     get_owner()->get_world().rigidbody_components.request_erase(this);
-     print("RigidbodyComponentのデストラクタおわりです");
+    print("RigidbodyComponentのデストラクタおわりです");
 }
 
 // ---------------------
