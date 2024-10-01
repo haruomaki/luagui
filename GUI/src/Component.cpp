@@ -48,16 +48,16 @@ RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
 }
 
 RigidbodyComponent::~RigidbodyComponent() {
-    print("RigidbodyComponentのデストラクタです。", this);
+    // print("RigidbodyComponentのデストラクタです。", this);
     auto ccs = get_owner()->get_components<ColliderComponent>();
-    debug(ccs);
+    // debug(ccs);
     for (auto *cc : ccs) {
         print("けすよ", cc->shape_ref_.Handle().index1, ", ", cc);
         cc->erase();
     }
 
     // ChainColliderComponentも消す
-    debug(get_owner()->get_components<ChainColliderComponent>());
+    // debug(get_owner()->get_components<ChainColliderComponent>());
     for (auto *ccc : get_owner()->get_components<ChainColliderComponent>()) {
         print("チェーンをけすよ", ccc->chain_ref_.Handle().index1);
         ccc->erase();
@@ -68,7 +68,7 @@ RigidbodyComponent::~RigidbodyComponent() {
 
     // Worldのrigidbodyリストから削除
     get_owner()->get_world().rigidbody_components.request_erase(this);
-    print("RigidbodyComponentのデストラクタおわりです");
+    // print("RigidbodyComponentのデストラクタおわりです");
 }
 
 // ---------------------

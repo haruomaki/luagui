@@ -12,7 +12,9 @@ void World::master_physics() {
     });
 
     // Box2Dの毎フレーム更新処理
-    b2world.Step(1 / 60.f, 4);
+    // ディスプレイのリフレッシュレートに依存する
+    float dt = 1 / float(window.refresh_rate());
+    b2world.Step(dt, 4);
 
     // 物理演算結果をWorldObjectに反映
     rigidbody_components.foreach_flush([](RigidbodyComponent *rbc) {
