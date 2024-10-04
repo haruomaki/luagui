@@ -1,7 +1,7 @@
 #include "WorldObject.hpp"
 #include <master.hpp>
 
-static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, sol::function f, std::optional<std::string> id) {
+static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, std::string id, sol::function f) {
     // fをコルーチンとして毎フレーム実行し、コルーチンが終了したらコンポーネントも削除する
     auto runner_thread = std::make_shared<sol::thread>(sol::thread::create(lua));
     auto co = std::make_shared<sol::coroutine>(runner_thread->state(), f);
@@ -25,8 +25,8 @@ static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, 
     };
 
     auto *uc = obj->add_component<UpdateComponent>(runner);
-    if (id.has_value()) uc->id = id.value();
-    // print("add_update_componentおわり,", uc, ", ", id.value_or("---"));
+    uc->id = std::move(id);
+    // print("add_update_componentおわり,", uc, ", ", uc->id);
     return uc;
 }
 
@@ -85,7 +85,7 @@ void register_world_object(sol::state &lua) {
         sol::property([](WorldObject *obj) { return obj->get_scale_prop(); }, [](WorldObject *obj, float scale) { obj->set_scale_prop(scale); }),
 
         "add_update_component",
-        [&lua](WorldObject *obj, sol::function f, std::optional<std::string> id) { return add_update_component(lua, obj, std::move(f), std::move(id)); },
+        [&lua](WorldObject *obj, std::string id, sol::function f) { return add_update_component(lua, obj, std::move(id), std::move(f)); },
 
         "add_rigidbody_component",
         [&lua](WorldObject *obj, const sol::optional<sol::table> &tbl_opt) { return add_rigidbody_component(lua, obj, tbl_opt); },

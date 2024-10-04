@@ -29,10 +29,10 @@ function WorldObject:children() end
 function WorldObject:erase() end
 
 ---Updateコンポーネントを追加する。（＝毎フレーム実行してほしい処理を追加する）
+---@param id string コンポーネントのID
 ---@param f fun(self: Update) 毎フレームresumeされるコルーチン。このコルーチンが終了したらコンポーネントも削除される。
----@param id string? コンポーネントのID
 ---@return Update
-function WorldObject:add_update_component(f, id) end
+function WorldObject:add_update_component(id, f) end
 
 ---Rigidbodyコンポーネントを追加する。（＝物理演算を追加する）
 ---@param body_params? BodyOptions b2::Bodyを作成するときに指定するオプション。位置や速度、摩擦など。

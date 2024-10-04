@@ -110,7 +110,7 @@ run_window(800, 600, "Test Window", function()
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
 
-    bar_obj:add_update_component(function()
+    bar_obj:add_update_component("バーのキー操作", function()
         Forever(function()
             -- バーをキー操作で動かす
             local bar_x = bar.position.x
@@ -123,14 +123,14 @@ run_window(800, 600, "Test Window", function()
 
             -- スペースキーで連射
             if GetKeyDown('Space') then
-                bar_obj:add_update_component(function(self)
+                bar_obj:add_update_component("ショット", function(self)
                     Interval(function()
                         local m = maru(bar.position.x, -0.04):get_component("Rigidbody")
                         local theta = (math.random() - 0.5) * 0.2
                         local speed = math.random() * 0.1 + 0.25
                         m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
                     end, 0.06)
-                end, "ショット")
+                end)
             end
 
             if GetKeyUp('Space') then

@@ -220,11 +220,11 @@ class WorldObject {
         for (Component *comp : components_.elements()) {
             if (id == comp->id) {
                 if (ret != nullptr) warn("同一IDの異なるコンポーネントがあります: ", id);
-                print("発見しました:", typeid(*comp).name());
+                // print("発見しました:", typeid(*comp).name());
                 ret = comp;
             }
         }
-        if (ret == nullptr) warn("ID=\"", id, "\" のコンポーネントが見つかりませんでした。");
+        if (ret == nullptr) warn("ID=\"", id, "\"のコンポーネントが見つかりませんでした。");
         return ret;
     }
 };
