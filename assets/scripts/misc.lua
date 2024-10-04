@@ -71,28 +71,24 @@ function supercamera_2d(...)
     for option, _ in pairs(options) do
         if option == "quit" then
             -- Qキーでウィンドウを閉じる
-            camera:add_update_component("quit by supercamera_2d", function(self)
-                Forever(function()
-                    if GetKeyDown "Q" then
-                        print("Qキーが押されたためウィンドウを閉じます")
-                        CloseWindow()
-                    end
-                end)
-            end)
+            camera:add_update_component("quit by supercamera_2d", ForeverFun(function()
+                if GetKeyDown "Q" then
+                    print("Qキーが押されたためウィンドウを閉じます")
+                    CloseWindow()
+                end
+            end))
         end
 
         if option == "zoom" then
             -- Z/Xキーでカメラを拡大縮小する
-            camera:add_update_component("zoom by supercamera_2d", function(self)
-                Forever(function()
-                    if GetKey('Z') then
-                        camera.scale_prop = camera.scale_prop * 0.99
-                    end
-                    if GetKey('X') then
-                        camera.scale_prop = camera.scale_prop * 1.01
-                    end
-                end)
-            end)
+            camera:add_update_component("zoom by supercamera_2d", ForeverFun(function()
+                if GetKey('Z') then
+                    camera.scale_prop = camera.scale_prop * 0.99
+                end
+                if GetKey('X') then
+                    camera.scale_prop = camera.scale_prop * 1.01
+                end
+            end))
         end
     end
 

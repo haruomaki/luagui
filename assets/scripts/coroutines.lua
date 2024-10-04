@@ -77,3 +77,24 @@ function RepeatUntil(action, interval, duration)
         end
     end
 end
+
+-------------
+-- Fun系関数
+-------------
+
+--- 指定の時間間隔で実行する関数を生成する
+---@param action fun() 実行する関数
+---@param interval number 実行間隔（秒）
+function IntervalFun(action, interval)
+    return function()
+        Interval(action, interval)
+    end
+end
+
+---無限ループを実行する関数を生成する
+---@param action? fun(t:number) 経過時間を引数に取る、毎フレーム実行する関数
+function ForeverFun(action)
+    return function()
+        Forever(action)
+    end
+end

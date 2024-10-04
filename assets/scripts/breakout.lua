@@ -110,34 +110,30 @@ run_window(800, 600, "Test Window", function()
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
 
-    bar_obj:add_update_component("バーのキー操作", function()
-        Forever(function()
-            -- バーをキー操作で動かす
-            local bar_x = bar.position.x
-            local dt = 1 / Screen.refreshRate
-            if GetKey('Right') then bar_x = bar_x + 0.2 * dt end
-            if GetKey('Left') then bar_x = bar_x - 0.2 * dt end
+    bar_obj:add_update_component("バーのキー操作", ForeverFun(function()
+        -- バーをキー操作で動かす
+        local bar_x = bar.position.x
+        local dt = 1 / Screen.refreshRate
+        if GetKey('Right') then bar_x = bar_x + 0.2 * dt end
+        if GetKey('Left') then bar_x = bar_x - 0.2 * dt end
 
-            local clamped = math.clamp(bar_x, -StageHW + BarHW, StageHW - BarHW)
-            bar.position = { clamped, -0.05 }
+        local clamped = math.clamp(bar_x, -StageHW + BarHW, StageHW - BarHW)
+        bar.position = { clamped, -0.05 }
 
-            -- スペースキーで連射
-            if GetKeyDown('Space') then
-                bar_obj:add_update_component("ショット", function(self)
-                    Interval(function()
-                        local m = maru(bar.position.x, -0.04):get_component("Rigidbody")
-                        local theta = (math.random() - 0.5) * 0.2
-                        local speed = math.random() * 0.1 + 0.25
-                        m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
-                    end, 0.06)
-                end)
-            end
+        -- スペースキーで連射
+        if GetKeyDown('Space') then
+            bar_obj:add_update_component("ショット", IntervalFun(function()
+                local m = maru(bar.position.x, -0.04):get_component("Rigidbody")
+                local theta = (math.random() - 0.5) * 0.2
+                local speed = math.random() * 0.1 + 0.25
+                m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
+            end, 0.06))
+        end
 
-            if GetKeyUp('Space') then
-                bar_obj:get_component_by_id("ショット"):erase()
-            end
-        end)
-    end)
+        if GetKeyUp('Space') then
+            bar_obj:get_component_by_id("ショット"):erase()
+        end
+    end))
 
     -- フリッパーを作成
     -- local flipper_left_obj = sen({ 0, 0 }, { 0.04, 0.04 })
