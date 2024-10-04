@@ -108,13 +108,8 @@ run_window(800, 600, "Test Window", function()
     local bar_obj = world:draw_rect(BarHW, 0.003)
     bar_obj.position = { 0, -0.05 }
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
-    bar.id = "バーの剛体"
-    print(bar.id)
-    local gaga = bar_obj:get_component_by_id("バーの剛体")
-    print("み", gaga)
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
 
-    local cooldown = 0
     bar_obj:add_update_component(function()
         Forever(function()
             -- バーをキー操作で動かす
@@ -125,19 +120,21 @@ run_window(800, 600, "Test Window", function()
 
             local clamped = math.clamp(bar_x, -StageHW + BarHW, StageHW - BarHW)
             bar.position = { clamped, -0.05 }
-            bar_x = clamped
 
             -- スペースキーで連射
-            if GetKey('Space') and cooldown == 0 then
-                -- print(bar.position.x - BarHW, bar.position.x + BarHW)
-                cooldown = 3
-                local m = maru(bar_x, -0.04):get_component("Rigidbody")
-                local theta = (math.random() - 0.5) * 0.2
-                local speed = math.random() * 0.1 + 0.25
-                m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
+            if GetKeyDown('Space') then
+                bar_obj:add_update_component(function(self)
+                    Interval(function()
+                        local m = maru(bar.position.x, -0.04):get_component("Rigidbody")
+                        local theta = (math.random() - 0.5) * 0.2
+                        local speed = math.random() * 0.1 + 0.25
+                        m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
+                    end, 0.06)
+                end, "ショット")
             end
-            if cooldown > 0 then
-                cooldown = cooldown - 1
+
+            if GetKeyUp('Space') then
+                bar_obj:get_component_by_id("ショット"):erase()
             end
         end)
     end)

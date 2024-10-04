@@ -224,6 +224,7 @@ class WorldObject {
                 ret = comp;
             }
         }
+        if (ret == nullptr) warn("ID=\"", id, "\" のコンポーネントが見つかりませんでした。");
         return ret;
     }
 };

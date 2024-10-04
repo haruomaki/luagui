@@ -29,8 +29,10 @@ function WorldObject:children() end
 function WorldObject:erase() end
 
 ---Updateコンポーネントを追加する。（＝毎フレーム実行してほしい処理を追加する）
----@param f fun(self: WorldObject) 毎フレームresumeされるコルーチン。このコルーチンが終了したらコンポーネントも削除される。
-function WorldObject:add_update_component(f) end
+---@param f fun(self: Update) 毎フレームresumeされるコルーチン。このコルーチンが終了したらコンポーネントも削除される。
+---@param id string? コンポーネントのID
+---@return Update
+function WorldObject:add_update_component(f, id) end
 
 ---Rigidbodyコンポーネントを追加する。（＝物理演算を追加する）
 ---@param body_params? BodyOptions b2::Bodyを作成するときに指定するオプション。位置や速度、摩擦など。
@@ -44,11 +46,19 @@ function WorldObject:add_rigidbody_component(body_params) end
 function WorldObject:get_component(typename) end
 
 ---IDを指定してコンポーネントを取得する
----@return string id
+---@param id string コンポーネントのID
+---@return Component comp キャスト済みのコンポーネント
 function WorldObject:get_component_by_id(id) end
 
 ---コンポーネントを削除する
 function Component:erase() end
+
+-----------------------
+-- Updateコンポーネント
+-----------------------
+
+---@class Update : Component
+Update = {}
 
 ----------
 -- カメラ
