@@ -87,14 +87,6 @@ run_window(800, 600, "Test Window", function()
     camera.scale_prop = 3.5
     world.b2world.gravity = { 0, -0.1 }
 
-    -- ブロックを配置
-    local block_container = world:append_empty_child()
-    for i = 0, 5, 1 do
-        for j = 0, 9, 1 do
-            block(block_container, -0.03 + 0.02 * i, 0.08 + 0.01 * j)
-        end
-    end
-
     -- 床と壁の剛体を作成
     wakka({ { -StageHW, -0.1 }, { -StageHW, 0.2 }, { StageHW, 0.2 }, { StageHW, -0.1 } })
 
@@ -144,10 +136,21 @@ run_window(800, 600, "Test Window", function()
     -- local flipper_right_rb = flipper_right_obj:get_component("Rigidbody")
     -- flipper_right_rb.angular_velocity = -4
 
-    WaitUntil(function()
-        return #block_container:children() == 0
-    end)
 
-    print("クリアー！すべてのブロックを消しました。")
-    Wait(2)
+    while true do
+        -- ブロックを配置
+        local block_container = world:append_empty_child()
+        for i = 0, 5, 1 do
+            for j = 0, 9, 1 do
+                block(block_container, -0.03 + 0.02 * i, 0.08 + 0.01 * j)
+            end
+        end
+
+        WaitUntil(function()
+            return #block_container:children() == 0
+        end)
+
+        print("クリアー！すべてのブロックを消しました。")
+        Wait(2)
+    end
 end)
