@@ -15,6 +15,9 @@ class Component {
     WorldObject *owner_ = nullptr;
 
   public:
+    // すべてのコンポーネントにIDを振るのは面倒＆ID無しも許容したいため、IDでなく型をキーとするmultimapで管理。
+    string id;
+
     Component();
     virtual ~Component() = default;
 

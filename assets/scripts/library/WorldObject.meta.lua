@@ -10,6 +10,7 @@ MeshObject = {}
 
 ---コンポーネント基底クラス
 ---@class Component
+---@field id string コンポーネントのID
 ---@field owner WorldObject コンポーネントが所属するオブジェクト
 Component = {}
 
@@ -41,6 +42,10 @@ function WorldObject:add_rigidbody_component(body_params) end
 ---@param typename `T` 取得したいコンポーネント名（型名を文字列で）
 ---@return T component
 function WorldObject:get_component(typename) end
+
+---IDを指定してコンポーネントを取得する
+---@return string id
+function WorldObject:get_component_by_id(id) end
 
 ---コンポーネントを削除する
 function Component:erase() end

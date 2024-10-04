@@ -56,6 +56,14 @@ static sol::object get_component(sol::state &lua, WorldObject *obj, const std::s
     return sol::nil;
 }
 
+static sol::object get_component_by_id(sol::state &lua, WorldObject *obj, const std::string &id) {
+    Component *comp = obj->get_component_by_id(id);
+    if (auto *p = dynamic_cast<RigidbodyComponent *>(comp)) return sol::make_object(lua, p);
+    if (auto *p = dynamic_cast<ColliderComponent *>(comp)) return sol::make_object(lua, p);
+    if (auto *p = dynamic_cast<UpdateComponent *>(comp)) return sol::make_object(lua, p);
+    return sol::nil;
+}
+
 void register_world_object(sol::state &lua) {
     lua.new_usertype<WorldObject>(
         "WorldObject",
@@ -81,12 +89,16 @@ void register_world_object(sol::state &lua) {
         "get_component",
         [&lua](WorldObject *obj, const std::string &component_type) { return get_component(lua, obj, component_type); },
 
+        "get_component_by_id",
+        [&lua](WorldObject *obj, const std::string &id) { return get_component_by_id(lua, obj, id); },
+
         "erase",
         [](WorldObject *obj) { obj->erase(); });
 
     // Componentクラス
     lua.new_usertype<Component>(
         "Component",
+        "id", &Component::id,
         "owner", sol::readonly_property([](Component *comp) { return comp->get_owner(); }),
         "erase", [](Component *comp) { comp->erase(); });
 

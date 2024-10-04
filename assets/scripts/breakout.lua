@@ -108,6 +108,10 @@ run_window(800, 600, "Test Window", function()
     local bar_obj = world:draw_rect(BarHW, 0.003)
     bar_obj.position = { 0, -0.05 }
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
+    bar.id = "バーの剛体"
+    print(bar.id)
+    local gaga = bar_obj:get_component_by_id("バーの剛体")
+    print("み", gaga)
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
 
     local cooldown = 0

@@ -214,6 +214,18 @@ class WorldObject {
         });
         return result;
     }
+
+    Component *get_component_by_id(std::string_view id) {
+        Component *ret = nullptr;
+        for (Component *comp : components_.elements()) {
+            if (id == comp->id) {
+                if (ret != nullptr) warn("同一IDの異なるコンポーネントがあります: ", id);
+                print("発見しました:", typeid(*comp).name());
+                ret = comp;
+            }
+        }
+        return ret;
+    }
 };
 
 // template <class T>
