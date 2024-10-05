@@ -1,5 +1,8 @@
 /.cache/
 /build/
-/out/
-/.vs/
 gmon.out
+
+# Windows
+/.vs/
+/out/
+CMakeSettings.json

@@ -162,7 +162,7 @@ inline T &dereference(Ptr *ptr) {
 using namespace base;
 
 
-#ifdef _WIN32
+#if _WIN32
 #define NOMINMAX // 無いと`std::numeric_limits<int>::min()`などがコンパイルできなくなる
 #include <Windows.h>
 #endif
@@ -170,7 +170,7 @@ using namespace base;
 // Windows環境での文字化け対策。
 // コンソールの出力コードページをUTF-8に設定する。
 inline void setUTF8() {
-#ifdef _WIN32
+#if _WIN32
     SetConsoleOutputCP(CP_UTF8);
 #endif
 }
