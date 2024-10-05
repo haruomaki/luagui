@@ -6,6 +6,12 @@ project(cppgui CXX)
 # もしくは`cmake -DCMAKE_CXX_COMPILER=***`とする
 # vscodeのkit設定: ~/.local/share/CMakeTools/cmake-tools-kits.jsonを編集 https://qiita.com/kilo/items/05e48d22ceff55049b29
 
+# vcpkgがあれば利用
+if(DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+    message("vcpkgを利用します。${CMAKE_TOOLCHAIN_FILE}")
+endif()
+
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 
 # コンパイルオプション（-Weverythingを使いたいためclangのときだけ）
