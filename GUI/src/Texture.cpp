@@ -38,7 +38,7 @@ GLuint loadTexture(const string &filename) {
 // 出典：https://proken.mydns.jp/index.php?plugin=attach&refer=pg_koneta%2FPNGInOpenGL&openfile=PNGInOpenGL.html
 GLuint create_texture_from_png_file(const char *filename) {
     // PNGファイルを開く
-    std::unique_ptr<FILE, decltype(&fclose)> fp(fopen(filename, "rb"), fclose);
+    std::unique_ptr<FILE, int (*)(FILE *)> fp(fopen(filename, "rb"), fclose);
     if (!fp) {
         warn("fopenに失敗");
         return 0;
