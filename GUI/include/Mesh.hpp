@@ -229,8 +229,7 @@ struct MeshDrawManager {
         case GL_LINE_LOOP:
             glLineWidth(GLfloat(material.line_width));
             break;
-        default:
-            warn("未知のプリミティブ種類です");
+        default: // GL_TRIANGLE_FANなどのときは何もしない
         }
 
         // ワールド座標変換 = instanceModelMatrix

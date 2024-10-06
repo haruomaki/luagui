@@ -18,10 +18,10 @@ enum class LogLevel {
 // #ifdef _WIN32
 // constexpr std::array<const char *, 5> icons = {"", "<warn>", "<print>", "<info>", "<trace>"};
 // #else
-constexpr std::array<const char *, 5> icons = {"", "🐝", "✅", "ℹ️", "🏞️"};
+constexpr std::array<const char *, 5> ICONS = {"", "🐝", "✅", "ℹ️", "🏞️"};
 // #endif // _WIN32
 
-constexpr LogLevel default_log_level = LogLevel::Print;
+constexpr LogLevel DEFAULT_LOG_LEVEL = LogLevel::Print;
 
 // -----------------------------------
 // デバッグ系
@@ -49,9 +49,9 @@ inline void print_impl(const char *sep, const T &arg, const Args &...args) {
 template <LogLevel level, typename... Ts>
 inline void log(std::source_location loc, Ts... args) {
 #ifdef DEBUG
-    if constexpr (level > default_log_level) return;
+    if constexpr (level > DEFAULT_LOG_LEVEL) return;
 
-    print_headline(icons[int(level)], loc);
+    print_headline(ICONS[int(level)], loc);
     if constexpr (sizeof...(args) > 0) {
         std::cerr << " ";
         print_impl("", args...);
@@ -64,7 +64,6 @@ inline void log(std::source_location loc, Ts... args) {
 #define print(...) log<LogLevel::Print>(std::source_location::current() __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
 #define info(...) log<LogLevel::Info>(std::source_location::current() __VA_OPT__(, __VA_ARGS__))   // NOLINT(cppcoreguidelines-macro-usage)
 #define trace(...) log<LogLevel::Trace>(std::source_location::current() __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
-
 
 template <class... Args> // NOTE: 未初期化変数の警告に対応するためconst T&を受け取る
 inline void debug_pre(const char *file, int line, const char *argnames, const Args &...args) {
@@ -97,7 +96,7 @@ inline std::chrono::duration<double> time_impl(Func &&func) {
 template <typename Func>
 inline void time_pre(const char *file, int line, Func &&func) {
     auto duration = timeImpl(func);
-    //print_headline("⏱️", file, line);
+    // print_headline("⏱️", file, line);
     print_headline("wa", file, line);
     std::cerr << " " << duration << std::endl;
 }
