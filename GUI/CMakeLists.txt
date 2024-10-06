@@ -40,8 +40,8 @@ target_link_libraries(GUI PRIVATE ${PNG_LIBRARIES})
 
 # FreeType
 find_package(Freetype REQUIRED)
-target_include_directories(GUI SYSTEM PRIVATE ${FREETYPE_INCLUDE_DIRS}) # SYSTEMを指定して警告対象から除外
-target_link_libraries(GUI PRIVATE ${FREETYPE_LIBRARIES})
+target_include_directories(GUI SYSTEM PUBLIC ${FREETYPE_INCLUDE_DIRS}) # SYSTEMを指定して警告対象から除外
+target_link_libraries(GUI PUBLIC ${FREETYPE_LIBRARIES})
 
 # Box2D & box2cpp Worldから直接扱えるようにPUBLIC
 if (MSVC)
