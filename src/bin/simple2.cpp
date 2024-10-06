@@ -27,8 +27,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 
 int main() {
     GUI gui;
-    Window &win = gui.create_window(600, 400, "aaaa");
-    GLFWwindow *window = win.glfw();
+    Window &window = gui.create_window(600, 400, "aaaa");
 
     // シェーダーのコンパイル
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -70,11 +69,8 @@ int main() {
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-    win.raw_worlds.emplace_back([&] {
-        // 入力処理
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-            glfwSetWindowShouldClose(window, 1);
-        }
+    window.raw_worlds.emplace_back([&] {
+        if (window.key(GLFW_KEY_ESCAPE)) window.close();
 
         // ステンシルバッファの設定
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
@@ -96,7 +92,4 @@ int main() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(shaderProgram);
-
-    glfwTerminate();
-    return 0;
 }
