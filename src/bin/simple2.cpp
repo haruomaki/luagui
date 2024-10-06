@@ -30,22 +30,11 @@ int main() {
     Window &window = gui.create_window(600, 400, "aaaa");
 
     // シェーダーのコンパイル
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
+    GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, vertexShaderSource);
+    GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
     // シェーダープログラムのリンク
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    ProgramObject shader = {vertex_shader, fragment_shader};
 
     // 三角形の頂点データ
     float vertices[] = {
@@ -77,7 +66,7 @@ int main() {
         glStencilMask(0xFF);
 
         // 三角形の描画
-        glUseProgram(shaderProgram);
+        shader.use();
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -91,5 +80,4 @@ int main() {
     // リソースの解放
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
 }

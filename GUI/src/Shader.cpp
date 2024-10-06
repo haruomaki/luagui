@@ -6,6 +6,7 @@ using enum StorageQualifier;
 DEFINE_RUNTIME_ERROR(GLShaderCreationException);
 
 // 個々のシェーダを生成する
+// TODO: 作成したシェーダを削除する機構。glDeleteShader()
 GLuint create_shader(GLenum shader_type, const string &source_code) {
     GLuint shader_id = glCreateShader(shader_type);
 
