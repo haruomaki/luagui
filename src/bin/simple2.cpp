@@ -1,9 +1,7 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
+// なぜかヘッダファイルが無くても動く！？
 
 // シェーダーのソースコード
-const char *vertexShaderSource = R"(
+static const char *const VERTEX_SHADER_SOURCE = R"(
 #version 330 core
 layout (location = 0) in vec3 aPos;
 void main()
@@ -12,7 +10,7 @@ void main()
 }
 )";
 
-const char *fragmentShaderSource = R"(
+static const char *const FRAGMENT_SHADER_SOURCE = R"(
 #version 330 core
 out vec4 FragColor;
 void main()
@@ -21,17 +19,13 @@ void main()
 }
 )";
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-
 int main() {
     GUI gui;
-    Window &window = gui.create_window(600, 400, "aaaa");
+    Window &window = gui.create_window(500, 500, "魔法使いの書斎");
 
     // シェーダーのコンパイル
-    GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, vertexShaderSource);
-    GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+    GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);
+    GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
 
     // シェーダープログラムのリンク
     ProgramObject shader = {vertex_shader, fragment_shader};
@@ -43,7 +37,7 @@ int main() {
         0.0f, 0.5f, 0.0f};
 
     VertexArrayObject vao;
-    VertexBufferObject vbo(sizeof(vertices), vertices, GL_STATIC_DRAW);
+    VertexBufferObject vbo(sizeof(vertices), (float *)vertices, GL_STATIC_DRAW);
 
     vao.bind([&] {
         vbo.bind([&] {
@@ -57,7 +51,7 @@ int main() {
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     window.raw_worlds.emplace_back([&] {
-        if (window.key(GLFW_KEY_ESCAPE)) window.close();
+        if (window.key(GLFW_KEY_Q)) window.close();
 
         // ステンシルバッファの設定
         glStencilFunc(GL_ALWAYS, 1, 0xFF);

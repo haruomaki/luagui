@@ -23,6 +23,7 @@ Checks:
   - -misc-non-private-member-variables-in-classes # publicおよびprotectedメンバ変数を無制限に許容
   - modernize-*
   - -modernize-use-trailing-return-type
+  - -modernize-avoid-c-arrays # C言語スタイルの配列を許容
   - performance-*
   - portability-*
   - readability-*
@@ -46,6 +47,7 @@ CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
   readability-identifier-naming.ParameterCase: lower_case
   readability-identifier-naming.UnionCase: CamelCase
   readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.GlobalConstantCase: UPPER_CASE # グローバル定数
   readability-identifier-naming.TypeTemplateParameterCase: CamelCase # テンプレート型引数
   readability-identifier-naming.ValueTemplateParameterCase: lower_case # 非型テンプレート引数
   readability-identifier-length.IgnoredVariableNames: ss
