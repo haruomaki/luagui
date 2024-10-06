@@ -41,8 +41,7 @@ int main() {
 
     vao.bind([&] {
         vbo.bind([&] {
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-            glEnableVertexAttribArray(0);
+            shader.set_attribute("aPos", 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
         });
     });
 
