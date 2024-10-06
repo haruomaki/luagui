@@ -42,17 +42,17 @@ int main() {
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
-    GLuint VBO, VAO;
-    glGenVertexArrays(1, &VAO);
+    VertexArrayObject vao;
+    GLuint VBO;
     glGenBuffers(1, &VBO);
 
-    glBindVertexArray(VAO);
+    vao.bind([&] {
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+        glEnableVertexAttribArray(0);
+    });
 
     // ステンシルバッファの設定
     glEnable(GL_STENCIL_TEST);
@@ -67,8 +67,9 @@ int main() {
 
         // 三角形の描画
         shader.use();
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        vao.bind([&] {
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        });
 
         // ステンシルバッファの設定を変更
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -78,6 +79,5 @@ int main() {
     gui.mainloop();
 
     // リソースの解放
-    glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 }
