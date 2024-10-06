@@ -40,6 +40,7 @@ class Window {
     Material *default_material = nullptr;
     Viewport *default_viewport = nullptr;
     BufferedSet<std::function<void()> *> resource_updates;
+    std::vector<std::function<void()>> raw_worlds;
 
     FunctionSet<void(int key, int action)> key_callbacks;
 
