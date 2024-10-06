@@ -76,6 +76,7 @@ class ProgramObject {
     }
 };
 
+// VAOを管理するラッパークラス。自動でglGenVertexArraysとglDeleteVertexArraysが呼ばれる。
 class VertexArrayObject {
     GLuint array_ = 0;
 
@@ -113,13 +114,22 @@ class VertexArrayObject {
     }
 };
 
+// VBOなどのバッファオブジェクトを管理するラッパークラス。
+// ※デフォルトコンストラクタは何も行わない。
 template <GLenum target>
 class BufferObject {
-    // はじめはゼロ初期化。INFO: あくまで仮の初期値であり、使う際はgenしないと無意味
+    // はじめはゼロ初期化。あくまで仮の初期値であり、使う際は引数ありのコンストラクタを呼ばないと無意味。
     GLuint buffer_ = 0;
 
   public:
+    // デフォルトコンストラクタ。バッファは生成されない。
     BufferObject() = default;
+
+    /// バッファを生成する。glGenBuffer->バインドしてglBufferDataを呼び出す。
+    /// glBufferDataの各引数を指定する。
+    /// @param size VRAMに転送するデータのサイズ。
+    /// @param data VRAMに転送するデータの先頭ポインタ。
+    /// @param usage GL_STATIC_DRAWやGL_DYNAMIC_DRAWを指定する。
     BufferObject(size_t size, const void *data, GLenum usage)
         : buffer_([&] {
             GLuint buffer;
@@ -130,6 +140,7 @@ class BufferObject {
             glBufferData(target, GLsizeiptr(size), data, usage); // バインド中にデータを設定
         });
     }
+
     ~BufferObject() {
         if (buffer_ != 0) {
             glDeleteBuffers(1, &buffer_);
@@ -158,12 +169,13 @@ class BufferObject {
 
     template <typename F>
     inline void bind(const F &proc_in_bind) const {
-        glBindBuffer(target, buffer_);
+        keep_bind();
         proc_in_bind();
         glBindBuffer(target, 0);
     }
 
     inline void keep_bind() const {
+        if (buffer_ == 0) warn("バッファオブジェクトの参照が切れています。ムーブ済み、もしくは空のバッファオブジェクトを仮生成しているのかもしれません。引数付きのコンストラクタを用いてください。");
         glBindBuffer(target, buffer_);
     }
 };

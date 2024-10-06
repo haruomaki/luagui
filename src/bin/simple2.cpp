@@ -43,15 +43,13 @@ int main() {
         0.0f, 0.5f, 0.0f};
 
     VertexArrayObject vao;
-    GLuint VBO;
-    glGenBuffers(1, &VBO);
+    VertexBufferObject vbo(sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     vao.bind([&] {
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-        glEnableVertexAttribArray(0);
+        vbo.bind([&] {
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+            glEnableVertexAttribArray(0);
+        });
     });
 
     // ステンシルバッファの設定
@@ -77,7 +75,4 @@ int main() {
     });
 
     gui.mainloop();
-
-    // リソースの解放
-    glDeleteBuffers(1, &VBO);
 }

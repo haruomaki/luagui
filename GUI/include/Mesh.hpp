@@ -16,8 +16,8 @@ class StaticMesh : virtual public Resource {
 
   protected:
     bool vao_should_regen_ = true;
-    VertexBufferObject vbo_{};
-    ElementBufferObject ebo_{};
+    VertexBufferObject vbo_;
+    ElementBufferObject ebo_;
     const GLenum usage_;
     size_t n_ = 0;
     size_t indices_n_ = 0;
@@ -101,21 +101,21 @@ class MeshObject : virtual public WorldObject {
 };
 
 struct ModelMatricesObservation {
-    vector<glm::mat4> model_matrices{};
-    std::unordered_map<const MeshObject *, size_t> object_index_map{};
-    std::vector<const MeshObject *> initial_list{};
-    std::vector<const MeshObject *> delete_list{};
+    vector<glm::mat4> model_matrices;
+    std::unordered_map<const MeshObject *, size_t> object_index_map;
+    std::vector<const MeshObject *> initial_list;
+    std::vector<const MeshObject *> delete_list;
 
     // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
     const glm::mat4 *matrices_raw = nullptr;
-    std::pair<VertexBufferObject, VertexArrayObject> vbovao{};
+    std::pair<VertexBufferObject, VertexArrayObject> vbovao;
 };
 
 struct MeshDrawManager {
     // メッシュ・マテリアル・シェーダの三項組ごとに一つモデル行列のvectorが決まる。
     using KeyType = std::tuple<StaticMesh *, const Material *, const ProgramObject *>;
     // この行列キューごとに一回ドローコールを行う
-    std::map<KeyType, ModelMatricesObservation> observations{};
+    std::map<KeyType, ModelMatricesObservation> observations;
 
     static inline KeyType key_from(const MeshObject *obj) {
         StaticMesh *mesh = &obj->mesh;
@@ -229,6 +229,8 @@ struct MeshDrawManager {
         case GL_LINE_LOOP:
             glLineWidth(GLfloat(material.line_width));
             break;
+        default:
+            warn("未知のプリミティブ種類です");
         }
 
         // ワールド座標変換 = instanceModelMatrix
