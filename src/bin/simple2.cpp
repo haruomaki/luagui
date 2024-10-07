@@ -16,6 +16,7 @@ layout (points) in;
 layout (triangle_strip, max_vertices = 3) out;
 
 out vec3 vertexColor; // フラグメントシェーダに渡す色
+out vec2 bezierPos; // 2次ベジェ曲線の座標情報
 
 void main()
 {
@@ -34,14 +35,17 @@ void main()
 
     gl_Position = center + offset1;
     vertexColor = color1;
+    bezierPos = vec2(0, 0);
     EmitVertex();
 
     gl_Position = center + offset2;
     vertexColor = color2;
+    bezierPos = vec2(0.5, 0);
     EmitVertex();
 
     gl_Position = center + offset3;
     vertexColor = color3;
+    bezierPos = vec2(1, 1);
     EmitVertex();
 
     EndPrimitive();
@@ -51,11 +55,16 @@ void main()
 static const char *const FRAGMENT_SHADER_SOURCE = R"(
 #version 330 core
 in vec3 vertexColor; // ジオメトリシェーダから渡される色
+in vec2 bezierPos; // ベジェ曲線を塗りつぶすための座標情報
 out vec4 FragColor;
 
 void main()
 {
-    FragColor = vec4(vertexColor, 1.0);
+    if (bezierPos.x * bezierPos.x <= bezierPos.y) {
+        FragColor = vec4(vertexColor, 1.0);
+    } else {
+        discard;
+    }
 }
 )";
 
