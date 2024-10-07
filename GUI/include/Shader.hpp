@@ -186,7 +186,22 @@ class BufferObject {
         if (buffer_ == 0) warn("バッファオブジェクトの参照が切れています。ムーブ済み、もしくは空のバッファオブジェクトを仮生成しているのかもしれません。引数付きのコンストラクタを用いてください。");
         glBindBuffer(target, buffer_);
     }
+
+    /// glBindBufferBaseを呼び出す。
+    /// @param binding_point バインディングポイントのインデックスを指定する。
+    ///
+    /// 例えばシェーダ内で
+    /// \code
+    /// layout (std430, binding = 0) buffer ssbo {
+    ///     float data[];
+    /// };
+    /// \endcode
+    /// と宣言されていれば、 `0` を指定することで `ssbo` にデータを転送できる
+    inline void bind_base(GLuint binding_point) const {
+        glBindBufferBase(target, binding_point, buffer_);
+    }
 };
 
 using VertexBufferObject = BufferObject<GL_ARRAY_BUFFER>;
 using ElementBufferObject = BufferObject<GL_ELEMENT_ARRAY_BUFFER>;
+using ShaderStorageBufferObject = BufferObject<GL_SHADER_STORAGE_BUFFER>;
