@@ -68,12 +68,18 @@ Window::Window(GUI &gui, int width, int height, const char *title)
     });
 
     // 押した/離した瞬間を記録するためのキーコールバック。key_down()/keu_up()に必要
-    glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int /*scancode*/, int action, int /*mods*/) {
+    glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int scancode, int action, int mods) {
         auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
-        if (action == GLFW_PRESS) {
-            window->key_down_[key] = true;
-        } else if (action == GLFW_RELEASE) {
-            window->key_up_[key] = true;
+        try {
+            if (action == GLFW_PRESS) {
+                // debug(key, scancode, mods);
+                window->key_down_.at(key) = true;
+            } else if (action == GLFW_RELEASE) {
+                window->key_up_.at(key) = true;
+            }
+        } catch (const std::out_of_range & /*e*/) {
+            // Fnキーや無変換キーなどはキーコードが無い
+            info("例外;未知のキーコードです。key=", key, ", scancode=", scancode, ", mods=", mods);
         }
     });
 
