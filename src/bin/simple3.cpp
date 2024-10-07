@@ -1,4 +1,4 @@
-// なぜかヘッダファイルが無くても動く！？
+#include <FreeType.hpp>
 
 // シェーダーのソースコード
 static const char *const VERTEX_SHADER_SOURCE = R"(
@@ -77,6 +77,10 @@ struct GlyphInfo {
 };
 
 int main() {
+    FreeTypeContext ft_context;
+    auto *face = ft_context.load_font("assets/fonts/main.ttf");
+    debug(face->num_faces);
+
     GUI gui;
     Window &window = gui.create_window(500, 500, "魔法使いの書斎");
 
