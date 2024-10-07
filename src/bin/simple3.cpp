@@ -4,50 +4,52 @@
 static const char *const VERTEX_SHADER_SOURCE = R"(
 #version 330 core
 in vec3 aPos;
+in int codepoint;
+out int c;
+
 void main()
 {
     gl_Position = vec4(aPos, 1.0);
+    c = codepoint;
 }
 )";
 
 static const char *const GEOMETRY_SHADER_SOURCE = R"(
-#version 330 core
+#version 430 core
 layout (points) in;
-layout (triangle_strip, max_vertices = 3) out;
+layout (triangle_strip, max_vertices = 6) out;
 
+in int c[];
 out vec3 vertexColor; // フラグメントシェーダに渡す色
-out vec2 bezierPos; // 2次ベジェ曲線の座標情報
+// out vec2 bezierPos; // 2次ベジェ曲線の座標情報
+
+layout(std430, binding = 0) buffer ControlPointBuffer {
+    float controlPoints[];
+};
+
+struct GlyphInfo {
+    int offset;
+    int count;
+};
+
+layout(std430, binding = 1) buffer GlyphInfoBuffer {
+    GlyphInfo glyphInfos[];
+};
 
 void main()
 {
     vec4 center = gl_in[0].gl_Position;
 
-    // 三角形の頂点を定義
-    float scale = 2;
-    vec4 offset1 = vec4(0.1, 0.0, 0.0, 0.0) * scale;
-    vec4 offset2 = vec4(-0.05, 0.0866, 0.0, 0.0) * scale;
-    vec4 offset3 = vec4(-0.05, -0.0866, 0.0, 0.0) * scale;
-    
-    // 各頂点の色を設定
-    vec3 color1 = vec3(1.0, 0.0, 0.0); // 赤
-    vec3 color2 = vec3(0.0, 1.0, 0.0); // 緑
-    vec3 color3 = vec3(0.0, 0.0, 1.0); // 青
+    int kind = c[0];
+    int offset = glyphInfos[kind].offset;
+    int count = glyphInfos[kind].count;
 
-    gl_Position = center + offset1;
-    vertexColor = color1;
-    bezierPos = vec2(0, 0);
-    EmitVertex();
-
-    gl_Position = center + offset2;
-    vertexColor = color2;
-    bezierPos = vec2(0.5, 0);
-    EmitVertex();
-
-    gl_Position = center + offset3;
-    vertexColor = color3;
-    bezierPos = vec2(1, 1);
-    EmitVertex();
-
+    // 制御点の数に基づいて頂点を生成
+    for (int i = 0; i < count; ++i) {
+        gl_Position = center + vec4(controlPoints[offset + i * 2], controlPoints[offset + i * 2 + 1], 0.0, 0.0);
+        vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
+        EmitVertex();
+    }
     EndPrimitive();
 }
 )";
@@ -55,18 +57,24 @@ void main()
 static const char *const FRAGMENT_SHADER_SOURCE = R"(
 #version 330 core
 in vec3 vertexColor; // ジオメトリシェーダから渡される色
-in vec2 bezierPos; // ベジェ曲線を塗りつぶすための座標情報
+// in vec2 bezierPos; // ベジェ曲線を塗りつぶすための座標情報
 out vec4 FragColor;
 
 void main()
 {
-    if (bezierPos.x * bezierPos.x <= bezierPos.y) {
+    // if (bezierPos.x * bezierPos.x <= bezierPos.y) {
         FragColor = vec4(vertexColor, 1.0);
-    } else {
-        discard;
-    }
+    // } else {
+    //     discard;
+    // }
 }
 )";
+
+// 各文字のオフセットと制御点の数
+struct GlyphInfo {
+    int offset;
+    int count;
+};
 
 int main() {
     GUI gui;
@@ -84,18 +92,47 @@ int main() {
         fragment_shader,
     };
 
+    // 制御点データ
+    float control_points[] = {
+        // 0
+        0, 0,
+        0, 0.1,
+        0.1, 0,
+        // 1
+        0.1, 0.1,
+        0.2, 0.2,
+        0, 0.2,
+        0.1, 0.4};
+
+    GlyphInfo glyph_infos[] = {
+        {0, 3},
+        {6, 4},
+    };
+
+    // SSBOにフォントデータを送る
+    ShaderStorageBufferObject control_points_ssbo(sizeof(float) * 14, (float *)control_points, GL_STATIC_DRAW);
+    control_points_ssbo.bind_base(0);
+    ShaderStorageBufferObject glyph_info_ssbo(sizeof(GlyphInfo) * 2, (GlyphInfo *)glyph_infos, GL_STATIC_DRAW);
+    glyph_info_ssbo.bind_base(1);
+
     // 三角形の頂点データ
     float vertices[] = {
         -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
+    int codes[] = {0, 0, 1};
+
     VertexArrayObject vao;
     VertexBufferObject vbo(sizeof(vertices), (float *)vertices, GL_STATIC_DRAW);
+    VertexBufferObject vbo_codes(sizeof(codes), (int *)codes, GL_STATIC_DRAW);
 
     vao.bind([&] {
         vbo.bind([&] {
             shader.set_attribute("aPos", 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        });
+        vbo_codes.bind([&] {
+            shader.set_attribute("codepoint", 1, GL_FLOAT, GL_FALSE, sizeof(int), nullptr);
         });
     });
 
