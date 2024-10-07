@@ -46,15 +46,21 @@ class ProgramObject {
         return loc;
     }
 
-    /// シェーダにアトリビュート変数を渡す関数。
+    /// シェーダにfloat型のアトリビュート変数を渡す関数。
     /// glVertexAttribPointer（頂点属性のデータフォーマットを設定）とglEnableVertexAttribArray（頂点属性配列の有効化）を行う。
     /// @param name アトリビュート変数名
     /// @param size アトリビュート変数の要素数。例えばvec3ならば3。
-    /// @param type 変数のデータ型。GL_FLOATなど。
-    /// @param normalized データを正規化するかどうか。例えば色属性の場合、 `GL_TRUE` にすると0-255の範囲の値が0.0-1.0に正規化される。
+    /// @param normalized データを正規化するかどうか。例えば色属性の場合、 `true` にすると0-255の範囲の値が0.0-1.0に正規化される。
     /// @param stride データブロックのサイズ（バイト単位）。連続したデータの場合は0を指定する。例えば位置属性と色属性が交互に格納されている場合、strideは各頂点のデータサイズになる。
     /// @param pointer 配列の開始位置。通常はバッファオブジェクトのオフセットを指定する。
-    void set_attribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const;
+    void set_attribute_float(const string &name, GLint size, bool normalized, GLsizei stride, const void *pointer) const;
+    /// シェーダにint型のアトリビュート変数を渡す関数。
+    /// glVertexAttribIPointer（頂点属性のデータフォーマットを設定）とglEnableVertexAttribArray（頂点属性配列の有効化）を行う。
+    /// @param name アトリビュート変数名
+    /// @param size アトリビュート変数の要素数。例えばvec3ならば3。
+    /// @param stride データブロックのサイズ（バイト単位）。連続したデータの場合は0を指定する。例えば位置属性と色属性が交互に格納されている場合、strideは各頂点のデータサイズになる。
+    /// @param pointer 配列の開始位置。通常はバッファオブジェクトのオフセットを指定する。
+    void set_attribute_int(const string &name, GLint size, GLsizei stride, const void *pointer) const;
     void set_uniform(const string &name, GLint int_value) const;
     void set_uniform(const string &name, const glm::vec3 &vec3_value) const;
     void set_uniform(const string &name, const glm::vec4 &vec4_value) const;

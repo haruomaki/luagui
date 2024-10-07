@@ -129,10 +129,10 @@ int main() {
 
     vao.bind([&] {
         vbo.bind([&] {
-            shader.set_attribute("aPos", 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+            shader.set_attribute_float("aPos", 3, false, 3 * sizeof(float), nullptr);
         });
         vbo_codes.bind([&] {
-            shader.set_attribute("codepoint", 1, GL_FLOAT, GL_FALSE, sizeof(int), nullptr);
+            shader.set_attribute_int("codepoint", 1, sizeof(int), nullptr);
         });
     });
 

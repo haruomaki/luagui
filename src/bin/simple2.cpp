@@ -95,7 +95,7 @@ int main() {
 
     vao.bind([&] {
         vbo.bind([&] {
-            shader.set_attribute("aPos", 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+            shader.set_attribute_float("aPos", 3, false, 3 * sizeof(float), nullptr);
         });
     });
 

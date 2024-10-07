@@ -7,6 +7,7 @@
 
 DEFINE_RUNTIME_ERROR(FreeTypeException);
 
+// NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
 Font::Font()
@@ -72,7 +73,7 @@ Font::Font()
     this->vbo_ = VertexBufferObject(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     this->vao_.bind([&] {
         this->vbo_.bind([&] {
-            this->shader_.set_attribute("vertex", 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
+            this->shader_.set_attribute_float("vertex", 4, false, 4 * sizeof(float), nullptr);
         });
     });
 }

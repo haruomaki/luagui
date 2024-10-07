@@ -57,9 +57,15 @@ void ProgramObject::use() const {
     glUseProgram(program_id_);
 }
 
-void ProgramObject::set_attribute(const string &name, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) const {
+void ProgramObject::set_attribute_float(const string &name, GLint size, bool normalized, GLsizei stride, const void *pointer) const {
     GLint location = get_location<Attribute>(name);
-    glVertexAttribPointer(location, size, type, normalized, stride, pointer);
+    glVertexAttribPointer(location, size, GL_FLOAT, normalized ? GL_TRUE : GL_FALSE, stride, pointer);
+    glEnableVertexAttribArray(location);
+}
+
+void ProgramObject::set_attribute_int(const string &name, GLint size, GLsizei stride, const void *pointer) const {
+    GLint location = get_location<Attribute>(name);
+    glVertexAttribIPointer(location, size, GL_INT, stride, pointer);
     glEnableVertexAttribArray(location);
 }
 

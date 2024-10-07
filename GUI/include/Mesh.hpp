@@ -199,9 +199,9 @@ struct MeshDrawManager {
         // VAOに頂点の座標と色を関連付ける
         vao.bind([&] {
             mesh.vbo_.bind([&] {
-                shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-                shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
-                shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
+                shader.set_attribute_float("position", 3, false, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+                shader.set_attribute_float("color", 4, false, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
+                shader.set_attribute_float("uv", 2, false, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
             });
             mesh.ebo_.keep_bind();
             model_matrices_vbo.bind([&] {
