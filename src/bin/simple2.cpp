@@ -3,10 +3,37 @@
 // シェーダーのソースコード
 static const char *const VERTEX_SHADER_SOURCE = R"(
 #version 330 core
-layout (location = 0) in vec3 aPos;
+in vec3 aPos;
 void main()
 {
     gl_Position = vec4(aPos, 1.0);
+}
+)";
+
+static const char *const GEOMETRY_SHADER_SOURCE = R"(
+#version 330 core
+layout (points) in;
+layout (triangle_strip, max_vertices = 3) out;
+
+void main()
+{
+    vec4 center = gl_in[0].gl_Position;
+
+    // 三角形の頂点を定義
+    vec4 offset1 = vec4(0.1, 0.0, 0.0, 0.0);
+    vec4 offset2 = vec4(-0.05, 0.0866, 0.0, 0.0);
+    vec4 offset3 = vec4(-0.05, -0.0866, 0.0, 0.0);
+
+    gl_Position = center + offset1;
+    EmitVertex();
+
+    gl_Position = center + offset2;
+    EmitVertex();
+
+    gl_Position = center + offset3;
+    EmitVertex();
+
+    EndPrimitive();
 }
 )";
 
@@ -25,10 +52,15 @@ int main() {
 
     // シェーダーのコンパイル
     GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);
+    GLuint geometry_shader = create_shader(GL_GEOMETRY_SHADER, GEOMETRY_SHADER_SOURCE);
     GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
 
     // シェーダープログラムのリンク
-    ProgramObject shader = {vertex_shader, fragment_shader};
+    ProgramObject shader = {
+        vertex_shader,
+        geometry_shader,
+        fragment_shader,
+    };
 
     // 三角形の頂点データ
     float vertices[] = {
@@ -59,7 +91,7 @@ int main() {
         // 三角形の描画
         shader.use();
         vao.bind([&] {
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glDrawArrays(GL_POINTS, 0, 3);
         });
 
         // ステンシルバッファの設定を変更
