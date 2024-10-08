@@ -38,10 +38,9 @@ target_include_directories(GUI SYSTEM PRIVATE ${PNG_INCLUDE_DIRS}) # SYSTEMを�
 target_link_libraries(GUI PRIVATE ${PNG_LIBRARIES})
 # message("libpng: ${PNG_FOUND} ${PNG_INCLUDE_DIRS} ${PNG_LIBRARIES}")
 
-# FreeType
-find_package(Freetype REQUIRED)
-target_include_directories(GUI SYSTEM PUBLIC ${FREETYPE_INCLUDE_DIRS}) # SYSTEMを指定して警告対象から除外
-target_link_libraries(GUI PUBLIC ${FREETYPE_LIBRARIES})
+# FuriType（FreeTypeのラッパー）
+add_subdirectory(furitype)
+target_link_libraries(GUI PUBLIC furitype)
 
 # Box2D & box2cpp Worldから直接扱えるようにPUBLIC
 if (MSVC)

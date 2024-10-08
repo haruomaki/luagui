@@ -1,4 +1,5 @@
 #include <FreeType.hpp>
+#include <furitype.hpp>
 
 // シェーダーのソースコード
 static const char *const VERTEX_SHADER_SOURCE = R"(
@@ -77,6 +78,7 @@ struct GlyphInfo {
 };
 
 int main() {
+    hello_furitype();
     FreeTypeContext ft_context;
     auto *face = ft_context.load_font("assets/fonts/main.ttf");
     debug(face->num_faces);
