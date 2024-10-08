@@ -7,3 +7,6 @@
 [submodule "GUI/glfw"]
 	path = GUI/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "GUI/furitype"]
+	path = GUI/furitype
+	url = git@codeberg.org:haruomaki/furitype.git
