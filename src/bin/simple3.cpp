@@ -1,4 +1,3 @@
-#include <FreeType.hpp>
 #include <furitype.hpp>
 
 // シェーダーのソースコード
@@ -78,7 +77,6 @@ struct GlyphInfo {
 };
 
 int main() {
-    hello_furitype();
     FreeTypeContext ft_context;
     auto *face = ft_context.load_font("assets/fonts/main.ttf");
     debug(face->num_faces);
