@@ -1,5 +1,8 @@
 #include <furitype.hpp>
 
+constexpr int MAX_POINTS = 1024;
+constexpr int MAX_CONTOURS = 64;
+
 // シェーダーのソースコード
 static const char *const VERTEX_SHADER_SOURCE = R"(
 #version 330 core
@@ -15,25 +18,33 @@ void main()
 )";
 
 static const char *const GEOMETRY_SHADER_SOURCE = R"(
-#version 430 core
+#version 440 core
+
+const int MAX_POINTS = 1024;
+const int MAX_CONTOURS = 64;
+
 layout (points) in;
-layout (triangle_strip, max_vertices = 6) out;
+layout (triangle_strip, max_vertices = 128) out;
 
 in int c[];
 out vec3 vertexColor; // フラグメントシェーダに渡す色
 // out vec2 bezierPos; // 2次ベジェ曲線の座標情報
 
-layout(std430, binding = 0) buffer ControlPointBuffer {
-    float controlPoints[];
+struct Point {
+    float x, y;  // 座標
+    uint tag;    // タグ情報
 };
 
-struct GlyphInfo {
-    int offset;
-    int count;
+struct GlyphOutline {
+    int glyph_id;      // グリフID。-1なら無効
+    uint numContours;  // 輪郭の数
+    uint numPoints;    // ポイントの数
+    uint contours[MAX_CONTOURS]; // 輪郭の終点情報
+    Point points[MAX_POINTS];
 };
 
-layout(std430, binding = 1) buffer GlyphInfoBuffer {
-    GlyphInfo glyphInfos[];
+layout(std430, binding = 0) buffer GlyphBuffer {
+    GlyphOutline glyphs[];
 };
 
 void main()
@@ -41,13 +52,22 @@ void main()
     vec4 center = gl_in[0].gl_Position;
 
     int kind = c[0];
-    int offset = glyphInfos[kind].offset;
-    int count = glyphInfos[kind].count;
-
+    GlyphOutline glyph = glyphs[kind];
+    
+    // 基準点を最初に発行
+    Point p0 = glyph.points[0];
+    gl_Position = center + vec4(p0.x/2000, p0.y/2000, 0.0, 1.0);
+    EmitVertex();
+    
     // 制御点の数に基づいて頂点を生成
-    for (int i = 0; i < count; ++i) {
-        gl_Position = center + vec4(controlPoints[offset + i * 2], controlPoints[offset + i * 2 + 1], 0.0, 0.0);
+    for (int i = 1; i < 15; ++i) {
+        Point p = glyph.points[i];
+        gl_Position = center + vec4(p.x / 2000, p.y / 2000, 0.0, 1.0);
         vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
+        EmitVertex();
+        
+        // 基準点を再度発行
+        gl_Position = center + vec4(p0.x/2000, p0.y/2000, 0.0, 1.0);
         EmitVertex();
     }
     EndPrimitive();
@@ -70,38 +90,53 @@ void main()
 }
 )";
 
-// 各文字のオフセットと制御点の数
-struct GlyphInfo {
-    int offset;
-    int count;
+struct GlyphOutline {
+    int glyph_id;                        // グリフID。-1なら無効
+    unsigned int n_contours;             // 輪郭の数
+    unsigned int n_points;               // ポイントの数
+    unsigned int contours[MAX_CONTOURS]; // 輪郭の終点情報
+    struct {
+        float x, y;       // 座標
+        unsigned int tag; // タグ情報
+    } points[MAX_POINTS];
 };
 
 int main() {
     freetype::Context ft;
     auto *face = ft.load_font("assets/fonts/main.ttf");
 
-    for (FT_ULong charcode = 0; charcode <= 0xFF; ++charcode) {
+    std::array<GlyphOutline, 256> buffer = {};
+    for (FT_ULong charcode = 0; charcode <= 255; ++charcode) {
         FT_UInt glyph_index = FT_Get_Char_Index(face, charcode);
         if (glyph_index == 0) {
-            continue; // グリフが存在しない場合
+            // グリフが存在しない場合
+            buffer[charcode].glyph_id = -1;
+            continue;
         }
 
         if (FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP) != 0) {
             // エラー処理
+            buffer[charcode].glyph_id = -1;
             continue;
         }
 
         FT_Outline outline = face->glyph->outline;
         // outlineを使って処理を行う
-        std::cout << "charcode: " << charcode << ", points: " << outline.n_points << ", contours" << outline.n_contours << "\n";
 
-        int ct = 0;
+        // contoursのコピー
+        std::copy(outline.contours, outline.contours + outline.n_contours, buffer[charcode].contours);
+
+        // pointsのコピー
         for (int i = 0; i < outline.n_points; ++i) {
-            std::cout << ct << " (" << outline.points[i].x << ", " << outline.points[i].y << ") " << int(outline.tags[i]) << "\n";
-            if (ct < outline.n_contours && i == outline.contours[ct]) {
-                ct++;
-            }
+            buffer[charcode].points[i] = {
+                .x = static_cast<float>(outline.points[i].x),
+                .y = static_cast<float>(outline.points[i].y),
+                .tag = static_cast<uint8_t>(outline.tags[i])};
         }
+
+        buffer[charcode].glyph_id = static_cast<int>(charcode);
+        buffer[charcode].n_contours = outline.n_contours;
+        buffer[charcode].n_points = uint(outline.n_points);
     }
 
     GUI gui;
@@ -119,28 +154,9 @@ int main() {
         fragment_shader,
     };
 
-    // 制御点データ
-    float control_points[] = {
-        // 0
-        0, 0,
-        0, 0.1,
-        0.1, 0,
-        // 1
-        0.1, 0.1,
-        0.2, 0.2,
-        0, 0.2,
-        0.1, 0.4};
-
-    GlyphInfo glyph_infos[] = {
-        {0, 3},
-        {6, 4},
-    };
-
     // SSBOにフォントデータを送る
-    ShaderStorageBufferObject control_points_ssbo(sizeof(float) * 14, (float *)control_points, GL_STATIC_DRAW);
-    control_points_ssbo.bind_base(0);
-    ShaderStorageBufferObject glyph_info_ssbo(sizeof(GlyphInfo) * 2, (GlyphInfo *)glyph_infos, GL_STATIC_DRAW);
-    glyph_info_ssbo.bind_base(1);
+    ShaderStorageBufferObject glyph_outline_ssbo(sizeof(GlyphOutline) * 256, buffer.data(), GL_STATIC_DRAW);
+    glyph_outline_ssbo.bind_base(0);
 
     // 三角形の頂点データ
     float vertices[] = {
@@ -148,7 +164,7 @@ int main() {
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
-    int codes[] = {0, 0, 1};
+    int codes[] = {65, 65, 65};
 
     VertexArrayObject vao;
     VertexBufferObject vbo(sizeof(vertices), (float *)vertices, GL_STATIC_DRAW);
