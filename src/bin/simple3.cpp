@@ -77,9 +77,32 @@ struct GlyphInfo {
 };
 
 int main() {
-    FreeTypeContext ft_context;
-    auto *face = ft_context.load_font("assets/fonts/main.ttf");
-    debug(face->num_faces);
+    freetype::Context ft;
+    auto *face = ft.load_font("assets/fonts/main.ttf");
+
+    for (FT_ULong charcode = 0; charcode <= 0xFF; ++charcode) {
+        FT_UInt glyph_index = FT_Get_Char_Index(face, charcode);
+        if (glyph_index == 0) {
+            continue; // グリフが存在しない場合
+        }
+
+        if (FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP) != 0) {
+            // エラー処理
+            continue;
+        }
+
+        FT_Outline outline = face->glyph->outline;
+        // outlineを使って処理を行う
+        std::cout << "charcode: " << charcode << ", points: " << outline.n_points << ", contours" << outline.n_contours << "\n";
+
+        int ct = 0;
+        for (int i = 0; i < outline.n_points; ++i) {
+            std::cout << ct << " (" << outline.points[i].x << ", " << outline.points[i].y << ") " << int(outline.tags[i]) << "\n";
+            if (ct < outline.n_contours && i == outline.contours[ct]) {
+                ct++;
+            }
+        }
+    }
 
     GUI gui;
     Window &window = gui.create_window(500, 500, "魔法使いの書斎");
