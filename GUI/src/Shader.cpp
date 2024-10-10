@@ -40,7 +40,7 @@ ProgramObject::ProgramObject(std::initializer_list<GLuint> shader_ids) {
     }
 
     // リンク
-    glLinkProgram(program_id);
+    time(glLinkProgram(program_id));
 
     program_id_ = program_id;
 }

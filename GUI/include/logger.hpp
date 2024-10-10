@@ -94,16 +94,15 @@ inline std::chrono::duration<double> time_impl(Func &&func) {
 
 // ***Pre関数は複文マクロを避ける意味もある
 template <typename Func>
-inline void time_pre(const char *file, int line, Func &&func) {
-    auto duration = timeImpl(func);
-    // print_headline("⏱️", file, line);
-    print_headline("wa", file, line);
-    std::cerr << " " << duration << std::endl;
+inline void time_pre(const char *file, int line, const char *argname, Func &&func) {
+    auto duration = time_impl(func);
+    print_headline("⏱️", file, line);
+    std::cerr << " " << argname << " spends " << duration << std::endl;
 }
 
 #ifdef DEBUG
 #define debug(...) debug_pre(__FILE__, __LINE__, #__VA_ARGS__ __VA_OPT__(, __VA_ARGS__)) // NOLINT(cppcoreguidelines-macro-usage)
-#define time(...) time_pre(__FILE__, __LINE__, [&] { __VA_ARGS__; })                     // NOLINT(cppcoreguidelines-macro-usage)
+#define time(...) time_pre(__FILE__, __LINE__, #__VA_ARGS__, [&] { __VA_ARGS__; })       // NOLINT(cppcoreguidelines-macro-usage)
 #else
 #define debug(...)
 #define time(...) __VA_ARGS__
