@@ -54,23 +54,31 @@ void main()
     int kind = c[0];
     GlyphOutline glyph = glyphs[kind];
     
-    // 基準点を最初に発行
-    Point p0 = glyph.points[0];
-    gl_Position = center + vec4(p0.x, p0.y, 0.0, 1.0);
-    EmitVertex();
+    uint start, end = -1;
+    for (int ct = 0; ct < glyph.numContours; ct++) {
+        uint tmp = end;
+        end = glyph.contours[ct];
+        start = tmp + 1;
+
+        // 基準点を最初に発行
+        Point p0 = glyph.points[start];
     
-    // 制御点の数に基づいて頂点を生成
-    for (int i = 1; i < 30; ++i) {
-        Point p = glyph.points[i];
-        gl_Position = center + vec4(p.x, p.y, 0.0, 1.0);
-        vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
-        EmitVertex();
-        
-        // 基準点を再度発行
-        gl_Position = center + vec4(p0.x, p0.y, 0.0, 1.0);
-        EmitVertex();
+        // 制御点の数に基づいて頂点を生成
+        for (uint i = start + 1; i <= end; i++) {
+            Point p = glyph.points[i];
+            if (p.tag == 1) {
+                // 基準点を再度発行
+                gl_Position = center + vec4(p0.x, p0.y, 0.0, 1.0);
+                EmitVertex();
+                
+                gl_Position = center + vec4(p.x, p.y, 0.0, 1.0);
+                vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
+                EmitVertex();
+            }
+        }
+
+        EndPrimitive();
     }
-    EndPrimitive();
 }
 )";
 
@@ -124,6 +132,12 @@ int main() {
         FT_Outline outline = face->glyph->outline;
         // outlineを使って処理を行う
 
+        std::cout << charcode << ": ";
+        for (int ct = 0; ct < outline.n_contours; ct++) {
+            std::cout << outline.contours[ct] << " ";
+        }
+        std::cout << "\n";
+
         // contoursのコピー
         std::copy(outline.contours, outline.contours + outline.n_contours, buffer[charcode].contours);
 
@@ -165,7 +179,12 @@ int main() {
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
-    int codes[] = {67, 67, 67};
+    int codes[] = {65, 66, 67};
+    // int codes[] = {68, 69, 70};
+    // int codes[] = {71, 72, 73};
+    // int codes[] = {74, 75, 76};
+    // int codes[] = {77, 78, 79};
+    // int codes[] = {80, 81, 82};
 
     VertexArrayObject vao;
     VertexBufferObject vbo(sizeof(vertices), (float *)vertices, GL_STATIC_DRAW);
