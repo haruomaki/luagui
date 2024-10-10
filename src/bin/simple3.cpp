@@ -56,19 +56,19 @@ void main()
     
     // 基準点を最初に発行
     Point p0 = glyph.points[0];
-    gl_Position = center + vec4(p0.x/2000, p0.y/2000, 0.0, 1.0);
+    gl_Position = center + vec4(p0.x, p0.y, 0.0, 1.0);
     EmitVertex();
     
     // 制御点の数に基づいて頂点を生成
     for (int i = 1; i < 30; ++i) {
         Point p = glyph.points[i];
-        gl_Position = center + vec4(p.x / 2000, p.y / 2000, 0.0, 1.0);
+        gl_Position = center + vec4(p.x, p.y, 0.0, 1.0);
         vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
         EmitVertex();
         
-        // // 基準点を再度発行
-        // gl_Position = center + vec4(p0.x/2000, p0.y/2000, 0.0, 1.0);
-        // EmitVertex();
+        // 基準点を再度発行
+        gl_Position = center + vec4(p0.x, p0.y, 0.0, 1.0);
+        EmitVertex();
     }
     EndPrimitive();
 }
@@ -130,8 +130,8 @@ int main() {
         // pointsのコピー
         for (int i = 0; i < outline.n_points; ++i) {
             buffer[charcode].points[i] = {
-                .x = static_cast<float>(outline.points[i].x),
-                .y = static_cast<float>(outline.points[i].y),
+                .x = static_cast<float>(outline.points[i].x) / 2000,
+                .y = static_cast<float>(outline.points[i].y) / 2000,
                 .tag = static_cast<uint8_t>(outline.tags[i])};
         }
 
@@ -195,10 +195,12 @@ int main() {
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
         // 三角形の描画
+        glDepthMask(GL_FALSE);
         shader.use();
         vao.bind([&] {
             glDrawArrays(GL_POINTS, 0, 3);
         });
+        glDepthMask(GL_TRUE);
 
         // // ステンシル関数の設定
         glStencilFunc(GL_EQUAL, 0, ~0);
