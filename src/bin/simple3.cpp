@@ -47,9 +47,23 @@ layout(std430, binding = 0) buffer GlyphBuffer {
     GlyphOutline glyphs[];
 };
 
+vec4 center;
+Point root;
+Point pa, po, pb;
+
+void draw_body() {
+    // 基準点を再度発行
+    gl_Position = center + vec4(root.x, root.y, 0.0, 1.0);
+    EmitVertex();
+    
+    gl_Position = center + vec4(pb.x, pb.y, 0.0, 1.0);
+    vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
+    EmitVertex();
+}
+
 void main()
 {
-    vec4 center = gl_in[0].gl_Position;
+    center = gl_in[0].gl_Position;
 
     int kind = c[0];
     GlyphOutline glyph = glyphs[kind];
@@ -60,20 +74,17 @@ void main()
         end = glyph.contours[ct];
         start = tmp + 1;
 
-        // 基準点を最初に発行
-        Point p0 = glyph.points[start];
+        // 基準点を保存
+        root = glyph.points[start];
+        pb = root;
     
         // 制御点の数に基づいて頂点を生成
         for (uint i = start + 1; i <= end; i++) {
             Point p = glyph.points[i];
             if (p.tag == 1) {
-                // 基準点を再度発行
-                gl_Position = center + vec4(p0.x, p0.y, 0.0, 1.0);
-                EmitVertex();
-                
-                gl_Position = center + vec4(p.x, p.y, 0.0, 1.0);
-                vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
-                EmitVertex();
+                pa = pb;
+                pb = p;
+                draw_body();
             }
         }
 
