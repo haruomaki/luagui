@@ -60,15 +60,15 @@ void main()
     EmitVertex();
     
     // 制御点の数に基づいて頂点を生成
-    for (int i = 1; i < 15; ++i) {
+    for (int i = 1; i < 30; ++i) {
         Point p = glyph.points[i];
         gl_Position = center + vec4(p.x / 2000, p.y / 2000, 0.0, 1.0);
         vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
         EmitVertex();
         
-        // 基準点を再度発行
-        gl_Position = center + vec4(p0.x/2000, p0.y/2000, 0.0, 1.0);
-        EmitVertex();
+        // // 基準点を再度発行
+        // gl_Position = center + vec4(p0.x/2000, p0.y/2000, 0.0, 1.0);
+        // EmitVertex();
     }
     EndPrimitive();
 }
@@ -105,8 +105,9 @@ int main() {
     freetype::Context ft;
     auto *face = ft.load_font("assets/fonts/main.ttf");
 
-    std::array<GlyphOutline, 256> buffer = {};
-    for (FT_ULong charcode = 0; charcode <= 255; ++charcode) {
+    constexpr int max_charcode = 256;
+    std::array<GlyphOutline, max_charcode> buffer = {};
+    for (FT_ULong charcode = 0; charcode < max_charcode; ++charcode) {
         FT_UInt glyph_index = FT_Get_Char_Index(face, charcode);
         if (glyph_index == 0) {
             // グリフが存在しない場合
@@ -155,7 +156,7 @@ int main() {
     };
 
     // SSBOにフォントデータを送る
-    ShaderStorageBufferObject glyph_outline_ssbo(sizeof(GlyphOutline) * 256, buffer.data(), GL_STATIC_DRAW);
+    ShaderStorageBufferObject glyph_outline_ssbo(sizeof(buffer), buffer.data(), GL_STATIC_DRAW);
     glyph_outline_ssbo.bind_base(0);
 
     // 三角形の頂点データ
@@ -164,7 +165,7 @@ int main() {
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
-    int codes[] = {65, 65, 65};
+    int codes[] = {67, 67, 67};
 
     VertexArrayObject vao;
     VertexBufferObject vbo(sizeof(vertices), (float *)vertices, GL_STATIC_DRAW);
@@ -181,14 +182,17 @@ int main() {
 
     // ステンシルバッファの設定
     glEnable(GL_STENCIL_TEST);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     window.raw_worlds.emplace_back([&] {
         if (window.key(GLFW_KEY_Q)) window.close();
 
+        // ステンシルバッファの初期化
+        glClearStencil(0);
+        glClear(GL_STENCIL_BUFFER_BIT);
         // ステンシルバッファの設定
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, ~0);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_INVERT);
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
         // 三角形の描画
         shader.use();
@@ -196,9 +200,21 @@ int main() {
             glDrawArrays(GL_POINTS, 0, 3);
         });
 
-        // ステンシルバッファの設定を変更
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilMask(0x00);
+        // // ステンシル関数の設定
+        glStencilFunc(GL_EQUAL, 0, ~0);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+        // 四角形の描画
+        glUseProgram(0);
+        glBegin(GL_QUADS);        // 四角形の描画開始
+        glVertex2f(-0.9f, -0.9f); // 左下
+        glVertex2f(0.9f, -0.9f);  // 右下
+        glVertex2f(0.9f, 0.9f);   // 右上
+        glVertex2f(-0.9f, 0.9f);  // 左上
+        glEnd();                  // 四角形の描画終了
+
+        glFlush(); // 描画命令の実行
     });
 
     gui.mainloop();
