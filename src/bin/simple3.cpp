@@ -28,7 +28,7 @@ layout (triangle_strip, max_vertices = 128) out;
 
 in int c[];
 out vec3 vertexColor; // フラグメントシェーダに渡す色
-// out vec2 bezierPos; // 2次ベジェ曲線の座標情報
+out vec2 bezierPos; // 2次ベジェ曲線の座標情報
 
 struct Point {
     float x, y;  // 座標
@@ -54,15 +54,31 @@ uint last_tag;
 
 void draw_body() {
     gl_Position = center + vec4(pa.x, pa.y, 0.0, 1.0);
-    vertexColor = vec3(1.0, 0.3, 0.0);
+    bezierPos = vec2(0, 1);
     EmitVertex();
     
     gl_Position = center + vec4(root.x, root.y, 0.0, 1.0);
-    vertexColor = vec3(1.0, 0.3, 0.0);
+    bezierPos = vec2(0, 1);
     EmitVertex();
     
     gl_Position = center + vec4(pb.x, pb.y, 0.0, 1.0);
-    vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
+    bezierPos = vec2(0, 1);
+    EmitVertex();
+
+    EndPrimitive();
+}
+
+void draw_round() {
+    gl_Position = center + vec4(pa.x, pa.y, 0.0, 1.0);
+    bezierPos = vec2(0, 0);
+    EmitVertex();
+    
+    gl_Position = center + vec4(po.x, po.y, 0.0, 1.0);
+    bezierPos = vec2(0.5, 0);
+    EmitVertex();
+    
+    gl_Position = center + vec4(pb.x, pb.y, 0.0, 1.0);
+    bezierPos = vec2(1, 1);
     EmitVertex();
 
     EndPrimitive();
@@ -90,15 +106,19 @@ void main()
         for (uint i = start + 1; i <= end; i++) {
             Point p = glyph.points[i];
             if (p.tag == 1) {
-                last_tag = 1;
                 pb = p;
                 draw_body();
+                if (last_tag == 0) {
+                    draw_round();
+                }
                 pa = p;
+                last_tag = 1;
             } else {
                 if (last_tag == 0) {
                     Point mid = {(po.x + p.x) / 2, (po.y + p.y) / 2, 1}; // tagの値は無意味
                     pb = mid;
                     draw_body();
+                    draw_round();
                     pa = mid;
                 }
                 po = p;
@@ -112,16 +132,16 @@ void main()
 static const char *const FRAGMENT_SHADER_SOURCE = R"(
 #version 330 core
 in vec3 vertexColor; // ジオメトリシェーダから渡される色
-// in vec2 bezierPos; // ベジェ曲線を塗りつぶすための座標情報
+in vec2 bezierPos; // ベジェ曲線を塗りつぶすための座標情報
 out vec4 FragColor;
 
 void main()
 {
-    // if (bezierPos.x * bezierPos.x <= bezierPos.y) {
+    if (bezierPos.x * bezierPos.x <= bezierPos.y) {
         FragColor = vec4(vertexColor, 1.0);
-    // } else {
-    //     discard;
-    // }
+    } else {
+        discard;
+    }
 }
 )";
 
@@ -206,11 +226,11 @@ int main() {
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
-    int codes[] = {65, 66, 67};
+    // int codes[] = {65, 66, 67};
     // int codes[] = {68, 69, 70};
     // int codes[] = {71, 72, 73};
     // int codes[] = {74, 75, 76};
-    // int codes[] = {77, 78, 79};
+    int codes[] = {77, 78, 79};
     // int codes[] = {80, 81, 82};
 
     VertexArrayObject vao;
