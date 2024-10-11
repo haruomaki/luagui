@@ -50,6 +50,7 @@ layout(std430, binding = 0) buffer GlyphBuffer {
 vec4 center;
 Point root;
 Point pa, po, pb;
+uint last_tag;
 
 void draw_body() {
     // 基準点を再度発行
@@ -77,14 +78,26 @@ void main()
         // 基準点を保存
         root = glyph.points[start];
         pb = root;
+        last_tag = 1;
     
         // 制御点の数に基づいて頂点を生成
         for (uint i = start + 1; i <= end; i++) {
             Point p = glyph.points[i];
             if (p.tag == 1) {
+                last_tag = 1;
                 pa = pb;
                 pb = p;
                 draw_body();
+            } else {
+                if (last_tag == 0) {
+                    Point mid = {(po.x + p.x) / 2, (po.y + p.y) / 2, 1}; // tagの値は無意味
+                    pa = pb;
+                    pb = mid;
+                    draw_body();
+                }
+                po = p;
+                last_tag = 0;
+                continue;
             }
         }
 
