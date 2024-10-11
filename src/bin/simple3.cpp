@@ -102,26 +102,30 @@ void main()
     
         // 制御点の数に基づいて頂点を生成
         for (uint i = start + 1; i <= end; i++) {
-            if (ct == 0) break;
             Point p = glyph.points[i];
             if (p.tag == 1) {
                 pb = p;
-                draw_body();
+                if (kind == 65 && i == 6) {
+                    pa.x -= 1;
+                    root.x -= 1;
+                    pb.x -= 1;
+                }
+                if (i != 1 && i != 2 && i != 4 && i != 5) draw_body();
                 if (last_tag == 0) {
-                    draw_round();
+                    // draw_round();
                 }
                 pa = p;
                 last_tag = 1;
             } else {
-                if (last_tag == 0) {
-                    Point mid = {(po.x + p.x) / 2, (po.y + p.y) / 2, 1}; // tagの値は無意味
-                    pb = mid;
-                    draw_body();
-                    draw_round();
-                    pa = mid;
-                }
-                po = p;
-                last_tag = 0;
+                // if (last_tag == 0) {
+                //     Point mid = {(po.x + p.x) / 2, (po.y + p.y) / 2, 1}; // tagの値は無意味
+                //     pb = mid;
+                //     draw_body();
+                //     // draw_round();
+                //     pa = mid;
+                // }
+                // po = p;
+                // last_tag = 0;
             }
         }
         start = end + 1;
@@ -200,7 +204,17 @@ int main() {
         buffer[charcode].n_points = uint(outline.n_points);
     }
 
-    // buffer[65].n_contours = 1;
+    buffer[65].n_contours = 2;
+    buffer[65].n_points = 7;
+    buffer[65].contours[0] = 3;
+    buffer[65].contours[1] = 6;
+    buffer[65].points[0] = {0, 0, 1};
+    buffer[65].points[1] = {0, 1, 1};
+    buffer[65].points[2] = {1, 1, 1};
+    buffer[65].points[3] = {1, 0, 1};
+    buffer[65].points[4] = {0.2, 0.2, 1};
+    buffer[65].points[5] = {0.8, 0.2, 1};
+    buffer[65].points[6] = {0.5, 0.8, 1};
 
     GUI gui;
     Window &window = gui.create_window(500, 500, "魔法使いの書斎");
