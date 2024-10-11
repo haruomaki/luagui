@@ -1,163 +1,37 @@
 #include <furitype.hpp>
 
-constexpr int MAX_POINTS = 1024;
-constexpr int MAX_CONTOURS = 64;
-
 // シェーダーのソースコード
 static const char *const VERTEX_SHADER_SOURCE = R"(
 #version 330 core
-in vec3 aPos;
-in int codepoint;
-out int c;
+in vec3 position;
 
 void main()
 {
-    gl_Position = vec4(aPos, 1.0);
-    c = codepoint;
-}
-)";
-
-static const char *const GEOMETRY_SHADER_SOURCE = R"(
-#version 440 core
-
-const int MAX_POINTS = 1024;
-const int MAX_CONTOURS = 64;
-
-layout (points) in;
-layout (triangle_strip, max_vertices = 128) out;
-
-in int c[];
-out vec3 vertexColor; // フラグメントシェーダに渡す色
-out vec2 bezierPos; // 2次ベジェ曲線の座標情報
-
-struct Point {
-    float x, y;  // 座標
-    uint tag;    // タグ情報
-};
-
-struct GlyphOutline {
-    int glyph_id;      // グリフID。-1なら無効
-    uint numContours;  // 輪郭の数
-    uint numPoints;    // ポイントの数
-    uint contours[MAX_CONTOURS]; // 輪郭の終点情報
-    Point points[MAX_POINTS];
-};
-
-layout(std430, binding = 0) buffer GlyphBuffer {
-    GlyphOutline glyphs[];
-};
-
-vec4 center;
-Point root;
-Point pa, po, pb;
-uint last_tag;
-
-void draw_body() {
-    gl_Position = center + vec4(pa.x, pa.y, 0.0, 1.0);
-    bezierPos = vec2(0, 1);
-    EmitVertex();
-    
-    gl_Position = center + vec4(root.x, root.y, 0.0, 1.0);
-    bezierPos = vec2(0, 1);
-    EmitVertex();
-    
-    gl_Position = center + vec4(pb.x, pb.y, 0.0, 1.0);
-    bezierPos = vec2(0, 1);
-    EmitVertex();
-
-    EndPrimitive();
-}
-
-void draw_round() {
-    gl_Position = center + vec4(pa.x, pa.y, 0.0, 1.0);
-    bezierPos = vec2(0, 0);
-    EmitVertex();
-    
-    gl_Position = center + vec4(po.x, po.y, 0.0, 1.0);
-    bezierPos = vec2(0.5, 0);
-    EmitVertex();
-    
-    gl_Position = center + vec4(pb.x, pb.y, 0.0, 1.0);
-    bezierPos = vec2(1, 1);
-    EmitVertex();
-
-    EndPrimitive();
-}
-
-void main()
-{
-    center = gl_in[0].gl_Position;
-
-    int kind = c[0];
-    GlyphOutline glyph = glyphs[kind];
-    
-    uint start = 0, end;
-    for (uint ct = 0; ct < glyph.numContours; ct++) {
-        end = glyph.contours[ct];
-
-        // 基準点を保存
-        root = glyph.points[start];
-        pa = root;
-        last_tag = 1;
-    
-        // 制御点の数に基づいて頂点を生成
-        for (uint i = start + 1; i <= end; i++) {
-            Point p = glyph.points[i];
-            if (p.tag == 1) {
-                pb = p;
-                if (kind == 65 && i == 6) {
-                    pa.x -= 1;
-                    root.x -= 1;
-                    pb.x -= 1;
-                }
-                if (i != 1 && i != 2 && i != 4 && i != 5) draw_body();
-                if (last_tag == 0) {
-                    // draw_round();
-                }
-                pa = p;
-                last_tag = 1;
-            } else {
-                // if (last_tag == 0) {
-                //     Point mid = {(po.x + p.x) / 2, (po.y + p.y) / 2, 1}; // tagの値は無意味
-                //     pb = mid;
-                //     draw_body();
-                //     // draw_round();
-                //     pa = mid;
-                // }
-                // po = p;
-                // last_tag = 0;
-            }
-        }
-        start = end + 1;
-    }
+    gl_Position = vec4(position, 1.0);
 }
 )";
 
 static const char *const FRAGMENT_SHADER_SOURCE = R"(
 #version 330 core
-in vec3 vertexColor; // ジオメトリシェーダから渡される色
-in vec2 bezierPos; // ベジェ曲線を塗りつぶすための座標情報
+// in vec3 vertexColor; // ジオメトリシェーダから渡される色
+// in vec2 bezierPos; // ベジェ曲線を塗りつぶすための座標情報
 out vec4 FragColor;
 
 void main()
 {
-    if (bezierPos.x * bezierPos.x <= bezierPos.y) {
-        FragColor = vec4(vertexColor, 1.0);
-    } else {
-        discard;
-    }
+    FragColor = vec4(0, 0, 0, 0);
+    // if (bezierPos.x * bezierPos.x <= bezierPos.y) {
+    //     FragColor = vec4(vertexColor, 1.0);
+    // } else {
+    //     discard;
+    // }
 }
 )";
 
 struct GlyphOutline {
-    int glyph_id;                        // グリフID。-1なら無効
-    unsigned int n_contours;             // 輪郭の数
-    unsigned int n_points;               // ポイントの数
-    unsigned int contours[MAX_CONTOURS]; // 輪郭の終点情報
-    struct {
-        float x, y;       // 座標
-        unsigned int tag; // タグ情報
-    } points[MAX_POINTS];
+    std::vector<int> contours;     // 輪郭の終点情報
+    std::vector<glm::vec2> points; // 点の座標
+    std::vector<int> tags;         // 実点か制御点か
 };
 
 int main() {
@@ -165,18 +39,16 @@ int main() {
     auto *face = ft.load_font("assets/fonts/main.ttf");
 
     constexpr int max_charcode = 256;
-    std::array<GlyphOutline, max_charcode> buffer = {};
+    std::map<size_t, GlyphOutline> glyph_outlines;
     for (FT_ULong charcode = 0; charcode < max_charcode; ++charcode) {
         FT_UInt glyph_index = FT_Get_Char_Index(face, charcode);
         if (glyph_index == 0) {
             // グリフが存在しない場合
-            buffer[charcode].glyph_id = -1;
             continue;
         }
 
         if (FT_Load_Glyph(face, glyph_index, FT_LOAD_NO_SCALE | FT_LOAD_NO_BITMAP) != 0) {
             // エラー処理
-            buffer[charcode].glyph_id = -1;
             continue;
         }
 
@@ -184,56 +56,47 @@ int main() {
         // outlineを使って処理を行う
 
         // contoursのコピー
-        std::cout << charcode << ": ";
+        glyph_outlines[charcode].contours.reserve(outline.n_contours);
         for (int i = 0; i < outline.n_contours; i++) {
-            std::cout << outline.contours[i] << " ";
-            buffer[charcode].contours[i] = outline.contours[i];
+            glyph_outlines[charcode].contours[i] = outline.contours[i];
         }
-        std::cout << "\n";
 
-        // pointsのコピー
+        // pointsとtagsのコピー
+        glyph_outlines[charcode].points.reserve(outline.n_points);
+        glyph_outlines[charcode].tags.reserve(outline.n_points);
         for (int i = 0; i < outline.n_points; ++i) {
-            buffer[charcode].points[i] = {
-                .x = static_cast<float>(outline.points[i].x) / 2000,
-                .y = static_cast<float>(outline.points[i].y) / 2000,
-                .tag = static_cast<uint8_t>(outline.tags[i])};
+            glyph_outlines[charcode].points[i] = {
+                float(outline.points[i].x) / 2000,
+                float(outline.points[i].y) / 2000,
+            };
+            glyph_outlines[charcode].tags[i] = (int)outline.tags[i];
         }
-
-        buffer[charcode].glyph_id = static_cast<int>(charcode);
-        buffer[charcode].n_contours = outline.n_contours;
-        buffer[charcode].n_points = uint(outline.n_points);
     }
 
-    buffer[65].n_contours = 2;
-    buffer[65].n_points = 7;
-    buffer[65].contours[0] = 3;
-    buffer[65].contours[1] = 6;
-    buffer[65].points[0] = {0, 0, 1};
-    buffer[65].points[1] = {0, 1, 1};
-    buffer[65].points[2] = {1, 1, 1};
-    buffer[65].points[3] = {1, 0, 1};
-    buffer[65].points[4] = {0.2, 0.2, 1};
-    buffer[65].points[5] = {0.8, 0.2, 1};
-    buffer[65].points[6] = {0.5, 0.8, 1};
+    // buffer[65].n_contours = 2;
+    // buffer[65].n_points = 7;
+    // buffer[65].contours[0] = 3;
+    // buffer[65].contours[1] = 6;
+    // buffer[65].points[0] = {0, 0, 1};
+    // buffer[65].points[1] = {0, 1, 1};
+    // buffer[65].points[2] = {1, 1, 1};
+    // buffer[65].points[3] = {1, 0, 1};
+    // buffer[65].points[4] = {0.2, 0.2, 1};
+    // buffer[65].points[5] = {0.8, 0.2, 1};
+    // buffer[65].points[6] = {0.5, 0.8, 1};
 
     GUI gui;
     Window &window = gui.create_window(500, 500, "魔法使いの書斎");
 
     // シェーダーのコンパイル
     GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);
-    GLuint geometry_shader = create_shader(GL_GEOMETRY_SHADER, GEOMETRY_SHADER_SOURCE);
     GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
 
     // シェーダープログラムのリンク
     ProgramObject shader = {
         vertex_shader,
-        geometry_shader,
         fragment_shader,
     };
-
-    // SSBOにフォントデータを送る
-    ShaderStorageBufferObject glyph_outline_ssbo(sizeof(buffer), buffer.data(), GL_STATIC_DRAW);
-    glyph_outline_ssbo.bind_base(0);
 
     // 三角形の頂点データ
     float vertices[] = {
@@ -241,23 +104,12 @@ int main() {
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
-    int codes[] = {65, 66, 67};
-    // int codes[] = {68, 69, 70};
-    // int codes[] = {71, 72, 73};
-    // int codes[] = {74, 75, 76};
-    // int codes[] = {77, 78, 79};
-    // int codes[] = {80, 81, 82};
-
     VertexArrayObject vao;
     VertexBufferObject vbo(sizeof(vertices), (float *)vertices, GL_STATIC_DRAW);
-    VertexBufferObject vbo_codes(sizeof(codes), (int *)codes, GL_STATIC_DRAW);
 
     vao.bind([&] {
         vbo.bind([&] {
-            shader.set_attribute_float("aPos", 3, false, 3 * sizeof(float), nullptr);
-        });
-        vbo_codes.bind([&] {
-            shader.set_attribute_int("codepoint", 1, sizeof(int), nullptr);
+            shader.set_attribute_float("position", 3, false, 3 * sizeof(float), nullptr);
         });
     });
 
@@ -279,7 +131,7 @@ int main() {
         glDepthMask(GL_FALSE);
         shader.use();
         vao.bind([&] {
-            glDrawArrays(GL_POINTS, 0, 3);
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
         });
         glDepthMask(GL_TRUE);
 
