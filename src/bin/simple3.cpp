@@ -91,11 +91,9 @@ void main()
     int kind = c[0];
     GlyphOutline glyph = glyphs[kind];
     
-    uint start, end = -1;
+    uint start = 0, end;
     for (uint ct = 0; ct < glyph.numContours; ct++) {
-        uint tmp = end;
         end = glyph.contours[ct];
-        start = tmp + 1;
 
         // 基準点を保存
         root = glyph.points[start];
@@ -104,6 +102,7 @@ void main()
     
         // 制御点の数に基づいて頂点を生成
         for (uint i = start + 1; i <= end; i++) {
+            if (ct == 0) break;
             Point p = glyph.points[i];
             if (p.tag == 1) {
                 pb = p;
@@ -125,6 +124,7 @@ void main()
                 last_tag = 0;
             }
         }
+        start = end + 1;
     }
 }
 )";
@@ -179,14 +179,13 @@ int main() {
         FT_Outline outline = face->glyph->outline;
         // outlineを使って処理を行う
 
+        // contoursのコピー
         std::cout << charcode << ": ";
-        for (int ct = 0; ct < outline.n_contours; ct++) {
-            std::cout << outline.contours[ct] << " ";
+        for (int i = 0; i < outline.n_contours; i++) {
+            std::cout << outline.contours[i] << " ";
+            buffer[charcode].contours[i] = outline.contours[i];
         }
         std::cout << "\n";
-
-        // contoursのコピー
-        std::copy(outline.contours, outline.contours + outline.n_contours, buffer[charcode].contours);
 
         // pointsのコピー
         for (int i = 0; i < outline.n_points; ++i) {
@@ -200,6 +199,8 @@ int main() {
         buffer[charcode].n_contours = outline.n_contours;
         buffer[charcode].n_points = uint(outline.n_points);
     }
+
+    // buffer[65].n_contours = 1;
 
     GUI gui;
     Window &window = gui.create_window(500, 500, "魔法使いの書斎");
@@ -226,11 +227,11 @@ int main() {
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
-    // int codes[] = {65, 66, 67};
+    int codes[] = {65, 66, 67};
     // int codes[] = {68, 69, 70};
     // int codes[] = {71, 72, 73};
     // int codes[] = {74, 75, 76};
-    int codes[] = {77, 78, 79};
+    // int codes[] = {77, 78, 79};
     // int codes[] = {80, 81, 82};
 
     VertexArrayObject vao;
