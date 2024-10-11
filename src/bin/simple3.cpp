@@ -53,13 +53,19 @@ Point pa, po, pb;
 uint last_tag;
 
 void draw_body() {
-    // 基準点を再度発行
+    gl_Position = center + vec4(pa.x, pa.y, 0.0, 1.0);
+    vertexColor = vec3(1.0, 0.3, 0.0);
+    EmitVertex();
+    
     gl_Position = center + vec4(root.x, root.y, 0.0, 1.0);
+    vertexColor = vec3(1.0, 0.3, 0.0);
     EmitVertex();
     
     gl_Position = center + vec4(pb.x, pb.y, 0.0, 1.0);
     vertexColor = vec3(1.0, 0.3, 0.0); // 色は適宜設定
     EmitVertex();
+
+    EndPrimitive();
 }
 
 void main()
@@ -70,14 +76,14 @@ void main()
     GlyphOutline glyph = glyphs[kind];
     
     uint start, end = -1;
-    for (int ct = 0; ct < glyph.numContours; ct++) {
+    for (uint ct = 0; ct < glyph.numContours; ct++) {
         uint tmp = end;
         end = glyph.contours[ct];
         start = tmp + 1;
 
         // 基準点を保存
         root = glyph.points[start];
-        pb = root;
+        pa = root;
         last_tag = 1;
     
         // 制御点の数に基づいて頂点を生成
@@ -85,23 +91,20 @@ void main()
             Point p = glyph.points[i];
             if (p.tag == 1) {
                 last_tag = 1;
-                pa = pb;
                 pb = p;
                 draw_body();
+                pa = p;
             } else {
                 if (last_tag == 0) {
                     Point mid = {(po.x + p.x) / 2, (po.y + p.y) / 2, 1}; // tagの値は無意味
-                    pa = pb;
                     pb = mid;
                     draw_body();
+                    pa = mid;
                 }
                 po = p;
                 last_tag = 0;
-                continue;
             }
         }
-
-        EndPrimitive();
     }
 }
 )";
