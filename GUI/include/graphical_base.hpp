@@ -7,30 +7,14 @@
 #include <GL/gl.h> // glGetString()のため
 #include <GLFW/glfw3.h>
 #include <glm/ext.hpp>
-#include <glm/gtx/string_cast.hpp>
 
 #include <iostream>
 
 // base.hppのインクルードより先に書かないといけない処理
-namespace base {
-
-template <glm::length_t l, class T, glm::qualifier q>
-std::ostream &operator<<(std::ostream &os, const glm::vec<l, T, q> input_vec) {
-    os << glm::to_string(input_vec);
-    return os;
-}
-
-template <glm::length_t c, glm::length_t r, class T, glm::qualifier q>
-std::ostream &operator<<(std::ostream &os, const glm::mat<c, r, T, q> input_mat) {
-    os << glm::to_string(input_mat);
-    return os;
-}
-
-} // namespace base
+#include <logger.hpp>
 
 // これより上に書かないと動かない
 #include <base.hpp>
-#include <logger.hpp>
 
 // base.hppのインクルードのあとでも問題無い処理
 namespace base {

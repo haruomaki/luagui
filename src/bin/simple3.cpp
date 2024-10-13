@@ -150,8 +150,8 @@ int main() {
     // buffer[65].points[4] = {0.2, 0.2, 1};
     // buffer[65].points[5] = {0.8, 0.2, 1};
     // buffer[65].points[6] = {0.5, 0.8, 1};
-    // debug(glyph_outlines[65].bodies);
-    // debug(glyph_outlines[65].rounds);
+    debug(glyph_outlines[65].bodies);
+    debug(glyph_outlines[65].rounds);
 
     GUI gui;
     Window &window = gui.create_window(500, 500, "魔法使いの書斎");
