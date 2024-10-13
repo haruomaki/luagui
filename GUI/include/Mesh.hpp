@@ -230,6 +230,7 @@ struct MeshDrawManager {
             glLineWidth(GLfloat(material.line_width));
             break;
         default: // GL_TRIANGLE_FANなどのときは何もしない
+            break;
         }
 
         // ワールド座標変換 = instanceModelMatrix
