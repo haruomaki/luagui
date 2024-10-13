@@ -1,4 +1,5 @@
 #include <furitype.hpp>
+#include <sumigl.hpp>
 
 // シェーダーのソースコード
 static const char *const VERTEX_SHADER_SOURCE = R"(
@@ -115,6 +116,7 @@ static GlyphOutline parse_glyph(const FT_Outline &outline) {
 }
 
 int main() {
+    debug(hi_sumigl());
     freetype::Context ft;
     auto *face = ft.load_font("assets/fonts/main.ttf");
 

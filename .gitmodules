@@ -10,3 +10,6 @@
 [submodule "GUI/furitype"]
 	path = GUI/furitype
 	url = git@codeberg.org:haruomaki/furitype.git
+[submodule "GUI/sumigl"]
+	path = GUI/sumigl
+	url = git@codeberg.org:haruomaki/sumigl.git
