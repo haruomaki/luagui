@@ -168,6 +168,11 @@ int main() {
         fragment_shader,
     };
 
+    GL::ProgramObject font_ssaa_shader = {
+        GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/fontSSAA.vsh")),
+        GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/fontSSAA.fsh")),
+    };
+
     // 三角形の頂点データ
     // auto &points = glyph_outlines[int('A')].points;
     // std::vector<glm::vec2> vertices(points.size());
@@ -176,10 +181,12 @@ int main() {
     // // }
     std::vector<glm::vec2> &vertices = glyph_outlines[80].bodies;
     std::vector<glm::vec2> &roundv = glyph_outlines[80].rounds;
+    std::vector<glm::vec2> quad_vec = {{-0.9, -0.9}, {-0.9, 0.9}, {0.9, 0.9}, {0.9, -0.9}};
 
-    GL::VertexArray vao, vao_roundv;
+    GL::VertexArray vao, vao_roundv, quad_vao;
     GL::VertexBuffer vbo(vertices.size() * sizeof(glm::vec2), vertices.data(), GL_STATIC_DRAW);
     GL::VertexBuffer vbo_roundv(roundv.size() * sizeof(glm::vec2), roundv.data(), GL_STATIC_DRAW);
+    GL::VertexBuffer quad_vbo(quad_vec.size() * sizeof(glm::vec2), quad_vec.data(), GL_STATIC_DRAW);
 
     vao.bind([&] {
         vbo.bind([&] {
@@ -191,6 +198,33 @@ int main() {
             shader.set_attribute_float("position", 2, false, 0, nullptr);
         });
     });
+    quad_vao.bind([&]() {
+        quad_vbo.bind([&]() {
+            font_ssaa_shader.set_attribute_float("position", 2, false, 0, nullptr);
+        });
+    });
+
+    // GLuint fbo;
+    // glGenFramebuffers(1, &fbo);
+    // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    // // カラーバッファをテクスチャとしてアタッチ（RGBA形式のテクスチャ）
+    // GLuint color_tex;
+    // int width = 500, height = 500;
+    // glGenTextures(1, &color_tex);
+    // glBindTexture(GL_TEXTURE_2D, color_tex);
+    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_tex, 0);
+
+    // // オフセット例 (RGBに対応する横方向のサンプル位置と垂直方向のサンプル)
+    // glm::vec2 offsets[6] = {
+    //     glm::vec2(-0.33f, -0.5f), // Red channel, first vertical sample
+    //     glm::vec2(0.0f, -0.5f),   // Green channel, first vertical sample
+    //     glm::vec2(0.33f, -0.5f),  // Blue channel, first vertical sample
+    //     glm::vec2(-0.33f, 0.5f),  // Red channel, second vertical sample
+    //     glm::vec2(0.0f, 0.5f),    // Green channel, second vertical sample
+    //     glm::vec2(0.33f, 0.5f)    // Blue channel, second vertical sample
+    // };
 
     // ステンシルバッファの設定
     glEnable(GL_STENCIL_TEST);
@@ -207,6 +241,7 @@ int main() {
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
         // フォント本体の描画
+        // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
         glDepthMask(GL_FALSE);
         shader.use();
         shader.set_uniform("is_bezier", 0);
@@ -221,21 +256,28 @@ int main() {
         });
         glDepthMask(GL_TRUE);
 
-        // // ステンシル関数の設定
+        // ステンシル関数の設定
         glStencilFunc(GL_EQUAL, 0, ~0);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
         // 四角形の描画
-        glUseProgram(0);
-        glBegin(GL_QUADS);        // 四角形の描画開始
-        glVertex2f(-0.9f, -0.9f); // 左下
-        glVertex2f(0.9f, -0.9f);  // 右下
-        glVertex2f(0.9f, 0.9f);   // 右上
-        glVertex2f(-0.9f, 0.9f);  // 左上
-        glEnd();                  // 四角形の描画終了
+        // glUseProgram(0);
+        // glBegin(GL_QUADS);        // 四角形の描画開始
+        // glVertex2f(-0.9f, -0.9f); // 左下
+        // glVertex2f(0.9f, -0.9f);  // 右下
+        // glVertex2f(0.9f, 0.9f);   // 右上
+        // glVertex2f(-0.9f, 0.9f);  // 左上
+        // glEnd();                  // 四角形の描画終了
 
-        glFlush(); // 描画命令の実行
+        // glFlush(); // 描画命令の実行
+
+        font_ssaa_shader.use();
+        quad_vao.bind([&] {
+            glDrawArrays(GL_QUADS, 0, 4);
+        });
+
+        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
     });
 
     gui.mainloop();
