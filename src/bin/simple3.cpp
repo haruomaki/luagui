@@ -115,6 +115,61 @@ static GlyphOutline parse_glyph(const FT_Outline &outline) {
     return ret;
 }
 
+// TODO: vaoにサイズ情報を付加
+GLuint render_path(const GL::ProgramObject &shader, const GL::VertexArray &body_vao, size_t body_size, const GL::VertexArray &round_vao, size_t round_size) {
+    // ステンシルバッファの初期化
+    glClearStencil(0);
+    glClear(GL_STENCIL_BUFFER_BIT);
+    // ステンシルバッファの設定
+    glStencilFunc(GL_ALWAYS, 0, ~0);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_INVERT);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+    // フォント本体の描画
+    // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glDepthMask(GL_FALSE);
+    shader.use();
+    shader.set_uniform("is_bezier", 0);
+    body_vao.bind([&] {
+        glDrawArrays(GL_TRIANGLE_FAN, 0, int(body_size));
+    });
+
+    // 輪郭の丸みの描画
+    shader.set_uniform("is_bezier", 1);
+    round_vao.bind([&] {
+        glDrawArrays(GL_TRIANGLES, 0, int(round_size));
+    });
+    glDepthMask(GL_TRUE);
+
+    // ステンシル関数の設定
+    glStencilFunc(GL_EQUAL, 0, ~0);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+    // 四角形の描画
+    // glUseProgram(0);
+    // glBegin(GL_QUADS);        // 四角形の描画開始
+    // glVertex2f(-0.9f, -0.9f); // 左下
+    // glVertex2f(0.9f, -0.9f);  // 右下
+    // glVertex2f(0.9f, 0.9f);   // 右上
+    // glVertex2f(-0.9f, 0.9f);  // 左上
+    // glEnd();                  // 四角形の描画終了
+
+    // glFlush(); // 描画命令の実行
+
+    // ステンシルバッファの内容をテクスチャにコピー
+    int width = 500, height = 500;
+    std::vector<GLubyte> stencil_data(width * height);
+    glReadPixels(0, 0, width, height, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, stencil_data.data());
+
+    // TODO: テクスチャのラッパークラスを作ってメモリリークを防止
+    GLuint stencil_tex;
+    glGenTextures(1, &stencil_tex);
+    glBindTexture(GL_TEXTURE_2D, stencil_tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, stencil_data.data());
+    return stencil_tex;
+}
+
 int main() {
     debug(GL::hi_sumigl());
     freetype::Context ft;
@@ -232,45 +287,13 @@ int main() {
     window.raw_worlds.emplace_back([&] {
         if (window.key(GLFW_KEY_Q)) window.close();
 
-        // ステンシルバッファの初期化
-        glClearStencil(0);
-        glClear(GL_STENCIL_BUFFER_BIT);
-        // ステンシルバッファの設定
-        glStencilFunc(GL_ALWAYS, 0, ~0);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_INVERT);
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-        // フォント本体の描画
-        // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glDepthMask(GL_FALSE);
-        shader.use();
-        shader.set_uniform("is_bezier", 0);
-        vao.bind([&] {
-            glDrawArrays(GL_TRIANGLE_FAN, 0, (int)vertices.size());
-        });
-
-        // 輪郭の丸みの描画
-        shader.set_uniform("is_bezier", 1);
-        vao_roundv.bind([&] {
-            glDrawArrays(GL_TRIANGLES, 0, (int)roundv.size());
-        });
-        glDepthMask(GL_TRUE);
-
-        // ステンシル関数の設定
-        glStencilFunc(GL_EQUAL, 0, ~0);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
-        // 四角形の描画
-        // glUseProgram(0);
-        // glBegin(GL_QUADS);        // 四角形の描画開始
-        // glVertex2f(-0.9f, -0.9f); // 左下
-        // glVertex2f(0.9f, -0.9f);  // 右下
-        // glVertex2f(0.9f, 0.9f);   // 右上
-        // glVertex2f(-0.9f, 0.9f);  // 左上
-        // glEnd();                  // 四角形の描画終了
-
-        // glFlush(); // 描画命令の実行
+        render_path(shader, vao, vertices.size(), vao_roundv, roundv.size());
+        render_path(shader, vao, vertices.size(), vao_roundv, roundv.size());
+        render_path(shader, vao, vertices.size(), vao_roundv, roundv.size());
+        render_path(shader, vao, vertices.size(), vao_roundv, roundv.size());
+        render_path(shader, vao, vertices.size(), vao_roundv, roundv.size());
+        render_path(shader, vao, vertices.size(), vao_roundv, roundv.size());
+        render_path(shader, vao, vertices.size(), vao_roundv, roundv.size());
 
         font_ssaa_shader.use();
         quad_vao.bind([&] {
