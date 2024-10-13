@@ -116,7 +116,7 @@ static GlyphOutline parse_glyph(const FT_Outline &outline) {
 }
 
 int main() {
-    debug(hi_sumigl());
+    debug(GL::hi_sumigl());
     freetype::Context ft;
     auto *face = ft.load_font("assets/fonts/main.ttf");
 
