@@ -36,7 +36,7 @@ class Window {
 
   public:
     GUI &gui;
-    std::optional<ProgramObject> default_shader;
+    std::optional<GL::ProgramObject> default_shader;
     Material *default_material = nullptr;
     Viewport *default_viewport = nullptr;
     BufferedSet<std::function<void()> *> resource_updates;

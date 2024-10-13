@@ -150,19 +150,19 @@ int main() {
     // buffer[65].points[4] = {0.2, 0.2, 1};
     // buffer[65].points[5] = {0.8, 0.2, 1};
     // buffer[65].points[6] = {0.5, 0.8, 1};
-    debug(glyph_outlines[65].bodies);
-    debug(glyph_outlines[65].rounds);
+    // debug(glyph_outlines[65].bodies);
+    // debug(glyph_outlines[65].rounds);
 
     GUI gui;
     Window &window = gui.create_window(500, 500, "魔法使いの書斎");
 
     // シェーダーのコンパイル
-    GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);
-    GLuint geometry_shader = create_shader(GL_GEOMETRY_SHADER, GEOMETRY_SHADER_SOURCE);
-    GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
+    GLuint vertex_shader = GL::create_shader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);
+    GLuint geometry_shader = GL::create_shader(GL_GEOMETRY_SHADER, GEOMETRY_SHADER_SOURCE);
+    GLuint fragment_shader = GL::create_shader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
 
     // シェーダープログラムのリンク
-    ProgramObject shader = {
+    GL::ProgramObject shader = {
         vertex_shader,
         geometry_shader,
         fragment_shader,
@@ -177,9 +177,9 @@ int main() {
     std::vector<glm::vec2> &vertices = glyph_outlines[80].bodies;
     std::vector<glm::vec2> &roundv = glyph_outlines[80].rounds;
 
-    VertexArrayObject vao, vao_roundv;
-    VertexBufferObject vbo(vertices.size() * sizeof(glm::vec2), vertices.data(), GL_STATIC_DRAW);
-    VertexBufferObject vbo_roundv(roundv.size() * sizeof(glm::vec2), roundv.data(), GL_STATIC_DRAW);
+    GL::VertexArray vao, vao_roundv;
+    GL::VertexBuffer vbo(vertices.size() * sizeof(glm::vec2), vertices.data(), GL_STATIC_DRAW);
+    GL::VertexBuffer vbo_roundv(roundv.size() * sizeof(glm::vec2), roundv.data(), GL_STATIC_DRAW);
 
     vao.bind([&] {
         vbo.bind([&] {

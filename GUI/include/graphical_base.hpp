@@ -29,8 +29,8 @@ std::ostream &operator<<(std::ostream &os, const glm::mat<c, r, T, q> input_mat)
 } // namespace base
 
 // これより上に書かないと動かない
-#include "logger.hpp"
 #include <base.hpp>
+#include <logger.hpp>
 
 // base.hppのインクルードのあとでも問題無い処理
 namespace base {
@@ -38,7 +38,7 @@ namespace base {
 inline void get_errors_pre(const char *file, int line) {
     GLenum err;
     while ((err = glGetError()) != GL_NO_ERROR) {
-        //print_headline("❎", file, line);
+        // print_headline("❎", file, line);
         print_headline("cr", file, line);
         std::cerr << " " << err << std::endl;
     }
