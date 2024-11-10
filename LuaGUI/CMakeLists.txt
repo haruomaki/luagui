@@ -22,11 +22,9 @@ target_compile_options(LuaGUI PRIVATE ${WARNINGS})
 
 # Lua
 find_package(Lua REQUIRED)
-target_include_directories(LuaGUI SYSTEM PRIVATE ${LUA_INCLUDE_DIRS})
+message(STATUS "Found Lua ${LUA_VERSION_STRING}. Include path is \"${LUA_INCLUDE_DIR}\", library path is \"${LUA_LIBRARIES}\".")
+target_include_directories(LuaGUI SYSTEM PUBLIC ${LUA_INCLUDE_DIR}) # gentooではPUBLICでないと駄目だった
 target_link_libraries(LuaGUI PUBLIC ${LUA_LIBRARIES}) # 動的リンクでPUBLIC
 
-# solのインクルードパス
-target_include_directories(LuaGUI SYSTEM PUBLIC ../external)
-
 # コンパイル済みヘッダの設定
-target_precompile_headers(LuaGUI PUBLIC ../external/sol/sol.hpp)
+# target_precompile_headers(LuaGUI PUBLIC ../external/sol/sol.hpp)
