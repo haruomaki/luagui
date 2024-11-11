@@ -1,4 +1,4 @@
-#include <NewTexture.hpp>
+#include <Texture.hpp>
 #include <furitype.hpp>
 #include <sumigl.hpp>
 
