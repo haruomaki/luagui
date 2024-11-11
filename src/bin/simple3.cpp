@@ -1,3 +1,4 @@
+#include <NewTexture.hpp>
 #include <furitype.hpp>
 #include <sumigl.hpp>
 
@@ -116,7 +117,7 @@ static GlyphOutline parse_glyph(const FT_Outline &outline) {
 }
 
 // TODO: vaoにサイズ情報を付加
-GLuint render_path(const GL::ProgramObject &shader, const GL::VertexArray &body_vao, size_t body_size, const GL::VertexArray &round_vao, size_t round_size) {
+GL::Texture render_path(const GL::ProgramObject &shader, const GL::VertexArray &body_vao, size_t body_size, const GL::VertexArray &round_vao, size_t round_size) {
     // ステンシルバッファの初期化
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
@@ -162,11 +163,10 @@ GLuint render_path(const GL::ProgramObject &shader, const GL::VertexArray &body_
     std::vector<GLubyte> stencil_data(width * height);
     glReadPixels(0, 0, width, height, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, stencil_data.data());
 
-    // TODO: テクスチャのラッパークラスを作ってメモリリークを防止
-    GLuint stencil_tex;
-    glGenTextures(1, &stencil_tex);
-    glBindTexture(GL_TEXTURE_2D, stencil_tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, stencil_data.data());
+    GL::Texture stencil_tex;
+    stencil_tex.bind([&] {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, stencil_data.data());
+    });
     return stencil_tex;
 }
 
