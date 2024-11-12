@@ -8,6 +8,7 @@ Checks:
   - cppcoreguidelines-*
   - -cppcoreguidelines-avoid-magic-numbers # マジックナンバー
   - -cppcoreguidelines-pro-bounds-constant-array-index # std::arrayの添え字として変数を許容
+  - -cppcoreguidelines-pro-bounds-pointer-arithmetic # ポインタ変数から添え字アクセスできるように
   - -cppcoreguidelines-pro-type-union-access # TODO: vec3の要素にアクセスできるように？
   - -cppcoreguidelines-avoid-const-or-ref-data-members # TODO: 参照型のメンバ変数を許容
   - -cppcoreguidelines-init-variables # 変数宣言時の未初期化を許容
@@ -23,6 +24,7 @@ Checks:
   - -misc-non-private-member-variables-in-classes # publicおよびprotectedメンバ変数を無制限に許容
   - modernize-*
   - -modernize-use-trailing-return-type
+  - -modernize-avoid-c-arrays # C言語スタイルの配列を許容
   - performance-*
   - portability-*
   - readability-*
@@ -46,6 +48,7 @@ CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
   readability-identifier-naming.ParameterCase: lower_case
   readability-identifier-naming.UnionCase: CamelCase
   readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.GlobalConstantCase: UPPER_CASE # グローバル定数
   readability-identifier-naming.TypeTemplateParameterCase: CamelCase # テンプレート型引数
   readability-identifier-naming.ValueTemplateParameterCase: lower_case # 非型テンプレート引数
   readability-identifier-length.IgnoredVariableNames: ss

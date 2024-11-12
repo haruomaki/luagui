@@ -16,13 +16,9 @@ endif()
 target_include_directories(GUI PUBLIC include)
 target_compile_options(GUI PRIVATE ${WARNINGS})
 
-# OpenGL & GLEW & GLFW
-find_package(OpenGL REQUIRED)
-# message("${OPENGL_FOUND} ${OPENGL_INCLUDE_DIRS} ${OPENGL_LIBRARIES} ぐ")
-find_package(GLEW REQUIRED)
-# message("${GLEW_FOUND} ${GLEW_INCLUDE_DIRS} ${GLEW_LIBRARIES} お")
-target_include_directories(GUI SYSTEM PRIVATE ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-target_link_libraries(GUI PUBLIC ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES}) # 動的リンクでPUBLIC
+# SumiGL（OpenGLのラッパー）
+add_subdirectory(sumigl)
+target_link_libraries(GUI PUBLIC sumigl)
 
 # GLFW https://www.glfw.org/docs/3.3/build_guide.html#build_link_cmake_source
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -38,10 +34,9 @@ target_include_directories(GUI SYSTEM PRIVATE ${PNG_INCLUDE_DIRS}) # SYSTEMを�
 target_link_libraries(GUI PRIVATE ${PNG_LIBRARIES})
 # message("libpng: ${PNG_FOUND} ${PNG_INCLUDE_DIRS} ${PNG_LIBRARIES}")
 
-# FreeType
-find_package(Freetype REQUIRED)
-target_include_directories(GUI SYSTEM PRIVATE ${FREETYPE_INCLUDE_DIRS}) # SYSTEMを指定して警告対象から除外
-target_link_libraries(GUI PRIVATE ${FREETYPE_LIBRARIES})
+# FuriType（FreeTypeのラッパー）
+add_subdirectory(furitype)
+target_link_libraries(GUI PUBLIC furitype)
 
 # Box2D & box2cpp Worldから直接扱えるようにPUBLIC
 if (MSVC)

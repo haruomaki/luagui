@@ -26,5 +26,8 @@ message(STATUS "Found Lua ${LUA_VERSION_STRING}. Include path is \"${LUA_INCLUDE
 target_include_directories(LuaGUI SYSTEM PUBLIC ${LUA_INCLUDE_DIR}) # gentooではPUBLICでないと駄目だった
 target_link_libraries(LuaGUI PUBLIC ${LUA_LIBRARIES}) # 動的リンクでPUBLIC
 
+# Solなどの外部ライブラリ
+target_include_directories(LuaGUI SYSTEM PUBLIC third-party) # SYSTEMを付けたいので別ディレクトリにしている
+
 # コンパイル済みヘッダの設定
 # target_precompile_headers(LuaGUI PUBLIC ../external/sol/sol.hpp)

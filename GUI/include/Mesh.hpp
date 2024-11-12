@@ -16,8 +16,8 @@ class StaticMesh : virtual public Resource {
 
   protected:
     bool vao_should_regen_ = true;
-    VertexBufferObject vbo_{};
-    ElementBufferObject ebo_{};
+    GL::VertexBuffer vbo_;
+    GL::ElementBuffer ebo_;
     const GLenum usage_;
     size_t n_ = 0;
     size_t indices_n_ = 0;
@@ -27,13 +27,13 @@ class StaticMesh : virtual public Resource {
     void regenerate_vbo() {
         info("VBO生成");
         // 空のVBOを生成
-        this->vbo_ = VertexBufferObject(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, usage_);
+        this->vbo_ = GL::VertexBuffer(sizeof(InterleavedVertexInfo) * vertices.capacity(), nullptr, usage_);
         vao_should_regen_ = true;
     }
 
     void regenerate_ibo() {
         info("IBO生成");
-        this->ebo_ = ElementBufferObject(sizeof(int) * indices.size(), indices.data(), usage_);
+        this->ebo_ = GL::ElementBuffer(sizeof(int) * indices.size(), indices.data(), usage_);
         vao_should_regen_ = true;
     }
 
@@ -101,26 +101,26 @@ class MeshObject : virtual public WorldObject {
 };
 
 struct ModelMatricesObservation {
-    vector<glm::mat4> model_matrices{};
-    std::unordered_map<const MeshObject *, size_t> object_index_map{};
-    std::vector<const MeshObject *> initial_list{};
-    std::vector<const MeshObject *> delete_list{};
+    vector<glm::mat4> model_matrices;
+    std::unordered_map<const MeshObject *, size_t> object_index_map;
+    std::vector<const MeshObject *> initial_list;
+    std::vector<const MeshObject *> delete_list;
 
     // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
     const glm::mat4 *matrices_raw = nullptr;
-    std::pair<VertexBufferObject, VertexArrayObject> vbovao{};
+    std::pair<GL::VertexBuffer, GL::VertexArray> vbovao;
 };
 
 struct MeshDrawManager {
     // メッシュ・マテリアル・シェーダの三項組ごとに一つモデル行列のvectorが決まる。
-    using KeyType = std::tuple<StaticMesh *, const Material *, const ProgramObject *>;
+    using KeyType = std::tuple<StaticMesh *, const Material *, const GL::ProgramObject *>;
     // この行列キューごとに一回ドローコールを行う
-    std::map<KeyType, ModelMatricesObservation> observations{};
+    std::map<KeyType, ModelMatricesObservation> observations;
 
     static inline KeyType key_from(const MeshObject *obj) {
         StaticMesh *mesh = &obj->mesh;
         const Material *material = &obj->material;
-        const ProgramObject *shader = &obj->material.shader;
+        const GL::ProgramObject *shader = &obj->material.shader;
         auto key = std::make_tuple(mesh, material, shader);
         return key;
     }
@@ -192,16 +192,16 @@ struct MeshDrawManager {
         });
     }
 
-    static VertexArrayObject generate_vao(StaticMesh &mesh, const ProgramObject &shader, const VertexBufferObject &model_matrices_vbo) {
+    static GL::VertexArray generate_vao(StaticMesh &mesh, const GL::ProgramObject &shader, const GL::VertexBuffer &model_matrices_vbo) {
         info("VAO生成");
-        auto vao = VertexArrayObject();
+        auto vao = GL::VertexArray();
 
         // VAOに頂点の座標と色を関連付ける
         vao.bind([&] {
             mesh.vbo_.bind([&] {
-                shader.set_attribute("position", 3, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
-                shader.set_attribute("color", 4, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
-                shader.set_attribute("uv", 2, GL_FLOAT, GL_FALSE, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
+                shader.set_attribute_float("position", 3, false, sizeof(InterleavedVertexInfo), nullptr);                                  // 位置
+                shader.set_attribute_float("color", 4, false, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(sizeof(float) * 3)); // 色 offset=12 NOLINT(performance-no-int-to-ptr)
+                shader.set_attribute_float("uv", 2, false, sizeof(InterleavedVertexInfo), reinterpret_cast<void *>(28));
             });
             mesh.ebo_.keep_bind();
             model_matrices_vbo.bind([&] {
@@ -214,7 +214,7 @@ struct MeshDrawManager {
         return vao;
     }
 
-    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const VertexArrayObject &vao, size_t count_instances, const Camera &camera) {
+    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const Camera &camera) {
         // シェーダを有効化
         const auto &shader = material.shader;
         shader.use();
@@ -228,6 +228,8 @@ struct MeshDrawManager {
         case GL_LINE_STRIP:
         case GL_LINE_LOOP:
             glLineWidth(GLfloat(material.line_width));
+            break;
+        default: // GL_TRIANGLE_FANなどのときは何もしない
             break;
         }
 
@@ -268,13 +270,13 @@ struct MeshDrawManager {
         // TODO: メッシュのVBO更新の際はVAOの再生成だけで十分。model_matrices_vboの再生成は必要ない
         if (obs.matrices_raw != model_matrices.data() || mesh.vao_should_regen_) {
             obs.matrices_raw = model_matrices.data();
-            auto model_matrices_vbo = VertexBufferObject(sizeof(glm::mat4) * model_matrices.capacity(), nullptr, GL_DYNAMIC_DRAW);
+            auto model_matrices_vbo = GL::VertexBuffer(sizeof(glm::mat4) * model_matrices.capacity(), nullptr, GL_DYNAMIC_DRAW);
             auto batch_vao = generate_vao(mesh, material.shader, model_matrices_vbo);
             obs.vbovao = std::make_pair(std::move(model_matrices_vbo), std::move(batch_vao));
         }
 
-        VertexBufferObject &model_matrices_vbo = obs.vbovao.first;
-        const VertexArrayObject &batch_vao = obs.vbovao.second;
+        GL::VertexBuffer &model_matrices_vbo = obs.vbovao.first;
+        const GL::VertexArray &batch_vao = obs.vbovao.second;
 
         // VBOに毎フレーム値をコピー
         model_matrices_vbo.subdata(0, sizeof(glm::mat4) * model_matrices.size(), model_matrices.data());
