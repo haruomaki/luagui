@@ -58,6 +58,9 @@ void register_world(sol::state &lua) {
             camera.set_active();
         }
 
+        // auto migmix_font = new Font();
+        // world.append_child<Text>(*migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
+
         return world;
     });
 

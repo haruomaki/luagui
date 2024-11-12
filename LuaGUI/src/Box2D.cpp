@@ -33,7 +33,7 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 
         float radius = tbl["radius"].get<float>();
 
-        cc = rbc->get_owner()->add_component<ColliderComponent>(b2Circle{.center = b2Vec2{x, y}, .radius = radius}, shape_params);
+        cc = rbc->get_owner().add_component<ColliderComponent>(b2Circle{.center = b2Vec2{x, y}, .radius = radius}, shape_params);
     } else if (shape == "edge") {
         using Points = std::vector<std::vector<float>>;
         Points points = tbl["points"].get_or(Points{});
@@ -42,13 +42,13 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         auto x2 = points.at(1).at(0);
         auto y2 = points.at(1).at(1);
 
-        cc = rbc->get_owner()->add_component<ColliderComponent>(b2Segment{{x1, y1}, {x2, y2}}, shape_params);
+        cc = rbc->get_owner().add_component<ColliderComponent>(b2Segment{{x1, y1}, {x2, y2}}, shape_params);
     } else if (shape == "rect") {
         float hx = tbl["halfWidth"].get_or(0.01f);
         float hy = tbl["halfHeight"].get_or(0.01f);
 
         auto poly = b2MakeBox(hx, hy);
-        cc = rbc->get_owner()->add_component<ColliderComponent>(poly, shape_params);
+        cc = rbc->get_owner().add_component<ColliderComponent>(poly, shape_params);
     } else {
         warn("未知の形状種です: ", shape);
     }
@@ -82,7 +82,7 @@ static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
     chain_params.friction = tbl["friction"].get_or(0.1f);
     chain_params.restitution = tbl["restitution"].get_or(0.3f);
 
-    auto *ccc = rbc->get_owner()->add_component<ChainColliderComponent>(chain_params);
+    auto *ccc = rbc->get_owner().add_component<ChainColliderComponent>(chain_params);
 
     // 衝突時のコールバックを設定
     if (ccc != nullptr && tbl["on_collision_enter"].valid()) {

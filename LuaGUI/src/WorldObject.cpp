@@ -103,7 +103,7 @@ void register_world_object(sol::state &lua) {
     lua.new_usertype<Component>(
         "Component",
         "id", &Component::id,
-        "owner", sol::readonly_property([](Component *comp) { return comp->get_owner(); }),
+        "owner", sol::readonly_property([](Component *comp) { return &comp->get_owner(); }),
         "erase", [](Component *comp) { comp->erase(); });
 
     // Updateコンポーネント

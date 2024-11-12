@@ -7,6 +7,7 @@
 #include <box2cpp/box2cpp.h>
 
 class WorldObject;
+class World;
 
 // コンポーネントの基底クラス。
 class Component {
@@ -21,7 +22,9 @@ class Component {
     Component();
     virtual ~Component() = default;
 
-    [[nodiscard]] WorldObject *get_owner() const { return owner_; }
+    [[nodiscard]] WorldObject &get_owner() const;
+    [[nodiscard]] World &get_world() const;
+    [[nodiscard]] Window &get_window() const;
 
     // コンポーネントを削除する。
     bool erase();
