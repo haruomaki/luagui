@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Property.hpp"
+#include <stdexcept> // libc++では不要
+#include <string>    // libc++では不要
 
 class Window;
 
@@ -14,7 +16,7 @@ class Resource {
     friend class Window;
     Window *window_; // コンストラクト後は変更されない
 
-    std::string name_{};
+    std::string name_;
 
     // コンストラクタのかわりにグローバル変数を利用してwindow_を初期化するための内部関数
     static Window *get_window_static();
