@@ -14,6 +14,7 @@ else()
 endif()
 
 target_include_directories(GUI PUBLIC include)
+target_include_directories(GUI PUBLIC include/GUI)
 target_compile_options(GUI PRIVATE ${WARNINGS})
 
 # SumiGL（OpenGLのラッパー）
@@ -48,7 +49,7 @@ target_link_libraries(GUI PUBLIC box2d)
 
 
 # コンパイル済みヘッダの設定
-target_precompile_headers(GUI PUBLIC ./include/master.hpp)
+target_precompile_headers(GUI PUBLIC include/GUI/master.hpp)
 
 
 # 変数のダンプ
