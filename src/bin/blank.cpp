@@ -1,6 +1,6 @@
-#include <master.hpp>
+#include <GUI/master.hpp>
 
-#include "utility.hpp"
+#include "GUI/utility.hpp"
 
 int main() {
     GUI gui;
