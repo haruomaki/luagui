@@ -33,6 +33,10 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 
     debug(gui.dpi());
 
+    // デフォルトのフォントを生成
+    auto &default_font = window.append_resource<Font>();
+    lua["__CurrentFont"] = &default_font;
+
     bool coroutine_finished = false;
 
     // フレームごとにコルーチンを進める。コルーチンが最後まで到達したら速やかにウィンドウを閉じる。
