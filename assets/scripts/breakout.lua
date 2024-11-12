@@ -87,6 +87,8 @@ run_window(800, 600, "Test Window", function()
     camera.scale_prop = 3.5
     world.b2world.gravity = { 0, -0.1 }
 
+    put_text()
+
     -- 床と壁の剛体を作成
     wakka({ { -StageHW, -0.1 }, { -StageHW, 0.2 }, { StageHW, 0.2 }, { StageHW, -0.1 } })
 
