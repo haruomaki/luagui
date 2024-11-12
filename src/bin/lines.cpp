@@ -35,7 +35,7 @@ int main() {
     auto &top_left_point = ui_world.append_child<StickyPointTopLeft>();
 
     // 文字の表示
-    Font migmix_font;
+    auto &migmix_font = window.append_resource<Font>();
     auto &sample_text = top_left_point.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     /* auto &credit_text =*/ui_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
     sample_text.position = {0.005, -0.02, 0};

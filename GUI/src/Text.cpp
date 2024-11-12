@@ -10,7 +10,7 @@ DEFINE_RUNTIME_ERROR(FreeTypeException);
 // NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
-Font::Font()
+Font::Font(const std::string &font_path)
     : shader_(GL::ProgramObject{
           GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
           GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))}) {
@@ -22,7 +22,7 @@ Font::Font()
 
     // フォントを読み込む
     FT_Face face;
-    if (FT_New_Face(ft, "assets/fonts/main.ttf", 0, &face) != 0) {
+    if (FT_New_Face(ft, font_path.c_str(), 0, &face) != 0) {
         throw FreeTypeException("ERROR::FREETYPE: Failed to load font");
     }
 

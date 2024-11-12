@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Draw.hpp"
+#include <Resource.hpp>
 #include <Shader.hpp>
 
 struct Character {
@@ -11,7 +12,7 @@ struct Character {
 };
 
 // 文字描画用のシェーダと48ptフォントテクスチャのセット
-class Font {
+class Font : public Resource {
     GL::ProgramObject shader_;
     std::map<char, Character> Characters;
     GL::VertexArray vao_;
@@ -20,7 +21,7 @@ class Font {
     friend class Text;
 
   public:
-    Font();
+    Font(const std::string &font_path = "assets/fonts/main.ttf");
 };
 
 class Text : public Draw {

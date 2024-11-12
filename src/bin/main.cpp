@@ -8,13 +8,13 @@ int main() {
 
     // バーテックスシェーダのコンパイル
     auto vsh_string = load_string("assets/shaders/default.vsh");
-    auto vsh_id = create_shader(GL_VERTEX_SHADER, vsh_string);
+    auto vsh_id = GL::create_shader(GL_VERTEX_SHADER, vsh_string);
 
     // フラグメントシェーダのコンパイル
     auto fsh_string = load_string("assets/shaders/default.fsh");
-    auto fsh_id = create_shader(GL_FRAGMENT_SHADER, fsh_string);
+    auto fsh_id = GL::create_shader(GL_FRAGMENT_SHADER, fsh_string);
 
-    auto main_shader = ProgramObject{vsh_id, fsh_id};
+    auto main_shader = GL::ProgramObject{vsh_id, fsh_id};
 
     auto &camera = main_world.append_child<MobileNormalCamera>();
     camera.position = {0, 0, 1000};
@@ -22,7 +22,7 @@ int main() {
     camera.scale = 2000; // 速度調整
     camera.set_active();
 
-    Font migmix_font;
+    auto &migmix_font = window.append_resource<Font>();
     auto &sample_text = main_world.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = main_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
 
