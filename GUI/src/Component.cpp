@@ -12,7 +12,7 @@ bool Component::erase() {
     auto *ptr_to_erase = this;
 
     // 生ポインタを使用して要素を削除する
-    auto &candidates = get_owner().components_;
+    auto &candidates = owner().components_;
     bool success = false;
     for (auto &[key, comp] : candidates.key_values()) {
         if (comp == ptr_to_erase) {
@@ -24,16 +24,16 @@ bool Component::erase() {
     return success;
 }
 
-WorldObject &Component::get_owner() const { return *owner_; }
-World &Component::get_world() const { return owner_->get_world(); }
-Window &Component::get_window() const { return owner_->get_world().window; }
+WorldObject &Component::owner() const { return *owner_; }
+World &Component::world() const { return owner_->get_world(); }
+Window &Component::window() const { return owner_->get_world().window; }
 
 UpdateComponent::UpdateComponent(std::function<void(UpdateComponent &)> &&f) {
     this->func_ = [f, this] { f(*this); };
-    get_world().updates.request_set(&this->func_);
+    world().updates.request_set(&this->func_);
 }
 UpdateComponent::~UpdateComponent() {
-    get_world().updates.request_erase(&this->func_);
+    world().updates.request_erase(&this->func_);
 }
 
 // ---------------------
@@ -44,16 +44,16 @@ RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
     trace("RigidbodyComponentのコンストラクタです。", this);
 
     // Worldのrigidbodyリストに追加
-    get_world().rigidbody_components.request_set(this);
+    world().rigidbody_components.request_set(this);
 
-    auto &b2world = get_world().b2world;
+    auto &b2world = world().b2world;
     b2::Body tmp_body = b2world.CreateBody(b2::OwningHandle, body_params);
     b2body = std::move(tmp_body);
 }
 
 RigidbodyComponent::~RigidbodyComponent() {
     // print("RigidbodyComponentのデストラクタです。", this);
-    auto ccs = get_owner().get_components<ColliderComponent>();
+    auto ccs = owner().get_components<ColliderComponent>();
     // debug(ccs);
     for (auto *cc : ccs) {
         print("けすよ", cc->shape_ref_.Handle().index1, ", ", cc);
@@ -62,7 +62,7 @@ RigidbodyComponent::~RigidbodyComponent() {
 
     // ChainColliderComponentも消す
     // debug(get_owner()->get_components<ChainColliderComponent>());
-    for (auto *ccc : get_owner().get_components<ChainColliderComponent>()) {
+    for (auto *ccc : owner().get_components<ChainColliderComponent>()) {
         print("チェーンをけすよ", ccc->chain_ref_.Handle().index1);
         ccc->erase();
     }
@@ -71,7 +71,7 @@ RigidbodyComponent::~RigidbodyComponent() {
     this->b2body.Destroy();
 
     // Worldのrigidbodyリストから削除
-    get_world().rigidbody_components.request_erase(this);
+    world().rigidbody_components.request_erase(this);
     // print("RigidbodyComponentのデストラクタおわりです");
 }
 
@@ -81,7 +81,7 @@ RigidbodyComponent::~RigidbodyComponent() {
 
 template <std::derived_from<Component> Comp>
 static RigidbodyComponent &get_rigidbody(Comp *self) {
-    auto rbcs = self->get_owner().template get_components<RigidbodyComponent>();
+    auto rbcs = self->owner().template get_components<RigidbodyComponent>();
     if (rbcs.empty()) throw std::runtime_error("Rigidbodyが付いていません");
     if (rbcs.size() > 1) throw std::runtime_error("Rigidbodyが複数付いています");
     return *rbcs[0];

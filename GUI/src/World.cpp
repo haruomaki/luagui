@@ -19,13 +19,13 @@ void World::master_physics() {
     // 物理演算結果をWorldObjectに反映
     rigidbody_components.foreach_flush([](RigidbodyComponent *rbc) {
         const auto physics_position = rbc->b2body.GetPosition();
-        rbc->get_owner().position = {physics_position.x, physics_position.y, 0};
+        rbc->owner().position = {physics_position.x, physics_position.y, 0};
 
         // b2Rot（サインコサイン）からglm::quatに変換する
         const auto physics_rotation = rbc->b2body.GetRotation();
         const float angle = atan2(physics_rotation.s, physics_rotation.c);
         const auto quat = glm::angleAxis(angle, glm::vec3{0, 0, 1}); // Z軸回転
-        rbc->get_owner().rotate = quat;
+        rbc->owner().rotate = quat;
     });
 
     // 衝突を検出してコールバックを実行
