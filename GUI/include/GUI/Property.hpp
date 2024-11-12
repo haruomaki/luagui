@@ -3,8 +3,8 @@
 
 #pragma once
 
+#include "meta.hpp"
 #include <functional>
-#include <meta.hpp>
 
 // 読み取り専用プロパティ
 template <auto getter>

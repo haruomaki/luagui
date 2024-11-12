@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Resource.hpp"
-#include <graphical_base.hpp>
+#include <GUI/graphical_base.hpp>
 
 // 描画領域（ビューポート）を管理するクラス
 class Viewport {

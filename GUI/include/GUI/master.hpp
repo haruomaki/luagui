@@ -1,21 +1,19 @@
 #pragma once
 
-#include <Camera.hpp>
-#include <Draw.hpp>
-#include <GUI.hpp>
-#include <Material.hpp>
-#include <Mesh.hpp>
-#include <Physics.hpp>
-#include <Resource.hpp>
-#include <Shader.hpp>
-#include <Text.hpp>
-#include <Texture.hpp>
-#include <Timer.hpp>
-#include <Update.hpp>
-#include <Viewport.hpp>
-#include <Window.hpp>
-#include <World.hpp>
-#include <WorldObject.hpp>
-#include <graphical_base.hpp>
+#include <GUI/Camera.hpp>
+#include <GUI/Draw.hpp>
+#include <GUI/GUI.hpp>
+#include <GUI/Material.hpp>
+#include <GUI/Mesh.hpp>
+#include <GUI/Physics.hpp>
+#include <GUI/Resource.hpp>
+#include <GUI/Text.hpp>
+#include <GUI/Timer.hpp>
+#include <GUI/Update.hpp>
+#include <GUI/Viewport.hpp>
+#include <GUI/Window.hpp>
+#include <GUI/World.hpp>
+#include <GUI/WorldObject.hpp>
+#include <GUI/graphical_base.hpp>
 
 #include "UpdateObject.hpp"

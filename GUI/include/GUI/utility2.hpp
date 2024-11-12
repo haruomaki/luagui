@@ -1,6 +1,6 @@
 #pragma once
 
-#include <utility.hpp>
+#include <GUI/utility.hpp>
 
 inline MeshObject &new_rect(WorldObject &parent, const std::vector<glm::vec3> &coords, Material &material) {
     auto &window = parent.get_world().window;

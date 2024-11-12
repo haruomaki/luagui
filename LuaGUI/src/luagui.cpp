@@ -1,4 +1,4 @@
-#include <GUI.hpp>
+#include <GUI/GUI.hpp>
 #include <luagui.hpp>
 
 #include "Box2D.hpp"

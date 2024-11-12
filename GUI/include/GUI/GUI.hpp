@@ -1,6 +1,6 @@
 #pragma once
 
-#include <graphical_base.hpp>
+#include <GUI/graphical_base.hpp>
 
 class Window;
 

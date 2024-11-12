@@ -1,5 +1,6 @@
-#include <utility.hpp>
-#include <utility2.hpp>
+#include "World.hpp"
+#include <GUI/utility.hpp>
+#include <GUI/utility2.hpp>
 
 static Camera &create_camera(WorldObject &parent) {
     auto &camera = parent.append_child<OrthoCamera>();

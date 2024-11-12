@@ -2,8 +2,6 @@
 
 #include <variant>
 
-#include <graphical_base.hpp>
-
 #include <box2cpp/box2cpp.h>
 
 class WorldObject;
@@ -17,7 +15,7 @@ class Component {
 
   public:
     // すべてのコンポーネントにIDを振るのは面倒＆ID無しも許容したいため、IDでなく型をキーとするmultimapで管理。
-    string id;
+    std::string id;
 
     Component();
     virtual ~Component() = default;

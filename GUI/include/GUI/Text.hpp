@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Draw.hpp"
-#include <Resource.hpp>
+#include "Resource.hpp"
 #include <Shader.hpp>
 
 struct Character {

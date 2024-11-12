@@ -1,5 +1,5 @@
+#include <LuaGUI/luagui.hpp>
 #include <filesystem>
-#include <luagui.hpp>
 
 namespace fs = std::filesystem;
 

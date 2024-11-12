@@ -2,10 +2,10 @@
 
 #include <typeindex>
 
-#include <Component.hpp>
-#include <Property.hpp>
-#include <buffered_container.hpp>
-#include <graphical_base.hpp>
+#include "Component.hpp"
+#include "Property.hpp"
+#include "buffered_container.hpp"
+#include "graphical_base.hpp"
 
 class World;
 

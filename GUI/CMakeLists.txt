@@ -14,7 +14,7 @@ else()
 endif()
 
 target_include_directories(GUI PUBLIC include)
-target_include_directories(GUI PUBLIC include/GUI)
+target_include_directories(GUI PRIVATE include/GUI)
 target_compile_options(GUI PRIVATE ${WARNINGS})
 
 # SumiGL（OpenGLのラッパー）

@@ -1,5 +1,6 @@
-#include <master.hpp>
-#include <utility.hpp>
+#include "Texture.hpp"
+#include <GUI/master.hpp>
+#include <GUI/utility.hpp>
 
 int main() {
     GUI gui;

@@ -14,7 +14,7 @@
 #include <logger.hpp>
 
 // これより上に書かないと動かない
-#include <base.hpp>
+#include <GUI/base.hpp>
 
 // base.hppのインクルードのあとでも問題無い処理
 namespace base {

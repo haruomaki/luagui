@@ -1,3 +1,4 @@
+#include "Text.hpp"
 #include <GUI/Text.hpp>
 
 void register_text(sol::state &lua) {

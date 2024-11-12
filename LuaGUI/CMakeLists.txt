@@ -17,7 +17,8 @@ endif()
 # libGUIにリンク
 target_link_libraries(LuaGUI PRIVATE GUI)
 
-target_include_directories(LuaGUI PUBLIC include/LuaGUI)
+target_include_directories(LuaGUI PUBLIC include)
+target_include_directories(LuaGUI PRIVATE include/LuaGUI)
 target_compile_options(LuaGUI PRIVATE ${WARNINGS})
 
 # Lua

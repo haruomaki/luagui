@@ -4,7 +4,6 @@
 #include "Resource.hpp"
 #include "Shader.hpp"
 #include "buffered_container.hpp"
-#include <graphical_base.hpp>
 
 class SizeCallback;
 class World;

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Property.hpp>
-#include <graphical_base.hpp>
+#include "Property.hpp"
 
 class Window;
 
