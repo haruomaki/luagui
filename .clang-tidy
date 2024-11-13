@@ -49,6 +49,8 @@ CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
   readability-identifier-naming.UnionCase: CamelCase
   readability-identifier-naming.VariableCase: lower_case
   readability-identifier-naming.GlobalConstantCase: UPPER_CASE # グローバル定数
+  readability-identifier-naming.ConstexprFunctionCase: UPPER_CASE # constexpr関数
+  readability-identifier-naming.ConstexprVariableCase: lower_case # constexpr変数
   readability-identifier-naming.TypeTemplateParameterCase: CamelCase # テンプレート型引数
   readability-identifier-naming.ValueTemplateParameterCase: lower_case # 非型テンプレート引数
   readability-identifier-length.IgnoredVariableNames: ss

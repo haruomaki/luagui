@@ -1,6 +1,6 @@
 #pragma once
 
-#define GLM_ENABLE_EXPERIMENTAL // TODO: 無いとglmが全く使えないが、他に対策があるかも＆アップデートで変わるかも
+#define GLM_ENABLE_EXPERIMENTAL // 無いとglmが全く使えないが、他に対策があるかも＆アップデートで変わるかも
 
 #include <GL/glew.h> // glとglfw3より早く
 
@@ -46,13 +46,12 @@ struct RGBA {
     }
 };
 
-// TODO: 可変長テンプレート関数化する
-#define TRANSLATE(...) glm::translate(glm::mat4(1), __VA_ARGS__)
-#define ROTATE(angle, ...) glm::rotate(glm::mat4(1), angle, __VA_ARGS__)
-#define ANGLE_X(angle) glm::angleAxis(angle, glm::vec3{1, 0, 0})
-#define ANGLE_Y(angle) glm::angleAxis(angle, glm::vec3{0, 1, 0})
-#define ANGLE_Z(angle) glm::angleAxis(angle, glm::vec3{0, 0, 1})
-#define SCALE(...) glm::scale(glm::mat4(1), __VA_ARGS__)
+constexpr inline glm::mat4 TRANSLATE(glm::vec3 pos) { return glm::translate(glm::mat4(1), pos); }
+constexpr inline glm::mat4 ROTATE(float angle, glm::vec3 axis) { return glm::rotate(glm::mat4(1), angle, axis); }
+constexpr inline glm::mat4 SCALE(glm::vec3 scales) { return glm::scale(glm::mat4(1), scales); }
+constexpr inline glm::quat ANGLE_X(float angle) { return glm::angleAxis(angle, glm::vec3{1, 0, 0}); }
+constexpr inline glm::quat ANGLE_Y(float angle) { return glm::angleAxis(angle, glm::vec3{0, 1, 0}); }
+constexpr inline glm::quat ANGLE_Z(float angle) { return glm::angleAxis(angle, glm::vec3{0, 0, 1}); }
 
 } // namespace base
 
