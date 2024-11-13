@@ -79,12 +79,12 @@ local function wakka(points, on_collision_enter)
     })
 end
 
-run_window(800, 600, "Test Window", function()
+run_window(800, 600, "ブロック崩し", function()
     b2SetLengthUnitsPerMeter(0.001)
     local world = create_world()
     local camera = supercamera_2d("quit", "zoom")
     camera.position = { 0, 0.05 }
-    camera.scale_prop = 3.5
+    camera.scale_prop = 2
     world.b2world.gravity = { 0, -0.1 }
 
     world:draw_text("mochi-mochi panic", { position = { -0.05, 0 } })
