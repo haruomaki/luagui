@@ -15,9 +15,9 @@ class StickyPointTopLeft : public Update {
 
     void update() override {
         const auto size = viewport_.get_size();
-        auto [vpixel_x, vpixel_y] = this->get_world().window.gui.vpixel();
-        const auto width = float(size.x) * vpixel_x;
-        const auto height = float(size.y) * vpixel_y;
+        auto ms = this->get_world().window.gui.master_scale();
+        const auto width = float(size.x) * ms.x;
+        const auto height = float(size.y) * ms.y;
 
         set_position({-width / 2, height / 2, 0});
     }

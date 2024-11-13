@@ -16,12 +16,10 @@ GUI::GUI() {
     auto vm = this->video_mode();
     dpi_ = {float(vm.width) / float(width_mm) * 1000.f * inch_meter, float(vm.height) / float(height_mm) * 1000.f * inch_meter};
 
-    // DPIに基づいて、実スケールでのピクセル寸法を計算する
-    px_meter_ = {inch_meter / dpi_.first, inch_meter / dpi_.second};
-
-    // vpixelも計算する
-    auto [xscale, yscale] = this->monitor_content_scale();
-    vpixel_ = {px_meter_.first / xscale, px_meter_.second / yscale};
+    // マスタースケールの設定。96DPIであると仮定し、1m=float値1の縮尺にする。
+    float s = inch_meter / 96;
+    auto [vx, vy] = monitor_content_scale();
+    master_scale_ = {s / vx, s / vy};
 }
 
 GUI::~GUI() {
