@@ -88,7 +88,7 @@ static GlyphOutline parse_glyph(const FT_Outline &outline) {
             FT_Vector p = outline.points[start + (i % len)];
             tag_hist2 = tag_hist1;
             tag_hist1 = tag;
-            tag = outline.tags[start + (i % len)];
+            tag = (unsigned char)outline.tags[start + (i % len)];
 
             if (tag == 1) {
                 add_body(p);
@@ -117,7 +117,7 @@ static GlyphOutline parse_glyph(const FT_Outline &outline) {
 }
 
 // TODO: vaoにサイズ情報を付加
-GL::Texture render_path(const GL::ProgramObject &shader, const GL::VertexArray &body_vao, size_t body_size, const GL::VertexArray &round_vao, size_t round_size) {
+static GL::Texture render_path(const GL::ProgramObject &shader, const GL::VertexArray &body_vao, size_t body_size, const GL::VertexArray &round_vao, size_t round_size) {
     // ステンシルバッファの初期化
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);

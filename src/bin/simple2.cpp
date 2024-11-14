@@ -73,12 +73,12 @@ int main() {
     Window &window = gui.create_window(500, 500, "魔法使いの書斎");
 
     // シェーダーのコンパイル
-    GLuint vertex_shader = create_shader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);
-    GLuint geometry_shader = create_shader(GL_GEOMETRY_SHADER, GEOMETRY_SHADER_SOURCE);
-    GLuint fragment_shader = create_shader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
+    GLuint vertex_shader = GL::create_shader(GL_VERTEX_SHADER, VERTEX_SHADER_SOURCE);
+    GLuint geometry_shader = GL::create_shader(GL_GEOMETRY_SHADER, GEOMETRY_SHADER_SOURCE);
+    GLuint fragment_shader = GL::create_shader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
 
     // シェーダープログラムのリンク
-    ProgramObject shader = {
+    GL::ProgramObject shader = {
         vertex_shader,
         geometry_shader,
         fragment_shader,
@@ -90,8 +90,8 @@ int main() {
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f};
 
-    VertexArrayObject vao;
-    VertexBufferObject vbo(sizeof(vertices), (float *)vertices, GL_STATIC_DRAW);
+    GL::VertexArray vao;
+    GL::VertexBuffer vbo(sizeof(vertices), (float *)vertices, GL_STATIC_DRAW);
 
     vao.bind([&] {
         vbo.bind([&] {

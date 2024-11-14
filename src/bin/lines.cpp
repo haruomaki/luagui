@@ -1,8 +1,8 @@
 // FIXME: 正確な寸法に修正したのに合わせ、文字サイズ要再調整。
 
-#include <Timer.hpp>
-#include <master.hpp>
-#include <utility.hpp>
+#include <GUI/Timer.hpp>
+#include <GUI/master.hpp>
+#include <GUI/utility.hpp>
 
 inline float f(float x) {
     return 3 * std::sin(x);
