@@ -46,12 +46,13 @@ struct RGBA {
     }
 };
 
-constexpr inline glm::mat4 TRANSLATE(glm::vec3 pos) { return glm::translate(glm::mat4(1), pos); }
-constexpr inline glm::mat4 ROTATE(float angle, glm::vec3 axis) { return glm::rotate(glm::mat4(1), angle, axis); }
-constexpr inline glm::mat4 SCALE(glm::vec3 scales) { return glm::scale(glm::mat4(1), scales); }
-constexpr inline glm::quat ANGLE_X(float angle) { return glm::angleAxis(angle, glm::vec3{1, 0, 0}); }
-constexpr inline glm::quat ANGLE_Y(float angle) { return glm::angleAxis(angle, glm::vec3{0, 1, 0}); }
-constexpr inline glm::quat ANGLE_Z(float angle) { return glm::angleAxis(angle, glm::vec3{0, 0, 1}); }
+// WARNING: Windows環境だとconstexprを付けられない
+inline glm::mat4 TRANSLATE(glm::vec3 pos) { return glm::translate(glm::mat4(1), pos); }
+inline glm::mat4 ROTATE(float angle, glm::vec3 axis) { return glm::rotate(glm::mat4(1), angle, axis); }
+inline glm::mat4 SCALE(glm::vec3 scales) { return glm::scale(glm::mat4(1), scales); }
+inline glm::quat ANGLE_X(float angle) { return glm::angleAxis(angle, glm::vec3{1, 0, 0}); }
+inline glm::quat ANGLE_Y(float angle) { return glm::angleAxis(angle, glm::vec3{0, 1, 0}); }
+inline glm::quat ANGLE_Z(float angle) { return glm::angleAxis(angle, glm::vec3{0, 0, 1}); }
 
 } // namespace base
 
