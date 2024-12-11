@@ -40,24 +40,13 @@ void GUI::refresh_windows() {
     // 閉じるべきウィンドウを見つけてvectorから削除
     trace("mainloop starts deleting windows");
     auto remove_begin = std::remove_if(this->windows_.begin(), this->windows_.end(), [](const auto &window) {
-        return glfwWindowShouldClose(window->gwin_) != 0;
+        return glfwWindowShouldClose(window->glfw()) != 0;
     });
     this->windows_.erase(remove_begin, this->windows_.end());
     trace("mainloop finished deleting windows");
 
     // 生きている各ウィンドウに対して更新および描画＆後処理
     for (const auto &window : this->windows_) {
-        // 更新処理。physicsとupdateは順不同？
-        trace("[mainloop] p1 《physics》->update->draw->post");
-        window->physics_routine();
-        trace("[mainloop] p2 physics->《update》->draw->post");
-        window->update_routine();
-
-        // 更新処理ののち描画。
-        trace("[mainloop] p3 physics->update->《draw》->post");
-        window->draw_routine();
-        trace("[mainloop] p4 physics->update->draw->《post》");
-        window->post_process();
-        trace("[mainloop] p5");
+        window->routines();
     }
 }

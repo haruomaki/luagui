@@ -24,7 +24,6 @@ class Window {
     friend class KeyCallback;
     friend class Update;
 
-    friend class GUI;
     void draw_routine();
     void update_routine();
     void physics_routine();
@@ -53,6 +52,8 @@ class Window {
     // // ムーブコンストラクタはデフォルト、ムーブ代入は禁止
     // Window(Window &&) = default;
     // Window &operator=(Window &&) = default;
+
+    void routines();
 
     [[nodiscard]] GLFWwindow *glfw() const;
     [[nodiscard]] pair<int, int> window_size() const;
