@@ -2,7 +2,7 @@
 
 #include "Draw.hpp"
 #include "Resource.hpp"
-#include <Shader.hpp>
+#include <SumiGL/Shader.hpp>
 
 struct Character {
     unsigned int TextureID; // ID handle of the glyph texture

@@ -1,9 +1,8 @@
 #pragma once
 
+#include <SumiGL/logger.hpp>
 #include <functional>
 #include <map>
-
-#include "logger.hpp"
 
 using FunctionId = int;
 

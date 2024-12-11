@@ -11,7 +11,7 @@
 #include <iostream>
 
 // base.hppのインクルードより先に書かないといけない処理
-#include <logger.hpp>
+#include <SumiGL/logger.hpp>
 
 // これより上に書かないと動かない
 #include <GUI/base.hpp>

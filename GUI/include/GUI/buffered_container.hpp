@@ -1,6 +1,6 @@
 #pragma once
 
-#include <logger.hpp>
+#include <SumiGL/logger.hpp>
 #include <unordered_map>
 #include <unordered_set>
 

@@ -1,4 +1,4 @@
-#include <sumigl.hpp>
+#include <SumiGL/sumigl.hpp>
 
 int main() {
     GL::Context ctx;

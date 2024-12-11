@@ -1,6 +1,6 @@
 #include "Text.hpp"
 #include "Camera.hpp"
-#include "Shader.hpp"
+#include <SumiGL/Shader.hpp>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

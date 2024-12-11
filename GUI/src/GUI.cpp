@@ -1,6 +1,6 @@
 #include "GUI.hpp"
 #include "Window.hpp"
-#include "constants.hpp"
+#include <SumiGL/constants.hpp>
 
 GUI::GUI() {
     // ライブラリglfw の初期化
