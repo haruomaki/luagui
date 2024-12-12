@@ -4,8 +4,8 @@
 
 #include "Component.hpp"
 #include "Property.hpp"
-#include "buffered_container.hpp"
 #include "graphical_base.hpp"
+#include <SumiGL/buffered_container.hpp>
 
 class World;
 

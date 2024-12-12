@@ -2,9 +2,9 @@
 
 #include "FunctionSet.hpp"
 #include "Resource.hpp"
-#include "buffered_container.hpp"
 #include <SumiGL/Context.hpp>
 #include <SumiGL/Shader.hpp>
+#include <SumiGL/buffered_container.hpp>
 
 class SizeCallback;
 class World;
