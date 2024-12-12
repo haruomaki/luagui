@@ -1,6 +1,6 @@
 #include "Camera.hpp"
-#include "GUI.hpp"
 #include "World.hpp"
+#include <SumiGL/Context.hpp>
 
 NormalCamera::NormalCamera(const Viewport *viewport)
     : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}

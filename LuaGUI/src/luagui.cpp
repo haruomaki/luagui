@@ -1,4 +1,4 @@
-#include <GUI/GUI.hpp>
+#include <SumiGL/Context.hpp>
 #include <luagui.hpp>
 
 #include "Box2D.hpp"
@@ -26,8 +26,8 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 
     // C++側でウィンドウを作成し、Luaのグローバル変数に保持する
     print("ウィンドウ作成開始");
-    GUI gui;
-    Window &window = gui.create_window(width, height, title);
+    GL::Context gui;
+    Window window = Window(gui, width, height, title.c_str());
     print("ウィンドウ作成完了");
     lua["__CurrentWindow"] = &window;
 

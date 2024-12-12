@@ -3,6 +3,7 @@
 #include "FunctionSet.hpp"
 #include "Resource.hpp"
 #include "buffered_container.hpp"
+#include <SumiGL/Context.hpp>
 #include <SumiGL/Shader.hpp>
 
 class SizeCallback;
@@ -33,7 +34,7 @@ class Window {
     void refresh_world_order();
 
   public:
-    GUI &gui;
+    GL::Context &gui;
     std::optional<GL::ProgramObject> default_shader;
     Material *default_material = nullptr;
     Viewport *default_viewport = nullptr;
@@ -42,7 +43,7 @@ class Window {
 
     FunctionSet<void(int key, int action)> key_callbacks;
 
-    Window(GUI &gui, int width, int height, const char *title);
+    Window(GL::Context &gui, int width, int height, const char *title);
     ~Window();
 
     // // コピーは禁止する

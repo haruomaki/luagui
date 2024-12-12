@@ -1,14 +1,14 @@
 #include "Window.hpp"
-#include "GUI.hpp"
 #include "Material.hpp"
 #include "Viewport.hpp"
 #include "World.hpp"
+#include <SumiGL/Context.hpp>
 
 #include <algorithm>
 
 using namespace std::chrono_literals;
 
-Window::Window(GUI &gui, int width, int height, const char *title)
+Window::Window(GL::Context &gui, int width, int height, const char *title)
     : gwin_(glfwCreateWindow(width, height, title, nullptr, nullptr))
     , gui(gui) {
     // ウィンドウを作成
