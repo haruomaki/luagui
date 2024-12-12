@@ -58,3 +58,5 @@ CheckOptions: # https://qiita.com/tenmyo/items/9753609385c7e4ff5222
   readability-identifier-length.MinimumParameterNameLength: 1
   readability-identifier-length.MinimumVariableNameLength: 1
   readability-identifier-length.MinimumLoopCounterNameLength: 1
+  readability-implicit-bool-conversion.AllowIntegerConditions: true # nullptr判定
+  readability-implicit-bool-conversion.AllowPointerConditions: true # 非ゼロ判定
