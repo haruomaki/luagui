@@ -10,8 +10,8 @@ inline float f(float x) {
 
 int main() {
     constexpr int width = 600, height = 500;
-    GUI gui;
-    Window &window = gui.create_window(width, height, "ウィンドウタイトル");
+    GL::Context gui;
+    Window window(gui, width, height, "ウィンドウタイトル");
     // Window &another_window = gui.create_window(width, height, "２つめのウィンドウ");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
 
@@ -58,12 +58,12 @@ int main() {
     });
 
     auto proc = std::make_unique<std::function<void()>>([&] {
-        sample_text.text_ = to_str(gui.tick);
+        sample_text.text_ = to_str(gui.tick());
 
         const auto xs = linspace(-9, 9, points_num);
         line_mesh.vertices.clear();
         line_mesh.vertices.xs = xs;
-        line_mesh.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick) / 100) + t; });
+        line_mesh.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick()) / 100) + t; });
         line_mesh.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
     });
     world.updates.request_set(proc.get());

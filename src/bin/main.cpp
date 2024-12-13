@@ -1,10 +1,10 @@
-#include "Texture.hpp"
 #include <GUI/master.hpp>
 #include <GUI/utility.hpp>
+#include <SumiGL/Texture.hpp>
 
 int main() {
-    GUI gui;
-    Window &window = gui.create_window(600, 500, "めいん");
+    GL::Context gui;
+    Window window(gui, 600, 500, "めいん");
     World &main_world = window.create_world();
 
     // バーテックスシェーダのコンパイル
