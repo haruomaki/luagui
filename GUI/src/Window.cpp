@@ -79,38 +79,8 @@ Window::~Window() {
     // glfwSetKeyCallback(gwin_, nullptr);
 }
 
-GLFWwindow *Window::glfw() const {
-    return this->gwin_;
-}
-
-pair<int, int> Window::window_size() const {
-    int width, height;
-    glfwGetWindowSize(gwin_, &width, &height);
-    return {width, height};
-}
-
-pair<int, int> Window::frame_buffer_size() const {
-    int width, height;
-    glfwGetFramebufferSize(gwin_, &width, &height);
-    return {width, height};
-}
-
-pair<float, float> Window::window_content_scale() const {
-    float xscale, yscale;
-    glfwGetWindowContentScale(gwin_, &xscale, &yscale);
-    return {xscale, yscale};
-}
-
-int Window::refresh_rate() const {
-    return this->gui.video_mode().refreshRate;
-}
-
 void Window::close() const {
     glfwSetWindowShouldClose(gwin_, GL_TRUE);
-}
-
-bool Window::key(int key) const {
-    return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
 }
 
 pair<double, double> Window::cursor_pos() const {

@@ -55,15 +55,7 @@ class Window : public GL::Window {
     // Window(Window &&) = default;
     // Window &operator=(Window &&) = default;
 
-    [[nodiscard]] GLFWwindow *glfw() const;
-    [[nodiscard]] pair<int, int> window_size() const;
-    [[nodiscard]] pair<int, int> frame_buffer_size() const; // FIXME: GL::Windowに移動したので、この辺全部削除
-    [[nodiscard]] pair<float, float> window_content_scale() const;
-    [[nodiscard]] int refresh_rate() const;
     void close() const;
-
-    // glfwGetKeyのラッパー。GLFW_PRESSのときtrue、GLFW_RELEASEのときfalse
-    [[nodiscard]] bool key(int key) const;
 
     // glfwGetCursorPos()のラッパー
     [[nodiscard]] pair<double, double> cursor_pos() const;
