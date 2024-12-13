@@ -25,6 +25,7 @@ class Window : public GL::Window {
     friend class KeyCallback;
     friend class Update;
 
+    void routine();
     void draw_routine();
     void update_routine();
     void physics_routine();
@@ -54,11 +55,9 @@ class Window : public GL::Window {
     // Window(Window &&) = default;
     // Window &operator=(Window &&) = default;
 
-    void routines();
-
     [[nodiscard]] GLFWwindow *glfw() const;
     [[nodiscard]] pair<int, int> window_size() const;
-    [[nodiscard]] pair<int, int> frame_buffer_size() const;
+    [[nodiscard]] pair<int, int> frame_buffer_size() const; // FIXME: GL::Windowに移動したので、この辺全部削除
     [[nodiscard]] pair<float, float> window_content_scale() const;
     [[nodiscard]] int refresh_rate() const;
     void close() const;

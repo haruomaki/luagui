@@ -9,7 +9,7 @@
 using namespace std::chrono_literals;
 
 Window::Window(GL::Context &gui, int width, int height, const char *title)
-    : GL::Window(gui, width, height, title)
+    : GL::Window(gui, width, height, title, [this] { this->routine(); })
     , gwin_(gwin)
     , gui(gui) {
 
@@ -69,7 +69,7 @@ Window::~Window() {
     this->worlds_.clear();    // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
     this->resources_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
 
-    // print("Windowのデストラクタです");
+    print("Windowのデストラクタです");
     // debug(this->size_callbacks_.size());
     // this->size_callbacks_.erase(this->size_callbacks_.begin());
     // debug(this->size_callbacks_.size());
@@ -138,7 +138,12 @@ World &Window::create_world() {
     return *this->worlds_.back();
 }
 
-void Window::routines() {
+void Window::routine() {
+    if (glfwWindowShouldClose(gwin)) {
+        this->GL::Window::close();
+        return;
+    }
+
     // 更新処理。physicsとupdateは順不同？
     trace("[mainloop] p1 《physics》->update->draw->post");
     this->physics_routine();
