@@ -9,38 +9,9 @@
 using namespace std::chrono_literals;
 
 Window::Window(GL::Context &gui, int width, int height, const char *title)
-    : gwin_(glfwCreateWindow(width, height, title, nullptr, nullptr))
+    : GL::Window(gui, width, height, title)
+    , gwin_(gwin)
     , gui(gui) {
-    // ウィンドウを作成
-    if (gwin_ == nullptr) {
-        throw std::runtime_error("ウィンドウの作成に失敗しました");
-    }
-    // GLFWwindow *gwin = glfwCreateWindow(width, height, title, nullptr, nullptr);
-    // if (gwin == nullptr) {
-    //     throw std::runtime_error("ウィンドウの作成に失敗しました");
-    // }
-    // this->gwin_ = gwin;
-
-    // 作成したウィンドウを，OpenGLの描画関数のターゲットにする
-    glfwMakeContextCurrent(gwin_);
-    glfwSwapInterval(1);
-
-    // GLEWの初期化
-    if (glewInit() != GLEW_OK) {
-        glfwTerminate();
-        throw std::runtime_error("GLEWの初期化に失敗しました");
-    }
-
-    debug(glGetString(GL_VERSION));
-    debug(glGetString(GL_VENDOR));
-    debug(glGetString(GL_RENDERER));
-
-    // ブレンド（透明処理）の設定
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    // 深度テストを有効化
-    glEnable(GL_DEPTH_TEST);
 
     // ユーザー領域にこのクラスのインスタンスを設定
     glfwSetWindowUserPointer(gwin_, this);

@@ -13,8 +13,8 @@ struct Material;
 class Viewport;
 
 // 一つのウィンドウを表すクラス
-class Window {
-    GLFWwindow *gwin_ = nullptr;
+class Window : public GL::Window {
+    GLFWwindow *gwin_ = nullptr; // FIXME: GL::Windowのgwinに置き換えたい
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
     std::set<std::unique_ptr<Resource>> resources_;
