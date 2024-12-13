@@ -53,7 +53,7 @@ class World : public WorldObject {
 
     void master_update() {
         // trace("World::master_update開始:", this);
-        this->updates.foreach_flush([&](const auto update) {
+        this->updates.foreach ([&](const auto update) {
             (*update)();
         });
 
@@ -74,7 +74,7 @@ class World : public WorldObject {
         if (this->active_camera_ == nullptr) {
             print("警告: アクティブなカメラが存在しません");
         }
-        this->draws.foreach_flush([&](const auto *draw) {
+        this->draws.foreach ([&](const auto *draw) {
             (*draw)(*this->active_camera_);
         });
 

@@ -160,7 +160,7 @@ void Window::update_routine() {
     // world_object_root_.refreshAbsolutePosition();
 
     // リソースの更新処理
-    this->resource_updates.foreach_flush([](const auto *update) {
+    this->resource_updates.foreach ([](const auto *update) {
         (*update)();
     });
 

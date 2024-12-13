@@ -52,7 +52,7 @@ int main() {
     bset.request_set(8);
     bset.request_set(9);
     bset.request_set(11);
-    bset.foreach_flush_combination([](int a, int b) {
+    bset.foreach_combination([](int a, int b) {
         debug(a, b);
     });
 
