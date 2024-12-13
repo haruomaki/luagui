@@ -160,3 +160,6 @@ inline T &dereference(Ptr *ptr) {
 #endif
 
 using namespace base;
+
+// setUTF8を使えるように
+#include <SumiGL/misc.hpp>

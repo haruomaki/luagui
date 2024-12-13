@@ -47,13 +47,11 @@ class Window : public GL::Window {
     Window(GL::Context &gui, int width, int height, const char *title);
     ~Window();
 
-    // // コピーは禁止する
-    // Window(const Window &) = default;
-    // Window &operator=(const Window &) = default;
-
-    // // ムーブコンストラクタはデフォルト、ムーブ代入は禁止
-    // Window(Window &&) = default;
-    // Window &operator=(Window &&) = default;
+    // コピーもムーブも禁止する
+    Window(const Window &) = delete;
+    Window &operator=(const Window &) = delete;
+    Window(Window &&) = delete;
+    Window &operator=(Window &&) = delete;
 
     void close() const;
 

@@ -110,7 +110,7 @@ World &Window::create_world() {
 
 void Window::routine() {
     if (glfwWindowShouldClose(gwin)) {
-        this->GL::Window::close();
+        this->destroy();
         return;
     }
 
