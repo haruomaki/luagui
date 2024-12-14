@@ -13,6 +13,13 @@ Window::Window(GL::Context &gui, int width, int height, const char *title)
     , gwin_(gwin)
     , gui(gui) {
 
+    // ブレンド（透明処理）の設定
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // 深度テストを有効化
+    glEnable(GL_DEPTH_TEST);
+
     // ユーザー領域にこのクラスのインスタンスを設定
     glfwSetWindowUserPointer(gwin_, this);
 
