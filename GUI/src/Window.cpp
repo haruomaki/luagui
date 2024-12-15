@@ -20,13 +20,10 @@ Window::Window(GL::Context &gui, int width, int height, const char *title)
     // 深度テストを有効化
     glEnable(GL_DEPTH_TEST);
 
-    // ユーザー領域にこのクラスのインスタンスを設定
-    glfwSetWindowUserPointer(gwin_, this);
-
     // ウィンドウサイズコールバック関数を登録する
     glfwSetWindowSizeCallback(gwin_, [](GLFWwindow *gwin, int width, int height) {
         // ここで描画処理などを行う
-        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
         // window->setCamera({0, 0}, default_camera_zoom);
         // debug(window->getViewMatrix());
 
@@ -39,7 +36,7 @@ Window::Window(GL::Context &gui, int width, int height, const char *title)
     // キーコールバック
     // INFO: キャラを一定速度で動かしたいなどの際は、1フレームごとにgetKeyメソッドを呼び出す方がいい
     glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int /*scancode*/, int action, int /*mods*/) {
-        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
         window->key_callbacks.safe_foreach([&](auto key_callback) {
             key_callback(key, action);
         });
@@ -47,7 +44,7 @@ Window::Window(GL::Context &gui, int width, int height, const char *title)
 
     // 押した/離した瞬間を記録するためのキーコールバック。key_down()/keu_up()に必要
     glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int scancode, int action, int mods) {
-        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
         try {
             if (action == GLFW_PRESS) {
                 // debug(key, scancode, mods);
