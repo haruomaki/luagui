@@ -2,7 +2,7 @@
 #include "Window.hpp"
 
 MaximumViewport::MaximumViewport()
-    : Viewport(0, 0, 0, 0) {
+    : GL::Viewport(0, 0, 0, 0) {
 
     auto size_callback = [this](int width, int height) {
         this->x_ = this->y_ = 0;

@@ -15,10 +15,10 @@ class Camera : virtual public WorldObject {
 };
 
 class NormalCamera : public Camera {
-    const Viewport &viewport_;
+    const GL::Viewport &viewport_;
 
   public:
-    NormalCamera(const Viewport *viewport = nullptr);
+    NormalCamera(const GL::Viewport *viewport = nullptr);
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;
@@ -26,10 +26,10 @@ class NormalCamera : public Camera {
 
 // float値1が物理ディスプレイ上での1mというスケールの正射影カメラ
 class OrthoCamera : public Camera {
-    const Viewport &viewport_;
+    const GL::Viewport &viewport_;
 
   public:
-    OrthoCamera(const Viewport *viewport = nullptr);
+    OrthoCamera(const GL::Viewport *viewport = nullptr);
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;

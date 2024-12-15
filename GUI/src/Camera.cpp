@@ -2,7 +2,7 @@
 #include "World.hpp"
 #include <SumiGL/Context.hpp>
 
-NormalCamera::NormalCamera(const Viewport *viewport)
+NormalCamera::NormalCamera(const GL::Viewport *viewport)
     : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
 
 void Camera::set_active() {
@@ -24,7 +24,7 @@ glm::mat4 NormalCamera::get_projection_matrix() const {
     return projection_matrix;
 }
 
-OrthoCamera::OrthoCamera(const Viewport *viewport)
+OrthoCamera::OrthoCamera(const GL::Viewport *viewport)
     : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
 
 glm::mat4 OrthoCamera::get_view_matrix() const {

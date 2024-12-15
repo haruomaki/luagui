@@ -5,13 +5,14 @@
 #include "Update.hpp"
 #include "World.hpp"
 #include <SumiGL/Context.hpp> // TODO: px_meter()をWindowへ移行できたらこの行は消せる
+#include <SumiGL/Window.hpp>
 
 // ヘッダオンリーでお手軽に。virtual関数をヘッダ内で実装するときの警告抑制
 #pragma clang diagnostic ignored "-Wweak-vtables"
 
 // 常に画面の左上にある点
 class StickyPointTopLeft : public Update {
-    const Viewport &viewport_;
+    const GL::Viewport &viewport_;
 
     void update() override {
         const auto size = viewport_.get_size();
@@ -23,7 +24,7 @@ class StickyPointTopLeft : public Update {
     }
 
   public:
-    StickyPointTopLeft(const Viewport *viewport = nullptr)
+    StickyPointTopLeft(const GL::Viewport *viewport = nullptr)
         : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
 };
 
@@ -64,7 +65,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
     }
 
   public:
-    MobileOrthoCamera(const Viewport *viewport = nullptr)
+    MobileOrthoCamera(const GL::Viewport *viewport = nullptr)
         : OrthoCamera(viewport) {}
 };
 
@@ -128,7 +129,7 @@ class MobileNormalCamera : public Camera, protected Update {
     float angle_speed = 0.02;
     pair<double, double> cursor_pos = this->get_world().window.cursor_pos();
 
-    MobileNormalCamera(const Viewport *viewport = nullptr)
+    MobileNormalCamera(const GL::Viewport *viewport = nullptr)
         : camera_head_(this->append_child<NormalCamera>(viewport)) {}
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override {
