@@ -1,11 +1,14 @@
 #pragma once
 
+#include <optional>
+#include <string>
 #include <variant>
 
 #include <box2cpp/box2cpp.h>
 
 class WorldObject;
 class World;
+class Window;
 
 // コンポーネントの基底クラス。
 class Component {

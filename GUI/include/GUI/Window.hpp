@@ -38,7 +38,6 @@ class Window : public GL::Window {
     GL::Context &gui;
     std::optional<GL::ProgramObject> default_shader;
     Material *default_material = nullptr;
-    GL::Viewport *default_viewport = nullptr;
     BufferedSet<std::function<void()> *> resource_updates;
     std::vector<std::function<void()>> raw_worlds;
 

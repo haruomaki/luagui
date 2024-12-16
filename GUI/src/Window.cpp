@@ -1,6 +1,5 @@
 #include "Window.hpp"
 #include "Material.hpp"
-#include "Viewport.hpp"
 #include "World.hpp"
 #include <SumiGL/Context.hpp>
 
@@ -64,9 +63,6 @@ Window::Window(GL::Context &gui, int width, int height, const char *title)
 
     // デフォルトマテリアルの設定
     this->default_material = &MaterialBuilder().build(*this);
-
-    // デフォルトビューポートの設定
-    this->default_viewport = &this->append_resource<MaximumViewport>();
 }
 
 Window::~Window() {

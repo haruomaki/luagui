@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Viewport.hpp"
 #include "WorldObject.hpp"
 
 // ビュー行列と射影行列を与える機能を持つワールドオブジェクト
