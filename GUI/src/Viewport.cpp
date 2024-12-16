@@ -10,7 +10,7 @@ MaximumViewport::MaximumViewport()
         this->height_ = height;
         this->set();
     };
-    const auto fbsize = this->get_window().frame_buffer_size();
+    const auto fbsize = this->get_window().framebuffer_size();
     size_callback(fbsize.first, fbsize.second);
     this->get_window().set_callback<CallbackKind::Size>(std::move(size_callback));
 }
