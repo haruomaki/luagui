@@ -15,10 +15,10 @@ class StickyPointTopLeft : public Update {
     const GL::Viewport &viewport_;
 
     void update() override {
-        const auto size = viewport_.get_size();
+        auto vp = this->get_world().get_viewport();
         auto ms = this->get_world().window.gui.master_scale();
-        const auto width = float(size.x) * ms.x;
-        const auto height = float(size.y) * ms.y;
+        const auto width = float(vp.width) * ms.x;
+        const auto height = float(vp.height) * ms.y;
 
         set_position({-width / 2, height / 2, 0});
     }

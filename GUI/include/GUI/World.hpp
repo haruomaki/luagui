@@ -22,6 +22,7 @@ class World : public WorldObject {
   public:
     Window &window;
     Timer timer;
+    std::function<GL::RawViewport()> viewport_provider;
     BufferedSet<std::function<void(const Camera &)> *> draws;
     BufferedSet<std::function<void()> *> updates;
     BufferedSet<Rigidbody *> rigidbodies;
@@ -31,7 +32,11 @@ class World : public WorldObject {
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
         , draw_priority_(draw_priority)
-        , window(window) {
+        , window(window)
+        , viewport_provider([this] {
+            auto [w, h] = this->window.framebuffer_size();
+            return GL::RawViewport{0, 0, w, h};
+        }) {
         // Box2Dの世界を生成
         b2::World::Params world_params;
         world_params.gravity = b2Vec2{};
@@ -71,6 +76,9 @@ class World : public WorldObject {
     void master_physics();
 
     void master_draw() {
+        // ビューポートを設定
+        GL::viewport(viewport_provider());
+
         if (this->active_camera_ == nullptr) {
             print("警告: アクティブなカメラが存在しません");
         }
