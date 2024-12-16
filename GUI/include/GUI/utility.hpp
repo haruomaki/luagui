@@ -12,25 +12,15 @@
 
 // 常に画面の左上にある点
 class StickyPointTopLeft : public Update {
-    const GL::Viewport &viewport_;
-
     void update() override {
-        auto vp = this->get_world().get_viewport();
+        auto vp = this->get_world().viewport_provider();
         auto ms = this->get_world().window.gui.master_scale();
         const auto width = float(vp.width) * ms.x;
         const auto height = float(vp.height) * ms.y;
 
         set_position({-width / 2, height / 2, 0});
     }
-
-  public:
-    StickyPointTopLeft(const GL::Viewport *viewport = nullptr)
-        : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
 };
-
-// glm::vec3 operator*(const glm::vec3 &v, const float a) {
-//     return v * a;
-// }
 
 class MobileOrthoCamera : public OrthoCamera, protected Update {
     void update() override {
@@ -65,8 +55,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
     }
 
   public:
-    MobileOrthoCamera(const GL::Viewport *viewport = nullptr)
-        : OrthoCamera(viewport) {}
+    MobileOrthoCamera() = default;
 };
 
 class MobileNormalCamera : public Camera, protected Update {
@@ -129,8 +118,8 @@ class MobileNormalCamera : public Camera, protected Update {
     float angle_speed = 0.02;
     pair<double, double> cursor_pos = this->get_world().window.cursor_pos();
 
-    MobileNormalCamera(const GL::Viewport *viewport = nullptr)
-        : camera_head_(this->append_child<NormalCamera>(viewport)) {}
+    MobileNormalCamera()
+        : camera_head_(this->append_child<NormalCamera>()) {}
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override {
         return camera_head_.get_view_matrix();
