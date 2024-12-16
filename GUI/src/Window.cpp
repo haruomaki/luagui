@@ -163,11 +163,13 @@ void Window::update_routine() {
     fbsize_cache = framebuffer_size();
 
     // リソースの更新処理
+    trace("[update] 《resource》->world");
     this->resource_updates.foreach ([](const auto *update) {
         (*update)();
     });
 
     // 各ワールドの更新処理
+    trace("[update] resource->《world》");
     for (const auto &world : this->worlds_) {
         world->master_update();
     }

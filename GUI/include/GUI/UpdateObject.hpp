@@ -6,7 +6,7 @@ class UpdateObject : virtual public WorldObject {
 
   public:
     UpdateObject(std::function<void(UpdateObject &)> &&f) {
-        this->func_ = [f, this] { f(*this); };
+        this->func_ = [f, this] { trace("UpdateObjectクラスによるアップデート開始"); f(*this); };
         this->get_world().updates.request_set(&this->func_);
     }
     ~UpdateObject() override {

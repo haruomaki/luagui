@@ -100,7 +100,7 @@ run_window(800, 600, "ブロック崩し", function()
 
     -- 落下判定を作成
     sen({ -0.5, -0.07 }, { 0.5, -0.07 }, function(self, other)
-        -- printf("衝突しました！ %d,%d", self.index, other.index)
+        printf("衝突しました！ %d,%d", self.index, other.index)
         other.owner:erase()
     end)
 
@@ -123,7 +123,9 @@ run_window(800, 600, "ブロック崩し", function()
         -- スペースキーで連射
         if GetKeyDown('Space') then
             bar_obj:add_update_component("ショット", IntervalFun(function()
+                print("ぴえん")
                 local m = maru(bar.position.x, -0.04):get_component("Rigidbody")
+                print("ぱおん")
                 local theta = (math.random() - 0.5) * 0.2
                 local speed = math.random() * 0.1 + 0.25
                 m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
