@@ -34,7 +34,7 @@ class World : public WorldObject {
         , draw_priority_(draw_priority)
         , window(window)
         , viewport_provider([this] {
-            auto [w, h] = this->window.framebuffer_size();
+            auto [w, h] = this->window.fbsize_cache;
             return GL::RawViewport{0, 0, w, h};
         }) {
         // Box2Dの世界を生成

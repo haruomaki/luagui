@@ -159,6 +159,9 @@ void Window::update_routine() {
     // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
     // world_object_root_.refreshAbsolutePosition();
 
+    // フレームバッファサイズを更新
+    fbsize_cache = framebuffer_size();
+
     // リソースの更新処理
     this->resource_updates.foreach ([](const auto *update) {
         (*update)();

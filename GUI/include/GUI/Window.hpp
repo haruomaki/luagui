@@ -41,6 +41,9 @@ class Window : public GL::Window {
     BufferedSet<std::function<void()> *> resource_updates;
     std::vector<std::function<void()>> raw_worlds;
 
+    // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。
+    std::pair<int, int> fbsize_cache = {0, 0};
+
     FunctionSet<void(int key, int action)> key_callbacks;
 
     Window(GL::Context &gui, int width, int height, const char *title);
