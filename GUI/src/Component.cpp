@@ -7,22 +7,7 @@ Component::Component()
     }
 }
 
-bool Component::erase() {
-    info("eraseです:", this);
-    auto *ptr_to_erase = this;
-
-    // 生ポインタを使用して要素を削除する
-    auto &candidates = owner().components_;
-    bool success = false;
-    for (auto &[key, comp] : candidates.key_values()) {
-        if (comp == ptr_to_erase) {
-            candidates.request_delete(key, comp);
-            success = true;
-        }
-    }
-    info("eraseおわり(", (success ? "成功" : "失敗"), "):", this);
-    return success;
-}
+void Component::erase() { owner().components_.request_erase(this); }
 
 WorldObject &Component::owner() const { return *owner_; }
 World &Component::world() const { return owner_->get_world(); }

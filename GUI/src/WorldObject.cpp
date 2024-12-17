@@ -57,11 +57,11 @@ WorldObject::WorldObject()
 }
 
 WorldObject::~WorldObject() {
-    trace("WorldObjectのデストラクタ開始 components_: ", components_.elements());
+    trace("WorldObjectのデストラクタ開始 components_: ", components_.keys());
     // オブジェクトの寿命はコンポーネントの寿命より長い（コンポーネントのデストラクタでget_owner()が無効にならないようにする）
-    components_.foreach ([](auto, Component &comp) {
-        trace("component iteration ", &comp);
-        comp.erase();
+    components_.foreach ([](auto &comp) {
+        trace("component iteration ", comp->id);
+        comp->erase();
     });
     components_.flush();
 

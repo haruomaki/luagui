@@ -28,7 +28,7 @@ class Component {
     [[nodiscard]] Window &window() const;
 
     // コンポーネントを削除する。
-    bool erase();
+    void erase();
 };
 
 class UpdateComponent : public Component {

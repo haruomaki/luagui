@@ -17,7 +17,7 @@ class WorldObject {
     glm::mat4 abs_transform_;
     WorldObject *const parent_;
     BufferedMap<WorldObject *, std::unique_ptr<WorldObject>> children_;
-    BufferedMultimap<std::type_index, Component> components_;
+    BufferedMap<Component *, std::unique_ptr<Component>> components_;
     World &world_; // parent_より後にする
 
     // 子孫ノードの絶対位置を再帰的に計算する関数
@@ -76,6 +76,7 @@ class WorldObject {
 
         auto raw = dynamic_cast<T *>(ptr.get());
         this->children_.request_set(raw, std::move(ptr));
+        if (this->children_.is_locked()) warn("ロック中にappend_childが呼ばれました💀💀💀");
         this->children_.flush(); // NOTE: 同一フレームで即座に反映させるためにとりあえずフラッシュしているが、問題が起きたら見直す。
         return *raw;
     }
@@ -185,36 +186,41 @@ class WorldObject {
         WorldObject::set_parent_static(nullptr);
 
         T *component_ptr = component.get();
-        components_.request_insert(std::type_index(typeid(T)), std::move(component)); // unique_ptrのムーブコンストラクタ。
+        components_.request_set(component_ptr, std::move(component));
+        if (components_.is_locked()) warn("ロック中にadd_componentが呼ばれました💀💀💀");
+        components_.flush(); // NOTE: children_同様ここで即時flushしてみるものの、問題があるかもしれない。
         return component_ptr;
     }
 
     template <typename T>
         requires std::derived_from<T, Component>
     T *get_component() {
-        Component *comp = components_.at(std::type_index(typeid(T)));
-        return static_cast<T *>(comp);
+        auto comps = get_components<T>();
+        if (comps.empty()) {
+            warn(typeid(T).name(), "型のコンポーネントがありません。");
+            return nullptr;
+        }
+        return comps[0];
     }
 
     template <typename T>
     std::vector<T *> get_components() {
         std::vector<T *> result;
-
-        components_.foreach_equal(std::type_index(typeid(T)), [&](Component &comp) {
-            result.push_back(static_cast<T *>(&comp));
+        components_.foreach ([&](std::unique_ptr<Component> &comp) {
+            auto *p = dynamic_cast<T *>(comp.get());
+            if (p) result.emplace_back(p);
         });
         return result;
     }
 
     Component *get_component_by_id(std::string_view id) {
         Component *ret = nullptr;
-        for (Component *comp : components_.elements()) {
+        components_.foreach ([&](std::unique_ptr<Component> &comp) {
             if (id == comp->id) {
                 if (ret != nullptr) warn("同一IDの異なるコンポーネントがあります: ", id);
-                // print("発見しました:", typeid(*comp).name());
-                ret = comp;
+                ret = comp.get();
             }
-        }
+        });
         if (ret == nullptr) warn("ID=\"", id, "\"のコンポーネントが見つかりませんでした。");
         return ret;
     }
