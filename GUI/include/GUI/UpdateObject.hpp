@@ -1,4 +1,3 @@
-#include "World.hpp"
 #include "WorldObject.hpp"
 
 class UpdateObject : virtual public WorldObject {

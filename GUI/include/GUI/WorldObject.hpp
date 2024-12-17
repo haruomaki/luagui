@@ -1,9 +1,6 @@
 #pragma once
 
-#include <typeindex>
-
 #include "Component.hpp"
-#include "graphical_base.hpp"
 #include "property.hpp"
 #include <SumiGL/buffered_container.hpp>
 

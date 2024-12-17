@@ -11,7 +11,7 @@ struct AbsAABB2d {
 
 class Rigidbody : virtual public WorldObject {
   public:
-    std::optional<std::function<void(Rigidbody &self, Rigidbody &other)>> callback{};
+    std::optional<std::function<void(Rigidbody &self, Rigidbody &other)>> callback;
     glm::vec3 velocity{0, 0, 0};
     bool moving = true;
 

@@ -12,8 +12,8 @@ class Timer {
     };
 
     FunctionSet<void()> tasks_{};
-    std::map<FunctionId, TaskInfo> task_infos_{};
-    std::vector<FunctionId> ids_to_erase_{};
+    std::map<FunctionId, TaskInfo> task_infos_;
+    std::vector<FunctionId> ids_to_erase_;
 
     // Worldクラスがタイマーを所有し毎フレーム更新する
     friend class World;

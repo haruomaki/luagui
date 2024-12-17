@@ -3,7 +3,6 @@
 #include "Camera.hpp"
 #include "Mesh.hpp"
 #include "Update.hpp"
-#include "World.hpp"
 #include <SumiGL/Context.hpp> // TODO: px_meter()をWindowへ移行できたらこの行は消せる
 #include <SumiGL/Window.hpp>
 

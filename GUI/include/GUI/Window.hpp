@@ -58,7 +58,7 @@ class Window : public GL::Window {
     void close() const;
 
     // glfwGetCursorPos()のラッパー
-    [[nodiscard]] pair<double, double> cursor_pos() const;
+    [[nodiscard]] std::pair<double, double> cursor_pos() const;
 
     // 現在フレームにおける、キー変更イベント（押した）の有無を表す
     [[nodiscard]] const KeyArray &key_down() const { return key_down_; }

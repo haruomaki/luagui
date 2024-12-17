@@ -13,7 +13,7 @@ class FunctionSet {
     FunctionId function_id_counter_ = 0;
     bool locked_ = false;
     std::vector<std::pair<FunctionId, std::function<Func>>> set_queue_{};
-    std::vector<FunctionId> erase_queue_{};
+    std::vector<FunctionId> erase_queue_;
 
     void set_function(FunctionId id, std::function<Func> &&func) {
         this->functions_[id] = std::move(func);

@@ -46,8 +46,8 @@ Font::Font(const std::string &font_path)
             GL_TEXTURE_2D,
             0,
             GL_RED,
-            face->glyph->bitmap.width,
-            face->glyph->bitmap.rows,
+            int(face->glyph->bitmap.width),
+            int(face->glyph->bitmap.rows),
             0,
             GL_RED,
             GL_UNSIGNED_BYTE,
@@ -98,11 +98,11 @@ void Text::draw(const Camera &camera) const {
 
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
             // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする TODO: HiDPI（1pt≠1px）時の対応
-            float xpos = tail + ch.Bearing.x * pt_meter;
-            float ypos = -(ch.Size.y - ch.Bearing.y) * pt_meter;
+            float xpos = tail + float(ch.Bearing.x) * pt_meter;
+            float ypos = -float(ch.Size.y - ch.Bearing.y) * pt_meter;
 
-            float w = ch.Size.x * pt_meter;
-            float h = ch.Size.y * pt_meter;
+            float w = float(ch.Size.x) * pt_meter;
+            float h = float(ch.Size.y) * pt_meter;
             // update VBO for each character
             float vertices[6][4] = {
                 {xpos, ypos + h, 0.0F, 0.0F},
@@ -131,7 +131,7 @@ void Text::draw(const Camera &camera) const {
             // render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
             // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-            tail += (ch.Advance >> 6) * pt_meter; // bitshift by 6 to get value in pixels (2^6 = 64)
+            tail += float(ch.Advance >> 6) * pt_meter; // bitshift by 6 to get value in pixels (2^6 = 64)
         }
     });
     glBindTexture(GL_TEXTURE_2D, 0);
