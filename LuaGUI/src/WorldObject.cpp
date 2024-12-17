@@ -8,9 +8,13 @@ static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, 
 
     // INFO: runner_threadもキャプチャしておかないとSEGV
     auto runner = [runner_thread, co](UpdateComponent &self) {
+        trace("[LuaGUI] UpdateComponent runner start");
+        trace("[LuaGUI] UpdateComponent runner x");
         auto result = (*co)(self);
+        trace("[LuaGUI] UpdateComponent runner 1");
         auto status = result.status();
 
+        trace("[LuaGUI] UpdateComponent runner 2");
         if (status == sol::call_status::yielded) {
             // コルーチンが yield した
         } else if (status == sol::call_status::ok) {
@@ -22,6 +26,7 @@ static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, 
             std::cerr << "Error in Lua coroutine: " << err.what() << std::endl;
             self.erase();
         }
+        trace("[LuaGUI] UpdateComponent runner end");
     };
 
     auto *uc = obj->add_component<UpdateComponent>(runner);
@@ -104,7 +109,7 @@ void register_world_object(sol::state &lua) {
         "Component",
         "id", &Component::id,
         "owner", sol::readonly_property([](Component *comp) { return &comp->owner(); }),
-        "erase", [](Component *comp) { comp->erase(); });
+        "erase", [](Component *comp) { trace("[LuaGUI] Component:erase id=", comp->id); comp->erase(); });
 
     // Updateコンポーネント
     lua.new_usertype<UpdateComponent>(
