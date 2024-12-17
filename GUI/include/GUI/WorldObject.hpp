@@ -76,6 +76,7 @@ class WorldObject {
 
         auto raw = dynamic_cast<T *>(ptr.get());
         this->children_.request_set(raw, std::move(ptr));
+        this->children_.flush(); // NOTE: 同一フレームで即座に反映させるためにとりあえずフラッシュしているが、問題が起きたら見直す。
         return *raw;
     }
 
