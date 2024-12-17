@@ -32,15 +32,6 @@ Window::Window(GL::Context &gui, int width, int height, const char *title)
         });
     });
 
-    // キーコールバック
-    // INFO: キャラを一定速度で動かしたいなどの際は、1フレームごとにgetKeyメソッドを呼び出す方がいい
-    glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int /*scancode*/, int action, int /*mods*/) {
-        auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
-        window->key_callbacks.safe_foreach([&](auto key_callback) {
-            key_callback(key, action);
-        });
-    });
-
     // 押した/離した瞬間を記録するためのキーコールバック。key_down()/keu_up()に必要
     glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int scancode, int action, int mods) {
         auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));

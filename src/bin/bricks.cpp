@@ -113,17 +113,16 @@ int main() {
     auto &ball2 = gen({0.3, 0.8, 0});
     auto &ball3 = gen({-0.1, -0.3, 0});
 
-    stage.append_child<KeyCallbackObject>([&](int key, int action) {
-        // FIXME: GL::Windowにキーコールバック機能を追加しないと
-        if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
+    stage.add_component<UpdateComponent>([&](auto & /*self*/) {
+        if (window.key_down()[GLFW_KEY_ENTER]) {
+            print("エンターが押されました");
             auto power_point = camera.get_position();
             flick_ball(power_point, ball1);
             flick_ball(power_point, ball2);
             flick_ball(power_point, ball3);
         }
-        if (key == GLFW_KEY_U) {
-            // stage.position += glm::vec3{1, 0, 0};
-            stage.erase(); // FIXME: 描画されたままになる
+        if (window.key_down()[GLFW_KEY_U]) {
+            stage.erase();
         }
     });
 
