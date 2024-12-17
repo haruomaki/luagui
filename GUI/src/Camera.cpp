@@ -1,9 +1,6 @@
 #include "Camera.hpp"
-#include "GUI.hpp"
 #include "World.hpp"
-
-NormalCamera::NormalCamera(const Viewport *viewport)
-    : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
+#include <SumiGL/Context.hpp>
 
 void Camera::set_active() {
     this->get_world().active_camera() = this;
@@ -14,9 +11,9 @@ glm::mat4 NormalCamera::get_view_matrix() const {
 }
 
 glm::mat4 NormalCamera::get_projection_matrix() const {
-    auto size = viewport_.get_size();
-    auto width = float(size.x);
-    auto height = float(size.y);
+    auto vp = this->get_world().viewport_provider();
+    auto width = float(vp.width);
+    auto height = float(vp.height);
 
     const auto aspect_ratio = width / height;
     const auto r = this->scale_prop;
@@ -24,17 +21,14 @@ glm::mat4 NormalCamera::get_projection_matrix() const {
     return projection_matrix;
 }
 
-OrthoCamera::OrthoCamera(const Viewport *viewport)
-    : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
-
 glm::mat4 OrthoCamera::get_view_matrix() const {
     return glm::inverse(get_absolute_transform());
 }
 
 glm::mat4 OrthoCamera::get_projection_matrix() const {
-    auto size = viewport_.get_size();
-    int width = size.x;
-    int height = size.y;
+    auto vp = this->get_world().viewport_provider();
+    int width = vp.width;
+    int height = vp.height;
 
     auto ms = this->get_world().window.gui.master_scale();
     const auto w = float(width) * ms.x;

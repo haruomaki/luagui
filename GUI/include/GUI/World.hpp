@@ -22,6 +22,7 @@ class World : public WorldObject {
   public:
     Window &window;
     Timer timer;
+    std::function<GL::RawViewport()> viewport_provider;
     BufferedSet<std::function<void(const Camera &)> *> draws;
     BufferedSet<std::function<void()> *> updates;
     BufferedSet<Rigidbody *> rigidbodies;
@@ -31,7 +32,11 @@ class World : public WorldObject {
     World(Window &window, int draw_priority)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
         , draw_priority_(draw_priority)
-        , window(window) {
+        , window(window)
+        , viewport_provider([this] {
+            auto [w, h] = this->window.fbsize_cache;
+            return GL::RawViewport{0, 0, w, h};
+        }) {
         // Box2Dの世界を生成
         b2::World::Params world_params;
         world_params.gravity = b2Vec2{};
@@ -40,8 +45,8 @@ class World : public WorldObject {
 
     ~World() override {
         info("Worldのデストラクタ");
-        children_.foreach ([&](WorldObject &obj) {
-            obj.erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
+        children_.foreach ([&](std::unique_ptr<WorldObject> &obj) {
+            obj->erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
         });
         children_.flush(); // 即時flushしないと子オブジェクトがメモリから消えない
     }
@@ -52,29 +57,32 @@ class World : public WorldObject {
     World &operator=(World &&) const = delete;
 
     void master_update() {
-        // trace("World::master_update開始:", this);
-        this->updates.foreach_flush([&](const auto update) {
+        trace("World::master_update開始:", this);
+        this->updates.foreach ([&](const auto update) {
             (*update)();
         });
 
-        // trace("World::master_update途中1:", this);
+        trace("World::master_update途中1:", this);
 
         // 子（および子孫）オブジェクトの追加／削除を再帰的に適用
         this->flush_components_children();
 
-        // trace("World::master_update途中2:", this);
+        trace("World::master_update途中2:", this);
 
         this->timer.step(); // タイマーを進める
-        // trace("World::master_update終了:", this);
+        trace("World::master_update終了:", this);
     }
 
     void master_physics();
 
     void master_draw() {
+        // ビューポートを設定
+        GL::viewport(viewport_provider());
+
         if (this->active_camera_ == nullptr) {
             print("警告: アクティブなカメラが存在しません");
         }
-        this->draws.foreach_flush([&](const auto *draw) {
+        this->draws.foreach ([&](const auto *draw) {
             (*draw)(*this->active_camera_);
         });
 

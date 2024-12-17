@@ -2,7 +2,7 @@
 #include "World.hpp"
 
 Update::Update() {
-    this->func_ = [this] { this->update(); };
+    this->func_ = [this] { trace("Updateクラスによるアップデート開始");this->update(); };
     this->get_world().updates.request_set(&this->func_);
 }
 Update::~Update() {

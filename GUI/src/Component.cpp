@@ -20,7 +20,7 @@ bool Component::erase() {
             success = true;
         }
     }
-    info("eraseおわり:", this);
+    info("eraseおわり(", (success ? "成功" : "失敗"), "):", this);
     return success;
 }
 
@@ -29,7 +29,7 @@ World &Component::world() const { return owner_->get_world(); }
 Window &Component::window() const { return owner_->get_world().window; }
 
 UpdateComponent::UpdateComponent(std::function<void(UpdateComponent &)> &&f) {
-    this->func_ = [f, this] { f(*this); };
+    this->func_ = [f, this] { trace("lambda from UpdateComponent (id: ", this->id, ")"); f(*this); trace("lambda ended"); };
     world().updates.request_set(&this->func_);
 }
 UpdateComponent::~UpdateComponent() {
@@ -52,7 +52,7 @@ RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
 }
 
 RigidbodyComponent::~RigidbodyComponent() {
-    // print("RigidbodyComponentのデストラクタです。", this);
+    trace("RigidbodyComponentのデストラクタです。", this);
     auto ccs = owner().get_components<ColliderComponent>();
     // debug(ccs);
     for (auto *cc : ccs) {
@@ -72,7 +72,7 @@ RigidbodyComponent::~RigidbodyComponent() {
 
     // Worldのrigidbodyリストから削除
     world().rigidbody_components.request_erase(this);
-    // print("RigidbodyComponentのデストラクタおわりです");
+    trace("RigidbodyComponentのデストラクタおわりです");
 }
 
 // ---------------------
@@ -99,7 +99,9 @@ ColliderComponent::ColliderComponent(ShapeVariant shape, b2::Shape::Params shape
 }
 
 ColliderComponent::~ColliderComponent() {
+    trace("start ColliderComponent dtor");
     this->shape_ref_.Destroy();
+    trace("finish ColliderComponent dtor");
 }
 
 // ---------------------

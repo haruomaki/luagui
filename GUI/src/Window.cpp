@@ -1,39 +1,16 @@
 #include "Window.hpp"
-#include "GUI.hpp"
 #include "Material.hpp"
-#include "Viewport.hpp"
 #include "World.hpp"
+#include <SumiGL/Context.hpp>
 
 #include <algorithm>
 
 using namespace std::chrono_literals;
 
-Window::Window(GUI &gui, int width, int height, const char *title)
-    : gwin_(glfwCreateWindow(width, height, title, nullptr, nullptr))
+Window::Window(GL::Context &gui, int width, int height, const char *title)
+    : GL::Window(gui, width, height, title, [this] { this->routine(); })
+    , gwin_(gwin)
     , gui(gui) {
-    // ウィンドウを作成
-    if (gwin_ == nullptr) {
-        throw std::runtime_error("ウィンドウの作成に失敗しました");
-    }
-    // GLFWwindow *gwin = glfwCreateWindow(width, height, title, nullptr, nullptr);
-    // if (gwin == nullptr) {
-    //     throw std::runtime_error("ウィンドウの作成に失敗しました");
-    // }
-    // this->gwin_ = gwin;
-
-    // 作成したウィンドウを，OpenGLの描画関数のターゲットにする
-    glfwMakeContextCurrent(gwin_);
-    glfwSwapInterval(1);
-
-    // GLEWの初期化
-    if (glewInit() != GLEW_OK) {
-        glfwTerminate();
-        throw std::runtime_error("GLEWの初期化に失敗しました");
-    }
-
-    debug(glGetString(GL_VERSION));
-    debug(glGetString(GL_VENDOR));
-    debug(glGetString(GL_RENDERER));
 
     // ブレンド（透明処理）の設定
     glEnable(GL_BLEND);
@@ -42,13 +19,10 @@ Window::Window(GUI &gui, int width, int height, const char *title)
     // 深度テストを有効化
     glEnable(GL_DEPTH_TEST);
 
-    // ユーザー領域にこのクラスのインスタンスを設定
-    glfwSetWindowUserPointer(gwin_, this);
-
     // ウィンドウサイズコールバック関数を登録する
     glfwSetWindowSizeCallback(gwin_, [](GLFWwindow *gwin, int width, int height) {
         // ここで描画処理などを行う
-        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
         // window->setCamera({0, 0}, default_camera_zoom);
         // debug(window->getViewMatrix());
 
@@ -61,7 +35,7 @@ Window::Window(GUI &gui, int width, int height, const char *title)
     // キーコールバック
     // INFO: キャラを一定速度で動かしたいなどの際は、1フレームごとにgetKeyメソッドを呼び出す方がいい
     glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int /*scancode*/, int action, int /*mods*/) {
-        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
         window->key_callbacks.safe_foreach([&](auto key_callback) {
             key_callback(key, action);
         });
@@ -69,7 +43,7 @@ Window::Window(GUI &gui, int width, int height, const char *title)
 
     // 押した/離した瞬間を記録するためのキーコールバック。key_down()/keu_up()に必要
     glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int scancode, int action, int mods) {
-        auto *window = static_cast<Window *>(glfwGetWindowUserPointer(gwin));
+        auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
         try {
             if (action == GLFW_PRESS) {
                 // debug(key, scancode, mods);
@@ -89,16 +63,13 @@ Window::Window(GUI &gui, int width, int height, const char *title)
 
     // デフォルトマテリアルの設定
     this->default_material = &MaterialBuilder().build(*this);
-
-    // デフォルトビューポートの設定
-    this->default_viewport = &this->append_resource<MaximumViewport>();
 }
 
 Window::~Window() {
     this->worlds_.clear();    // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
     this->resources_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
 
-    // print("Windowのデストラクタです");
+    print("Windowのデストラクタです");
     // debug(this->size_callbacks_.size());
     // this->size_callbacks_.erase(this->size_callbacks_.begin());
     // debug(this->size_callbacks_.size());
@@ -108,38 +79,8 @@ Window::~Window() {
     // glfwSetKeyCallback(gwin_, nullptr);
 }
 
-GLFWwindow *Window::glfw() const {
-    return this->gwin_;
-}
-
-pair<int, int> Window::window_size() const {
-    int width, height;
-    glfwGetWindowSize(gwin_, &width, &height);
-    return {width, height};
-}
-
-pair<int, int> Window::frame_buffer_size() const {
-    int width, height;
-    glfwGetFramebufferSize(gwin_, &width, &height);
-    return {width, height};
-}
-
-pair<float, float> Window::window_content_scale() const {
-    float xscale, yscale;
-    glfwGetWindowContentScale(gwin_, &xscale, &yscale);
-    return {xscale, yscale};
-}
-
-int Window::refresh_rate() const {
-    return this->gui.video_mode().refreshRate;
-}
-
 void Window::close() const {
     glfwSetWindowShouldClose(gwin_, GL_TRUE);
-}
-
-bool Window::key(int key) const {
-    return glfwGetKey(this->gwin_, key) == GLFW_PRESS;
 }
 
 pair<double, double> Window::cursor_pos() const {
@@ -165,6 +106,26 @@ World &Window::create_world() {
     this->worlds_.push_back(std::move(world));
 
     return *this->worlds_.back();
+}
+
+void Window::routine() {
+    if (glfwWindowShouldClose(gwin)) {
+        this->destroy();
+        return;
+    }
+
+    // 更新処理。physicsとupdateは順不同？
+    trace("[mainloop] p1 《physics》->update->draw->post");
+    this->physics_routine();
+    trace("[mainloop] p2 physics->《update》->draw->post");
+    this->update_routine();
+
+    // 更新処理ののち描画。
+    trace("[mainloop] p3 physics->update->《draw》->post");
+    this->draw_routine();
+    trace("[mainloop] p4 physics->update->draw->《post》");
+    this->post_process();
+    trace("[mainloop] p5");
 }
 
 void Window::draw_routine() {
@@ -198,12 +159,17 @@ void Window::update_routine() {
     // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
     // world_object_root_.refreshAbsolutePosition();
 
+    // フレームバッファサイズを更新
+    fbsize_cache = framebuffer_size();
+
     // リソースの更新処理
-    this->resource_updates.foreach_flush([](const auto *update) {
+    trace("[update] 《resource》->world");
+    this->resource_updates.foreach ([](const auto *update) {
         (*update)();
     });
 
     // 各ワールドの更新処理
+    trace("[update] resource->《world》");
     for (const auto &world : this->worlds_) {
         world->master_update();
     }
@@ -221,10 +187,18 @@ void Window::post_process() {
     key_down_.fill(false);
     key_up_.fill(false);
 
+    // フラッシュ TODO: 場所はここでいい？
+    resource_updates.flush();
+
     // rigidbody_components_（物理演算結果を物体の位置に反映するために管理）をフラッシュしておく。
     // 次フレームに同一アドレスの別コンポーネントが作られたときに、競合しないようにするため。
     for (std::unique_ptr<World> &world : this->worlds_) {
         world->rigidbody_components.flush();
+
+        // 各種フラッシュ TODO: 場所はここでいい？
+        world->draws.flush();
+        world->updates.flush();
+        world->rigidbodies.flush();
     }
 }
 

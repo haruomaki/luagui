@@ -3,9 +3,9 @@
 #include <typeindex>
 
 #include "Component.hpp"
-#include "Property.hpp"
-#include "buffered_container.hpp"
 #include "graphical_base.hpp"
+#include "property.hpp"
+#include <SumiGL/buffered_container.hpp>
 
 class World;
 
@@ -16,7 +16,7 @@ class WorldObject {
     glm::vec3 scale_;
     glm::mat4 abs_transform_;
     WorldObject *const parent_;
-    UniqueBufferedSet<WorldObject> children_;
+    BufferedMap<WorldObject *, std::unique_ptr<WorldObject>> children_;
     BufferedMultimap<std::type_index, Component> components_;
     World &world_; // parent_より後にする
 
@@ -75,27 +75,18 @@ class WorldObject {
         WorldObject::set_parent_static(nullptr);
 
         auto raw = dynamic_cast<T *>(ptr.get());
-        this->children_.request_insert(std::move(ptr));
+        this->children_.request_set(raw, std::move(ptr));
+        this->children_.flush(); // NOTE: 同一フレームで即座に反映させるためにとりあえずフラッシュしているが、問題が起きたら見直す。
         return *raw;
     }
 
     bool erase() {
-        auto *ptr_to_erase = this;
-
         // 生ポインタを使用して要素を削除する
-        auto &candidates = this->parent_->children_;
-        bool success = false;
-        candidates.foreach ([&](WorldObject &obj) {
-            if (&obj == ptr_to_erase) {
-                candidates.request_delete(&obj);
-                success = true;
-            }
-        });
-        return success;
+        return this->parent_->children_.request_erase(this);
     }
 
     std::vector<WorldObject *> children() {
-        return children_.elements();
+        return children_.keys();
     }
 
     // void showAbsolutePositionRecursively(int depth) const {

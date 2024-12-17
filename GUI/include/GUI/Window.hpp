@@ -2,8 +2,9 @@
 
 #include "FunctionSet.hpp"
 #include "Resource.hpp"
-#include "Shader.hpp"
-#include "buffered_container.hpp"
+#include <SumiGL/Context.hpp>
+#include <SumiGL/Shader.hpp>
+#include <SumiGL/buffered_container.hpp>
 
 class SizeCallback;
 class World;
@@ -12,8 +13,8 @@ struct Material;
 class Viewport;
 
 // 一つのウィンドウを表すクラス
-class Window {
-    GLFWwindow *gwin_ = nullptr;
+class Window : public GL::Window {
+    GLFWwindow *gwin_ = nullptr; // FIXME: GL::Windowのgwinに置き換えたい
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
     std::set<std::unique_ptr<Resource>> resources_;
@@ -24,7 +25,7 @@ class Window {
     friend class KeyCallback;
     friend class Update;
 
-    friend class GUI;
+    void routine();
     void draw_routine();
     void update_routine();
     void physics_routine();
@@ -34,35 +35,27 @@ class Window {
     void refresh_world_order();
 
   public:
-    GUI &gui;
+    GL::Context &gui;
     std::optional<GL::ProgramObject> default_shader;
     Material *default_material = nullptr;
-    Viewport *default_viewport = nullptr;
     BufferedSet<std::function<void()> *> resource_updates;
     std::vector<std::function<void()>> raw_worlds;
 
+    // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。
+    std::pair<int, int> fbsize_cache = {0, 0};
+
     FunctionSet<void(int key, int action)> key_callbacks;
 
-    Window(GUI &gui, int width, int height, const char *title);
+    Window(GL::Context &gui, int width, int height, const char *title);
     ~Window();
 
-    // // コピーは禁止する
-    // Window(const Window &) = default;
-    // Window &operator=(const Window &) = default;
+    // コピーもムーブも禁止する
+    Window(const Window &) = delete;
+    Window &operator=(const Window &) = delete;
+    Window(Window &&) = delete;
+    Window &operator=(Window &&) = delete;
 
-    // // ムーブコンストラクタはデフォルト、ムーブ代入は禁止
-    // Window(Window &&) = default;
-    // Window &operator=(Window &&) = default;
-
-    [[nodiscard]] GLFWwindow *glfw() const;
-    [[nodiscard]] pair<int, int> window_size() const;
-    [[nodiscard]] pair<int, int> frame_buffer_size() const;
-    [[nodiscard]] pair<float, float> window_content_scale() const;
-    [[nodiscard]] int refresh_rate() const;
     void close() const;
-
-    // glfwGetKeyのラッパー。GLFW_PRESSのときtrue、GLFW_RELEASEのときfalse
-    [[nodiscard]] bool key(int key) const;
 
     // glfwGetCursorPos()のラッパー
     [[nodiscard]] pair<double, double> cursor_pos() const;

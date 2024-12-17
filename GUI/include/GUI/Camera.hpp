@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Viewport.hpp"
 #include "WorldObject.hpp"
 
 // ビュー行列と射影行列を与える機能を持つワールドオブジェクト
@@ -15,10 +14,8 @@ class Camera : virtual public WorldObject {
 };
 
 class NormalCamera : public Camera {
-    const Viewport &viewport_;
-
   public:
-    NormalCamera(const Viewport *viewport = nullptr);
+    NormalCamera() = default;
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;
@@ -26,10 +23,8 @@ class NormalCamera : public Camera {
 
 // float値1が物理ディスプレイ上での1mというスケールの正射影カメラ
 class OrthoCamera : public Camera {
-    const Viewport &viewport_;
-
   public:
-    OrthoCamera(const Viewport *viewport = nullptr);
+    OrthoCamera() = default;
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;

@@ -1,5 +1,6 @@
-#include "utility2.hpp"
-#include <master.hpp>
+#include <GUI/master.hpp>
+#include <GUI/utility2.hpp>
+#include <SumiGL/Texture.hpp> // FIXME: 明示しなくても、GUI経由でインクルードされているのが理想
 
 class GlassBall : public MeshObject, public AABB2d {
     static StaticMesh &gen_mesh(Window &window) {
@@ -51,13 +52,13 @@ int main() {
     bset.request_set(8);
     bset.request_set(9);
     bset.request_set(11);
-    bset.foreach_flush_combination([](int a, int b) {
+    bset.foreach_combination([](int a, int b) {
         debug(a, b);
     });
 
     constexpr int width = 600, height = 500;
-    GUI gui;
-    Window &window = gui.create_window(width, height, "ウィンドウタイトル");
+    GL::Context gui;
+    Window window(gui, width, height, "ウィンドウタイトル");
     World &world = window.create_world();
     // auto &camera = world.append_child<MobileOrthoCamera>();
     auto &camera = world.append_child<MobileNormalCamera>();
@@ -113,6 +114,7 @@ int main() {
     auto &ball3 = gen({-0.1, -0.3, 0});
 
     stage.append_child<KeyCallbackObject>([&](int key, int action) {
+        // FIXME: GL::Windowにキーコールバック機能を追加しないと
         if (key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
             auto power_point = camera.get_position();
             flick_ball(power_point, ball1);

@@ -3,7 +3,7 @@
 class LuaGUI {
 
   public:
-    GUI gui;
+    GL::Context gui;
     sol::state lua;
 
     LuaGUI();

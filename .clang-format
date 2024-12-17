@@ -1,4 +1,5 @@
 # 参考：https://blog.takuchalle.dev/post/2018/04/26/setup_clang_format/
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 
 BasedOnStyle: LLVM # ここを上記の別のスタイルにすることで変えられる
 
@@ -14,3 +15,4 @@ BreakConstructorInitializers: BeforeComma
 DerivePointerAlignment: false
 IndentCaseLabels: false
 AllowShortIfStatementsOnASingleLine: WithoutElse  # 単一行のif文を許容
+AllowShortLoopsOnASingleLine: true  # 単一行のwhile/for文を許容

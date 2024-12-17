@@ -2,7 +2,6 @@
 
 #include <GUI/Camera.hpp>
 #include <GUI/Draw.hpp>
-#include <GUI/GUI.hpp>
 #include <GUI/Material.hpp>
 #include <GUI/Mesh.hpp>
 #include <GUI/Physics.hpp>
@@ -10,7 +9,6 @@
 #include <GUI/Text.hpp>
 #include <GUI/Timer.hpp>
 #include <GUI/Update.hpp>
-#include <GUI/Viewport.hpp>
 #include <GUI/Window.hpp>
 #include <GUI/World.hpp>
 #include <GUI/WorldObject.hpp>

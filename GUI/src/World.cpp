@@ -3,11 +3,11 @@
 
 void World::master_physics() {
     // まず各Rigidbodyの更新処理を呼び出す
-    this->rigidbodies.foreach_flush([](Rigidbody *rb) {
+    this->rigidbodies.foreach ([](Rigidbody *rb) {
         rb->tick();
     });
 
-    this->rigidbodies.foreach_flush_combination([](auto *rb1, auto *rb2) {
+    this->rigidbodies.foreach_combination([](auto *rb1, auto *rb2) {
         (*rb1).collide(*rb2);
     });
 
@@ -17,7 +17,7 @@ void World::master_physics() {
     b2world.Step(dt, 4);
 
     // 物理演算結果をWorldObjectに反映
-    rigidbody_components.foreach_flush([](RigidbodyComponent *rbc) {
+    rigidbody_components.foreach ([](RigidbodyComponent *rbc) {
         const auto physics_position = rbc->b2body.GetPosition();
         rbc->owner().position = {physics_position.x, physics_position.y, 0};
 

@@ -1,35 +1,26 @@
 #pragma once
 
 #include "Camera.hpp"
-#include "GUI.hpp" // TODO: px_meter()をWindowへ移行できたらこの行は消せる
 #include "Mesh.hpp"
 #include "Update.hpp"
 #include "World.hpp"
+#include <SumiGL/Context.hpp> // TODO: px_meter()をWindowへ移行できたらこの行は消せる
+#include <SumiGL/Window.hpp>
 
 // ヘッダオンリーでお手軽に。virtual関数をヘッダ内で実装するときの警告抑制
 #pragma clang diagnostic ignored "-Wweak-vtables"
 
 // 常に画面の左上にある点
 class StickyPointTopLeft : public Update {
-    const Viewport &viewport_;
-
     void update() override {
-        const auto size = viewport_.get_size();
+        auto vp = this->get_world().viewport_provider();
         auto ms = this->get_world().window.gui.master_scale();
-        const auto width = float(size.x) * ms.x;
-        const auto height = float(size.y) * ms.y;
+        const auto width = float(vp.width) * ms.x;
+        const auto height = float(vp.height) * ms.y;
 
         set_position({-width / 2, height / 2, 0});
     }
-
-  public:
-    StickyPointTopLeft(const Viewport *viewport = nullptr)
-        : viewport_(viewport == nullptr ? *this->get_world().window.default_viewport : *viewport) {}
 };
-
-// glm::vec3 operator*(const glm::vec3 &v, const float a) {
-//     return v * a;
-// }
 
 class MobileOrthoCamera : public OrthoCamera, protected Update {
     void update() override {
@@ -64,8 +55,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
     }
 
   public:
-    MobileOrthoCamera(const Viewport *viewport = nullptr)
-        : OrthoCamera(viewport) {}
+    MobileOrthoCamera() = default;
 };
 
 class MobileNormalCamera : public Camera, protected Update {
@@ -128,8 +118,8 @@ class MobileNormalCamera : public Camera, protected Update {
     float angle_speed = 0.02;
     pair<double, double> cursor_pos = this->get_world().window.cursor_pos();
 
-    MobileNormalCamera(const Viewport *viewport = nullptr)
-        : camera_head_(this->append_child<NormalCamera>(viewport)) {}
+    MobileNormalCamera()
+        : camera_head_(this->append_child<NormalCamera>()) {}
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override {
         return camera_head_.get_view_matrix();

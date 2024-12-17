@@ -3,11 +3,11 @@
 #include "GUI/utility.hpp"
 
 int main() {
-    GUI gui;
-    Window &window = gui.create_window(1280, 720, "blank");
+    GL::Context gui;
+    Window window(gui, 1280, 720, "blank");
     World &main_world = window.create_world();
 
-    glfwSetInputMode(window.glfw(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window.gwin, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     auto &camera = main_world.append_child<MobileNormalCamera>();
     camera.position = {0, 0, 10};
@@ -41,4 +41,6 @@ int main() {
 
     // レンダリングループ
     gui.mainloop();
+    // TODO: Windowの開放タイミングのバグ調査
+    print("blankおわり");
 }
