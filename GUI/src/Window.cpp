@@ -19,19 +19,6 @@ Window::Window(GL::Context &gui, int width, int height, const char *title)
     // 深度テストを有効化
     glEnable(GL_DEPTH_TEST);
 
-    // ウィンドウサイズコールバック関数を登録する
-    glfwSetWindowSizeCallback(gwin_, [](GLFWwindow *gwin, int width, int height) {
-        // ここで描画処理などを行う
-        auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
-        // window->setCamera({0, 0}, default_camera_zoom);
-        // debug(window->getViewMatrix());
-
-        // 登録されたコールバック関数たちを実行
-        window->size_callbacks_.safe_foreach([&](auto size_callback) {
-            size_callback(width, height);
-        });
-    });
-
     // 押した/離した瞬間を記録するためのキーコールバック。key_down()/keu_up()に必要
     glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int scancode, int action, int mods) {
         auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));

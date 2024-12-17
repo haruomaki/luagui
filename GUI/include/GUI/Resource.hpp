@@ -6,11 +6,6 @@
 
 class Window;
 
-enum class CallbackKind {
-    Size,
-    Key,
-};
-
 // ユーザはこのクラス（をpublic継承したクラス）を必ずwindow.append_resource()経由でインスタンス化する
 class Resource {
     friend class Window;
@@ -47,15 +42,3 @@ class Resource {
     }
     PropertyGetSet<&Resource::get_name, &Resource::set_name> name{this};
 };
-
-// class SizeCallback : public WindowObject {
-//   public:
-//     std::function<void(int width, int height)> size_callback;
-
-//     // SizeCallback() = default;
-//     // ~SizeCallback() override = default; // virtualにするのが重要
-//     // SizeCallback(const SizeCallback &) = default;
-//     // SizeCallback &operator=(const SizeCallback &) = delete;
-//     // SizeCallback(SizeCallback &&) = default;
-//     // SizeCallback &operator=(SizeCallback &&) = delete;
-// };

@@ -6,7 +6,6 @@
 #include <SumiGL/Shader.hpp>
 #include <SumiGL/buffered_container.hpp>
 
-class SizeCallback;
 class World;
 class GUI;
 struct Material;
@@ -18,11 +17,8 @@ class Window : public GL::Window {
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
     std::set<std::unique_ptr<Resource>> resources_;
-    FunctionSet<void(int, int)> size_callbacks_; // TODO: key_callbackに合わせてpublicにしてもいい
     std::vector<std::unique_ptr<World>> worlds_;
 
-    friend class SizeCallback;
-    friend class KeyCallback;
     friend class Update;
 
     void routine();
@@ -92,25 +88,6 @@ class Window : public GL::Window {
         }
         return nullptr;
     }
-
-    // 各種コールバックを設定する関数。
-    template <CallbackKind callback_kind>
-    void set_callback(std::function<void(int, int)> &&callback) {
-        if constexpr (callback_kind == CallbackKind::Size) {
-            this->size_callbacks_.request_set_function(std::move(callback));
-        } else {
-            static_assert(false, "CallbackKindが不正です");
-        }
-    }
-
-    // // コールバックを削除する関数群
-    // template <CallbackKind callback_kind>
-    // void unset_callback(std::function<void(int, int)> &&callback);
-
-    // template <>
-    // void unset_callback<Size>(std::function<void(int, int)> &&callback) {
-    //     this->size_callbacks_.erase(callback);
-    // }
 
     World &create_world();
 };
