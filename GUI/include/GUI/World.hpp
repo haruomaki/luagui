@@ -45,8 +45,8 @@ class World : public WorldObject {
 
     ~World() override {
         info("Worldのデストラクタ");
-        children_.foreach ([&](WorldObject &obj) {
-            obj.erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
+        children_.foreach ([&](std::unique_ptr<WorldObject> &obj) {
+            obj->erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
         });
         children_.flush(); // 即時flushしないと子オブジェクトがメモリから消えない
     }

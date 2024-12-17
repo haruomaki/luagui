@@ -154,6 +154,8 @@ run_window(800, 600, "ブロック崩し", function()
             end
         end
 
+        Yield(); -- FIXME: childを反映させるために1ティック休むが、本当はこんなもの書かずにすむといい。
+
         WaitUntil(function()
             return #block_container:children() == 0
         end)
