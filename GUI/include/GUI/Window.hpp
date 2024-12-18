@@ -1,6 +1,5 @@
 #pragma once
 
-#include "FunctionSet.hpp"
 #include "Resource.hpp"
 #include <SumiGL/Context.hpp>
 #include <SumiGL/Shader.hpp>
@@ -13,7 +12,7 @@ class Viewport;
 
 // 一つのウィンドウを表すクラス
 class Window : public GL::Window {
-    GLFWwindow *gwin_ = nullptr; // FIXME: GL::Windowのgwinに置き換えたい
+    GLFWwindow *gwin_ = nullptr; // GL::Windowのgwinと同じ
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
     std::set<std::unique_ptr<Resource>> resources_;
