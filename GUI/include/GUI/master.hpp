@@ -4,7 +4,6 @@
 #include <GUI/Draw.hpp>
 #include <GUI/Material.hpp>
 #include <GUI/Mesh.hpp>
-#include <GUI/Physics.hpp>
 #include <GUI/Resource.hpp>
 #include <GUI/Text.hpp>
 #include <GUI/Timer.hpp>
