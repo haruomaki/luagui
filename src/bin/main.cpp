@@ -30,7 +30,7 @@ int main() {
     sample_text.set_position({-200, 50, 200});
     credit_text.set_position({200, 400, 1});
 
-    GLuint cat_texture = loadTexture("assets/images/cat.raw");
+    GLuint cat_texture = load_texture("assets/images/cat.raw");
     Material &cat_material = MaterialBuilder().texture(cat_texture).build(window);
 
     auto &gon = new_mesh(window, GL_TRIANGLE_FAN, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
