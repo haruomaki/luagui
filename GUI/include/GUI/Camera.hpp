@@ -24,6 +24,17 @@ class NormalCamera : public Camera {
 // float値1が物理ディスプレイ上での1mというスケールの正射影カメラ
 class OrthoCamera : public Camera {
   public:
+    enum CameraMode {
+        Center,      // 画面中心
+        TopRight,    // 右上
+        BottomRight, // 右下
+        TopLeft,     // 左上
+        BottomLeft,  // 左下
+        // Custom       // カスタムモード（詳細は別途指定）
+    };
+
+    CameraMode mode = Center;
+
     OrthoCamera() = default;
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
