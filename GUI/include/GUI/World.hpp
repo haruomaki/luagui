@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Mesh.hpp"
+#include "Rigidbody.hpp"
 #include "Timer.hpp"
-
-#include <box2cpp/box2cpp.h>
 
 class Camera;
 class Rigidbody;
