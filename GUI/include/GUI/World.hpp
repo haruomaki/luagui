@@ -45,6 +45,15 @@ class World : public WorldObject {
 
     ~World() override {
         info("Worldのデストラクタ");
+
+        // WARNING: バグ応急処置で、worldに直接付いているコンポーネントの削除。
+        // こんな場当たり的でなく、Worldのシステムから改善したい。
+        components_.foreach ([](auto &comp) {
+            trace("component iteration ", comp->id);
+            comp->erase();
+        });
+        components_.flush();
+
         children_.foreach ([&](std::unique_ptr<WorldObject> &obj) {
             obj->erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
         });

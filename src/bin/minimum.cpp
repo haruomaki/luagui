@@ -16,7 +16,6 @@ int main() {
     std::cout << "\n";
 
     // ただウィンドウを作成し、Qキーで終了するプログラム。
-    // FIXME: 終了時、malloc_consolidate(): unaligned fastbin chunk detectedというエラーが出るので何とかする
     GL::Context ctx;
     Window window(ctx, 500, 400, "minimum.cppのウィンドウ");
     World &world = window.create_world();            // TODO: いちいちワールドを作らなくてもいいようにしたい
