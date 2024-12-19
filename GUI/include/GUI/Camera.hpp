@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Component.hpp"
-#include "WorldObject.hpp"
+#include <glm/glm.hpp>
 
 // ビュー行列と射影行列を与える機能を持つワールドオブジェクト
 struct CameraInterface {
