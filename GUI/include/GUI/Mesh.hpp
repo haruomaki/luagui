@@ -214,7 +214,7 @@ struct MeshDrawManager {
         return vao;
     }
 
-    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const Camera &camera) {
+    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const CameraInterface &camera) {
         // シェーダを有効化
         const auto &shader = material.shader;
         shader.use();
@@ -260,7 +260,7 @@ struct MeshDrawManager {
         });
     }
 
-    void draw_observation(KeyType key, const Camera &camera) {
+    void draw_observation(KeyType key, const CameraInterface &camera) {
         auto &obs = observations[key];
         StaticMesh &mesh = *std::get<0>(key);
         const Material &material = *std::get<1>(key);
@@ -285,7 +285,7 @@ struct MeshDrawManager {
         draw_instanced(mesh, material, batch_vao, model_matrices.size(), camera);
     }
 
-    void draw_all_registered_objects(const Camera &camera) {
+    void draw_all_registered_objects(const CameraInterface &camera) {
         // マテリアルの優先度に基づいてキーをソート
         std::vector<KeyType> sorted_keys{};
         sorted_keys.reserve(observations.size());

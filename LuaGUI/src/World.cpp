@@ -2,7 +2,7 @@
 #include <GUI/utility.hpp>
 #include <GUI/utility2.hpp>
 
-static Camera &create_camera(WorldObject &parent) {
+static CameraInterface &create_camera(WorldObject &parent) {
     auto &camera = parent.append_child<OrthoCamera>();
     camera.set_active();
     return camera;

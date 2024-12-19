@@ -2,11 +2,11 @@
 
 #include "WorldObject.hpp"
 
-class Camera;
+class CameraInterface;
 
 class Draw : virtual public WorldObject {
-    std::function<void(const Camera &)> func_;
-    virtual void draw(const Camera &camera) const = 0;
+    std::function<void(const CameraInterface &)> func_;
+    virtual void draw(const CameraInterface &camera) const = 0;
 
   public:
     Draw();

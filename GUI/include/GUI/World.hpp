@@ -4,11 +4,11 @@
 #include "Rigidbody.hpp"
 #include "Timer.hpp"
 
-class Camera;
+class CameraInterface;
 class Rigidbody;
 
 class World : public WorldObject {
-    Camera *active_camera_ = nullptr;
+    CameraInterface *active_camera_ = nullptr;
 
     friend class Window;
     int draw_priority_ = 0;
@@ -22,7 +22,7 @@ class World : public WorldObject {
     Window &window;
     Timer timer;
     std::function<GL::RawViewport()> viewport_provider;
-    BufferedSet<std::function<void(const Camera &)> *> draws;
+    BufferedSet<std::function<void(const CameraInterface &)> *> draws;
     BufferedSet<std::function<void()> *> updates;
     BufferedSet<Rigidbody *> rigidbodies;
     BufferedSet<RigidbodyComponent *> rigidbody_components;
@@ -103,7 +103,7 @@ class World : public WorldObject {
     //     this->mesh_draw_manager_.register_to_draw(obj);
     // }
 
-    Camera *&active_camera() {
+    CameraInterface *&active_camera() {
         return this->active_camera_;
     }
 

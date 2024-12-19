@@ -3,9 +3,9 @@
 #include "WorldObject.hpp"
 
 // ビュー行列と射影行列を与える機能を持つワールドオブジェクト
-class Camera : virtual public WorldObject {
+class CameraInterface : virtual public WorldObject {
   public:
-    Camera() = default;
+    CameraInterface() = default;
     [[nodiscard]] virtual glm::mat4 get_view_matrix() const = 0;
     [[nodiscard]] virtual glm::mat4 get_projection_matrix() const = 0;
 
@@ -13,7 +13,7 @@ class Camera : virtual public WorldObject {
     void set_active();
 };
 
-class NormalCamera : public Camera {
+class NormalCamera : public CameraInterface {
   public:
     NormalCamera() = default;
 
@@ -22,7 +22,7 @@ class NormalCamera : public Camera {
 };
 
 // float値1が物理ディスプレイ上での1mというスケールの正射影カメラ
-class OrthoCamera : public Camera {
+class OrthoCamera : public CameraInterface {
   public:
     enum CameraMode {
         Center,      // 画面中心

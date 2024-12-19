@@ -2,7 +2,7 @@
 #include "World.hpp"
 #include <SumiGL/Context.hpp>
 
-void Camera::set_active() {
+void CameraInterface::set_active() {
     this->get_world().active_camera() = this;
 }
 
