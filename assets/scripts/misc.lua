@@ -66,6 +66,7 @@ function supercamera_2d(...)
     local camera = cobj:add_camera_component("Orthogonal")
 
     __CurrentCamera = camera
+    camera:set_active()
 
     -- オプションに応じた機能を追加
     -- print(to_set({ 3, 3, 5, 5, 7, 8 }))

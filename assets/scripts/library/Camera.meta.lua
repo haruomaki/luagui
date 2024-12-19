@@ -10,6 +10,9 @@ local Camera = {}
 ---@type Camera
 __CurrentCamera = nil
 
+---このカメラをアクティブにする。
+function Camera:set_active() end
+
 ---カメラコンポーネントを追加する。
 ---@param projection_mode "Normal" | "Orthogonal"
 ---@return Camera
