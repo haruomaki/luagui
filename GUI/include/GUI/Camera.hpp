@@ -10,16 +10,7 @@ struct CameraInterface {
     [[nodiscard]] virtual glm::mat4 get_projection_matrix() const = 0;
 };
 
-class NormalCamera : public CameraInterface, public Component {
-  public:
-    NormalCamera() = default;
-
-    [[nodiscard]] glm::mat4 get_view_matrix() const override;
-    [[nodiscard]] glm::mat4 get_projection_matrix() const override;
-};
-
-// float値1が物理ディスプレイ上での1mというスケールの正射影カメラ
-class OrthoCamera : public CameraInterface, public Component {
+class Camera : public CameraInterface, public Component {
   public:
     enum CameraMode {
         Center,      // 画面中心
@@ -30,9 +21,15 @@ class OrthoCamera : public CameraInterface, public Component {
         // Custom       // カスタムモード（詳細は別途指定）
     };
 
+    enum ProjectionMode {
+        Normal,     // 透視図法？
+        Orthogonal, // 正射影
+    };
+
+    ProjectionMode projection_mode;
     CameraMode mode = Center;
 
-    OrthoCamera() = default;
+    Camera(Camera::ProjectionMode projection_mode = Normal);
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;

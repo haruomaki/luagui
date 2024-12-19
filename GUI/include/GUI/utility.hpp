@@ -21,9 +21,9 @@ class StickyPointTopLeft : public Update {
     }
 };
 
-inline OrthoCamera &mobile_ortho_camera(WorldObject &parent) {
+inline Camera &mobile_ortho_camera(WorldObject &parent) {
     auto &obj = parent.append_child<WorldObject>();
-    auto &camera = obj.add_component<OrthoCamera>();
+    auto &camera = obj.add_component<Camera>(Camera::Orthogonal);
 
     obj.add_component<UpdateComponent>([&](UpdateComponent &self) {
         constexpr float speed = 0.002;
@@ -54,10 +54,10 @@ inline OrthoCamera &mobile_ortho_camera(WorldObject &parent) {
     return camera;
 }
 
-inline NormalCamera &mobile_normal_camera(WorldObject &parent) {
+inline Camera &mobile_normal_camera(WorldObject &parent) {
     auto &body = parent.append_child<WorldObject>();
     auto &head = body.append_child<WorldObject>();
-    auto &camera = head.add_component<NormalCamera>();
+    auto &camera = head.add_component<Camera>();
 
     constexpr float speed = 0.003;
     constexpr float angle_speed = 0.02;

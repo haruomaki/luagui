@@ -4,7 +4,7 @@
 
 static CameraInterface &create_camera(WorldObject &parent) {
     auto obj = parent.append_child<WorldObject>();
-    auto &camera = obj.add_component<OrthoCamera>();
+    auto &camera = obj.add_component<Camera>(Camera::Orthogonal);
     obj.get_world().active_camera() = &camera;
     return camera;
 }
