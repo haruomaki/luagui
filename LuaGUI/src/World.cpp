@@ -3,8 +3,9 @@
 #include <GUI/utility2.hpp>
 
 static CameraInterface &create_camera(WorldObject &parent) {
-    auto &camera = parent.append_child<OrthoCamera>();
-    camera.get_world().active_camera() = &camera;
+    auto obj = parent.append_child<WorldObject>();
+    auto &camera = obj.add_component<OrthoCamera>();
+    obj.get_world().active_camera() = &camera;
     return camera;
 }
 
@@ -55,8 +56,8 @@ void register_world(sol::state &lua) {
         lua["__CurrentWorld"] = &world;
 
         if (debug) {
-            auto &camera = world.append_child<MobileOrthoCamera>();
-            camera.get_world().active_camera() = &camera;
+            auto &camera = mobile_ortho_camera(world);
+            world.active_camera() = &camera;
         }
 
         // auto migmix_font = new Font();

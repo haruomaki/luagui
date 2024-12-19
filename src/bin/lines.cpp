@@ -18,12 +18,13 @@ int main() {
     World &world = window.create_world();
     World &ui_world = window.create_world();
 
-    auto &camera = world.append_child<MobileOrthoCamera>();
-    auto &ui_camera = ui_world.append_child<OrthoCamera>();
+    auto &camera = mobile_ortho_camera(world);
+    auto &ui_camera_obj = ui_world.append_child<WorldObject>();
+    auto &ui_camera = ui_camera_obj.add_component<OrthoCamera>();
     // camera.setScale(0.01F);
     // camera.setScale(100);
-    camera.set_active();
-    ui_camera.set_active();
+    world.active_camera() = &camera;
+    ui_world.active_camera() = &ui_camera;
 
     auto &line = new_points(world);
     auto &line_mesh = line.mesh;

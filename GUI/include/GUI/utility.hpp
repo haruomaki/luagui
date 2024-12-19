@@ -21,41 +21,38 @@ class StickyPointTopLeft : public Update {
     }
 };
 
-class MobileOrthoCamera : public OrthoCamera, protected Update {
-    void update() override {
+inline OrthoCamera &mobile_ortho_camera(WorldObject &parent) {
+    auto &obj = parent.append_child<WorldObject>();
+    auto &camera = obj.add_component<OrthoCamera>();
+
+    obj.add_component<UpdateComponent>([&](UpdateComponent &self) {
         constexpr float speed = 0.002;
-        const Window &window = this->get_world().window;
+        const Window &window = self.window();
 
         if (window.key(GLFW_KEY_RIGHT)) {
-            position += get_left() * speed;
+            obj.position += obj.get_left() * speed;
         }
         if (window.key(GLFW_KEY_LEFT)) {
-            position += get_right() * speed;
+            obj.position += obj.get_right() * speed;
         }
         if (window.key(GLFW_KEY_DOWN)) {
-            position += get_down() * speed;
+            obj.position += obj.get_down() * speed;
         }
         if (window.key(GLFW_KEY_UP)) {
-            position += get_up() * speed;
+            obj.position += obj.get_up() * speed;
         }
         if (window.key(GLFW_KEY_Z)) {
-            scale /= 1.01F;
+            obj.scale /= 1.01F;
         }
         if (window.key(GLFW_KEY_X)) {
-            scale *= 1.01F;
+            obj.scale *= 1.01F;
         }
         if (window.key(GLFW_KEY_Q)) {
             window.close();
         }
-
-        // scale *= 1.002F;
-        // scale *= "a";
-        // scale + "a";
-    }
-
-  public:
-    MobileOrthoCamera() = default;
-};
+    });
+    return camera;
+}
 
 class MobileNormalCamera : public CameraInterface, protected Update, virtual public WorldObject {
     NormalCamera &camera_head_;

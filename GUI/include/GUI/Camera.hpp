@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Component.hpp"
 #include "WorldObject.hpp"
 
 // ビュー行列と射影行列を与える機能を持つワールドオブジェクト
@@ -18,7 +19,7 @@ class NormalCamera : public CameraInterface, virtual public WorldObject {
 };
 
 // float値1が物理ディスプレイ上での1mというスケールの正射影カメラ
-class OrthoCamera : public CameraInterface, virtual public WorldObject {
+class OrthoCamera : public CameraInterface, public Component {
   public:
     enum CameraMode {
         Center,      // 画面中心

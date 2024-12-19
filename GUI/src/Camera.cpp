@@ -18,18 +18,18 @@ glm::mat4 NormalCamera::get_projection_matrix() const {
 }
 
 glm::mat4 OrthoCamera::get_view_matrix() const {
-    return glm::inverse(get_absolute_transform());
+    return glm::inverse(owner().get_absolute_transform());
 }
 
 glm::mat4 OrthoCamera::get_projection_matrix() const {
-    auto vp = this->get_world().viewport_provider();
+    auto vp = this->world().viewport_provider();
     int width = vp.width;
     int height = vp.height;
 
-    auto ms = this->get_world().window.gui.master_scale();
+    auto ms = this->world().window.gui.master_scale();
     const auto w = float(width) * ms.x;
     const auto h = float(height) * ms.y;
-    const auto r = this->get_scale().z;
+    const auto r = owner().get_scale().z;
     const auto near = -1000.0f * r;
     const auto far = 1000.0f * r;
     switch (mode) {
