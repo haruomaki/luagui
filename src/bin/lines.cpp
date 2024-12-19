@@ -25,21 +25,19 @@ int main() {
     // camera.setScale(100);
     world.active_camera() = &camera;
     ui_world.active_camera() = &ui_camera;
+    ui_camera.mode = Camera::TopLeft;
 
     auto &line = new_points(world);
     auto &line_mesh = line.mesh;
     line.scale = 0.03;
     int points_num = 100;
 
-    // 左上に常在する点
-    // これが間違ってworldの子になってもメモリエラー？回答：前と後ろでui_worldとworldのようにチグハグに指定するとエラー
-    auto &top_left_point = ui_world.append_child<StickyPointTopLeft>();
-
     // 文字の表示
     auto &migmix_font = window.append_resource<Font>();
-    auto &sample_text = top_left_point.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
-    /* auto &credit_text =*/ui_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
+    auto &sample_text = ui_world.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
+    auto &credit_text = ui_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
     sample_text.position = {0.005, -0.02, 0};
+    credit_text.position = {0.1, -0.1, 0};
 
     // 三角形の表示
     auto &my_triangle_mesh = new_mesh(window, GL_TRIANGLE_FAN, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},

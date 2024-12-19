@@ -9,17 +9,17 @@
 // ヘッダオンリーでお手軽に。virtual関数をヘッダ内で実装するときの警告抑制
 #pragma clang diagnostic ignored "-Wweak-vtables"
 
-// 常に画面の左上にある点
-class StickyPointTopLeft : public Update {
-    void update() override {
-        auto vp = this->get_world().viewport_provider();
-        auto ms = this->get_world().window.gui.master_scale();
-        const auto width = float(vp.width) * ms.x;
-        const auto height = float(vp.height) * ms.y;
+// // 常に画面の左上にある点
+// class StickyPointTopLeft : public Update {
+//     void update() override {
+//         auto vp = this->get_world().viewport_provider();
+//         auto ms = this->get_world().window.gui.master_scale();
+//         const auto width = float(vp.width) * ms.x;
+//         const auto height = float(vp.height) * ms.y;
 
-        set_position({-width / 2, height / 2, 0});
-    }
-};
+//         set_position({-width / 2, height / 2, 0});
+//     }
+// };
 
 inline Camera &mobile_ortho_camera(WorldObject &parent) {
     auto &obj = parent.append_child<WorldObject>();
