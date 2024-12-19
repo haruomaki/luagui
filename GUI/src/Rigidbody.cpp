@@ -1,5 +1,3 @@
-#include "Rigidbody.hpp"
-
 // ---------------------
 // RigidbodyComponent
 // ---------------------

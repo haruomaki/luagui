@@ -1,5 +1,3 @@
-#include <Component.hpp>
-
 Component::Component()
     : owner_(WorldObject::get_parent_static()) {
     if (owner_ == nullptr) {

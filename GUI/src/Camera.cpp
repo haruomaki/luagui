@@ -1,7 +1,3 @@
-#include "Camera.hpp"
-#include "World.hpp"
-#include <SumiGL/Context.hpp>
-
 Camera::Camera(ProjectionMode projection_mode)
     : projection_mode(projection_mode) {}
 
