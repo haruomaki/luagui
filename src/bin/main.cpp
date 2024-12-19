@@ -21,7 +21,7 @@ int main() {
     camera.position = {0, 0, 1000};
     camera.rotate = ANGLE_Y(M_PIf);
     camera.scale = 2000; // 速度調整
-    camera.set_active();
+    main_world.active_camera() = &camera;
 
     auto &migmix_font = window.append_resource<Font>();
     auto &sample_text = main_world.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});

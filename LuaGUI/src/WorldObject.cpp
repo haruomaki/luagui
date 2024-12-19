@@ -29,10 +29,10 @@ static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, 
         trace("[LuaGUI] UpdateComponent runner end");
     };
 
-    auto *uc = obj->add_component<UpdateComponent>(runner);
-    uc->id = std::move(id);
+    auto &uc = obj->add_component<UpdateComponent>(runner);
+    uc.id = std::move(id);
     // print("add_update_componentおわり,", uc, ", ", uc->id);
-    return uc;
+    return &uc;
 }
 
 static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject *obj, const sol::optional<sol::table> &tbl_opt) {
@@ -52,8 +52,8 @@ static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject 
     body_params.position = {pos.x, pos.y};
     body_params.sleepThreshold = 0.0005f; // スリープ状態を防ぐ
 
-    auto *rbc = obj->add_component<RigidbodyComponent>(body_params);
-    return rbc;
+    auto &rbc = obj->add_component<RigidbodyComponent>(body_params);
+    return &rbc;
 }
 
 static sol::object get_component(sol::state &lua, WorldObject *obj, const std::string &component_type) {
