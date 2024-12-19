@@ -12,10 +12,6 @@ World = {}
 ---@type World
 __CurrentWorld = nil
 
----カメラを作成する。
----@return Camera camera
-function World:create_camera() end
-
 ---直線を描画する。
 ---@param points Points 頂点の座標
 ---@return MeshObject

@@ -59,14 +59,3 @@ function Component:erase() end
 
 ---@class Update : Component
 Update = {}
-
-----------
--- カメラ
-----------
-
----カメラオブジェクトを表すクラス。
----@class Camera : WorldObject
-local Camera = {}
-
----@type Camera
-__CurrentCamera = nil

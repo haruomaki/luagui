@@ -84,8 +84,8 @@ run_window(800, 600, "ブロック崩し", function()
 
     local world = create_world()
     local camera = supercamera_2d("quit", "zoom")
-    camera.position = { 0, 0.05 }
-    camera.scale_prop = 2
+    camera.owner.position = { 0, 0.05 }
+    camera.owner.scale_prop = 2
     world.b2world.gravity = { 0, -0.1 }
 
     local text_world = create_world()
