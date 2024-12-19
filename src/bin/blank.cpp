@@ -9,10 +9,11 @@ int main() {
 
     glfwSetInputMode(window.gwin, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    auto &camera = main_world.append_child<MobileNormalCamera>();
-    camera.position = {0, 0, 10};
-    camera.rotate = ANGLE_Y(M_PIf);
-    camera.scale = 10;
+    auto &camera = mobile_normal_camera(main_world);
+    auto &cobj = *camera.owner().get_parent();
+    cobj.position = {0, 0, 10};
+    cobj.rotate = ANGLE_Y(M_PIf);
+    cobj.scale = 10;
     main_world.active_camera() = &camera;
 
     auto &cube = new_mesh(main_world);

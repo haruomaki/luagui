@@ -54,77 +54,67 @@ inline OrthoCamera &mobile_ortho_camera(WorldObject &parent) {
     return camera;
 }
 
-class MobileNormalCamera : public CameraInterface, protected Update, virtual public WorldObject {
-    NormalCamera &camera_head_;
+inline NormalCamera &mobile_normal_camera(WorldObject &parent) {
+    auto &body = parent.append_child<WorldObject>();
+    auto &head = body.append_child<WorldObject>();
+    auto &camera = head.add_component<NormalCamera>();
 
-    void update() override {
-        const Window &window = this->get_world().window;
+    constexpr float speed = 0.003;
+    constexpr float angle_speed = 0.02;
+    // pair<double, double> cursor_pos = this->get_world().window.cursor_pos();
+    body.add_component<UpdateComponent>([&](UpdateComponent &self) {
+        const Window &window = self.window();
 
         if (window.key(GLFW_KEY_W)) {
-            position += get_front() * speed;
+            body.position += body.get_front() * speed;
         }
         if (window.key(GLFW_KEY_A)) {
-            position += get_left() * speed;
+            body.position += body.get_left() * speed;
         }
         if (window.key(GLFW_KEY_S)) {
-            position += get_back() * speed;
+            body.position += body.get_back() * speed;
         }
         if (window.key(GLFW_KEY_D)) {
-            position += get_right() * speed;
+            body.position += body.get_right() * speed;
         }
         if (window.key(GLFW_KEY_SPACE)) {
-            position += get_up() * speed;
+            body.position += body.get_up() * speed;
         }
         if (window.key(GLFW_KEY_LEFT_SHIFT)) {
-            position += get_down() * speed;
+            body.position += body.get_down() * speed;
         }
         if (window.key(GLFW_KEY_RIGHT)) {
-            rotate *= ANGLE_Y(-angle_speed);
+            body.rotate *= ANGLE_Y(-angle_speed);
         }
         if (window.key(GLFW_KEY_LEFT)) {
-            rotate *= ANGLE_Y(angle_speed);
+            body.rotate *= ANGLE_Y(angle_speed);
         }
         if (window.key(GLFW_KEY_DOWN)) {
-            camera_head_.rotate *= ANGLE_X(angle_speed);
+            head.rotate *= ANGLE_X(angle_speed);
         }
         if (window.key(GLFW_KEY_UP)) {
-            camera_head_.rotate *= ANGLE_X(-angle_speed);
+            head.rotate *= ANGLE_X(-angle_speed);
         }
-        if (window.key(GLFW_KEY_Z)) {
-            // 移動速度が変わる
-            scale *= 1.01;
-        }
-        if (window.key(GLFW_KEY_X)) {
-            scale /= 1.01;
-        }
+        // if (window.key(GLFW_KEY_Z)) {
+        //     // 移動速度が変わる
+        //     scale *= 1.01;
+        // }
+        // if (window.key(GLFW_KEY_X)) {
+        //     scale /= 1.01;
+        // }
         if (window.key(GLFW_KEY_Q)) {
             window.close();
         }
 
-        auto [new_x, new_y] = window.cursor_pos();
-        auto dx = new_x - this->cursor_pos.first;
-        auto dy = new_y - this->cursor_pos.second;
-        rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.1f);
-        camera_head_.rotate *= ANGLE_X(angle_speed * float(dy) * 0.1f);
-        this->cursor_pos = {new_x, new_y};
-    }
-
-  public:
-    float speed = 0.003;
-    float angle_speed = 0.02;
-    pair<double, double> cursor_pos = this->get_world().window.cursor_pos();
-
-    MobileNormalCamera()
-        : camera_head_(this->append_child<NormalCamera>()) {}
-
-    [[nodiscard]] glm::mat4 get_view_matrix() const override {
-        return camera_head_.get_view_matrix();
-    }
-
-    [[nodiscard]] glm::mat4 get_projection_matrix() const override {
-        return camera_head_.get_projection_matrix();
-    }
-};
+        // auto [new_x, new_y] = window.cursor_pos();
+        // auto dx = new_x - this->cursor_pos.first;
+        // auto dy = new_y - this->cursor_pos.second;
+        // rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.1f);
+        // camera_head_.rotate *= ANGLE_X(angle_speed * float(dy) * 0.1f);
+        // this->cursor_pos = {new_x, new_y};
+    });
+    return camera;
+}
 
 inline MeshObject &new_mesh(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;

@@ -17,10 +17,11 @@ int main() {
 
     auto main_shader = GL::ProgramObject{vsh_id, fsh_id};
 
-    auto &camera = main_world.append_child<MobileNormalCamera>();
-    camera.position = {0, 0, 1000};
-    camera.rotate = ANGLE_Y(M_PIf);
-    camera.scale = 2000; // 速度調整
+    auto &camera = mobile_normal_camera(main_world);
+    auto &cobj = *camera.owner().get_parent();
+    cobj.position = {0, 0, 1000};
+    cobj.rotate = ANGLE_Y(M_PIf);
+    cobj.scale = 2000; // 速度調整
     main_world.active_camera() = &camera;
 
     auto &migmix_font = window.append_resource<Font>();

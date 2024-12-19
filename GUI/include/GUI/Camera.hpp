@@ -10,7 +10,7 @@ struct CameraInterface {
     [[nodiscard]] virtual glm::mat4 get_projection_matrix() const = 0;
 };
 
-class NormalCamera : public CameraInterface, virtual public WorldObject {
+class NormalCamera : public CameraInterface, public Component {
   public:
     NormalCamera() = default;
 
