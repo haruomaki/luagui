@@ -4,7 +4,7 @@
 
 static CameraInterface &create_camera(WorldObject &parent) {
     auto &camera = parent.append_child<OrthoCamera>();
-    camera.set_active();
+    camera.get_world().active_camera() = &camera;
     return camera;
 }
 
@@ -56,7 +56,7 @@ void register_world(sol::state &lua) {
 
         if (debug) {
             auto &camera = world.append_child<MobileOrthoCamera>();
-            camera.set_active();
+            camera.get_world().active_camera() = &camera;
         }
 
         // auto migmix_font = new Font();

@@ -13,7 +13,7 @@ int main() {
     camera.position = {0, 0, 10};
     camera.rotate = ANGLE_Y(M_PIf);
     camera.scale = 10;
-    camera.set_active();
+    main_world.active_camera() = &camera;
 
     auto &cube = new_mesh(main_world);
     auto &mesh = cube.mesh;

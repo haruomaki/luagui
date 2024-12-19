@@ -2,10 +2,6 @@
 #include "World.hpp"
 #include <SumiGL/Context.hpp>
 
-void CameraInterface::set_active() {
-    this->get_world().active_camera() = this;
-}
-
 glm::mat4 NormalCamera::get_view_matrix() const {
     return SCALE({-1, 1, -1}) * glm::inverse(get_absolute_transform());
 }

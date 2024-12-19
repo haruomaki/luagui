@@ -57,7 +57,7 @@ class MobileOrthoCamera : public OrthoCamera, protected Update {
     MobileOrthoCamera() = default;
 };
 
-class MobileNormalCamera : public CameraInterface, protected Update {
+class MobileNormalCamera : public CameraInterface, protected Update, virtual public WorldObject {
     NormalCamera &camera_head_;
 
     void update() override {
