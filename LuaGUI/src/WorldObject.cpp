@@ -117,7 +117,4 @@ void register_world_object(sol::state &lua) {
         sol::base_classes, sol::bases<Component>());
 
     lua.new_usertype<MeshObject>("MeshObject", sol::base_classes, sol::bases<WorldObject>());
-
-    // // Cameraクラス
-    // lua.new_usertype<CameraInterface>("CameraInterface", sol::base_classes, sol::bases<WorldObject>());
 }

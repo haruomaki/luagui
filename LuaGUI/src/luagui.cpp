@@ -2,6 +2,7 @@
 #include <luagui.hpp>
 
 #include "Box2D.hpp"
+#include "Camera.hpp"
 #include "Text.hpp"
 #include "Window.hpp"
 #include "World.hpp"
@@ -92,6 +93,7 @@ LuaGUI::LuaGUI() {
     register_window(lua);
     register_world_object(lua);
     register_world(lua);
+    register_camera(lua);
     register_box2d(lua);
     register_text(lua);
 }

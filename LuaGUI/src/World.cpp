@@ -2,13 +2,6 @@
 #include <GUI/utility.hpp>
 #include <GUI/utility2.hpp>
 
-// static CameraInterface &create_camera(WorldObject &parent) {
-//     auto obj = parent.append_child<WorldObject>();
-//     auto &camera = obj.add_component<Camera>(Camera::Orthogonal);
-//     obj.get_world().active_camera() = &camera;
-//     return camera;
-// }
-
 static MeshObject &draw_line(WorldObject &parent, std::vector<std::vector<float>> points, std::optional<bool> is_loop) { // NOLINT(performance-unnecessary-value-param)
     std::vector<glm::vec3> coords(points.size());
     for (size_t i = 0; i < points.size(); i++) {
@@ -71,7 +64,6 @@ void register_world(sol::state &lua) {
         "b2world", sol::readonly_property([](World *world) { return &world->b2world; }),
         sol::base_classes, sol::bases<WorldObject>());
 
-    // lua["WorldObject"]["create_camera"] = create_camera;
     lua["WorldObject"]["draw_line"] = draw_line;
     lua["WorldObject"]["draw_circle"] = draw_circle;
     lua["WorldObject"]["draw_rect"] = draw_rect;
