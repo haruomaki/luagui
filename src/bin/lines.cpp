@@ -1,8 +1,6 @@
 // FIXME: 正確な寸法に修正したのに合わせ、文字サイズ要再調整。
 
-#include <GUI/Timer.hpp>
-#include <GUI/master.hpp>
-#include <GUI/utility.hpp>
+#include <gui.hpp>
 
 inline float f(float x) {
     return 3 * std::sin(x);
@@ -18,27 +16,26 @@ int main() {
     World &world = window.create_world();
     World &ui_world = window.create_world();
 
-    auto &camera = world.append_child<MobileOrthoCamera>();
-    auto &ui_camera = ui_world.append_child<OrthoCamera>();
+    auto &camera = mobile_ortho_camera(world);
+    auto &ui_camera_obj = ui_world.append_child<WorldObject>();
+    auto &ui_camera = ui_camera_obj.add_component<Camera>(Camera::Orthographic);
     // camera.setScale(0.01F);
     // camera.setScale(100);
-    camera.set_active();
-    ui_camera.set_active();
+    world.active_camera() = &camera;
+    ui_world.active_camera() = &ui_camera;
+    ui_camera.mode = Camera::TopLeft;
 
     auto &line = new_points(world);
     auto &line_mesh = line.mesh;
-    line.scale = 0.03;
+    line.owner().scale = 0.03;
     int points_num = 100;
-
-    // 左上に常在する点
-    // これが間違ってworldの子になってもメモリエラー？回答：前と後ろでui_worldとworldのようにチグハグに指定するとエラー
-    auto &top_left_point = ui_world.append_child<StickyPointTopLeft>();
 
     // 文字の表示
     auto &migmix_font = window.append_resource<Font>();
-    auto &sample_text = top_left_point.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
-    /* auto &credit_text =*/ui_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
-    sample_text.position = {0.005, -0.02, 0};
+    auto &sample_text = ui_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
+    auto &credit_text = ui_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
+    sample_text.owner().position = {0.005, -0.02, 0};
+    credit_text.owner().position = {0.1, -0.1, 0};
 
     // 三角形の表示
     auto &my_triangle_mesh = new_mesh(window, GL_TRIANGLE_FAN, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
@@ -47,9 +44,9 @@ int main() {
                                           {0.9, 0.2, 0.7, 0.3},
                                           {0.3, 0.7, 0.5, 0.5},
                                       });
-    auto &my_triangle = world.append_child<MeshObject>(my_triangle_mesh);
-    my_triangle.scale = 0.1;
-    my_triangle.position = {-0.1, 0, 0};
+    auto &my_triangle = world.child_component<MeshComponent>(my_triangle_mesh);
+    my_triangle.owner().scale = 0.1;
+    my_triangle.owner().position = {-0.1, 0, 0};
 
     float t = 0;
     world.timer.task(0.5, [&] {
@@ -58,7 +55,7 @@ int main() {
     });
 
     auto proc = std::make_unique<std::function<void()>>([&] {
-        sample_text.text_ = to_str(gui.tick());
+        sample_text.text = to_str(gui.tick());
 
         const auto xs = linspace(-9, 9, points_num);
         line_mesh.vertices.clear();

@@ -15,6 +15,7 @@ class Window : public GL::Window {
     GLFWwindow *gwin_ = nullptr; // GL::Windowのgwinと同じ
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
+    std::pair<double, double> last_cursor_ = cursor_pos();
     std::set<std::unique_ptr<Resource>> resources_;
     std::vector<std::unique_ptr<World>> worlds_;
 
@@ -50,8 +51,11 @@ class Window : public GL::Window {
 
     void close() const;
 
-    // glfwGetCursorPos()のラッパー
-    [[nodiscard]] std::pair<double, double> cursor_pos() const;
+    // 前フレームからのカーソルの移動差分を得る。
+    [[nodiscard]] std::pair<double, double> cursor_diff() const {
+        auto [x, y] = cursor_pos();
+        return {x - last_cursor_.first, y - last_cursor_.second};
+    }
 
     // 現在フレームにおける、キー変更イベント（押した）の有無を表す
     [[nodiscard]] const KeyArray &key_down() const { return key_down_; }

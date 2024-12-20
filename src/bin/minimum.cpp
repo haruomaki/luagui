@@ -1,4 +1,4 @@
-#include <iostream>
+#include <gui.hpp>
 
 int main() {
     setUTF8();
@@ -18,9 +18,12 @@ int main() {
     // ただウィンドウを作成し、Qキーで終了するプログラム。
     GL::Context ctx;
     Window window(ctx, 500, 400, "minimum.cppのウィンドウ");
-    World &world = window.create_world();            // TODO: いちいちワールドを作らなくてもいいようにしたい
-    world.append_child<NormalCamera>().set_active(); // TODO: いちいちカメラを作りたくない
+    World &world = window.create_world();      // TODO: いちいちワールドを作らなくてもいいようにしたい
+    auto &cam = world.add_component<Camera>(); // TODO: いちいちカメラを作りたくない
+    world.active_camera() = &cam;
     world.add_component<UpdateComponent>([&](auto & /*self*/) {
+        if (window.key_down()[GLFW_KEY_W]) std::cout << "わん🐶\n";
+        if (window.key_down()[GLFW_KEY_N]) std::cout << "にゃん🐱\n";
         if (window.key(GLFW_KEY_Q)) window.close();
     });
     ctx.mainloop();

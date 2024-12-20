@@ -1,6 +1,4 @@
-#include <GUI/master.hpp>
-
-#include "GUI/utility.hpp"
+#include <gui.hpp>
 
 int main() {
     GL::Context gui;
@@ -9,11 +7,12 @@ int main() {
 
     glfwSetInputMode(window.gwin, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    auto &camera = main_world.append_child<MobileNormalCamera>();
-    camera.position = {0, 0, 10};
-    camera.rotate = ANGLE_Y(M_PIf);
-    camera.scale = 10;
-    camera.set_active();
+    auto &camera = mobile_normal_camera(main_world);
+    auto &cobj = *camera.owner().get_parent();
+    cobj.position = {0, 0, 10};
+    cobj.rotate = ANGLE_Y(M_PIf);
+    cobj.scale = 10;
+    main_world.active_camera() = &camera;
 
     auto &cube = new_mesh(main_world);
     auto &mesh = cube.mesh;
@@ -34,8 +33,8 @@ int main() {
     // cube.draw_mode = GL_LINE_STRIP;
     mesh.draw_mode = GL_TRIANGLE_STRIP;
     cube.material.line_width = 5;
-    cube.scale = 2;
-    cube.position = {1, 1, 5};
+    cube.owner().scale = 2;
+    cube.owner().position = {1, 1, 5};
 
     main_world.append_child<GridGround>();
 

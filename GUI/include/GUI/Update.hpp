@@ -1,16 +1,17 @@
 #pragma once
 
-#include "WorldObject.hpp"
+#include "Component.hpp"
+#include <functional>
 
-class Update : virtual public WorldObject {
+class UpdateComponent : public Component {
     std::function<void()> func_;
+    const std::string category_;
 
   public:
-    virtual void update() = 0;
-    Update();
-    ~Update() override;
-    Update(const Update &);
-    Update &operator=(const Update &) const = delete;
-    Update(Update &&) = delete;
-    Update &operator=(Update &&) const = delete;
+    UpdateComponent(std::function<void(UpdateComponent &)> &&f, std::string category = "Update");
+    ~UpdateComponent() override;
+    UpdateComponent(const UpdateComponent &) = delete;
+    UpdateComponent &operator=(const UpdateComponent &) const = delete;
+    UpdateComponent(UpdateComponent &&) = delete;
+    UpdateComponent &operator=(UpdateComponent &&) const = delete;
 };

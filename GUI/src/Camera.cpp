@@ -1,39 +1,34 @@
 #include "Camera.hpp"
 #include "World.hpp"
-#include <SumiGL/Context.hpp>
 
-void Camera::set_active() {
-    this->get_world().active_camera() = this;
+Camera::Camera(ProjectionMode projection_mode)
+    : projection_mode(projection_mode) {}
+
+glm::mat4 Camera::get_view_matrix() const {
+    switch (projection_mode) {
+    case Perspective:
+        return SCALE({-1, 1, -1}) * glm::inverse(owner().get_absolute_transform());
+    case Orthographic:
+        return glm::inverse(owner().get_absolute_transform());
+    }
 }
 
-glm::mat4 NormalCamera::get_view_matrix() const {
-    return SCALE({-1, 1, -1}) * glm::inverse(get_absolute_transform());
-}
-
-glm::mat4 NormalCamera::get_projection_matrix() const {
-    auto vp = this->get_world().viewport_provider();
+glm::mat4 Camera::get_projection_matrix() const {
+    auto vp = this->world().viewport_provider();
     auto width = float(vp.width);
     auto height = float(vp.height);
 
-    const auto aspect_ratio = width / height;
-    const auto r = this->scale_prop;
-    const auto projection_matrix = glm::perspective(glm::radians(60.0F), aspect_ratio, 0.01F * r, 1000.F * r);
-    return projection_matrix;
-}
+    if (projection_mode == Perspective) {
+        const auto aspect_ratio = width / height;
+        const auto r = owner().scale_prop;
+        const auto projection_matrix = glm::perspective(glm::radians(60.0F), aspect_ratio, 0.01F * r, 1000.F * r);
+        return projection_matrix;
+    }
 
-glm::mat4 OrthoCamera::get_view_matrix() const {
-    return glm::inverse(get_absolute_transform());
-}
-
-glm::mat4 OrthoCamera::get_projection_matrix() const {
-    auto vp = this->get_world().viewport_provider();
-    int width = vp.width;
-    int height = vp.height;
-
-    auto ms = this->get_world().window.gui.master_scale();
+    auto ms = this->world().window.gui.master_scale();
     const auto w = float(width) * ms.x;
     const auto h = float(height) * ms.y;
-    const auto r = this->get_scale().z;
+    const auto r = owner().get_scale().z;
     const auto near = -1000.0f * r;
     const auto far = 1000.0f * r;
     switch (mode) {

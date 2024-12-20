@@ -1,4 +1,5 @@
-#include <Component.hpp>
+#include "Component.hpp"
+#include "World.hpp"
 
 Component::Component()
     : owner_(WorldObject::get_parent_static()) {
@@ -12,11 +13,3 @@ void Component::erase() { owner().components_.request_erase(this); }
 WorldObject &Component::owner() const { return *owner_; }
 World &Component::world() const { return owner_->get_world(); }
 Window &Component::window() const { return owner_->get_world().window; }
-
-UpdateComponent::UpdateComponent(std::function<void(UpdateComponent &)> &&f) {
-    this->func_ = [f, this] { trace("lambda from UpdateComponent (id: ", this->id, ")"); f(*this); trace("lambda ended"); };
-    world().updates.request_set(&this->func_);
-}
-UpdateComponent::~UpdateComponent() {
-    world().updates.request_erase(&this->func_);
-}

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <GUI/Camera.hpp>
-#include <GUI/Draw.hpp>
 #include <GUI/Material.hpp>
 #include <GUI/Mesh.hpp>
 #include <GUI/Resource.hpp>
@@ -13,5 +12,4 @@
 #include <GUI/World.hpp>
 #include <GUI/WorldObject.hpp>
 #include <GUI/graphical_base.hpp>
-
-#include "UpdateObject.hpp"
+#include <GUI/utility.hpp>

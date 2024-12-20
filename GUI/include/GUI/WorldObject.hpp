@@ -174,9 +174,8 @@ class WorldObject {
 
     friend class Component; // get_parent_static()のため
 
-    template <typename T, typename... Args>
-        requires std::derived_from<T, Component>
-    T *add_component(Args &&...args) {
+    template <std::derived_from<Component> T, typename... Args>
+    T &add_component(Args &&...args) {
         // コンポーネントの実体をヒープ上に生成
         WorldObject::set_parent_static(this); // componentのコンストラクタにthisを伝えるため
         auto component = std::make_unique<T>(std::forward<Args>(args)...);
@@ -186,11 +185,17 @@ class WorldObject {
         components_.request_set(component_ptr, std::move(component));
         if (components_.is_locked()) warn("ロック中にadd_componentが呼ばれました💀💀💀");
         components_.flush(); // NOTE: children_同様ここで即時flushしてみるものの、問題があるかもしれない。
-        return component_ptr;
+        return *component_ptr;
     }
 
-    template <typename T>
-        requires std::derived_from<T, Component>
+    // append_child＆コンポーネント追加を一括で行うヘルパー関数。
+    template <std::derived_from<Component> T, typename... Args>
+    T &child_component(Args &&...args) {
+        auto &child = this->append_child<WorldObject>();
+        return child.add_component<T>(std::forward<Args>(args)...);
+    }
+
+    template <std::derived_from<Component> T>
     T *get_component() {
         auto comps = get_components<T>();
         if (comps.empty()) {

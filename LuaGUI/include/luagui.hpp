@@ -1,4 +1,7 @@
+#pragma once
+
 #include <sol/sol.hpp>
+#include <sumigl.hpp>
 
 class LuaGUI {
 
