@@ -92,8 +92,8 @@ run_window(800, 600, "ブロック崩し", function()
     supercamera_2d("zoom")
     __CurrentWorld = world
 
-    text_world:draw_text("mochi-mochi panic", { position = { 0, 0 } })
-    text_world:draw_text("mochi-mochi panic", { position = { -0.05, 0.02 } })
+    text_world:child_text("mochi-mochi panic", { position = { 0, 0 } })
+    text_world:child_text("mochi-mochi panic", { position = { -0.05, 0.02 } })
 
     -- 床と壁の剛体を作成
     wakka({ { -StageHW, -0.1 }, { -StageHW, 0.2 }, { StageHW, 0.2 }, { StageHW, -0.1 } })
