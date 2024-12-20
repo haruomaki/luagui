@@ -28,7 +28,7 @@ static MeshComponent &draw_circle(WorldObject &parent, std::vector<float> center
         coords[i] = glm::vec3(x, y, 0);
     }
     auto &line_obj = new_line(parent);
-    line_obj.position = {center[0], center[1], 0};
+    line_obj.owner().position = {center[0], center[1], 0};
     line_obj.mesh.vertices.setCoords(coords);
 
     return line_obj;
@@ -64,6 +64,7 @@ void register_world(sol::state &lua) {
         "b2world", sol::readonly_property([](World *world) { return &world->b2world; }),
         sol::base_classes, sol::bases<WorldObject>());
 
+    // TODO: WorldObject.cppなどへ移動
     lua["WorldObject"]["draw_line"] = draw_line;
     lua["WorldObject"]["draw_circle"] = draw_circle;
     lua["WorldObject"]["draw_rect"] = draw_rect;

@@ -91,7 +91,7 @@ class Mesh : public StaticMesh, public ResourceUpdate {
         : StaticMesh(draw_mode, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
 };
 
-class MeshComponent : virtual public WorldObject {
+class MeshComponent : public Component {
   public:
     StaticMesh &mesh;
     Material &material;
@@ -125,25 +125,25 @@ struct MeshDrawManager {
         return key;
     }
 
-    void set_model_matrix(const MeshComponent *obj) {
-        auto key = key_from(obj);
+    void set_model_matrix(const MeshComponent *mc) {
+        auto key = key_from(mc);
 
         if (observations.contains(key)) {
             auto &obj_ix_map = observations[key].object_index_map;
 
-            if (obj_ix_map.contains(obj)) {
+            if (obj_ix_map.contains(mc)) {
                 // すでに登録済みのメッシュオブジェクトの場合、ただちに書き換え
-                size_t index = obj_ix_map[obj];
-                const auto &model_matrix = obj->get_absolute_transform();
+                size_t index = obj_ix_map[mc];
+                const auto &model_matrix = mc->owner().get_absolute_transform();
                 observations[key].model_matrices[index] = model_matrix;
             } else {
                 // 新たなメッシュオブジェクトの場合、一旦initial_valuesに蓄えておく
-                observations[key].initial_list.emplace_back(obj);
+                observations[key].initial_list.emplace_back(mc);
             }
         } else {
             // そもそも初めてのkeyのオブジェクトだった場合、キーを追加してやはりinitial_valuesに蓄える
             observations[key] = ModelMatricesObservation{};
-            observations[key].initial_list.emplace_back(obj);
+            observations[key].initial_list.emplace_back(mc);
         }
     }
 
@@ -173,8 +173,8 @@ struct MeshDrawManager {
                 auto queue_size = obj_ix_map.size();
                 obs.model_matrices = std::vector<glm::mat4>(queue_size); // モデル行列キュー再生成
                 size_t counter = 0;
-                for (auto &[obj, index] : obj_ix_map) {
-                    const auto &model_matrix = obj->get_absolute_transform();
+                for (auto &[mc, index] : obj_ix_map) {
+                    const auto &model_matrix = mc->owner().get_absolute_transform();
                     index = counter++;
                     obs.model_matrices[index] = model_matrix;
                 }

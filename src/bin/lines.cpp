@@ -27,7 +27,7 @@ int main() {
 
     auto &line = new_points(world);
     auto &line_mesh = line.mesh;
-    line.scale = 0.03;
+    line.owner().scale = 0.03;
     int points_num = 100;
 
     // 文字の表示
@@ -44,9 +44,9 @@ int main() {
                                           {0.9, 0.2, 0.7, 0.3},
                                           {0.3, 0.7, 0.5, 0.5},
                                       });
-    auto &my_triangle = world.append_child<MeshComponent>(my_triangle_mesh);
-    my_triangle.scale = 0.1;
-    my_triangle.position = {-0.1, 0, 0};
+    auto &my_triangle = world.child_component<MeshComponent>(my_triangle_mesh);
+    my_triangle.owner().scale = 0.1;
+    my_triangle.owner().position = {-0.1, 0, 0};
 
     float t = 0;
     world.timer.task(0.5, [&] {

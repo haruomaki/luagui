@@ -5,8 +5,8 @@
 ---@field scale_prop number 物体の幾何平均スケール
 WorldObject = {}
 
----@class MeshObject : WorldObject
-MeshObject = {}
+---@class MeshComponent : Component
+MeshComponent = {}
 
 ---コンポーネント基底クラス
 ---@class Component

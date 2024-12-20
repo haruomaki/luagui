@@ -33,8 +33,8 @@ int main() {
     // cube.draw_mode = GL_LINE_STRIP;
     mesh.draw_mode = GL_TRIANGLE_STRIP;
     cube.material.line_width = 5;
-    cube.scale = 2;
-    cube.position = {1, 1, 5};
+    cube.owner().scale = 2;
+    cube.owner().position = {1, 1, 5};
 
     main_world.append_child<GridGround>();
 

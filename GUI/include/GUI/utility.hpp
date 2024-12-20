@@ -115,7 +115,7 @@ inline MeshComponent &new_mesh(WorldObject &parent, Material *material = nullptr
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
     mesh.use_index = true;
-    auto &obj = parent.append_child<MeshComponent>(mesh, material);
+    auto &obj = parent.child_component<MeshComponent>(mesh, material);
     return obj;
 }
 
@@ -127,7 +127,7 @@ inline Mesh &new_mesh(Window &window, GLenum draw_mode = GL_TRIANGLE_STRIP, cons
 inline MeshComponent &new_points(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshComponent>(mesh, material);
+    auto &obj = parent.child_component<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_POINTS;
     return obj;
 }
@@ -135,7 +135,7 @@ inline MeshComponent &new_points(WorldObject &parent, Material *material = nullp
 inline MeshComponent &new_line(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshComponent>(mesh, material);
+    auto &obj = parent.child_component<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_LINE_STRIP;
     return obj;
 }
@@ -154,6 +154,6 @@ class GridGround : public WorldObject {
             grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
         }
         grid.mesh.draw_mode = GL_LINES;
-        grid.scale = 1;
+        grid.owner().scale = 1;
     }
 };

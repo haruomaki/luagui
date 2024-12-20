@@ -119,5 +119,5 @@ void register_world_object(sol::state &lua) {
         "Update",
         sol::base_classes, sol::bases<Component>());
 
-    lua.new_usertype<MeshComponent>("MeshObject", sol::base_classes, sol::bases<WorldObject>());
+    lua.new_usertype<MeshComponent>("MeshComponent", sol::base_classes, sol::bases<Component>());
 }

@@ -61,21 +61,21 @@ int main() {
 
     auto &poly = new_mesh(window, GL_TRIANGLE_FAN, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
-    auto &ins3 = main_world.append_child<MeshComponent>(gon3);
-    /* auto &ins = */ ins3.append_child<MeshComponent>(gon, &cat_material);
-    auto &ins2 = main_world.append_child<MeshComponent>(gon2);
-    auto &inspoly = main_world.append_child<MeshComponent>(poly);
-    ins3.scale = 1000;
-    ins2.scale = 1500;
-    inspoly.set_position({0, 100, 100});
+    auto &ins3 = main_world.child_component<MeshComponent>(gon3);
+    /* auto &ins = */ ins3.owner().child_component<MeshComponent>(gon, &cat_material);
+    auto &ins2 = main_world.child_component<MeshComponent>(gon2);
+    auto &inspoly = main_world.child_component<MeshComponent>(poly);
+    ins3.owner().scale = 1000;
+    ins2.owner().scale = 1500;
+    inspoly.owner().set_position({0, 100, 100});
 
     for (int i = -500; i <= 500; i += 100) {
-        auto &instance = main_world.append_child<MeshComponent>(poly);
-        instance.set_position({-200, -50, i});
+        auto &instance = main_world.child_component<MeshComponent>(poly);
+        instance.owner().set_position({-200, -50, i});
     }
     for (int i = -300; i <= 300; i += 100) {
-        auto &instance = main_world.append_child<MeshComponent>(poly);
-        instance.set_position({-0, 300, i});
+        auto &instance = main_world.child_component<MeshComponent>(poly);
+        instance.owner().set_position({-0, 300, i});
     }
 
     // main_world.timer.task(1, [&] {
@@ -106,8 +106,8 @@ int main() {
     mesh.draw_mode = GL_LINE_STRIP;
     mesh.draw_mode = GL_TRIANGLE_STRIP;
     cube.material.line_width = 10;
-    cube.scale = 200;
-    cube.position = {100, 100, 500};
+    cube.owner().scale = 200;
+    cube.owner().position = {100, 100, 500};
 
     auto &grid = new_line(main_world);
     // grid.indices = {0, 1, 2, 3, 4, 5};
@@ -120,7 +120,7 @@ int main() {
     }
     grid.mesh.draw_mode = GL_LINES;
     grid.material.line_width = 6;
-    grid.scale = 100;
+    grid.owner().scale = 100;
 
     // レンダリングループ
     gui.mainloop();
