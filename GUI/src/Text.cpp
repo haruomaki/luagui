@@ -79,7 +79,7 @@ Font::Font(const std::string &font_path)
 }
 
 Text::Text(Font &font, string text, RGBA color)
-    : UpdateComponent([](auto & /*self*/) {}, "Draw")
+    : UpdateComponent([this](auto &) { this->draw(); }, "Draw")
     , font_(font)
     , color_(color)
     , text_(std::move(text)) {}

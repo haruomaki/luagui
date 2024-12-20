@@ -25,11 +25,11 @@ int main() {
     main_world.active_camera() = &camera;
 
     auto &migmix_font = window.append_resource<Font>();
-    auto &sample_text = main_world.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
-    auto &credit_text = main_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
+    auto &sample_text = main_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
+    auto &credit_text = main_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
 
-    sample_text.set_position({-200, 50, 200});
-    credit_text.set_position({200, 400, 1});
+    sample_text.owner().set_position({-200, 50, 200});
+    credit_text.owner().set_position({200, 400, 1});
 
     GLuint cat_texture = load_texture("assets/images/cat.raw");
     Material &cat_material = MaterialBuilder().texture(cat_texture).build(window);
