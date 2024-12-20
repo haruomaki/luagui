@@ -12,5 +12,3 @@
 #include <GUI/World.hpp>
 #include <GUI/WorldObject.hpp>
 #include <GUI/graphical_base.hpp>
-
-#include "UpdateObject.hpp"
