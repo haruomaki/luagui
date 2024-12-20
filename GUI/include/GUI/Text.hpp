@@ -28,7 +28,7 @@ class Text : public Draw {
     Font &font_;
     RGBA color_;
 
-    void draw(const CameraInterface &camera) const override;
+    void draw() const override;
 
   public:
     string text_;

@@ -83,8 +83,9 @@ Text::Text(Font &font, string text, RGBA color)
     , color_(color)
     , text_(std::move(text)) {}
 
-void Text::draw(const CameraInterface &camera) const {
+void Text::draw() const {
     // activate corresponding render state
+    CameraInterface &camera = *get_world().active_camera();
     font_.shader_.use();
     font_.shader_.set_uniform("textColor", color_);
     glActiveTexture(GL_TEXTURE0);

@@ -5,8 +5,8 @@
 class CameraInterface;
 
 class Draw : virtual public WorldObject {
-    std::function<void(const CameraInterface &)> func_;
-    virtual void draw(const CameraInterface &camera) const = 0;
+    std::function<void()> func_;
+    virtual void draw() const = 0;
 
   public:
     Draw();

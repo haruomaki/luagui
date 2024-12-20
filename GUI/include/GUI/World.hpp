@@ -22,7 +22,7 @@ class World : public WorldObject {
     Window &window;
     Timer timer;
     std::function<GL::RawViewport()> viewport_provider;
-    BufferedSet<std::function<void(const CameraInterface &)> *> draws;
+    BufferedSet<std::function<void()> *> draws;
     BufferedSet<std::function<void()> *> updates;
     BufferedSet<Rigidbody *> rigidbodies;
     BufferedSet<RigidbodyComponent *> rigidbody_components;
@@ -91,7 +91,7 @@ class World : public WorldObject {
             print("警告: アクティブなカメラが存在しません");
         }
         this->draws.foreach ([&](const auto *draw) {
-            (*draw)(*this->active_camera_);
+            (*draw)();
         });
 
         // メッシュを描画
