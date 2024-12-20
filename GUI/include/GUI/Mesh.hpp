@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Camera.hpp"
-#include "Draw.hpp"
 #include "Material.hpp"
 #include "ResourceUpdate.hpp"
+#include "WorldObject.hpp"
 #include "core.hpp"
 
 #include <algorithm>
