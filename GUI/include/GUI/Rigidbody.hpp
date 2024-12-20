@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Component.hpp"
-#include <box2cpp/box2cpp.h>
+#include "box2d_wrapper.hpp"
 #include <optional>
-#include <variant>
 
 /// 一つの剛体を表すコンポーネント。
 /// オブジェクトに対してRigidbodyComponentは一つだけ付与できる。
@@ -16,9 +15,6 @@ class RigidbodyComponent : public Component {
     ~RigidbodyComponent() override;
 };
 
-// Box2DのShapeたちをまとめるタグ付きユニオン
-using ShapeVariant = std::variant<b2Circle, b2Capsule, b2Segment, b2Polygon>;
-
 /// 剛体に付随する当たり判定を表すコンポーネント。
 /// 一つの剛体に対して複数のコライダーを追加できる。
 /// RigidbodyComponentが既に存在するときは即座にShapeが追加されるが、そうでないときはRigidbodyComponentが追加され次第Shapeも速やかに反映される。
@@ -27,7 +23,7 @@ class ColliderComponent : public Component {
 
     friend class RigidbodyComponent;
     ShapeVariant shape_;
-    b2::Shape::Params shape_params_;
+    ParamsVariant shape_params_;
 
     // RigidBodyがあるときだけ呼び出す。その直下にShapeを追加する。
     void append_shape(RigidbodyComponent *rbc);
@@ -36,10 +32,10 @@ class ColliderComponent : public Component {
 
   public:
     // NOLINTNEXTLINE(readability-identifier-naming)
-    b2::ShapeRef shape_ref_; // publicだが直接触るのは非推奨
+    ShapeRefVariant shape_ref_; // publicだが直接触るのは非推奨
     std::optional<std::function<void(ColliderComponent &self, ColliderComponent &other)>> on_collision_enter = std::nullopt;
 
-    ColliderComponent(ShapeVariant shape, b2::Shape::Params shape_params);
+    ColliderComponent(ShapeVariant shape, ParamsVariant shape_params);
 
     ~ColliderComponent() override;
 };

@@ -22,7 +22,7 @@ void World::master_physics() {
     auto contact_events = b2world.GetContactEvents();
     for (int i = 0; i < contact_events.beginCount; i++) {
         // print("衝突かいし");
-        auto event = contact_events.beginEvents[i]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        auto event = contact_events.beginEvents[i];
         auto &cca = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdA));
         auto &ccb = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdB));
         auto chain_id_a = b2Shape_GetParentChain(event.shapeIdA);
