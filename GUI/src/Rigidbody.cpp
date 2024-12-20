@@ -21,6 +21,11 @@ RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
     for (auto *cc : owner().get_components<ColliderComponent>()) {
         cc->append_shape(this);
     }
+
+    // Chainについても同様。
+    for (auto *ccc : owner().get_components<ChainColliderComponent>()) {
+        ccc->append_chain(this);
+    }
 }
 
 RigidbodyComponent::~RigidbodyComponent() {
@@ -33,11 +38,11 @@ RigidbodyComponent::~RigidbodyComponent() {
         cc->drop_shape(this);
     }
 
-    // ChainColliderComponentも消す
-    // debug(get_owner()->get_components<ChainColliderComponent>());
-    for (auto *ccc : owner().get_components<ChainColliderComponent>()) {
-        print("チェーンをけすよ", ccc->chain_ref_.Handle().index1);
-        ccc->erase();
+    // Chainも外す
+    auto cccs = owner().get_components<ChainColliderComponent>();
+    for (auto *ccc : cccs) {
+        info("ChainはあるけどRigidbodyを消すよ。handle: ", ccc->chain_ref_.Handle().index1, ", ", ccc);
+        ccc->drop_chain(this);
     }
 
     // Box2D上で物体を削除
@@ -51,14 +56,6 @@ RigidbodyComponent::~RigidbodyComponent() {
 // ---------------------
 // ColliderComponent
 // ---------------------
-
-template <std::derived_from<Component> Comp>
-static RigidbodyComponent &get_rigidbody(Comp *self) {
-    auto rbcs = self->owner().template get_components<RigidbodyComponent>();
-    if (rbcs.empty()) throw std::runtime_error("Rigidbodyが付いていません");
-    if (rbcs.size() > 1) throw std::runtime_error("Rigidbodyが複数付いています");
-    return *rbcs[0];
-}
 
 void ColliderComponent::append_shape(RigidbodyComponent *rbc) {
     // どの型が代入されていたとしても、共通のインタフェースを呼び出す
@@ -102,12 +99,31 @@ ColliderComponent::~ColliderComponent() {
 // ChainColliderComponent
 // ---------------------
 
-ChainColliderComponent::ChainColliderComponent(b2::Chain::Params chain_params) {
-    auto &rbc = get_rigidbody(this);
-    chain_params.userData = static_cast<void *>(this);
-    chain_ref_ = rbc.b2body.CreateChain(b2::DestroyWithParent, chain_params);
+void ChainColliderComponent::append_chain(RigidbodyComponent *rbc) {
+    chain_params_.userData = static_cast<void *>(this);
+    chain_ref_ = rbc->b2body.CreateChain(b2::DestroyWithParent, chain_params_);
+}
+
+void ChainColliderComponent::drop_chain(RigidbodyComponent * /*rbc*/) {
+    active_ = false;
+    this->chain_ref_.Destroy();
+}
+
+ChainColliderComponent::ChainColliderComponent(b2::Chain::Params chain_params)
+    : chain_params_(chain_params) {
+    auto rbcs = owner().get_components<RigidbodyComponent>();
+    if (rbcs.size() == 0) {
+        info("RigidbodyComponentが無いため、Chainを付けずに保留。");
+    } else {
+        this->append_chain(rbcs[0]);
+    }
 }
 
 ChainColliderComponent::~ChainColliderComponent() {
-    this->chain_ref_.Destroy();
+    auto rbcs = owner().get_components<RigidbodyComponent>();
+    if (rbcs.size() == 0) {
+        info("RigidbodyComponentが無いため、そのまま終了。");
+    } else {
+        this->drop_chain(rbcs[0]);
+    }
 }
