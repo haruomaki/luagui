@@ -79,13 +79,14 @@ Font::Font(const std::string &font_path)
 }
 
 Text::Text(Font &font, string text, RGBA color)
-    : font_(font)
+    : UpdateComponent([](auto & /*self*/) {}, "Draw")
+    , font_(font)
     , color_(color)
     , text_(std::move(text)) {}
 
 void Text::draw() const {
     // activate corresponding render state
-    CameraInterface &camera = *get_world().active_camera();
+    CameraInterface &camera = *world().active_camera();
     font_.shader_.use();
     font_.shader_.set_uniform("textColor", color_);
     glActiveTexture(GL_TEXTURE0);
@@ -121,7 +122,7 @@ void Text::draw() const {
             });
 
             // モデルビュー行列
-            const auto model_matrix = this->get_absolute_transform();
+            const auto model_matrix = owner().get_absolute_transform();
             const auto model_view_matrix = camera.get_view_matrix() * model_matrix;
             font_.shader_.set_uniform("modelViewMatrix", model_view_matrix);
 

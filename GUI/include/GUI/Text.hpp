@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Draw.hpp"
 #include "Resource.hpp"
+#include "Update.hpp"
 #include <SumiGL/Shader.hpp>
 
 struct Character {
@@ -24,11 +24,11 @@ class Font : public Resource {
     Font(const std::string &font_path = "assets/fonts/main.ttf");
 };
 
-class Text : public Draw {
+class Text : public UpdateComponent {
     Font &font_;
     RGBA color_;
 
-    void draw() const override;
+    void draw() const;
 
   public:
     string text_;
