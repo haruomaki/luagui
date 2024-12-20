@@ -17,6 +17,7 @@ int main() {
 
     auto main_shader = GL::ProgramObject{vsh_id, fsh_id};
 
+    // FIXME: cursor_diffを使うようにしてからガクガクになってしまった
     auto &camera = mobile_normal_camera(main_world);
     auto &cobj = *camera.owner().get_parent();
     cobj.position = {0, 0, 1000};
