@@ -1,6 +1,6 @@
 ---@meta Camera
 
----@alias ProjectionMode 'Normal' | 'Orthogonal'
+---@alias ProjectionMode 'Perspective' | 'Orthographic'
 
 ---カメラコンポーネント。
 ---@class Camera : Component
@@ -14,6 +14,6 @@ __CurrentCamera = nil
 function Camera:set_active() end
 
 ---カメラコンポーネントを追加する。
----@param projection_mode "Normal" | "Orthogonal"
+---@param projection_mode ProjectionMode
 ---@return Camera
 function WorldObject:add_camera_component(projection_mode) end

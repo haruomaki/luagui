@@ -24,7 +24,7 @@
 // キー操作が可能な正投影カメラを作成する。
 inline Camera &mobile_ortho_camera(WorldObject &parent) {
     auto &obj = parent.append_child<WorldObject>();
-    auto &camera = obj.add_component<Camera>(Camera::Orthogonal);
+    auto &camera = obj.add_component<Camera>(Camera::Orthographic);
 
     obj.add_component<UpdateComponent>([&](UpdateComponent &self) {
         constexpr float speed = 0.002;

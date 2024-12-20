@@ -20,7 +20,7 @@ int main() {
 
     auto &camera = mobile_ortho_camera(world);
     auto &ui_camera_obj = ui_world.append_child<WorldObject>();
-    auto &ui_camera = ui_camera_obj.add_component<Camera>(Camera::Orthogonal);
+    auto &ui_camera = ui_camera_obj.add_component<Camera>(Camera::Orthographic);
     // camera.setScale(0.01F);
     // camera.setScale(100);
     world.active_camera() = &camera;

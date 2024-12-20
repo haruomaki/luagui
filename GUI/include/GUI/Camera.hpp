@@ -22,14 +22,14 @@ class Camera : public CameraInterface, public Component {
     };
 
     enum ProjectionMode {
-        Normal,     // 透視図法？
-        Orthogonal, // 正射影
+        Perspective,  // 透視投影
+        Orthographic, // 平行投影
     };
 
     ProjectionMode projection_mode;
     CameraMode mode = Center;
 
-    Camera(Camera::ProjectionMode projection_mode = Normal);
+    Camera(Camera::ProjectionMode projection_mode = Perspective);
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;

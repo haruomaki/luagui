@@ -3,9 +3,9 @@ Camera::Camera(ProjectionMode projection_mode)
 
 glm::mat4 Camera::get_view_matrix() const {
     switch (projection_mode) {
-    case Normal:
+    case Perspective:
         return SCALE({-1, 1, -1}) * glm::inverse(owner().get_absolute_transform());
-    case Orthogonal:
+    case Orthographic:
         return glm::inverse(owner().get_absolute_transform());
     }
 }
@@ -15,7 +15,7 @@ glm::mat4 Camera::get_projection_matrix() const {
     auto width = float(vp.width);
     auto height = float(vp.height);
 
-    if (projection_mode == Normal) {
+    if (projection_mode == Perspective) {
         const auto aspect_ratio = width / height;
         const auto r = owner().scale_prop;
         const auto projection_matrix = glm::perspective(glm::radians(60.0F), aspect_ratio, 0.01F * r, 1000.F * r);

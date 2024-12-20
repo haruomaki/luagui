@@ -63,7 +63,7 @@ end
 ---@return Camera camera
 function supercamera_2d(...)
     local cobj = __CurrentWorld:append_empty_child()
-    local camera = cobj:add_camera_component("Orthogonal")
+    local camera = cobj:add_camera_component("Orthographic")
 
     __CurrentCamera = camera
     camera:set_active()

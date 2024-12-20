@@ -8,6 +8,6 @@ void register_camera(sol::state &lua) {
         sol::base_classes, sol::bases<Component>());
 
     lua["WorldObject"]["add_camera_component"] = [&](WorldObject &obj, const std::string &projection_mode) -> Camera & {
-        return obj.add_component<Camera>(projection_mode == "Orthogonal" ? Camera::Orthogonal : Camera::Normal);
+        return obj.add_component<Camera>(projection_mode == "Orthographic" ? Camera::Orthographic : Camera::Perspective);
     };
 }
