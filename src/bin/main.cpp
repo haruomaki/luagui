@@ -1,6 +1,5 @@
-#include <GUI/master.hpp>
-#include <GUI/utility.hpp>
 #include <SumiGL/Texture.hpp>
+#include <gui.hpp>
 
 int main() {
     GL::Context gui;

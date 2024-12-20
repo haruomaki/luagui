@@ -1,4 +1,4 @@
-#include <GUI/master.hpp>
+#include <gui.hpp>
 
 int main() {
     setUTF8();

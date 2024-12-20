@@ -12,3 +12,4 @@
 #include <GUI/World.hpp>
 #include <GUI/WorldObject.hpp>
 #include <GUI/graphical_base.hpp>
+#include <GUI/utility.hpp>

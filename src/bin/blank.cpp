@@ -1,6 +1,4 @@
-#include <GUI/master.hpp>
-
-#include "GUI/utility.hpp"
+#include <gui.hpp>
 
 int main() {
     GL::Context gui;

@@ -1,8 +1,6 @@
 // FIXME: 正確な寸法に修正したのに合わせ、文字サイズ要再調整。
 
-#include <GUI/Timer.hpp>
-#include <GUI/master.hpp>
-#include <GUI/utility.hpp>
+#include <gui.hpp>
 
 inline float f(float x) {
     return 3 * std::sin(x);
@@ -57,7 +55,7 @@ int main() {
     });
 
     auto proc = std::make_unique<std::function<void()>>([&] {
-        sample_text.text_ = to_str(gui.tick());
+        sample_text.text = to_str(gui.tick());
 
         const auto xs = linspace(-9, 9, points_num);
         line_mesh.vertices.clear();
