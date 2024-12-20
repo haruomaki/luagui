@@ -21,6 +21,7 @@
 //     }
 // };
 
+// キー操作が可能な正投影カメラを作成する。
 inline Camera &mobile_ortho_camera(WorldObject &parent) {
     auto &obj = parent.append_child<WorldObject>();
     auto &camera = obj.add_component<Camera>(Camera::Orthogonal);
@@ -54,7 +55,8 @@ inline Camera &mobile_ortho_camera(WorldObject &parent) {
     return camera;
 }
 
-inline Camera &mobile_normal_camera(WorldObject &parent) {
+// キー操作およびマウス操作が可能な透視投影カメラを作成する。
+inline Camera &mobile_normal_camera(WorldObject &parent) { // NOLINT(readability-function-cognitive-complexity)
     auto &body = parent.append_child<WorldObject>();
     auto &head = body.append_child<WorldObject>();
     auto &camera = head.add_component<Camera>();
@@ -94,13 +96,13 @@ inline Camera &mobile_normal_camera(WorldObject &parent) {
         if (window.key(GLFW_KEY_UP)) {
             head.rotate *= ANGLE_X(-angle_speed);
         }
-        // if (window.key(GLFW_KEY_Z)) {
-        //     // 移動速度が変わる
-        //     scale *= 1.01;
-        // }
-        // if (window.key(GLFW_KEY_X)) {
-        //     scale /= 1.01;
-        // }
+        if (window.key(GLFW_KEY_Z)) {
+            // 移動速度が変わる
+            body.scale *= 1.01;
+        }
+        if (window.key(GLFW_KEY_X)) {
+            body.scale /= 1.01;
+        }
         if (window.key(GLFW_KEY_Q)) {
             window.close();
         }
