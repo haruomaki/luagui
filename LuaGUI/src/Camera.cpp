@@ -1,4 +1,5 @@
 #include "Camera.hpp"
+#include <GUI/World.hpp>
 
 void register_camera(sol::state &lua) {
     // Cameraクラス

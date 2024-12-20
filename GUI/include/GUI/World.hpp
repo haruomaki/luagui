@@ -4,7 +4,7 @@
 #include "Rigidbody.hpp"
 #include "Timer.hpp"
 
-class CameraInterface;
+struct CameraInterface;
 class Rigidbody;
 
 class World : public WorldObject {

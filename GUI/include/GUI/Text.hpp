@@ -2,7 +2,9 @@
 
 #include "Resource.hpp"
 #include "Update.hpp"
+#include "graphical_base.hpp"
 #include <SumiGL/Shader.hpp>
+#include <map>
 
 struct Character {
     unsigned int TextureID; // ID handle of the glyph texture
@@ -31,7 +33,7 @@ class Text : public UpdateComponent {
     void draw() const;
 
   public:
-    string text_;
+    std::string text_;
 
-    Text(Font &font, string text, RGBA color);
+    Text(Font &font, std::string text, RGBA color);
 };

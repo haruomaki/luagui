@@ -1,5 +1,6 @@
 #include "Text.hpp"
 #include "Camera.hpp"
+#include "World.hpp"
 #include <SumiGL/Shader.hpp>
 
 #include <ft2build.h>

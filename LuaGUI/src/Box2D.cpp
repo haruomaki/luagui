@@ -1,4 +1,6 @@
 #include "Box2D.hpp"
+#include <GUI/Rigidbody.hpp>
+#include <GUI/WorldObject.hpp>
 
 // b2::World::SetGravityなど、「b2Vec2を受け取るメンバ関数」を「テーブルを受け取るメンバ関数」に変換する高階関数。
 static std::function<void(b2::World *, const sol::table &)> wrap_table(void (b2::World::*f)(b2Vec2)) {

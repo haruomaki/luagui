@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.hpp"
+#include <functional>
 
 class UpdateComponent : public Component {
     std::function<void()> func_;

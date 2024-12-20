@@ -1,4 +1,6 @@
 #include "Text.hpp"
+#include <GUI/Text.hpp>
+#include <GUI/WorldObject.hpp>
 
 void register_text(sol::state &lua) {
     // Textクラス

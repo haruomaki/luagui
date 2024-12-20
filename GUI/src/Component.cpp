@@ -1,3 +1,6 @@
+#include "Component.hpp"
+#include "World.hpp"
+
 Component::Component()
     : owner_(WorldObject::get_parent_static()) {
     if (owner_ == nullptr) {

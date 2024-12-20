@@ -1,3 +1,5 @@
+#include <GUI/Text.hpp>
+#include <GUI/Window.hpp>
 #include <SumiGL/Context.hpp>
 #include <luagui.hpp>
 

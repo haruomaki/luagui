@@ -40,8 +40,8 @@ target_include_directories(GUI SYSTEM PUBLIC ../external/box2cpp/include)
 target_link_libraries(GUI PUBLIC box2d)
 
 
-# コンパイル済みヘッダの設定
-target_precompile_headers(GUI PUBLIC include/GUI/master.hpp)
+# # コンパイル済みヘッダの設定 NOTE: 逆に遅い？
+# target_precompile_headers(GUI PUBLIC include/GUI/master.hpp)
 
 
 # 変数のダンプ

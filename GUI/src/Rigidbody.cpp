@@ -1,3 +1,6 @@
+#include "Rigidbody.hpp"
+#include "World.hpp"
+
 // ---------------------
 // RigidbodyComponent
 // ---------------------
