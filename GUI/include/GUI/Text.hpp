@@ -7,16 +7,16 @@
 #include <map>
 
 struct Character {
-    unsigned int TextureID; // ID handle of the glyph texture
-    glm::ivec2 Size;        // Size of glyph
-    glm::ivec2 Bearing;     // Offset from baseline to left/top of glyph
-    unsigned int Advance;   // Offset to advance to next glyph
+    unsigned int texture_id; // ID handle of the glyph texture
+    glm::ivec2 size;         // Size of glyph
+    glm::ivec2 bearing;      // Offset from baseline to left/top of glyph
+    unsigned int advance;    // Offset to advance to next glyph
 };
 
 // 文字描画用のシェーダと48ptフォントテクスチャのセット
 class Font : public Resource {
     GL::ProgramObject shader_;
-    std::map<char, Character> Characters;
+    std::map<char, Character> characters_;
     GL::VertexArray vao_;
     GL::VertexBuffer vbo_;
 
@@ -33,7 +33,7 @@ class Text : public UpdateComponent {
     void draw() const;
 
   public:
-    std::string text_;
+    std::string text;
 
     Text(Font &font, std::string text, RGBA color);
 };

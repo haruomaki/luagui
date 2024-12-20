@@ -64,7 +64,7 @@ Font::Font(const std::string &font_path)
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             static_cast<unsigned int>(face->glyph->advance.x)};
-        Characters.insert(std::pair<char, Character>(c, character));
+        characters_.insert(std::pair<char, Character>(c, character));
     }
 
     // FreeTypeのリソースを解放
@@ -83,7 +83,7 @@ Text::Text(Font &font, string text, RGBA color)
     : UpdateComponent([this](auto &) { this->draw(); }, "Draw")
     , font_(font)
     , color_(color)
-    , text_(std::move(text)) {}
+    , text(std::move(text)) {}
 
 void Text::draw() const {
     // activate corresponding render state
@@ -95,17 +95,16 @@ void Text::draw() const {
         float tail = 0;
 
         // iterate through all characters
-        std::string::const_iterator c;
-        for (c = text_.begin(); c != text_.end(); c++) {
-            Character ch = font_.Characters.at(*c);
+        for (char c : text) {
+            Character ch = font_.characters_.at(c);
 
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
             // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする TODO: HiDPI（1pt≠1px）時の対応
-            float xpos = tail + float(ch.Bearing.x) * pt_meter;
-            float ypos = -float(ch.Size.y - ch.Bearing.y) * pt_meter;
+            float xpos = tail + float(ch.bearing.x) * pt_meter;
+            float ypos = -float(ch.size.y - ch.bearing.y) * pt_meter;
 
-            float w = float(ch.Size.x) * pt_meter;
-            float h = float(ch.Size.y) * pt_meter;
+            float w = float(ch.size.x) * pt_meter;
+            float h = float(ch.size.y) * pt_meter;
             // update VBO for each character
             float vertices[6][4] = {
                 {xpos, ypos + h, 0.0F, 0.0F},
@@ -116,7 +115,7 @@ void Text::draw() const {
                 {xpos + w, ypos, 1.0F, 1.0F},
                 {xpos + w, ypos + h, 1.0F, 0.0F}};
             // render glyph texture over quad
-            glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+            glBindTexture(GL_TEXTURE_2D, ch.texture_id);
             // update content of VBO memory
             this->font_.vbo_.bind([&] {
                 glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
@@ -134,7 +133,7 @@ void Text::draw() const {
             // render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
             // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-            tail += float(ch.Advance >> 6) * pt_meter; // bitshift by 6 to get value in pixels (2^6 = 64)
+            tail += float(ch.advance >> 6) * pt_meter; // bitshift by 6 to get value in pixels (2^6 = 64)
         }
     });
     glBindTexture(GL_TEXTURE_2D, 0);
