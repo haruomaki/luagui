@@ -61,12 +61,6 @@ void Window::close() const {
     glfwSetWindowShouldClose(gwin_, GL_TRUE);
 }
 
-pair<double, double> Window::cursor_pos() const {
-    double x, y;
-    glfwGetCursorPos(this->gwin_, &x, &y);
-    return {x, y};
-}
-
 World &Window::create_world() {
     // draw_priority_の最大値
     int max_priority = std::numeric_limits<int>::min();
@@ -164,6 +158,9 @@ void Window::post_process() {
     // 今フレームのキーイベント発生状況を0にリセットする
     key_down_.fill(false);
     key_up_.fill(false);
+
+    // カーソル位置を更新
+    last_cursor_ = cursor_pos();
 
     // フラッシュ TODO: 場所はここでいい？
     resource_updates.flush();

@@ -61,7 +61,6 @@ inline Camera &mobile_normal_camera(WorldObject &parent) {
 
     constexpr float speed = 0.003;
     constexpr float angle_speed = 0.02;
-    // pair<double, double> cursor_pos = this->get_world().window.cursor_pos();
     body.add_component<UpdateComponent>([&](UpdateComponent &self) {
         const Window &window = self.window();
 
@@ -106,12 +105,9 @@ inline Camera &mobile_normal_camera(WorldObject &parent) {
             window.close();
         }
 
-        // auto [new_x, new_y] = window.cursor_pos();
-        // auto dx = new_x - this->cursor_pos.first;
-        // auto dy = new_y - this->cursor_pos.second;
-        // rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.1f);
-        // camera_head_.rotate *= ANGLE_X(angle_speed * float(dy) * 0.1f);
-        // this->cursor_pos = {new_x, new_y};
+        auto [dx, dy] = window.cursor_diff();
+        body.rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.1f);
+        head.rotate *= ANGLE_X(angle_speed * float(dy) * 0.1f);
     });
     return camera;
 }
