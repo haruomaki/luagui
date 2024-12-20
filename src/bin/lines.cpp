@@ -44,7 +44,7 @@ int main() {
                                           {0.9, 0.2, 0.7, 0.3},
                                           {0.3, 0.7, 0.5, 0.5},
                                       });
-    auto &my_triangle = world.append_child<MeshObject>(my_triangle_mesh);
+    auto &my_triangle = world.append_child<MeshComponent>(my_triangle_mesh);
     my_triangle.scale = 0.1;
     my_triangle.position = {-0.1, 0, 0};
 

@@ -111,11 +111,11 @@ inline Camera &mobile_normal_camera(WorldObject &parent) { // NOLINT(readability
     return camera;
 }
 
-inline MeshObject &new_mesh(WorldObject &parent, Material *material = nullptr) {
+inline MeshComponent &new_mesh(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
     mesh.use_index = true;
-    auto &obj = parent.append_child<MeshObject>(mesh, material);
+    auto &obj = parent.append_child<MeshComponent>(mesh, material);
     return obj;
 }
 
@@ -124,18 +124,18 @@ inline Mesh &new_mesh(Window &window, GLenum draw_mode = GL_TRIANGLE_STRIP, cons
     return mesh;
 }
 
-inline MeshObject &new_points(WorldObject &parent, Material *material = nullptr) {
+inline MeshComponent &new_points(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshObject>(mesh, material);
+    auto &obj = parent.append_child<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_POINTS;
     return obj;
 }
 
-inline MeshObject &new_line(WorldObject &parent, Material *material = nullptr) {
+inline MeshComponent &new_line(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshObject>(mesh, material);
+    auto &obj = parent.append_child<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_LINE_STRIP;
     return obj;
 }

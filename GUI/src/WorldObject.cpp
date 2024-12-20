@@ -29,7 +29,7 @@ void WorldObject::refresh_absolute_transform() {
     abs_transform_ = parent_abs_transform * TRANSLATE(pos_) * glm::mat4_cast(rotate_) * SCALE(scale_);
 
     // メッシュオブジェクトの場合は描画のための更新
-    const auto *obj = dynamic_cast<MeshObject *>(this);
+    const auto *obj = dynamic_cast<MeshComponent *>(this);
     if (obj != nullptr) {
         this->world_.mesh_draw_manager_.set_model_matrix(obj);
     }

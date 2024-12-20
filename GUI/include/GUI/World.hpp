@@ -14,7 +14,7 @@ class World : public WorldObject {
     int draw_priority_ = 0;
 
     // メッシュ描画を一元管理するクラス
-    friend class MeshObject;
+    friend class MeshComponent;
     MeshDrawManager mesh_draw_manager_;
     friend class WorldObject; // mesh_draw_manager_にアクセスするため
 

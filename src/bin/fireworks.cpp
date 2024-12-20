@@ -1,7 +1,7 @@
 #include "utility.hpp"
 #include <master.hpp>
 
-class GlassBall : public MeshObject {
+class GlassBall : public MeshComponent {
     Material &gen_material() {
         auto &window = this->get_world().window;
         GLuint tex = create_texture_from_png_file("assets/images/青いガラス玉.png");
@@ -21,7 +21,7 @@ class GlassBall : public MeshObject {
 
   public:
     GlassBall()
-        : MeshObject(gen_mesh(), &gen_material()) {}
+        : MeshComponent(gen_mesh(), &gen_material()) {}
 };
 
 class Hiyoko : virtual public WorldObject {
@@ -77,7 +77,7 @@ int main() {
                                           {0.9, 0.2, 0.7, 0.3},
                                           {0.3, 0.7, 0.5, 0.5},
                                       });
-    auto &my_triangle = world.append_child<MeshObject>(my_triangle_mesh);
+    auto &my_triangle = world.append_child<MeshComponent>(my_triangle_mesh);
     my_triangle.scale = 0.1;
     my_triangle.position = {-0.1, 0, 0};
 
@@ -90,7 +90,7 @@ int main() {
     auto bricks = std::vector(num_x, std::vector<MeshObject *>(num_y));
     for (int x = 0; x < num_x; x++) {
         for (int y = 0; y < num_y; y++) {
-            bricks[x][y] = &world.append_child<MeshObject>(brick_mesh, &brick_material);
+            bricks[x][y] = &world.append_child<MeshComponent>(brick_mesh, &brick_material);
             bricks[x][y]->position = {0.02 * x, 0.01 * y, 0};
         }
     }

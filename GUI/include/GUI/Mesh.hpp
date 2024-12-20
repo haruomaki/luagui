@@ -11,7 +11,7 @@
 
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
 class StaticMesh : virtual public Resource {
-    friend class MeshObject;
+    friend class MeshComponent;
     friend struct MeshDrawManager;
 
   protected:
@@ -91,20 +91,20 @@ class Mesh : public StaticMesh, public ResourceUpdate {
         : StaticMesh(draw_mode, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
 };
 
-class MeshObject : virtual public WorldObject {
+class MeshComponent : virtual public WorldObject {
   public:
     StaticMesh &mesh;
     Material &material;
 
-    MeshObject(StaticMesh &mesh, Material *material = nullptr);
-    ~MeshObject() override;
+    MeshComponent(StaticMesh &mesh, Material *material = nullptr);
+    ~MeshComponent() override;
 };
 
 struct ModelMatricesObservation {
     vector<glm::mat4> model_matrices;
-    std::unordered_map<const MeshObject *, size_t> object_index_map;
-    std::vector<const MeshObject *> initial_list;
-    std::vector<const MeshObject *> delete_list;
+    std::unordered_map<const MeshComponent *, size_t> object_index_map;
+    std::vector<const MeshComponent *> initial_list;
+    std::vector<const MeshComponent *> delete_list;
 
     // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
     const glm::mat4 *matrices_raw = nullptr;
@@ -117,7 +117,7 @@ struct MeshDrawManager {
     // この行列キューごとに一回ドローコールを行う
     std::map<KeyType, ModelMatricesObservation> observations;
 
-    static inline KeyType key_from(const MeshObject *obj) {
+    static inline KeyType key_from(const MeshComponent *obj) {
         StaticMesh *mesh = &obj->mesh;
         const Material *material = &obj->material;
         const GL::ProgramObject *shader = &obj->material.shader;
@@ -125,7 +125,7 @@ struct MeshDrawManager {
         return key;
     }
 
-    void set_model_matrix(const MeshObject *obj) {
+    void set_model_matrix(const MeshComponent *obj) {
         auto key = key_from(obj);
 
         if (observations.contains(key)) {
@@ -147,7 +147,7 @@ struct MeshDrawManager {
         }
     }
 
-    void delete_model_matrix(const MeshObject *obj) {
+    void delete_model_matrix(const MeshComponent *obj) {
         auto key = key_from(obj);
         assert(observations.contains(key)); // 一度も登録されていないキーを持つオブジェクトの削除要求
         observations[key].delete_list.push_back(obj);
@@ -181,8 +181,8 @@ struct MeshDrawManager {
             }
 
             // 各キューを削除
-            obs.initial_list = std::vector<const MeshObject *>();
-            obs.delete_list = std::vector<const MeshObject *>();
+            obs.initial_list = std::vector<const MeshComponent *>();
+            obs.delete_list = std::vector<const MeshComponent *>();
         }
 
         // 使われなくなったモデル行列キューは削除する

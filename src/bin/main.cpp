@@ -61,20 +61,20 @@ int main() {
 
     auto &poly = new_mesh(window, GL_TRIANGLE_FAN, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
-    auto &ins3 = main_world.append_child<MeshObject>(gon3);
-    /* auto &ins = */ ins3.append_child<MeshObject>(gon, &cat_material);
-    auto &ins2 = main_world.append_child<MeshObject>(gon2);
-    auto &inspoly = main_world.append_child<MeshObject>(poly);
+    auto &ins3 = main_world.append_child<MeshComponent>(gon3);
+    /* auto &ins = */ ins3.append_child<MeshComponent>(gon, &cat_material);
+    auto &ins2 = main_world.append_child<MeshComponent>(gon2);
+    auto &inspoly = main_world.append_child<MeshComponent>(poly);
     ins3.scale = 1000;
     ins2.scale = 1500;
     inspoly.set_position({0, 100, 100});
 
     for (int i = -500; i <= 500; i += 100) {
-        auto &instance = main_world.append_child<MeshObject>(poly);
+        auto &instance = main_world.append_child<MeshComponent>(poly);
         instance.set_position({-200, -50, i});
     }
     for (int i = -300; i <= 300; i += 100) {
-        auto &instance = main_world.append_child<MeshObject>(poly);
+        auto &instance = main_world.append_child<MeshComponent>(poly);
         instance.set_position({-0, 300, i});
     }
 
