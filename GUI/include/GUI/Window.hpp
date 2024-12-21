@@ -9,6 +9,7 @@ class World;
 class GUI;
 struct Material;
 class Viewport;
+struct CameraInterface;
 
 // 一つのウィンドウを表すクラス
 class Window : public GL::Window {
@@ -18,8 +19,6 @@ class Window : public GL::Window {
     std::pair<double, double> last_cursor_ = cursor_pos();
     std::set<std::unique_ptr<Resource>> resources_;
     std::vector<std::unique_ptr<World>> worlds_;
-
-    friend class Update;
 
     void routine();
     void draw_routine();
@@ -36,6 +35,7 @@ class Window : public GL::Window {
     Material *default_material = nullptr;
     BufferedSet<std::function<void()> *> resource_updates;
     std::vector<std::function<void()>> raw_worlds;
+    BufferedSet<CameraInterface *> cameras;
 
     // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。
     std::pair<int, int> fbsize_cache = {0, 0};

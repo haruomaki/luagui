@@ -2,7 +2,25 @@
 #include "World.hpp"
 
 Camera::Camera(ProjectionMode projection_mode)
-    : projection_mode(projection_mode) {}
+    : projection_mode(projection_mode) {
+
+    render = [this] {
+        auto &world = this->world();
+        world.active_camera() = this;
+        world.master_draw();
+    };
+
+    viewport_provider = [this] {
+        auto [w, h] = this->window().fbsize_cache;
+        return GL::Viewport{0, 0, w, h};
+    };
+
+    window().cameras.request_set(this);
+}
+
+Camera::~Camera() {
+    window().cameras.request_erase(this);
+}
 
 glm::mat4 Camera::get_view_matrix() const {
     switch (projection_mode) {
@@ -14,7 +32,7 @@ glm::mat4 Camera::get_view_matrix() const {
 }
 
 glm::mat4 Camera::get_projection_matrix() const {
-    auto vp = this->world().viewport_provider();
+    auto vp = this->viewport_provider();
     auto width = float(vp.width);
     auto height = float(vp.height);
 

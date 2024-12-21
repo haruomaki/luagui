@@ -1,10 +1,15 @@
 #pragma once
 
 #include "Component.hpp"
+#include <SumiGL/misc.hpp>
+#include <functional>
 #include <glm/glm.hpp>
 
 // ビュー行列と射影行列を与える機能を持つワールドオブジェクト
 struct CameraInterface {
+    std::function<void()> render;
+    std::function<GL::Viewport()> viewport_provider;
+
     virtual ~CameraInterface() = default;
     [[nodiscard]] virtual glm::mat4 get_view_matrix() const = 0;
     [[nodiscard]] virtual glm::mat4 get_projection_matrix() const = 0;
@@ -30,6 +35,7 @@ class Camera : public CameraInterface, public Component {
     CameraMode mode = Center;
 
     Camera(Camera::ProjectionMode projection_mode = Perspective);
+    ~Camera() override;
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;

@@ -8,10 +8,8 @@ struct CameraInterface;
 class Rigidbody;
 
 class World : public WorldObject {
+    // ステートフルに目まぐるしく変わる。
     CameraInterface *active_camera_ = nullptr;
-
-    friend class Window;
-    int draw_priority_ = 0;
 
     // メッシュ描画を一元管理するクラス
     friend class MeshComponent;
@@ -21,21 +19,15 @@ class World : public WorldObject {
   public:
     Window &window;
     Timer timer;
-    std::function<GL::Viewport()> viewport_provider;
     BufferedSet<std::function<void()> *> draws;
     BufferedSet<std::function<void()> *> updates;
     BufferedSet<Rigidbody *> rigidbodies;
     BufferedSet<RigidbodyComponent *> rigidbody_components;
     b2::World b2world;
 
-    World(Window &window, int draw_priority)
+    World(Window &window)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
-        , draw_priority_(draw_priority)
-        , window(window)
-        , viewport_provider([this] {
-            auto [w, h] = this->window.fbsize_cache;
-            return GL::Viewport{0, 0, w, h};
-        }) {
+        , window(window) {
         // Box2Dの世界を生成
         b2::World::Params world_params;
         world_params.gravity = b2Vec2{};
@@ -84,19 +76,19 @@ class World : public WorldObject {
     void master_physics();
 
     void master_draw() {
-        // ビューポートを設定
-        GL::viewport(viewport_provider());
+        // master_drawが呼ばれる直前にactive_camera_が都度書き換えられる。
+        CameraInterface &camera = *active_camera_;
 
-        if (this->active_camera_ == nullptr) {
-            print("警告: アクティブなカメラが存在しません");
-        }
+        // ビューポートを設定
+        GL::viewport(camera.viewport_provider());
+
         this->draws.foreach ([&](const auto *draw) {
             (*draw)();
         });
 
         // メッシュを描画
         this->mesh_draw_manager_.step();
-        this->mesh_draw_manager_.draw_all_registered_objects(*active_camera());
+        this->mesh_draw_manager_.draw_all_registered_objects(camera);
     }
 
     // void register_to_draw(const MeshObject &obj) {
@@ -106,13 +98,4 @@ class World : public WorldObject {
     CameraInterface *&active_camera() {
         return this->active_camera_;
     }
-
-    [[nodiscard]] int get_draw_priority() const {
-        return this->draw_priority_;
-    }
-    void set_draw_priority(int priority) {
-        this->draw_priority_ = priority;
-        this->window.refresh_world_order();
-    }
-    PropertyGetSet<&World::get_draw_priority, &World::set_draw_priority> draw_priority{this};
 };

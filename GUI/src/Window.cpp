@@ -3,8 +3,6 @@
 #include "World.hpp"
 #include <SumiGL/Context.hpp>
 
-#include <algorithm>
-
 using namespace std::chrono_literals;
 
 Window::Window(GL::Context &gui, int width, int height, const char *title)
@@ -62,19 +60,20 @@ void Window::close() const {
 }
 
 World &Window::create_world() {
-    // draw_priority_の最大値
-    int max_priority = std::numeric_limits<int>::min();
-    for (const auto &world : worlds_) {
-        max_priority = std::max(max_priority, world->draw_priority_);
-    }
+    // FIXME: カメラ優先度を初期設定するアルゴリズム。カメラへ移植する。
+    // // draw_priority_の最大値
+    // int max_priority = std::numeric_limits<int>::min();
+    // for (const auto &world : worlds_) {
+    //     max_priority = std::max(max_priority, world->draw_priority_);
+    // }
 
-    // 新規ワールドの描画優先度は、max_priorityより少しだけ大きい10の倍数とする
-    int one_level_higher = 0;
-    if (max_priority >= 0) {
-        one_level_higher = max_priority - (max_priority % 10) + 10;
-    }
+    // // 新規ワールドの描画優先度は、max_priorityより少しだけ大きい10の倍数とする
+    // int one_level_higher = 0;
+    // if (max_priority >= 0) {
+    //     one_level_higher = max_priority - (max_priority % 10) + 10;
+    // }
 
-    auto world = std::make_unique<World>(*this, one_level_higher);
+    auto world = std::make_unique<World>(*this);
     this->worlds_.push_back(std::move(world));
 
     return *this->worlds_.back();
@@ -109,13 +108,11 @@ void Window::draw_routine() {
     glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // 優先度が非負である各ワールドを順に描画
-    for (const auto &world : this->worlds_) {
-        if (world->draw_priority_ >= 0) {
-            glClear(GL_DEPTH_BUFFER_BIT);
-            world->master_draw();
-        }
-    }
+    cameras.flush();
+    cameras.foreach ([](CameraInterface *camera) {
+        glClear(GL_DEPTH_BUFFER_BIT);
+        camera->render();
+    });
 
     // カスタムの描画ルーチンを実行
     for (const auto &world : this->raw_worlds) {
@@ -175,12 +172,4 @@ void Window::post_process() {
         world->updates.flush();
         world->rigidbodies.flush();
     }
-}
-
-// World::draw_priority_に基づき、worlds_を昇順に並べ替える
-void Window::refresh_world_order() {
-    std::sort(this->worlds_.begin(), this->worlds_.end(),
-              [](const auto &world1, const auto &world2) {
-                  return world1->draw_priority_ < world2->draw_priority_;
-              });
 }
