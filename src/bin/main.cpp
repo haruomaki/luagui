@@ -1,6 +1,5 @@
-#include <GUI/master.hpp>
-#include <GUI/utility.hpp>
 #include <SumiGL/Texture.hpp>
+#include <gui.hpp>
 
 int main() {
     GL::Context gui;
@@ -17,20 +16,21 @@ int main() {
 
     auto main_shader = GL::ProgramObject{vsh_id, fsh_id};
 
-    auto &camera = main_world.append_child<MobileNormalCamera>();
-    camera.position = {0, 0, 1000};
-    camera.rotate = ANGLE_Y(M_PIf);
-    camera.scale = 2000; // 速度調整
-    camera.set_active();
+    // FIXME: cursor_diffを使うようにしてからガクガクになってしまった
+    auto &camera = mobile_normal_camera(main_world);
+    auto &cobj = *camera.owner().get_parent();
+    cobj.position = {0, 0, 1000};
+    cobj.rotate = ANGLE_Y(M_PIf);
+    cobj.scale = 2000; // 速度調整
 
     auto &migmix_font = window.append_resource<Font>();
-    auto &sample_text = main_world.append_child<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
-    auto &credit_text = main_world.append_child<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
+    auto &sample_text = main_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
+    auto &credit_text = main_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
 
-    sample_text.set_position({-200, 50, 200});
-    credit_text.set_position({200, 400, 1});
+    sample_text.owner().set_position({-200, 50, 200});
+    credit_text.owner().set_position({200, 400, 1});
 
-    GLuint cat_texture = loadTexture("assets/images/cat.raw");
+    GLuint cat_texture = load_texture("assets/images/cat.raw");
     Material &cat_material = MaterialBuilder().texture(cat_texture).build(window);
 
     auto &gon = new_mesh(window, GL_TRIANGLE_FAN, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
@@ -60,21 +60,21 @@ int main() {
 
     auto &poly = new_mesh(window, GL_TRIANGLE_FAN, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
-    auto &ins3 = main_world.append_child<MeshObject>(gon3);
-    /* auto &ins = */ ins3.append_child<MeshObject>(gon, &cat_material);
-    auto &ins2 = main_world.append_child<MeshObject>(gon2);
-    auto &inspoly = main_world.append_child<MeshObject>(poly);
-    ins3.scale = 1000;
-    ins2.scale = 1500;
-    inspoly.set_position({0, 100, 100});
+    auto &ins3 = main_world.child_component<MeshComponent>(gon3);
+    /* auto &ins = */ ins3.owner().child_component<MeshComponent>(gon, &cat_material);
+    auto &ins2 = main_world.child_component<MeshComponent>(gon2);
+    auto &inspoly = main_world.child_component<MeshComponent>(poly);
+    ins3.owner().scale = 1000;
+    ins2.owner().scale = 1500;
+    inspoly.owner().set_position({0, 100, 100});
 
     for (int i = -500; i <= 500; i += 100) {
-        auto &instance = main_world.append_child<MeshObject>(poly);
-        instance.set_position({-200, -50, i});
+        auto &instance = main_world.child_component<MeshComponent>(poly);
+        instance.owner().set_position({-200, -50, i});
     }
     for (int i = -300; i <= 300; i += 100) {
-        auto &instance = main_world.append_child<MeshObject>(poly);
-        instance.set_position({-0, 300, i});
+        auto &instance = main_world.child_component<MeshComponent>(poly);
+        instance.owner().set_position({-0, 300, i});
     }
 
     // main_world.timer.task(1, [&] {
@@ -105,8 +105,8 @@ int main() {
     mesh.draw_mode = GL_LINE_STRIP;
     mesh.draw_mode = GL_TRIANGLE_STRIP;
     cube.material.line_width = 10;
-    cube.scale = 200;
-    cube.position = {100, 100, 500};
+    cube.owner().scale = 200;
+    cube.owner().position = {100, 100, 500};
 
     auto &grid = new_line(main_world);
     // grid.indices = {0, 1, 2, 3, 4, 5};
@@ -119,7 +119,7 @@ int main() {
     }
     grid.mesh.draw_mode = GL_LINES;
     grid.material.line_width = 6;
-    grid.scale = 100;
+    grid.owner().scale = 100;
 
     // レンダリングループ
     gui.mainloop();

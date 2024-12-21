@@ -1,139 +1,121 @@
 #pragma once
 
-#include "Camera.hpp"
-#include "Mesh.hpp"
 #include "Update.hpp"
-#include <SumiGL/Context.hpp> // TODO: px_meter()をWindowへ移行できたらこの行は消せる
-#include <SumiGL/Window.hpp>
+#include "World.hpp"
 
 // ヘッダオンリーでお手軽に。virtual関数をヘッダ内で実装するときの警告抑制
 #pragma clang diagnostic ignored "-Wweak-vtables"
 
-// 常に画面の左上にある点
-class StickyPointTopLeft : public Update {
-    void update() override {
-        auto vp = this->get_world().viewport_provider();
-        auto ms = this->get_world().window.gui.master_scale();
-        const auto width = float(vp.width) * ms.x;
-        const auto height = float(vp.height) * ms.y;
+// // 常に画面の左上にある点
+// class StickyPointTopLeft : public Update {
+//     void update() override {
+//         auto vp = this->get_world().viewport_provider();
+//         auto ms = this->get_world().window.gui.master_scale();
+//         const auto width = float(vp.width) * ms.x;
+//         const auto height = float(vp.height) * ms.y;
 
-        set_position({-width / 2, height / 2, 0});
-    }
-};
+//         set_position({-width / 2, height / 2, 0});
+//     }
+// };
 
-class MobileOrthoCamera : public OrthoCamera, protected Update {
-    void update() override {
+// キー操作が可能な正投影カメラを作成する。
+inline Camera &mobile_ortho_camera(WorldObject &parent) {
+    auto &obj = parent.append_child<WorldObject>();
+    auto &camera = obj.add_component<Camera>(Camera::Orthographic);
+
+    obj.add_component<UpdateComponent>([&](UpdateComponent &self) {
         constexpr float speed = 0.002;
-        const Window &window = this->get_world().window;
+        const Window &window = self.window();
 
         if (window.key(GLFW_KEY_RIGHT)) {
-            position += get_left() * speed;
+            obj.position += obj.get_left() * speed;
         }
         if (window.key(GLFW_KEY_LEFT)) {
-            position += get_right() * speed;
+            obj.position += obj.get_right() * speed;
         }
         if (window.key(GLFW_KEY_DOWN)) {
-            position += get_down() * speed;
+            obj.position += obj.get_down() * speed;
         }
         if (window.key(GLFW_KEY_UP)) {
-            position += get_up() * speed;
+            obj.position += obj.get_up() * speed;
         }
         if (window.key(GLFW_KEY_Z)) {
-            scale /= 1.01F;
+            obj.scale /= 1.01F;
         }
         if (window.key(GLFW_KEY_X)) {
-            scale *= 1.01F;
+            obj.scale *= 1.01F;
         }
         if (window.key(GLFW_KEY_Q)) {
             window.close();
         }
+    });
+    return camera;
+}
 
-        // scale *= 1.002F;
-        // scale *= "a";
-        // scale + "a";
-    }
+// キー操作およびマウス操作が可能な透視投影カメラを作成する。
+inline Camera &mobile_normal_camera(WorldObject &parent) { // NOLINT(readability-function-cognitive-complexity)
+    auto &body = parent.append_child<WorldObject>();
+    auto &head = body.append_child<WorldObject>();
+    auto &camera = head.add_component<Camera>();
 
-  public:
-    MobileOrthoCamera() = default;
-};
-
-class MobileNormalCamera : public Camera, protected Update {
-    NormalCamera &camera_head_;
-
-    void update() override {
-        const Window &window = this->get_world().window;
+    constexpr float speed = 0.003;
+    constexpr float angle_speed = 0.02;
+    body.add_component<UpdateComponent>([&](UpdateComponent &self) {
+        const Window &window = self.window();
 
         if (window.key(GLFW_KEY_W)) {
-            position += get_front() * speed;
+            body.position += body.get_front() * speed;
         }
         if (window.key(GLFW_KEY_A)) {
-            position += get_left() * speed;
+            body.position += body.get_left() * speed;
         }
         if (window.key(GLFW_KEY_S)) {
-            position += get_back() * speed;
+            body.position += body.get_back() * speed;
         }
         if (window.key(GLFW_KEY_D)) {
-            position += get_right() * speed;
+            body.position += body.get_right() * speed;
         }
         if (window.key(GLFW_KEY_SPACE)) {
-            position += get_up() * speed;
+            body.position += body.get_up() * speed;
         }
         if (window.key(GLFW_KEY_LEFT_SHIFT)) {
-            position += get_down() * speed;
+            body.position += body.get_down() * speed;
         }
         if (window.key(GLFW_KEY_RIGHT)) {
-            rotate *= ANGLE_Y(-angle_speed);
+            body.rotate *= ANGLE_Y(-angle_speed);
         }
         if (window.key(GLFW_KEY_LEFT)) {
-            rotate *= ANGLE_Y(angle_speed);
+            body.rotate *= ANGLE_Y(angle_speed);
         }
         if (window.key(GLFW_KEY_DOWN)) {
-            camera_head_.rotate *= ANGLE_X(angle_speed);
+            head.rotate *= ANGLE_X(angle_speed);
         }
         if (window.key(GLFW_KEY_UP)) {
-            camera_head_.rotate *= ANGLE_X(-angle_speed);
+            head.rotate *= ANGLE_X(-angle_speed);
         }
         if (window.key(GLFW_KEY_Z)) {
             // 移動速度が変わる
-            scale *= 1.01;
+            body.scale *= 1.01;
         }
         if (window.key(GLFW_KEY_X)) {
-            scale /= 1.01;
+            body.scale /= 1.01;
         }
         if (window.key(GLFW_KEY_Q)) {
             window.close();
         }
 
-        auto [new_x, new_y] = window.cursor_pos();
-        auto dx = new_x - this->cursor_pos.first;
-        auto dy = new_y - this->cursor_pos.second;
-        rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.1f);
-        camera_head_.rotate *= ANGLE_X(angle_speed * float(dy) * 0.1f);
-        this->cursor_pos = {new_x, new_y};
-    }
+        auto [dx, dy] = window.cursor_diff();
+        body.rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.1f);
+        head.rotate *= ANGLE_X(angle_speed * float(dy) * 0.1f);
+    });
+    return camera;
+}
 
-  public:
-    float speed = 0.003;
-    float angle_speed = 0.02;
-    pair<double, double> cursor_pos = this->get_world().window.cursor_pos();
-
-    MobileNormalCamera()
-        : camera_head_(this->append_child<NormalCamera>()) {}
-
-    [[nodiscard]] glm::mat4 get_view_matrix() const override {
-        return camera_head_.get_view_matrix();
-    }
-
-    [[nodiscard]] glm::mat4 get_projection_matrix() const override {
-        return camera_head_.get_projection_matrix();
-    }
-};
-
-inline MeshObject &new_mesh(WorldObject &parent, Material *material = nullptr) {
+inline MeshComponent &new_mesh(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
     mesh.use_index = true;
-    auto &obj = parent.append_child<MeshObject>(mesh, material);
+    auto &obj = parent.child_component<MeshComponent>(mesh, material);
     return obj;
 }
 
@@ -142,18 +124,18 @@ inline Mesh &new_mesh(Window &window, GLenum draw_mode = GL_TRIANGLE_STRIP, cons
     return mesh;
 }
 
-inline MeshObject &new_points(WorldObject &parent, Material *material = nullptr) {
+inline MeshComponent &new_points(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshObject>(mesh, material);
+    auto &obj = parent.child_component<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_POINTS;
     return obj;
 }
 
-inline MeshObject &new_line(WorldObject &parent, Material *material = nullptr) {
+inline MeshComponent &new_line(WorldObject &parent, Material *material = nullptr) {
     auto &window = parent.get_world().window;
     auto &mesh = window.append_resource<Mesh>();
-    auto &obj = parent.append_child<MeshObject>(mesh, material);
+    auto &obj = parent.child_component<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_LINE_STRIP;
     return obj;
 }
@@ -172,6 +154,6 @@ class GridGround : public WorldObject {
             grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
         }
         grid.mesh.draw_mode = GL_LINES;
-        grid.scale = 1;
+        grid.owner().scale = 1;
     }
 };

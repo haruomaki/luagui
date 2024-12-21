@@ -27,6 +27,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         -Wno-ctad-maybe-unsupported # 型推論によってテンプレート引数を省略
         -Wno-shadow-field # メンバ変数と同名の引数
         -Wno-shadow-field-in-constructor # メンバ変数と同名のコンストラクタ引数
+        -Wno-switch-default # defaultラベルの無いswitch文を許容
         -Wno-unused-macros # ヘッダで定義するマクロ
         -Wno-unsafe-buffer-usage # 変数を添字にしてstd::arrayにアクセスするのを許可
         

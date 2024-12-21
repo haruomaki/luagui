@@ -1,14 +1,20 @@
 #include "Update.hpp"
 #include "World.hpp"
 
-Update::Update() {
-    this->func_ = [this] { trace("Updateクラスによるアップデート開始");this->update(); };
-    this->get_world().updates.request_set(&this->func_);
+UpdateComponent::UpdateComponent(std::function<void(UpdateComponent &)> &&f, std::string category)
+    : category_(std::move(category)) {
+    this->func_ = [f, this] { trace("lambda from UpdateComponent:", this->category_, " (id: ", this->id, ")"); f(*this); trace("lambda ended"); };
+    if (category_ == "Update") {
+        world().updates.request_set(&this->func_);
+    } else if (category_ == "Draw") {
+        world().draws.request_set(&this->func_);
+    }
 }
-Update::~Update() {
-    this->get_world().updates.request_erase(&this->func_);
-}
-Update::Update(const Update & /*other*/) {
-    this->func_ = [this] { this->update(); };
-    this->get_world().updates.request_set(&this->func_);
+
+UpdateComponent::~UpdateComponent() {
+    if (category_ == "Update") {
+        world().updates.request_erase(&this->func_);
+    } else if (category_ == "Draw") {
+        world().draws.request_erase(&this->func_);
+    }
 }

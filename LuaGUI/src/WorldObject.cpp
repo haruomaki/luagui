@@ -1,5 +1,8 @@
 #include "WorldObject.hpp"
-#include <GUI/master.hpp>
+#include <GUI/Mesh.hpp>
+#include <GUI/Rigidbody.hpp>
+#include <GUI/Update.hpp>
+#include <GUI/WorldObject.hpp>
 
 static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, std::string id, sol::function f) {
     // fをコルーチンとして毎フレーム実行し、コルーチンが終了したらコンポーネントも削除する
@@ -29,10 +32,10 @@ static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, 
         trace("[LuaGUI] UpdateComponent runner end");
     };
 
-    auto *uc = obj->add_component<UpdateComponent>(runner);
-    uc->id = std::move(id);
+    auto &uc = obj->add_component<UpdateComponent>(runner);
+    uc.id = std::move(id);
     // print("add_update_componentおわり,", uc, ", ", uc->id);
-    return uc;
+    return &uc;
 }
 
 static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject *obj, const sol::optional<sol::table> &tbl_opt) {
@@ -52,8 +55,8 @@ static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject 
     body_params.position = {pos.x, pos.y};
     body_params.sleepThreshold = 0.0005f; // スリープ状態を防ぐ
 
-    auto *rbc = obj->add_component<RigidbodyComponent>(body_params);
-    return rbc;
+    auto &rbc = obj->add_component<RigidbodyComponent>(body_params);
+    return &rbc;
 }
 
 static sol::object get_component(sol::state &lua, WorldObject *obj, const std::string &component_type) {
@@ -116,8 +119,5 @@ void register_world_object(sol::state &lua) {
         "Update",
         sol::base_classes, sol::bases<Component>());
 
-    lua.new_usertype<MeshObject>("MeshObject", sol::base_classes, sol::bases<WorldObject>());
-
-    // Cameraクラス
-    lua.new_usertype<Camera>("Camera", sol::base_classes, sol::bases<WorldObject>());
+    lua.new_usertype<MeshComponent>("MeshComponent", sol::base_classes, sol::bases<Component>());
 }

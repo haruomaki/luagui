@@ -2,13 +2,7 @@
 #include <GUI/utility.hpp>
 #include <GUI/utility2.hpp>
 
-static Camera &create_camera(WorldObject &parent) {
-    auto &camera = parent.append_child<OrthoCamera>();
-    camera.set_active();
-    return camera;
-}
-
-static MeshObject &draw_line(WorldObject &parent, std::vector<std::vector<float>> points, std::optional<bool> is_loop) { // NOLINT(performance-unnecessary-value-param)
+static MeshComponent &draw_line(WorldObject &parent, std::vector<std::vector<float>> points, std::optional<bool> is_loop) { // NOLINT(performance-unnecessary-value-param)
     std::vector<glm::vec3> coords(points.size());
     for (size_t i = 0; i < points.size(); i++) {
         coords[i].x = points[i][0];
@@ -23,7 +17,7 @@ static MeshObject &draw_line(WorldObject &parent, std::vector<std::vector<float>
     return line_obj;
 }
 
-static MeshObject &draw_circle(WorldObject &parent, std::vector<float> center, float radius, std::optional<int> segments_opt) { // NOLINT(performance-unnecessary-value-param)
+static MeshComponent &draw_circle(WorldObject &parent, std::vector<float> center, float radius, std::optional<int> segments_opt) { // NOLINT(performance-unnecessary-value-param)
     const int segments = segments_opt.value_or(48);
     std::vector<glm::vec3> coords(segments + 1);
 
@@ -34,13 +28,13 @@ static MeshObject &draw_circle(WorldObject &parent, std::vector<float> center, f
         coords[i] = glm::vec3(x, y, 0);
     }
     auto &line_obj = new_line(parent);
-    line_obj.position = {center[0], center[1], 0};
+    line_obj.owner().position = {center[0], center[1], 0};
     line_obj.mesh.vertices.setCoords(coords);
 
     return line_obj;
 }
 
-static MeshObject &draw_rect(WorldObject &parent, float hx, float hy) { // NOLINT(performance-unnecessary-value-param)
+static MeshComponent &draw_rect(WorldObject &parent, float hx, float hy) { // NOLINT(performance-unnecessary-value-param)
     std::vector<glm::vec3> coords = {{-hx, -hy, 0}, {hx, -hy, 0}, {hx, hy, 0}, {-hx, hy, 0}};
     auto &rect_obj = new_rect(parent, coords, MaterialBuilder().build(parent.get_world().window));
 
@@ -55,8 +49,7 @@ void register_world(sol::state &lua) {
         lua["__CurrentWorld"] = &world;
 
         if (debug) {
-            auto &camera = world.append_child<MobileOrthoCamera>();
-            camera.set_active();
+            mobile_ortho_camera(world);
         }
 
         // auto migmix_font = new Font();
@@ -70,7 +63,7 @@ void register_world(sol::state &lua) {
         "b2world", sol::readonly_property([](World *world) { return &world->b2world; }),
         sol::base_classes, sol::bases<WorldObject>());
 
-    lua["WorldObject"]["create_camera"] = create_camera;
+    // TODO: WorldObject.cppなどへ移動
     lua["WorldObject"]["draw_line"] = draw_line;
     lua["WorldObject"]["draw_circle"] = draw_circle;
     lua["WorldObject"]["draw_rect"] = draw_rect;

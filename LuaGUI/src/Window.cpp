@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include <GUI/Window.hpp>
 
 using Keymap = std::unordered_map<std::string_view, int>;
 
