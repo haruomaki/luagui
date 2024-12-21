@@ -1,6 +1,25 @@
 #include "Camera.hpp"
 #include "World.hpp"
 
+// カメラ優先度を初期設定するアルゴリズム。
+static int calc_default_priority(Window &window) {
+    if (window.cameras.is_locked()) throw std::runtime_error("camerasのロック中にカメラを追加することはできません。");
+    window.cameras.flush();
+
+    // priorityの最大値
+    int max_priority = std::numeric_limits<int>::min();
+    window.cameras.foreach ([&](const CameraInterface *camera) {
+        max_priority = std::max(max_priority, camera->priority);
+    });
+
+    // 新規ワールドの描画優先度は、max_priorityより少しだけ大きい10の倍数とする
+    int one_level_higher = 0;
+    if (max_priority >= 0) {
+        one_level_higher = max_priority - (max_priority % 10) + 10;
+    }
+    return one_level_higher;
+}
+
 Camera::Camera(ProjectionMode projection_mode)
     : projection_mode(projection_mode) {
 
@@ -13,6 +32,8 @@ Camera::Camera(ProjectionMode projection_mode)
         auto [w, h] = this->window().fbsize_cache;
         return GL::Viewport{0, 0, w, h};
     };
+
+    priority = calc_default_priority(window());
 
     window().cameras.request_set(this);
 }

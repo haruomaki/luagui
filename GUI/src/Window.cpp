@@ -60,19 +60,6 @@ void Window::close() const {
 }
 
 World &Window::create_world() {
-    // FIXME: カメラ優先度を初期設定するアルゴリズム。カメラへ移植する。
-    // // draw_priority_の最大値
-    // int max_priority = std::numeric_limits<int>::min();
-    // for (const auto &world : worlds_) {
-    //     max_priority = std::max(max_priority, world->draw_priority_);
-    // }
-
-    // // 新規ワールドの描画優先度は、max_priorityより少しだけ大きい10の倍数とする
-    // int one_level_higher = 0;
-    // if (max_priority >= 0) {
-    //     one_level_higher = max_priority - (max_priority % 10) + 10;
-    // }
-
     auto world = std::make_unique<World>(*this);
     this->worlds_.push_back(std::move(world));
 
@@ -108,13 +95,17 @@ void Window::draw_routine() {
     glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // prorityが高いものほど後に描画されるようにソートする
+    std::set<std::pair<int, CameraInterface *>> sorted_cameras;
     cameras.flush();
-    cameras.foreach ([](CameraInterface *camera) {
-        if (camera->active) {
-            glClear(GL_DEPTH_BUFFER_BIT);
-            camera->render();
-        }
+    cameras.foreach ([&](CameraInterface *camera) {
+        if (camera->active) sorted_cameras.emplace(camera->priority, camera);
     });
+    for (const auto &[priority, camera] : sorted_cameras) {
+        trace("[draw_routine] カメラ描画（優先度 ", priority, "）");
+        glClear(GL_DEPTH_BUFFER_BIT);
+        camera->render();
+    }
 
     // カスタムの描画ルーチンを実行
     for (const auto &world : this->raw_worlds) {
