@@ -6,8 +6,7 @@ Camera::Camera(ProjectionMode projection_mode)
 
     render = [this] {
         auto &world = this->world();
-        world.active_camera() = this;
-        world.master_draw();
+        world.master_draw(*this);
     };
 
     viewport_provider = [this] {

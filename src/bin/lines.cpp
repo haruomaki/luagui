@@ -21,8 +21,8 @@ int main() {
     auto &ui_camera = ui_camera_obj.add_component<Camera>(Camera::Orthographic);
     // camera.setScale(0.01F);
     // camera.setScale(100);
-    world.active_camera() = &camera;
-    ui_world.active_camera() = &ui_camera;
+    world.rendering_camera() = &camera;
+    ui_world.rendering_camera() = &ui_camera;
     ui_camera.mode = Camera::TopLeft;
 
     auto &line = new_points(world);

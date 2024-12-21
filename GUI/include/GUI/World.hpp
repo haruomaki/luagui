@@ -9,7 +9,7 @@ class Rigidbody;
 
 class World : public WorldObject {
     // ステートフルに目まぐるしく変わる。
-    CameraInterface *active_camera_ = nullptr;
+    CameraInterface *rendering_camera_ = nullptr;
 
     // メッシュ描画を一元管理するクラス
     friend class MeshComponent;
@@ -75,9 +75,9 @@ class World : public WorldObject {
 
     void master_physics();
 
-    void master_draw() {
-        // master_drawが呼ばれる直前にactive_camera_が都度書き換えられる。
-        CameraInterface &camera = *active_camera_;
+    void master_draw(CameraInterface &camera) {
+        // 描画処理中だけrrendering_cameraが有効になる。
+        rendering_camera_ = &camera;
 
         // ビューポートを設定
         GL::viewport(camera.viewport_provider());
@@ -89,13 +89,18 @@ class World : public WorldObject {
         // メッシュを描画
         this->mesh_draw_manager_.step();
         this->mesh_draw_manager_.draw_all_registered_objects(camera);
+
+        // 描画処理が終わるとrendering_cameraは無効になる。
+        rendering_camera_ = nullptr;
     }
 
     // void register_to_draw(const MeshObject &obj) {
     //     this->mesh_draw_manager_.register_to_draw(obj);
     // }
 
-    CameraInterface *&active_camera() {
-        return this->active_camera_;
+    // 描画処理の最中は、現在描画に用いているカメラへのポインタを返す。
+    // 描画処理外ではnullptrを返す。
+    CameraInterface *rendering_camera() {
+        return this->rendering_camera_;
     }
 };

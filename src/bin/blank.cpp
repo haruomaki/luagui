@@ -12,7 +12,7 @@ int main() {
     cobj.position = {0, 0, 10};
     cobj.rotate = ANGLE_Y(M_PIf);
     cobj.scale = 10;
-    main_world.active_camera() = &camera;
+    main_world.rendering_camera() = &camera;
 
     auto &cube = new_mesh(main_world);
     auto &mesh = cube.mesh;

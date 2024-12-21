@@ -22,7 +22,7 @@ int main() {
     cobj.position = {0, 0, 1000};
     cobj.rotate = ANGLE_Y(M_PIf);
     cobj.scale = 2000; // 速度調整
-    main_world.active_camera() = &camera;
+    main_world.rendering_camera() = &camera;
 
     auto &migmix_font = window.append_resource<Font>();
     auto &sample_text = main_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});

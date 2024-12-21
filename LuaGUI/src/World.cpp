@@ -50,7 +50,7 @@ void register_world(sol::state &lua) {
 
         if (debug) {
             auto &camera = mobile_ortho_camera(world);
-            world.active_camera() = &camera;
+            world.rendering_camera() = &camera;
         }
 
         // auto migmix_font = new Font();
