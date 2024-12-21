@@ -21,7 +21,7 @@ class World : public WorldObject {
   public:
     Window &window;
     Timer timer;
-    std::function<GL::RawViewport()> viewport_provider;
+    std::function<GL::Viewport()> viewport_provider;
     BufferedSet<std::function<void()> *> draws;
     BufferedSet<std::function<void()> *> updates;
     BufferedSet<Rigidbody *> rigidbodies;
@@ -34,7 +34,7 @@ class World : public WorldObject {
         , window(window)
         , viewport_provider([this] {
             auto [w, h] = this->window.fbsize_cache;
-            return GL::RawViewport{0, 0, w, h};
+            return GL::Viewport{0, 0, w, h};
         }) {
         // Box2Dの世界を生成
         b2::World::Params world_params;
