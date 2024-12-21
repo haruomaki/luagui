@@ -48,10 +48,10 @@ void register_world(sol::state &lua) {
         auto &world = window.create_world();
         lua["__CurrentWorld"] = &world;
 
-        if (debug) {
-            auto &camera = mobile_ortho_camera(world);
-            world.rendering_camera() = &camera;
-        }
+        // if (debug) {
+        //     auto &camera = mobile_ortho_camera(world);
+        //     world.rendering_camera() = &camera;
+        // }
 
         // auto migmix_font = new Font();
         // world.append_child<Text>(*migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});

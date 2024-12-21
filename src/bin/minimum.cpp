@@ -18,9 +18,7 @@ int main() {
     // ただウィンドウを作成し、Qキーで終了するプログラム。
     GL::Context ctx;
     Window window(ctx, 500, 400, "minimum.cppのウィンドウ");
-    World &world = window.create_world();      // TODO: いちいちワールドを作らなくてもいいようにしたい
-    auto &cam = world.add_component<Camera>(); // TODO: いちいちカメラを作りたくない
-    world.rendering_camera() = &cam;
+    World &world = window.create_world(); // TODO: いちいちワールドを作らなくてもいいようにしたい
     world.add_component<UpdateComponent>([&](auto & /*self*/) {
         if (window.key_down()[GLFW_KEY_W]) std::cout << "わん🐶\n";
         if (window.key_down()[GLFW_KEY_N]) std::cout << "にゃん🐱\n";
