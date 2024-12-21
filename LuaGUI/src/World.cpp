@@ -49,8 +49,7 @@ void register_world(sol::state &lua) {
         lua["__CurrentWorld"] = &world;
 
         if (debug) {
-            auto &camera = mobile_ortho_camera(world);
-            world.active_camera() = &camera;
+            mobile_ortho_camera(world);
         }
 
         // auto migmix_font = new Font();
