@@ -4,14 +4,12 @@
 
 ---カメラコンポーネント。
 ---@class Camera : Component
+---@field active boolean このカメラからの映像を実際に描画するかどうか
 ---@field projection_mode ProjectionMode 投影モード
 local Camera = {}
 
 ---@type Camera
 __CurrentCamera = nil
-
----このカメラをアクティブにする。
-function Camera:set_active() end
 
 ---カメラコンポーネントを追加する。
 ---@param projection_mode ProjectionMode

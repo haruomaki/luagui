@@ -9,6 +9,7 @@
 struct CameraInterface {
     std::function<void()> render;
     std::function<GL::Viewport()> viewport_provider;
+    bool active = true;
 
     virtual ~CameraInterface() = default;
     [[nodiscard]] virtual glm::mat4 get_view_matrix() const = 0;

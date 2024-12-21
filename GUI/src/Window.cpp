@@ -110,8 +110,10 @@ void Window::draw_routine() {
 
     cameras.flush();
     cameras.foreach ([](CameraInterface *camera) {
-        glClear(GL_DEPTH_BUFFER_BIT);
-        camera->render();
+        if (camera->active) {
+            glClear(GL_DEPTH_BUFFER_BIT);
+            camera->render();
+        }
     });
 
     // カスタムの描画ルーチンを実行
