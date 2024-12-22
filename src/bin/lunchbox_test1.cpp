@@ -7,19 +7,43 @@
 #include <SumiGL/logger.hpp>
 #include <lunchbox.hpp>
 
-int main() {
-    auto box = lunchbox::Lunchbox();
-    box.list("assets");
-    debug(box.get_text("assets/shaders/default.vsh"));
-    box.dump_binary("assets/audio/テスト音声.wav");
+// メモリ上のデータを読み込むためのカスタム関数
+static sf_count_t get_filelen(void *user_data) {
+    std::vector<char> *data = static_cast<std::vector<char> *>(user_data);
+    return data->size();
+}
 
-    // ファイル読み込み
-    const char *file_path = "assets/audio/テスト音声.wav";
+static sf_count_t read_file(void *ptr, sf_count_t count, void *user_data) {
+    std::vector<char> *data = static_cast<std::vector<char> *>(user_data);
+    sf_count_t to_read = std::min(count, static_cast<sf_count_t>(data->size()));
+    std::memcpy(ptr, data->data(), to_read);
+    data->erase(data->begin(), data->begin() + to_read);
+    return to_read;
+}
+
+static sf_count_t seek_file(sf_count_t offset, int whence, void *user_data) {
+    std::vector<char> *data = static_cast<std::vector<char> *>(user_data);
+    if (whence == SEEK_SET) {
+        if (offset >= 0 && offset < data->size()) {
+            data->erase(data->begin(), data->begin() + offset);
+            return offset;
+        }
+    }
+    return -1;
+}
+
+SF_VIRTUAL_IO virtual_io = {
+    get_filelen,
+    seek_file,
+    read_file,
+    nullptr, nullptr};
+
+void play_sound(std::vector<char> wav_data) {
     SF_INFO sfinfo;
-    SNDFILE *file = sf_open(file_path, SFM_READ, &sfinfo);
+    SNDFILE *file = sf_open_virtual(&virtual_io, SFM_READ, &sfinfo, &wav_data);
     if (!file) {
         std::cerr << "ファイルを開けませんでした" << std::endl;
-        return -1;
+        std::abort();
     }
 
     std::vector<short> buffer(sfinfo.frames * sfinfo.channels);
@@ -56,4 +80,12 @@ int main() {
     alDeleteBuffers(1, &al_buffer);
     alcDestroyContext(context);
     alcCloseDevice(device);
+}
+
+int main() {
+    auto box = lunchbox::Lunchbox();
+    box.list("assets");
+    debug(box.get_text("assets/shaders/default.vsh"));
+
+    box.get_binary_stream("assets/audio/テスト音声.wav");
 }
