@@ -7,29 +7,52 @@
 #include <SumiGL/logger.hpp>
 #include <lunchbox.hpp>
 
-// メモリ上のデータを読み込むためのカスタム関数
+// メモリ上のデータを操作するための構造体
+struct MemoryData {
+    const std::byte *data; // メモリ上のデータの開始位置
+    sf_count_t size;       // データの総サイズ
+    sf_count_t offset;     // 現在の読み取り位置
+};
+
+// データのサイズを取得
 static sf_count_t get_filelen(void *user_data) {
-    std::vector<char> *data = static_cast<std::vector<char> *>(user_data);
-    return data->size();
+    auto *mem = static_cast<MemoryData *>(user_data);
+    return mem->size;
 }
 
+// データの読み取り
 static sf_count_t read_file(void *ptr, sf_count_t count, void *user_data) {
-    std::vector<char> *data = static_cast<std::vector<char> *>(user_data);
-    sf_count_t to_read = std::min(count, static_cast<sf_count_t>(data->size()));
-    std::memcpy(ptr, data->data(), to_read);
-    data->erase(data->begin(), data->begin() + to_read);
+    auto *mem = static_cast<MemoryData *>(user_data);
+    sf_count_t remaining = mem->size - mem->offset;
+    sf_count_t to_read = std::min(count, remaining);
+
+    std::memcpy(ptr, mem->data + mem->offset, to_read);
+    mem->offset += to_read;
+
     return to_read;
 }
 
+// データのシーク
 static sf_count_t seek_file(sf_count_t offset, int whence, void *user_data) {
-    std::vector<char> *data = static_cast<std::vector<char> *>(user_data);
+    auto *mem = static_cast<MemoryData *>(user_data);
+
+    sf_count_t new_offset = mem->offset;
     if (whence == SEEK_SET) {
-        if (offset >= 0 && offset < data->size()) {
-            data->erase(data->begin(), data->begin() + offset);
-            return offset;
-        }
+        new_offset = offset;
+    } else if (whence == SEEK_CUR) {
+        new_offset += offset;
+    } else if (whence == SEEK_END) {
+        new_offset = mem->size + offset;
+    } else {
+        return -1; // 無効なシーク
     }
-    return -1;
+
+    if (new_offset < 0 || new_offset > mem->size) {
+        return -1; // 範囲外
+    }
+
+    mem->offset = new_offset;
+    return mem->offset;
 }
 
 SF_VIRTUAL_IO virtual_io = {
@@ -38,14 +61,21 @@ SF_VIRTUAL_IO virtual_io = {
     read_file,
     nullptr, nullptr};
 
-void play_sound(std::vector<char> wav_data) {
-    SF_INFO sfinfo;
-    SNDFILE *file = sf_open_virtual(&virtual_io, SFM_READ, &sfinfo, &wav_data);
+static void play_sound(std::vector<std::byte> &&wav_data) {
+    // MemoryData構造体を初期化
+    MemoryData memory_data = {wav_data.data(), static_cast<sf_count_t>(wav_data.size()), 0};
+
+    // SF_INFO構造体をゼロ初期化
+    SF_INFO sfinfo = {0};
+
+    // 仮想ファイルを開く
+    SNDFILE *file = sf_open_virtual(&virtual_io, SFM_READ, &sfinfo, &memory_data);
+
     if (!file) {
-        std::cerr << "ファイルを開けませんでした" << std::endl;
-        std::abort();
+        throw std::runtime_error("Failed to open virtual file: " + std::string(sf_strerror(nullptr)));
     }
 
+    // 音声データの処理
     std::vector<short> buffer(sfinfo.frames * sfinfo.channels);
     sf_readf_short(file, buffer.data(), sfinfo.frames);
     sf_close(file);
@@ -84,8 +114,9 @@ void play_sound(std::vector<char> wav_data) {
 
 int main() {
     auto box = lunchbox::Lunchbox();
-    box.list("assets");
-    debug(box.get_text("assets/shaders/default.vsh"));
+    box.list("assets/audio");
+    // debug(box.get_text("assets/shaders/default.vsh"));
 
-    box.get_binary_stream("assets/audio/テスト音声.wav");
+    auto buffer = box.get_binary("assets/audio/テスト音声.wav");
+    play_sound(std::move(buffer));
 }
