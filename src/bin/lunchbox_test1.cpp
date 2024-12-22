@@ -7,17 +7,8 @@
 #include <lunchbox.hpp>
 #include <reader.hpp>
 
-static void play_sound(std::vector<std::byte> &&wav_data) {
-    auto [file, sfinfo] = lunchbox::core::open_from_buffer(std::move(wav_data));
-
-    if (!file) {
-        throw std::runtime_error("Failed to open virtual file: " + std::string(sf_strerror(nullptr)));
-    }
-
-    // 音声データの処理
-    std::vector<short> buffer(sfinfo.frames * sfinfo.channels);
-    sf_readf_short(file, buffer.data(), sfinfo.frames);
-    sf_close(file);
+static void play_sound(const std::vector<std::byte> &wav_data) {
+    auto [buffer, sfinfo] = lunchbox::core::open_from_buffer(wav_data);
 
     // OpenAL初期化
     ALCdevice *device = alcOpenDevice(nullptr);
@@ -57,5 +48,5 @@ int main() {
     // debug(box.get_text("assets/shaders/default.vsh"));
 
     auto buffer = box.get_binary("assets/audio/テスト音声.wav");
-    play_sound(std::move(buffer));
+    play_sound(buffer);
 }
