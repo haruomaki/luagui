@@ -4,34 +4,34 @@
 #include <stdexcept> // libc++では不要
 #include <string>    // libc++では不要
 
-class Window;
+struct GUI;
 
-// ユーザはこのクラス（をpublic継承したクラス）を必ずwindow.append_resource()経由でインスタンス化する
+// ユーザはこのクラス（をpublic継承したクラス）を必ずgui.append_resource()経由でインスタンス化する
 class Resource {
-    friend class Window;
-    Window *window_; // コンストラクト後は変更されない
+    friend struct GUI;
+    GUI *gui_; // コンストラクト後は変更されない
 
     std::string name_;
 
-    // コンストラクタのかわりにグローバル変数を利用してwindow_を初期化するための内部関数
-    static Window *get_window_static();
-    static void set_window_static(Window *window);
+    // コンストラクタのかわりにグローバル変数を利用してgui_を初期化するための内部関数
+    static GUI *get_gui_static();
+    static void set_gui_static(GUI *gui);
 
   public:
     // このクラスのコンストラクタは呼ぶ直前にsetWindowStatic()を実行しておかなければならない
     Resource()
-        : window_(get_window_static()) {
-        if (this->window_ == nullptr) {
-            throw std::runtime_error("WindowObjectに関連付けるウィンドウの取得に失敗");
+        : gui_(get_gui_static()) {
+        if (this->gui_ == nullptr) {
+            throw std::runtime_error("WindowObjectに関連付けるGUIの取得に失敗");
         }
     }
     virtual ~Resource() = default;
 
     // window_を読み取るゲッターおよびプロパティ
-    Window &get_window() {
-        return *this->window_;
+    GUI &get_gui() {
+        return *this->gui_;
     }
-    PropertyGet<&Resource::get_window> window{this};
+    PropertyGet<&Resource::get_gui> gui{this};
 
     // 名前を読み取り/更新するプロパティ
     const std::string &get_name() {
