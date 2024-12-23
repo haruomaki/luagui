@@ -1,3 +1,4 @@
+#include <GUI/GUI.hpp>
 #include <GUI/Text.hpp>
 #include <GUI/Window.hpp>
 #include <SumiGL/Context.hpp>
@@ -29,12 +30,12 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 
     // C++側でウィンドウを作成し、Luaのグローバル変数に保持する
     print("ウィンドウ作成開始");
-    GL::Context gui;
+    GUI gui;
     Window window = Window(gui, width, height, title.c_str());
     print("ウィンドウ作成完了");
     lua["__CurrentWindow"] = &window;
 
-    debug(gui.dpi());
+    debug(gui.ctx.dpi());
 
     // デフォルトのフォントを生成
     auto &default_font = window.append_resource<Font>();

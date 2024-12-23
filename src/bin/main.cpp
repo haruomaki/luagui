@@ -2,7 +2,7 @@
 #include <gui.hpp>
 
 int main() {
-    GL::Context gui;
+    GUI gui;
     Window window(gui, 600, 500, "めいん");
     World &main_world = window.create_world();
 

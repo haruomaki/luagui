@@ -1,4 +1,5 @@
 #include "Camera.hpp"
+#include "GUI.hpp"
 #include "World.hpp"
 
 // カメラ優先度を初期設定するアルゴリズム。
@@ -63,7 +64,7 @@ glm::mat4 Camera::get_projection_matrix() const {
         return projection_matrix;
     }
 
-    auto ms = this->world().window.gui.master_scale();
+    auto ms = this->world().window.gui.ctx.master_scale();
     const auto w = float(width) * ms.x;
     const auto h = float(height) * ms.y;
     const auto r = owner().get_scale().z;

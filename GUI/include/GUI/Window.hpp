@@ -6,7 +6,7 @@
 #include <SumiGL/buffered_container.hpp>
 
 class World;
-class GUI;
+struct GUI;
 struct Material;
 class Viewport;
 struct CameraInterface;
@@ -30,7 +30,7 @@ class Window : public GL::Window {
     void refresh_world_order();
 
   public:
-    GL::Context &gui;
+    GUI &gui;
     std::optional<GL::ProgramObject> default_shader;
     Material *default_material = nullptr;
     BufferedSet<std::function<void()> *> resource_updates;
@@ -40,7 +40,7 @@ class Window : public GL::Window {
     // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。
     std::pair<int, int> fbsize_cache = {0, 0};
 
-    Window(GL::Context &gui, int width, int height, const char *title);
+    Window(GUI &gui, int width, int height, const char *title);
     ~Window();
 
     // コピーもムーブも禁止する

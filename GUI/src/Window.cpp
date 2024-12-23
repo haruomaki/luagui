@@ -1,12 +1,13 @@
 #include "Window.hpp"
+#include "GUI.hpp"
 #include "Material.hpp"
 #include "World.hpp"
 #include <SumiGL/Context.hpp>
 
 using namespace std::chrono_literals;
 
-Window::Window(GL::Context &gui, int width, int height, const char *title)
-    : GL::Window(gui, width, height, title, [this] { this->routine(); })
+Window::Window(GUI &gui, int width, int height, const char *title)
+    : GL::Window(gui.ctx, width, height, title, [this] { this->routine(); })
     , gwin_(gwin)
     , gui(gui) {
 
