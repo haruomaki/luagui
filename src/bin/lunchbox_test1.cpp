@@ -3,12 +3,12 @@
 #include <iostream>
 #include <vector>
 
+#include <Lunchbox/core/sf_open_virtual.hpp>
 #include <SumiGL/logger.hpp>
 #include <lunchbox.hpp>
-#include <reader.hpp>
 
-static void play_sound(const std::vector<std::byte> &wav_data) {
-    auto [buffer, sfinfo] = lunchbox::core::open_from_buffer(wav_data);
+static void play_sound(std::vector<std::byte> &&wav_data) {
+    auto [buffer, sfinfo] = lunchbox::core::open_from_buffer(std::move(wav_data));
 
     // OpenAL初期化
     ALCdevice *device = alcOpenDevice(nullptr);
@@ -48,5 +48,5 @@ int main() {
     // debug(box.get_text("assets/shaders/default.vsh"));
 
     auto buffer = box.get_binary("assets/audio/テスト音声.wav");
-    play_sound(buffer);
+    play_sound(std::move(buffer));
 }
