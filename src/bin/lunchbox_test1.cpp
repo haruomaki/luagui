@@ -3,9 +3,9 @@
 #include <iostream>
 #include <vector>
 
+#include <Lunchbox/Storage.hpp>
 #include <Lunchbox/sound.hpp>
 #include <SumiGL/logger.hpp>
-#include <lunchbox.hpp>
 
 static void play_sound(std::vector<std::byte> &&wav_data) {
     auto [buffer, sfinfo] = lunchbox::load_sound(std::move(wav_data));
@@ -43,10 +43,9 @@ static void play_sound(std::vector<std::byte> &&wav_data) {
 }
 
 int main() {
-    auto box = lunchbox::Lunchbox();
-    box.list("assets/audio");
-    // debug(box.get_text("assets/shaders/default.vsh"));
+    lunchbox::Storage storage;
+    storage.list("assets/audio");
 
-    auto buffer = box.get_binary("assets/audio/テスト音声.wav");
+    auto buffer = storage.get_binary("assets/audio/テスト音声.wav");
     play_sound(std::move(buffer));
 }
