@@ -12,14 +12,11 @@ static void play_sound(std::vector<std::byte> &&wav_data) {
     auto [buffer, sfinfo] = lunchbox::load_sound(std::move(wav_data));
 
     // OpenALバッファとソース作成
-    ALuint al_buffer;
-    alGenBuffers(1, &al_buffer);
-    alBufferData(al_buffer, (sfinfo.channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16),
-                 buffer.data(), int(buffer.size() * sizeof(short)), sfinfo.samplerate);
+    lunchbox::OpenALBuffer al_buffer(buffer, sfinfo.channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, sfinfo.samplerate);
 
     ALuint source;
     alGenSources(1, &source);
-    alSourcei(source, AL_BUFFER, int(al_buffer));
+    alSourcei(source, AL_BUFFER, int(al_buffer.get()));
 
     // 再生
     alSourcePlay(source);
@@ -33,7 +30,6 @@ static void play_sound(std::vector<std::byte> &&wav_data) {
 
     // 後始末
     alDeleteSources(1, &source);
-    alDeleteBuffers(1, &al_buffer);
 }
 
 int main() {
