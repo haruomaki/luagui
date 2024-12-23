@@ -29,9 +29,6 @@ class Window : public GL::Window {
 
   public:
     GUI &gui;
-    std::optional<GL::ProgramObject> default_shader;
-    Material *default_material = nullptr;
-    BufferedSet<std::function<void()> *> resource_updates;
     std::vector<std::function<void()>> raw_worlds;
     BufferedSet<CameraInterface *> cameras;
 

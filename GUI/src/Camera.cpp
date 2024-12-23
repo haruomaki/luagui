@@ -1,5 +1,5 @@
 #include "Camera.hpp"
-#include "GUI.hpp"
+#include "Window.hpp"
 #include "World.hpp"
 
 // カメラ優先度を初期設定するアルゴリズム。

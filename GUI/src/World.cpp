@@ -1,4 +1,7 @@
 #include "World.hpp"
+#include "Window.hpp"
+
+GUI &World::gui() const { return window.gui; }
 
 void World::master_physics() {
     // Box2Dの毎フレーム更新処理

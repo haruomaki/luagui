@@ -2,6 +2,9 @@
 
 #include "Resource.hpp"
 #include <SumiGL/Context.hpp>
+#include <SumiGL/Shader.hpp>
+
+struct Material;
 
 struct GUI {
     GL::Context ctx;
@@ -9,6 +12,11 @@ struct GUI {
     long epoch = 0;
 
     std::set<std::unique_ptr<Resource>> resources_;
+    BufferedSet<std::function<void()> *> resource_updates;
+    std::optional<GL::ProgramObject> default_shader;
+    Material *default_material = nullptr;
+
+    GUI();
 
     ~GUI() {
         this->resources_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
@@ -34,10 +42,20 @@ struct GUI {
             trace("[mainloop] カスタムルーチン開始：", epoch);
             custom_routine(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
             trace("[mainloop] ウィンドウ更新開始：", epoch);
+
+            // リソースの更新処理
+            trace("[update] 《resource》->world");
+            this->resource_updates.foreach ([](const auto *update) {
+                (*update)();
+            });
+
             // 登録されている各ウィンドウに対してルーティンを実行
             ctx.windows.foreach ([](const GL::Window *window) {
                 window->routine();
             });
+
+            // フラッシュ TODO: 場所はここでいい？
+            resource_updates.flush();
         }
 
         looping = false;

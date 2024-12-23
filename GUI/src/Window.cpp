@@ -1,6 +1,5 @@
 #include "Window.hpp"
 #include "GUI.hpp"
-#include "Material.hpp"
 #include "World.hpp"
 #include <SumiGL/Context.hpp>
 
@@ -33,18 +32,10 @@ Window::Window(GUI &gui, int width, int height, const char *title)
             info("例外;未知のキーコードです。key=", key, ", scancode=", scancode, ", mods=", mods);
         }
     });
-
-    // デフォルトシェーダの設定
-    this->default_shader.emplace({GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
-                                  GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))});
-
-    // デフォルトマテリアルの設定
-    this->default_material = &MaterialBuilder().build(*this);
 }
 
 Window::~Window() {
-    this->worlds_.clear();    // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
-    this->resources_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
+    this->worlds_.clear(); // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
 
     print("Windowのデストラクタです");
     // debug(this->size_callbacks_.size());
@@ -125,12 +116,6 @@ void Window::update_routine() {
     // フレームバッファサイズを更新
     fbsize_cache = framebuffer_size();
 
-    // リソースの更新処理
-    trace("[update] 《resource》->world");
-    this->resource_updates.foreach ([](const auto *update) {
-        (*update)();
-    });
-
     // 各ワールドの更新処理
     trace("[update] resource->《world》");
     for (const auto &world : this->worlds_) {
@@ -152,9 +137,6 @@ void Window::post_process() {
 
     // カーソル位置を更新
     last_cursor_ = cursor_pos();
-
-    // フラッシュ TODO: 場所はここでいい？
-    resource_updates.flush();
 
     // rigidbody_components_（物理演算結果を物体の位置に反映するために管理）をフラッシュしておく。
     // 次フレームに同一アドレスの別コンポーネントが作られたときに、競合しないようにするため。

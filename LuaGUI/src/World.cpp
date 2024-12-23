@@ -36,7 +36,7 @@ static MeshComponent &draw_circle(WorldObject &parent, std::vector<float> center
 
 static MeshComponent &draw_rect(WorldObject &parent, float hx, float hy) { // NOLINT(performance-unnecessary-value-param)
     std::vector<glm::vec3> coords = {{-hx, -hy, 0}, {hx, -hy, 0}, {hx, hy, 0}, {-hx, hy, 0}};
-    auto &rect_obj = new_rect(parent, coords, MaterialBuilder().build(parent.get_world().window));
+    auto &rect_obj = new_rect(parent, coords, MaterialBuilder().build(parent.get_world().gui()));
 
     return rect_obj;
 }

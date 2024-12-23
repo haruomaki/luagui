@@ -56,6 +56,8 @@ class World : public WorldObject {
     World(World &&) = delete;
     World &operator=(World &&) const = delete;
 
+    GUI &gui() const;
+
     void master_update() {
         trace("World::master_update開始:", this);
         this->updates.foreach ([&](const auto update) {
