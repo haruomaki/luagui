@@ -31,6 +31,10 @@ target_link_libraries(GUI PRIVATE ${PNG_LIBRARIES})
 add_subdirectory(furitype)
 target_link_libraries(GUI PUBLIC furitype)
 
+# Launchbox（マルチメディア読み書き＆アセット埋め込み）
+add_subdirectory(lunchbox)
+target_link_libraries(GUI PUBLIC lunchbox)
+
 # Box2D & box2cpp Worldから直接扱えるようにPUBLIC
 if (MSVC)
     add_compile_options(/wd4244 /wd4018) # 暗黙の型変換＆比較の警告を抑制
