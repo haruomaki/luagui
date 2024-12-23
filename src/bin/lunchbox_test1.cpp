@@ -3,17 +3,13 @@
 #include <iostream>
 #include <vector>
 
+#include <Lunchbox/OpenAL.hpp>
 #include <Lunchbox/Storage.hpp>
 #include <Lunchbox/sound.hpp>
 #include <SumiGL/logger.hpp>
 
 static void play_sound(std::vector<std::byte> &&wav_data) {
     auto [buffer, sfinfo] = lunchbox::load_sound(std::move(wav_data));
-
-    // OpenAL初期化
-    ALCdevice *device = alcOpenDevice(nullptr);
-    ALCcontext *context = alcCreateContext(device, nullptr);
-    alcMakeContextCurrent(context);
 
     // OpenALバッファとソース作成
     ALuint al_buffer;
@@ -38,11 +34,10 @@ static void play_sound(std::vector<std::byte> &&wav_data) {
     // 後始末
     alDeleteSources(1, &source);
     alDeleteBuffers(1, &al_buffer);
-    alcDestroyContext(context);
-    alcCloseDevice(device);
 }
 
 int main() {
+    lunchbox::OpenALContext openal_ctx;
     lunchbox::Storage storage;
     storage.list("assets/audio");
 
