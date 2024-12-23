@@ -13,23 +13,14 @@ static void play_sound(std::vector<std::byte> &&wav_data) {
 
     // OpenALバッファとソース作成
     lunchbox::OpenALBuffer al_buffer(buffer, sfinfo.channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, sfinfo.samplerate);
-
-    ALuint source;
-    alGenSources(1, &source);
-    alSourcei(source, AL_BUFFER, int(al_buffer.get()));
+    lunchbox::OpenALSource source(al_buffer);
 
     // 再生
-    alSourcePlay(source);
+    source.play();
     std::cout << "再生中..." << std::endl;
 
     // 再生が終了するまで待機
-    ALint state;
-    do {
-        alGetSourcei(source, AL_SOURCE_STATE, &state);
-    } while (state == AL_PLAYING);
-
-    // 後始末
-    alDeleteSources(1, &source);
+    while (source.is_playing());
 }
 
 int main() {
