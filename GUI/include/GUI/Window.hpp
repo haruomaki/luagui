@@ -13,13 +13,11 @@ class Window : public GL::Window {
     KeyArray key_down_{}, key_up_{};
     std::pair<double, double> last_cursor_ = cursor_pos();
 
-    void routine();
+  public:
     void draw_routine();
     void update_routine();
-    void physics_routine();
     void post_process();
 
-  public:
     GUI &gui;
     BufferedSet<CameraInterface *> cameras;
 

@@ -50,25 +50,25 @@ void Window::close() const {
     glfwSetWindowShouldClose(gwin_, GL_TRUE);
 }
 
-void Window::routine() {
-    if (glfwWindowShouldClose(gwin)) {
-        this->destroy();
-        return;
-    }
+// void Window::routine() {
+//     if (glfwWindowShouldClose(gwin)) {
+//         this->destroy();
+//         return;
+//     }
 
-    // 更新処理。physicsとupdateは順不同？
-    trace("[mainloop] p1 《physics》->update->draw->post");
-    this->physics_routine();
-    trace("[mainloop] p2 physics->《update》->draw->post");
-    this->update_routine();
+//     // 更新処理。physicsとupdateは順不同？
+//     trace("[mainloop] p1 《physics》->update->draw->post");
+//     // this->physics_routine();
+//     trace("[mainloop] p2 physics->《update》->draw->post");
+//     this->update_routine();
 
-    // 更新処理ののち描画。
-    trace("[mainloop] p3 physics->update->《draw》->post");
-    this->draw_routine();
-    trace("[mainloop] p4 physics->update->draw->《post》");
-    this->post_process();
-    trace("[mainloop] p5");
-}
+//     // 更新処理ののち描画。
+//     trace("[mainloop] p3 physics->update->《draw》->post");
+//     this->draw_routine();
+//     trace("[mainloop] p4 physics->update->draw->《post》");
+//     this->post_process();
+//     trace("[mainloop] p5");
+// }
 
 void Window::draw_routine() {
     // OpenGLの描画関数のターゲットにするウィンドウを指定
@@ -101,9 +101,6 @@ void Window::update_routine() {
 
     // フレームバッファサイズを更新
     fbsize_cache = framebuffer_size();
-}
-
-void Window::physics_routine() {
 }
 
 void Window::post_process() {

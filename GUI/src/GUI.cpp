@@ -25,6 +25,18 @@ World &GUI::create_world() {
 }
 
 void GUI::default_routine1() {
+    windows.flush();
+    windows.foreach ([](Window *window) {
+        // 閉じるべきウィンドウは閉じる
+        if (window->should_close()) {
+            window->destroy();
+            return;
+        }
+
+        // フレームバッファサイズの更新
+        window->update_routine();
+    });
+
     // 各ワールドの更新処理
     trace("[update] resource->《world》");
     for (const auto &world : this->worlds_) {
@@ -36,9 +48,10 @@ void GUI::default_routine1() {
         world->master_physics();
     }
 
-    // 登録されている各ウィンドウに対してルーティンを実行
-    windows.foreach ([](const Window *window) {
-        window->GL::Window::routine();
+    // 描画と後処理
+    windows.foreach ([](Window *window) {
+        window->draw_routine();
+        window->post_process();
     });
 }
 
