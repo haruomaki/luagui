@@ -23,7 +23,7 @@ int main() {
     cobj.rotate = ANGLE_Y(M_PIf);
     cobj.scale = 2000; // 速度調整
 
-    auto &migmix_font = window.append_resource<Font>();
+    auto &migmix_font = gui.append_resource<Font>();
     auto &sample_text = main_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = main_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
 
@@ -31,9 +31,9 @@ int main() {
     credit_text.owner().set_position({200, 400, 1});
 
     GLuint cat_texture = load_texture("assets/images/cat.raw");
-    Material &cat_material = MaterialBuilder().texture(cat_texture).build(window);
+    Material &cat_material = MaterialBuilder().texture(cat_texture).build(gui);
 
-    auto &gon = new_mesh(window, GL_TRIANGLE_FAN, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
+    auto &gon = new_mesh(gui, GL_TRIANGLE_FAN, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
                          {
                              {0.9, 0.3, 0, 1},
                              {0.1, 0.2, 0.7, 0.3},
@@ -42,14 +42,14 @@ int main() {
                          },
                          {{1, 0}, {0, 0}, {0, 1}, {1, 1}});
 
-    auto &gon2 = new_mesh(window, GL_TRIANGLE_FAN, {{-0.8, -0.3, -0.1}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+    auto &gon2 = new_mesh(gui, GL_TRIANGLE_FAN, {{-0.8, -0.3, -0.1}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
                           {
                               {0.9, 0.3, 0, 1},
                               {0.9, 0.2, 0.7, 0.3},
                               {0.3, 0.7, 0.5f, 0.5},
                           });
 
-    auto &gon3 = new_mesh(window, GL_TRIANGLE_FAN, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
+    auto &gon3 = new_mesh(gui, GL_TRIANGLE_FAN, {{0.4, 0.3, 0}, {0.5, 0.3, 0}, {0.5, 0.4, 0}, {0.45, 0.35, 0}, {0.4, 0.4, 0}},
                           {
                               {0.9, 0.3, 0, 1},
                               {0.9, 0.2, 0.7, 0.3},
@@ -58,7 +58,7 @@ int main() {
                               {0.3, 0.7, 0.5f, 0.5},
                           });
 
-    auto &poly = new_mesh(window, GL_TRIANGLE_FAN, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
+    auto &poly = new_mesh(gui, GL_TRIANGLE_FAN, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
     auto &ins3 = main_world.child_component<MeshComponent>(gon3);
     /* auto &ins = */ ins3.owner().child_component<MeshComponent>(gon, &cat_material);

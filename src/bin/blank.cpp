@@ -1,7 +1,7 @@
 #include <gui.hpp>
 
 int main() {
-    GL::Context gui;
+    GUI gui;
     Window window(gui, 1280, 720, "blank");
     World &main_world = window.create_world();
 

@@ -8,7 +8,7 @@ inline float f(float x) {
 
 int main() {
     constexpr int width = 600, height = 500;
-    GL::Context gui;
+    GUI gui;
     Window window(gui, width, height, "ウィンドウタイトル");
     // Window &another_window = gui.create_window(width, height, "２つめのウィンドウ");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
@@ -29,14 +29,14 @@ int main() {
     int points_num = 100;
 
     // 文字の表示
-    auto &migmix_font = window.append_resource<Font>();
+    auto &migmix_font = gui.append_resource<Font>();
     auto &sample_text = ui_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = ui_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
     sample_text.owner().position = {0.005, -0.02, 0};
     credit_text.owner().position = {0.1, -0.1, 0};
 
     // 三角形の表示
-    auto &my_triangle_mesh = new_mesh(window, GL_TRIANGLE_FAN, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
+    auto &my_triangle_mesh = new_mesh(gui, GL_TRIANGLE_FAN, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
                                       {
                                           {0.9, 0.3, 0, 1},
                                           {0.9, 0.2, 0.7, 0.3},
@@ -53,12 +53,12 @@ int main() {
     });
 
     auto proc = std::make_unique<std::function<void()>>([&] {
-        sample_text.text = to_str(gui.tick());
+        sample_text.text = to_str(gui.epoch);
 
         const auto xs = linspace(-9, 9, points_num);
         line_mesh.vertices.clear();
         line_mesh.vertices.xs = xs;
-        line_mesh.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.tick()) / 100) + t; });
+        line_mesh.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.epoch) / 100) + t; });
         line_mesh.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
     });
     world.updates.request_set(proc.get());
