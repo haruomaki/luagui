@@ -1,13 +1,9 @@
 #pragma once
 
-#include <SumiGL/Context.hpp>
-#include <SumiGL/Shader.hpp>
+#include <SumiGL/Window.hpp>
 #include <SumiGL/buffered_container.hpp>
 
-class World;
 class GUI;
-struct Material;
-class Viewport;
 struct CameraInterface;
 
 // 一つのウィンドウを表すクラス

@@ -3,6 +3,7 @@
 #include "Resource.hpp"
 #include <SumiGL/Context.hpp>
 #include <SumiGL/Shader.hpp>
+#include <SumiGL/buffered_container.hpp>
 
 struct Material;
 class World;
@@ -17,6 +18,7 @@ class GUI {
     std::vector<std::unique_ptr<World>> worlds_;
 
   public:
+    BufferedSet<Window *> windows;
     BufferedSet<std::function<void()> *> resource_updates;
     std::optional<GL::ProgramObject> default_shader;
     Material *default_material = nullptr;
@@ -38,7 +40,7 @@ class GUI {
         looping_ = true;
 
         // 描画のループ
-        while (!ctx_.windows.empty()) {
+        while (!windows.empty()) {
             epoch_++;
             trace("[mainloop] メインループ：", epoch_);
 
@@ -57,11 +59,6 @@ class GUI {
             });
 
             default_routine1();
-
-            // 登録されている各ウィンドウに対してルーティンを実行
-            ctx_.windows.foreach ([](const GL::Window *window) {
-                window->routine();
-            });
 
             default_routine2();
 

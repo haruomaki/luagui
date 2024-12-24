@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Camera.hpp"
+#include "Mesh.hpp"
 #include "Update.hpp"
-#include "Window.hpp"
 #include "World.hpp"
+#include "WorldObject.hpp"
 
 // ヘッダオンリーでお手軽に。virtual関数をヘッダ内で実装するときの警告抑制
 #pragma clang diagnostic ignored "-Wweak-vtables"

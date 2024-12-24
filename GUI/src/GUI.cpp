@@ -35,6 +35,11 @@ void GUI::default_routine1() {
     for (const auto &world : this->worlds_) {
         world->master_physics();
     }
+
+    // 登録されている各ウィンドウに対してルーティンを実行
+    windows.foreach ([](const Window *window) {
+        window->GL::Window::routine();
+    });
 }
 
 void GUI::default_routine2() {

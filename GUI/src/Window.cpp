@@ -6,9 +6,11 @@
 using namespace std::chrono_literals;
 
 Window::Window(GUI &gui, int width, int height, const char *title)
-    : GL::Window(gui.ctx(), width, height, title, [this] { this->routine(); })
+    : GL::Window(gui.ctx(), width, height, title)
     , gwin_(gwin)
     , gui(gui) {
+
+    this->GL::Window::routine = [this] { this->routine(); };
 
     // ブレンド（透明処理）の設定
     glEnable(GL_BLEND);
@@ -33,20 +35,15 @@ Window::Window(GUI &gui, int width, int height, const char *title)
         }
     });
 
+    gui.windows.request_set(this);
+
     // FIXME: current_windowが切り替わるのは、現状ウィンドウが作成されたときだけ
     gui.current_window = this;
 }
 
 Window::~Window() {
-
     print("Windowのデストラクタです");
-    // debug(this->size_callbacks_.size());
-    // this->size_callbacks_.erase(this->size_callbacks_.begin());
-    // debug(this->size_callbacks_.size());
-    // print("消しました");
-
-    // glfwSetWindowSizeCallback(gwin_, nullptr);
-    // glfwSetKeyCallback(gwin_, nullptr);
+    gui.windows.request_erase(this);
 }
 
 void Window::close() const {
