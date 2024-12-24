@@ -4,11 +4,11 @@
 #include <stdexcept> // libc++では不要
 #include <string>    // libc++では不要
 
-struct GUI;
+class GUI;
 
 // ユーザはこのクラス（をpublic継承したクラス）を必ずgui.append_resource()経由でインスタンス化する
 class Resource {
-    friend struct GUI;
+    friend class GUI;
     GUI *gui_; // コンストラクト後は変更されない
 
     std::string name_;

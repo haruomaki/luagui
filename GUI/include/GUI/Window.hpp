@@ -5,7 +5,7 @@
 #include <SumiGL/buffered_container.hpp>
 
 class World;
-struct GUI;
+class GUI;
 struct Material;
 class Viewport;
 struct CameraInterface;

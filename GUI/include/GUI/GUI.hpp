@@ -6,42 +6,47 @@
 
 struct Material;
 
-struct GUI {
-    GL::Context ctx;
-    bool looping = false;
-    long epoch = 0;
+class GUI {
+    GL::Context ctx_;
+    bool looping_ = false;
+    long epoch_ = 0;
 
     std::set<std::unique_ptr<Resource>> resources_;
+
+  public:
     BufferedSet<std::function<void()> *> resource_updates;
     std::optional<GL::ProgramObject> default_shader;
     Material *default_material = nullptr;
 
     GUI();
-
     ~GUI() {
         this->resources_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
     }
+    GUI(GUI &) = delete;
+    GUI &operator=(GUI &) = delete;
+    GUI(GUI &&) = delete;
+    GUI &operator=(GUI &&) = delete;
 
     // メインループに制御を移す。
     template <typename F = void (*)()>
     void mainloop(F &&custom_routine = [] {}) {
-        if (looping) {
+        if (looping_) {
             throw std::runtime_error("すでにメインループが始まっています");
         }
-        looping = true;
+        looping_ = true;
 
         // 描画のループ
-        while (!ctx.windows.empty()) {
-            epoch++;
-            trace("[mainloop] メインループ：", epoch);
+        while (!ctx_.windows.empty()) {
+            epoch_++;
+            trace("[mainloop] メインループ：", epoch_);
 
             // 受け取ったイベント（キーボードやマウス入力）を処理する
             // キー押下の瞬間などを捉えるために、ユーザ処理よりも前に置く
             glfwPollEvents();
 
-            trace("[mainloop] カスタムルーチン開始：", epoch);
+            trace("[mainloop] カスタムルーチン開始：", epoch_);
             custom_routine(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
-            trace("[mainloop] ウィンドウ更新開始：", epoch);
+            trace("[mainloop] ウィンドウ更新開始：", epoch_);
 
             // リソースの更新処理
             trace("[update] 《resource》->world");
@@ -50,7 +55,7 @@ struct GUI {
             });
 
             // 登録されている各ウィンドウに対してルーティンを実行
-            ctx.windows.foreach ([](const GL::Window *window) {
+            ctx_.windows.foreach ([](const GL::Window *window) {
                 window->routine();
             });
 
@@ -58,8 +63,13 @@ struct GUI {
             resource_updates.flush();
         }
 
-        looping = false;
+        looping_ = false;
     }
+
+    // 生のコンテキストを取得する
+    [[nodiscard]] GL::Context &ctx() { return ctx_; }
+    // 経過フレーム数を取得する
+    [[nodiscard]] long epoch() const { return epoch_; }
 
     template <typename T, typename... Args>
         requires std::constructible_from<T, Args...> && // ArgsはTのコンストラクタの引数
