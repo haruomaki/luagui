@@ -7,7 +7,8 @@ GUI::GUI() {
                                   GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))});
 
     // デフォルトマテリアルの設定
-    this->default_material = &MaterialBuilder().build(*this);
+    auto &default_material = MaterialBuilder().build(*this);
+    default_material.name = "default_material";
 }
 
 GUI::~GUI() {

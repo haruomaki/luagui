@@ -20,7 +20,6 @@ class GUI : public GL::Context {
     BufferedSet<Window *> windows;
     BufferedSet<std::function<void()> *> resource_updates;
     std::optional<GL::ProgramObject> default_shader;
-    Material *default_material = nullptr;
     Window *current_window = nullptr; // 現在操作対象としているウィンドウ
 
     GUI();
