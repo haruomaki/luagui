@@ -16,9 +16,9 @@ int main() {
     World &world = window.create_world();
     World &ui_world = window.create_world();
 
-    /*auto &camera = */ mobile_ortho_camera(world);
+    /*auto &camera = */ mobile_ortho_camera(world, window);
     auto &ui_camera_obj = ui_world.append_child<WorldObject>();
-    auto &ui_camera = ui_camera_obj.add_component<Camera>(Camera::Orthographic);
+    auto &ui_camera = ui_camera_obj.add_component<Camera>(window, Camera::Orthographic);
     // camera.setScale(0.01F);
     // camera.setScale(100);
     ui_camera.mode = Camera::TopLeft;
@@ -53,12 +53,12 @@ int main() {
     });
 
     auto proc = std::make_unique<std::function<void()>>([&] {
-        sample_text.text = to_str(gui.epoch);
+        sample_text.text = to_str(gui.epoch());
 
         const auto xs = linspace(-9, 9, points_num);
         line_mesh.vertices.clear();
         line_mesh.vertices.xs = xs;
-        line_mesh.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.epoch) / 100) + t; });
+        line_mesh.vertices.ys = map(xs, [&](auto x) { return f(x + float(gui.epoch()) / 100) + t; });
         line_mesh.vertices.colors = vector<RGBA>(points_num, {0.5, 0.2, 0.7, 1.0});
     });
     world.updates.request_set(proc.get());

@@ -1,12 +1,12 @@
 #pragma once
 
+#include <GUI/GUI.hpp>
 #include <sol/sol.hpp>
-#include <sumigl.hpp>
 
 class LuaGUI {
 
   public:
-    GL::Context gui;
+    GUI gui;
     sol::state lua;
 
     LuaGUI();

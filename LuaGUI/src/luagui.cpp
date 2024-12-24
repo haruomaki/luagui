@@ -71,6 +71,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 }
 
 LuaGUI::LuaGUI() {
+    // print("LuaGUIのコンストラクタ");
     lua.open_libraries(
         sol::lib::base,
         sol::lib::os,

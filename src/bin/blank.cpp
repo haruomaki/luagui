@@ -7,7 +7,7 @@ int main() {
 
     glfwSetInputMode(window.gwin, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    auto &camera = mobile_normal_camera(main_world);
+    auto &camera = mobile_normal_camera(main_world, window);
     auto &cobj = *camera.owner().get_parent();
     cobj.position = {0, 0, 10};
     cobj.rotate = ANGLE_Y(M_PIf);
