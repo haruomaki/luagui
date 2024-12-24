@@ -29,7 +29,6 @@ class Window : public GL::Window {
 
   public:
     GUI &gui;
-    std::vector<std::function<void()>> raw_worlds;
     BufferedSet<CameraInterface *> cameras;
 
     // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。

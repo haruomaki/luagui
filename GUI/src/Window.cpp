@@ -99,12 +99,6 @@ void Window::draw_routine() {
         camera->render();
     }
 
-    // カスタムの描画ルーチンを実行
-    for (const auto &world : this->raw_worlds) {
-        glClear(GL_DEPTH_BUFFER_BIT);
-        world();
-    }
-
     // 上記描画した図形を表画面のバッファにスワップする
     glfwSwapBuffers(this->gwin_);
 }
