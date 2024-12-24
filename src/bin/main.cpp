@@ -4,7 +4,7 @@
 int main() {
     GUI gui;
     Window window(gui, 600, 500, "めいん");
-    World &main_world = window.create_world();
+    World &main_world = gui.create_world();
 
     // バーテックスシェーダのコンパイル
     auto vsh_string = load_string("assets/shaders/default.vsh");

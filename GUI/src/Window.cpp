@@ -32,6 +32,9 @@ Window::Window(GUI &gui, int width, int height, const char *title)
             info("例外;未知のキーコードです。key=", key, ", scancode=", scancode, ", mods=", mods);
         }
     });
+
+    // FIXME: current_windowが切り替わるのは、現状ウィンドウが作成されたときだけ
+    gui.current_window = this;
 }
 
 Window::~Window() {
@@ -49,13 +52,6 @@ Window::~Window() {
 
 void Window::close() const {
     glfwSetWindowShouldClose(gwin_, GL_TRUE);
-}
-
-World &Window::create_world() {
-    auto world = std::make_unique<World>(this->gui);
-    this->worlds_.push_back(std::move(world));
-
-    return *this->worlds_.back();
 }
 
 void Window::routine() {

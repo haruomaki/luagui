@@ -13,8 +13,8 @@ int main() {
     // Window &another_window = gui.create_window(width, height, "２つめのウィンドウ");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
 
-    World &world = window.create_world();
-    World &ui_world = window.create_world();
+    World &world = gui.create_world();
+    World &ui_world = gui.create_world();
 
     /*auto &camera = */ mobile_ortho_camera(world, window);
     auto &ui_camera_obj = ui_world.append_child<WorldObject>();

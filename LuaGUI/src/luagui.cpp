@@ -30,7 +30,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 
     // C++側でウィンドウを作成し、Luaのグローバル変数に保持する
     print("ウィンドウ作成開始");
-    GUI gui;
+    GUI &gui = lua["__GUI"];
     Window window = Window(gui, width, height, title.c_str());
     print("ウィンドウ作成完了");
     lua["__CurrentWindow"] = &window;
@@ -72,6 +72,8 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 
 LuaGUI::LuaGUI() {
     // print("LuaGUIのコンストラクタ");
+    lua["__GUI"] = &gui;
+
     lua.open_libraries(
         sol::lib::base,
         sol::lib::os,

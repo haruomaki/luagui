@@ -5,6 +5,8 @@
 #include <SumiGL/Shader.hpp>
 
 struct Material;
+class World;
+class Window;
 
 class GUI {
     GL::Context ctx_;
@@ -17,6 +19,7 @@ class GUI {
     BufferedSet<std::function<void()> *> resource_updates;
     std::optional<GL::ProgramObject> default_shader;
     Material *default_material = nullptr;
+    Window *current_window = nullptr; // 現在操作対象としているウィンドウ
 
     GUI();
     ~GUI() {
@@ -70,6 +73,12 @@ class GUI {
     [[nodiscard]] GL::Context &ctx() { return ctx_; }
     // 経過フレーム数を取得する
     [[nodiscard]] long epoch() const { return epoch_; }
+
+    World &create_world();
+
+    // -----------------
+    // リソース関係
+    // -----------------
 
     template <typename T, typename... Args>
         requires std::constructible_from<T, Args...> && // ArgsはTのコンストラクタの引数

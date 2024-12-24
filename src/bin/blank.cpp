@@ -3,7 +3,7 @@
 int main() {
     GUI gui;
     Window window(gui, 1280, 720, "blank");
-    World &main_world = window.create_world();
+    World &main_world = gui.create_world();
 
     glfwSetInputMode(window.gwin, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 

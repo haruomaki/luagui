@@ -1,6 +1,5 @@
 #include "GUI.hpp"
-#include "Material.hpp"
-#include "base.hpp"
+#include "World.hpp"
 
 GUI::GUI() {
     // デフォルトシェーダの設定
@@ -9,4 +8,11 @@ GUI::GUI() {
 
     // デフォルトマテリアルの設定
     this->default_material = &MaterialBuilder().build(*this);
+}
+
+World &GUI::create_world() {
+    auto world = std::make_unique<World>(*this);
+    current_window->worlds_.emplace_back(std::move(world));
+
+    return *current_window->worlds_.back();
 }

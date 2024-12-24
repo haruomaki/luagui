@@ -16,7 +16,6 @@ class Window : public GL::Window {
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
     std::pair<double, double> last_cursor_ = cursor_pos();
-    std::vector<std::unique_ptr<World>> worlds_;
 
     void routine();
     void draw_routine();
@@ -24,12 +23,10 @@ class Window : public GL::Window {
     void physics_routine();
     void post_process();
 
-    friend class World;
-    void refresh_world_order();
-
   public:
     GUI &gui;
     BufferedSet<CameraInterface *> cameras;
+    std::vector<std::unique_ptr<World>> worlds_; // FIXME: 正式に公開
 
     // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。
     std::pair<int, int> fbsize_cache = {0, 0};
@@ -56,6 +53,4 @@ class Window : public GL::Window {
 
     // 現在フレームにおける、キー変更イベント（離した）の有無を表す
     [[nodiscard]] const KeyArray &key_up() const { return key_up_; }
-
-    World &create_world();
 };
