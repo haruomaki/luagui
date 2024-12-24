@@ -4,7 +4,7 @@
 void World::master_physics() {
     // Box2Dの毎フレーム更新処理
     // ディスプレイのリフレッシュレートに依存する
-    float dt = 1 / float(gui.ctx().video_mode().refreshRate); // FIXME: refresh_rateメソッドがほしい
+    float dt = 1 / float(gui.refresh_rate());
     b2world.Step(dt, 4);
 
     // 物理演算結果をWorldObjectに反映

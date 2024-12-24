@@ -9,8 +9,7 @@ struct Material;
 class World;
 class Window;
 
-class GUI {
-    GL::Context ctx_;
+class GUI : public GL::Context {
     bool looping_ = false;
     long epoch_ = 0;
 
@@ -69,8 +68,6 @@ class GUI {
         looping_ = false;
     }
 
-    // 生のコンテキストを取得する
-    [[nodiscard]] GL::Context &ctx() { return ctx_; }
     // 経過フレーム数を取得する
     [[nodiscard]] long epoch() const { return epoch_; }
 

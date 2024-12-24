@@ -6,7 +6,7 @@
 using namespace std::chrono_literals;
 
 Window::Window(GUI &gui, int width, int height, const char *title)
-    : GL::Window(gui.ctx(), width, height, title)
+    : GL::Window(gui, width, height, title)
     , gwin_(gwin)
     , gui(gui) {
 

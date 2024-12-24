@@ -35,7 +35,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
     print("ウィンドウ作成完了");
     lua["__CurrentWindow"] = &window;
 
-    debug(gui.ctx().dpi());
+    debug(gui.dpi());
 
     // デフォルトのフォントを生成
     auto &default_font = gui.append_resource<Font>();

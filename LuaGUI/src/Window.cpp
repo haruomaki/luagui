@@ -88,6 +88,6 @@ void register_window(sol::state &lua) {
         "Screen",
         "refreshRate", sol::readonly_property([&lua]() {
             GUI &gui = lua["__GUI"];
-            return gui.ctx().refresh_rate();
+            return gui.refresh_rate();
         }));
 }
