@@ -14,6 +14,7 @@ class GUI {
     long epoch_ = 0;
 
     std::set<std::unique_ptr<Resource>> resources_;
+    std::vector<std::unique_ptr<World>> worlds_;
 
   public:
     BufferedSet<std::function<void()> *> resource_updates;
@@ -22,9 +23,7 @@ class GUI {
     Window *current_window = nullptr; // 現在操作対象としているウィンドウ
 
     GUI();
-    ~GUI() {
-        this->resources_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
-    }
+    ~GUI();
     GUI(GUI &) = delete;
     GUI &operator=(GUI &) = delete;
     GUI(GUI &&) = delete;
@@ -57,10 +56,14 @@ class GUI {
                 (*update)();
             });
 
+            default_routine1();
+
             // 登録されている各ウィンドウに対してルーティンを実行
             ctx_.windows.foreach ([](const GL::Window *window) {
                 window->routine();
             });
+
+            default_routine2();
 
             // フラッシュ TODO: 場所はここでいい？
             resource_updates.flush();
@@ -75,6 +78,8 @@ class GUI {
     [[nodiscard]] long epoch() const { return epoch_; }
 
     World &create_world();
+    void default_routine1();
+    void default_routine2();
 
     // -----------------
     // リソース関係

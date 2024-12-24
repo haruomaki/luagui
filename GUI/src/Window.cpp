@@ -38,7 +38,6 @@ Window::Window(GUI &gui, int width, int height, const char *title)
 }
 
 Window::~Window() {
-    this->worlds_.clear(); // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
 
     print("Windowのデストラクタです");
     // debug(this->size_callbacks_.size());
@@ -105,19 +104,9 @@ void Window::update_routine() {
 
     // フレームバッファサイズを更新
     fbsize_cache = framebuffer_size();
-
-    // 各ワールドの更新処理
-    trace("[update] resource->《world》");
-    for (const auto &world : this->worlds_) {
-        world->master_update();
-    }
 }
 
 void Window::physics_routine() {
-    // 各ワールドの物理演算処理
-    for (const auto &world : this->worlds_) {
-        world->master_physics();
-    }
 }
 
 void Window::post_process() {
@@ -127,15 +116,4 @@ void Window::post_process() {
 
     // カーソル位置を更新
     last_cursor_ = cursor_pos();
-
-    // rigidbody_components_（物理演算結果を物体の位置に反映するために管理）をフラッシュしておく。
-    // 次フレームに同一アドレスの別コンポーネントが作られたときに、競合しないようにするため。
-    for (std::unique_ptr<World> &world : this->worlds_) {
-        world->rigidbody_components.flush();
-
-        // 各種フラッシュ TODO: 場所はここでいい？
-        world->draws.flush();
-        world->updates.flush();
-        world->rigidbodies.flush();
-    }
 }
