@@ -11,8 +11,10 @@ GUI::GUI() {
 }
 
 GUI::~GUI() {
+    info("GUIのデストラクタ");
     this->resources_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
     this->worlds_.clear();    // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
+    info("GUIのデストラクタおわり");
 }
 
 World &GUI::create_world() {

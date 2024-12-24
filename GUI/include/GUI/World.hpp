@@ -49,6 +49,7 @@ class World : public WorldObject {
             obj->erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
         });
         children_.flush(); // 即時flushしないと子オブジェクトがメモリから消えない
+        info("Worldのデストラクタおわり");
     }
 
     World(const World &) = delete;
