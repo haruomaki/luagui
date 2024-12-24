@@ -100,7 +100,7 @@ class GUI : public GL::Context {
         // NOTE: 虱潰しに検索するので簡潔だが非効率
         // 名前とリソースの対応を表すmapを新たに作りたいが、リソースの追加・削除によるバグが怖い
         for (const auto &rc : this->resources_) {
-            if (rc->name_ == name) return dynamic_cast<T *>(rc.get());
+            if (rc->get_name() == name) return dynamic_cast<T *>(rc.get());
         }
         return nullptr;
     }

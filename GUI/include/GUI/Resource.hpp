@@ -28,13 +28,11 @@ class Resource {
     virtual ~Resource() = default;
 
     // window_を読み取るゲッターおよびプロパティ
-    GUI &get_gui() {
-        return *this->gui_;
-    }
-    PropertyGet<&Resource::get_gui> gui{this};
+    [[nodiscard]] GUI &gui() const { return *gui_; }
 
     // 名前を読み取り/更新するプロパティ
-    const std::string &get_name() {
+    // NOTE: 名前で検索できるようにする
+    [[nodiscard]] const std::string &get_name() const {
         return this->name_;
     }
     void set_name(const std::string &name) {
