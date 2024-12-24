@@ -2,7 +2,6 @@
 
 #include "Resource.hpp"
 #include <SumiGL/Context.hpp>
-#include <SumiGL/Shader.hpp>
 #include <SumiGL/buffered_container.hpp>
 
 struct Material;
@@ -19,7 +18,6 @@ class GUI : public GL::Context {
   public:
     BufferedSet<Window *> windows;
     BufferedSet<std::function<void()> *> resource_updates;
-    std::optional<GL::ProgramObject> default_shader;
     Window *current_window = nullptr; // 現在操作対象としているウィンドウ
 
     GUI();

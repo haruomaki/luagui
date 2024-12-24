@@ -1,18 +1,18 @@
 #pragma once
 
 #include "GUI.hpp"
-#include <SumiGL/Shader.hpp>
+#include "Shader.hpp"
 
 struct Material : public Resource {
-    const GL::ProgramObject &shader;
+    const Shader &shader;
     int priority;
     glm::vec4 base_color;
     std::optional<GLuint> texture;
     double point_size;
     double line_width;
 
-    Material(const GL::ProgramObject *shader, int priority, const glm::vec4 &color, std::optional<GLuint> texture, double point_size, double line_width)
-        : shader(shader == nullptr ? *this->get_gui().default_shader : *shader)
+    Material(const Shader *shader, int priority, const glm::vec4 &color, std::optional<GLuint> texture, double point_size, double line_width)
+        : shader(shader == nullptr ? *get_gui().find_resource<Shader>("default_shader") : *shader)
         , priority(priority)
         , base_color(color)
         , texture(texture)
@@ -22,7 +22,7 @@ struct Material : public Resource {
 };
 
 class MaterialBuilder {
-    const GL::ProgramObject *shader_ = nullptr;
+    const Shader *shader_ = nullptr;
     int priority_ = 0;
     glm::vec4 base_color_ = {1, 1, 1, 1};
     std::optional<GLuint> texture_ = std::nullopt;
@@ -39,7 +39,7 @@ class MaterialBuilder {
         , point_size_(src.point_size)
         , line_width_(src.line_width) {}
 
-    MaterialBuilder shader(const GL::ProgramObject &shader) {
+    MaterialBuilder shader(const Shader &shader) {
         this->shader_ = &shader;
         return *this;
     }

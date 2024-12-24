@@ -3,8 +3,10 @@
 
 GUI::GUI() {
     // デフォルトシェーダの設定
-    this->default_shader.emplace({GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
-                                  GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))});
+    GL::ProgramObject pg{GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
+                         GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))};
+    auto &default_shader = this->append_resource<Shader>(std::move(pg));
+    default_shader.name = "default_shader";
 
     // デフォルトマテリアルの設定
     auto &default_material = MaterialBuilder().build(*this);
