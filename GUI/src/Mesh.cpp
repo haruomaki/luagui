@@ -3,7 +3,7 @@
 
 MeshComponent::MeshComponent(StaticMesh &mesh, Material *material)
     : mesh(mesh)
-    , material(material == nullptr ? *this->world().gui().default_material : *material) {
+    , material(material == nullptr ? *this->world().gui.default_material : *material) {
     // 描画のための位置初期設定
     this->owner().position = this->owner().get_position();
 }

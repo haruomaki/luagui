@@ -1,4 +1,5 @@
 #include "Component.hpp"
+#include "GUI.hpp"
 #include "World.hpp"
 
 Component::Component()
@@ -12,4 +13,4 @@ void Component::erase() { owner().components_.request_erase(this); }
 
 WorldObject &Component::owner() const { return *owner_; }
 World &Component::world() const { return owner_->get_world(); }
-Window &Component::window() const { return owner_->get_world().window; }
+GUI &Component::gui() const { return owner_->get_world().gui; }

@@ -21,26 +21,27 @@ static int calc_default_priority(Window &window) {
     return one_level_higher;
 }
 
-Camera::Camera(ProjectionMode projection_mode)
-    : projection_mode(projection_mode) {
+Camera::Camera(Window &window, ProjectionMode projection_mode)
+    : CameraInterface(window)
+    , projection_mode(projection_mode) {
 
     render = [this] {
         auto &world = this->world();
         world.master_draw(*this);
     };
 
-    viewport_provider = [this] {
-        auto [w, h] = this->window().fbsize_cache;
+    viewport_provider = [&] {
+        auto [w, h] = window.fbsize_cache;
         return GL::Viewport{0, 0, w, h};
     };
 
-    priority = calc_default_priority(window());
+    priority = calc_default_priority(window);
 
-    window().cameras.request_set(this);
+    window.cameras.request_set(this);
 }
 
 Camera::~Camera() {
-    window().cameras.request_erase(this);
+    window.cameras.request_erase(this);
 }
 
 glm::mat4 Camera::get_view_matrix() const {
@@ -64,7 +65,7 @@ glm::mat4 Camera::get_projection_matrix() const {
         return projection_matrix;
     }
 
-    auto ms = this->world().window.gui.ctx().master_scale();
+    auto ms = gui().ctx().master_scale();
     const auto w = float(width) * ms.x;
     const auto h = float(height) * ms.y;
     const auto r = owner().get_scale().z;

@@ -20,13 +20,12 @@
 // };
 
 // キー操作が可能な正投影カメラを作成する。
-inline Camera &mobile_ortho_camera(WorldObject &parent) {
+inline Camera &mobile_ortho_camera(WorldObject &parent, Window &window) {
     auto &obj = parent.append_child<WorldObject>();
-    auto &camera = obj.add_component<Camera>(Camera::Orthographic);
+    auto &camera = obj.add_component<Camera>(window, Camera::Orthographic);
 
-    obj.add_component<UpdateComponent>([&](UpdateComponent &self) {
+    obj.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
         constexpr float speed = 0.002;
-        const Window &window = self.window();
 
         if (window.key(GLFW_KEY_RIGHT)) {
             obj.position += obj.get_left() * speed;
@@ -54,16 +53,14 @@ inline Camera &mobile_ortho_camera(WorldObject &parent) {
 }
 
 // キー操作およびマウス操作が可能な透視投影カメラを作成する。
-inline Camera &mobile_normal_camera(WorldObject &parent) { // NOLINT(readability-function-cognitive-complexity)
+inline Camera &mobile_normal_camera(WorldObject &parent, Window &window) { // NOLINT(readability-function-cognitive-complexity)
     auto &body = parent.append_child<WorldObject>();
     auto &head = body.append_child<WorldObject>();
-    auto &camera = head.add_component<Camera>();
+    auto &camera = head.add_component<Camera>(window);
 
     constexpr float speed = 0.003;
     constexpr float angle_speed = 0.02;
-    body.add_component<UpdateComponent>([&](UpdateComponent &self) {
-        const Window &window = self.window();
-
+    body.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
         if (window.key(GLFW_KEY_W)) {
             body.position += body.get_front() * speed;
         }
@@ -113,7 +110,7 @@ inline Camera &mobile_normal_camera(WorldObject &parent) { // NOLINT(readability
 }
 
 inline MeshComponent &new_mesh(WorldObject &parent, Material *material = nullptr) {
-    auto &gui = parent.get_world().gui();
+    auto &gui = parent.get_world().gui;
     auto &mesh = gui.append_resource<Mesh>();
     mesh.use_index = true;
     auto &obj = parent.child_component<MeshComponent>(mesh, material);
@@ -126,7 +123,7 @@ inline Mesh &new_mesh(GUI &gui, GLenum draw_mode = GL_TRIANGLE_STRIP, const vect
 }
 
 inline MeshComponent &new_points(WorldObject &parent, Material *material = nullptr) {
-    auto &gui = parent.get_world().gui();
+    auto &gui = parent.get_world().gui;
     auto &mesh = gui.append_resource<Mesh>();
     auto &obj = parent.child_component<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_POINTS;
@@ -134,7 +131,7 @@ inline MeshComponent &new_points(WorldObject &parent, Material *material = nullp
 }
 
 inline MeshComponent &new_line(WorldObject &parent, Material *material = nullptr) {
-    auto &gui = parent.get_world().gui();
+    auto &gui = parent.get_world().gui;
     auto &mesh = gui.append_resource<Mesh>();
     auto &obj = parent.child_component<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_LINE_STRIP;
@@ -145,7 +142,7 @@ inline MeshComponent &new_line(WorldObject &parent, Material *material = nullptr
 class GridGround : public WorldObject {
   public:
     GridGround() {
-        auto &material = MaterialBuilder().line_width(1).build(this->get_world().gui());
+        auto &material = MaterialBuilder().line_width(1).build(this->get_world().gui);
         auto &grid = new_line(*this, &material);
         for (int i = -10; i <= 10; i++) {
             constexpr RGBA grid_color = {0.1, 0.1, 0.1, 1};

@@ -52,7 +52,7 @@ void Window::close() const {
 }
 
 World &Window::create_world() {
-    auto world = std::make_unique<World>(*this);
+    auto world = std::make_unique<World>(this->gui);
     this->worlds_.push_back(std::move(world));
 
     return *this->worlds_.back();

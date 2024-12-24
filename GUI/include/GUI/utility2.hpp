@@ -3,7 +3,7 @@
 #include <GUI/utility.hpp>
 
 inline MeshComponent &new_rect(WorldObject &parent, const std::vector<glm::vec3> &coords, Material &material) {
-    auto &gui = parent.get_world().gui();
+    auto &gui = parent.get_world().gui;
     auto &mesh = gui.append_resource<StaticMesh>();
     auto &obj = parent.child_component<MeshComponent>(mesh, &material);
 

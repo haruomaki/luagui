@@ -17,7 +17,7 @@ class World : public WorldObject {
     friend class WorldObject; // mesh_draw_manager_にアクセスするため
 
   public:
-    Window &window;
+    GUI &gui;
     Timer timer;
     BufferedSet<std::function<void()> *> draws;
     BufferedSet<std::function<void()> *> updates;
@@ -25,9 +25,9 @@ class World : public WorldObject {
     BufferedSet<RigidbodyComponent *> rigidbody_components;
     b2::World b2world;
 
-    World(Window &window)
+    World(GUI &gui)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
-        , window(window) {
+        , gui(gui) {
         // Box2Dの世界を生成
         b2::World::Params world_params;
         world_params.gravity = b2Vec2{};
@@ -55,8 +55,6 @@ class World : public WorldObject {
     World &operator=(const World &) const = delete;
     World(World &&) = delete;
     World &operator=(World &&) const = delete;
-
-    GUI &gui() const;
 
     void master_update() {
         trace("World::master_update開始:", this);

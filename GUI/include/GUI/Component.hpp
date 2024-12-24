@@ -4,7 +4,7 @@
 
 class WorldObject;
 class World;
-class Window;
+class GUI;
 
 // コンポーネントの基底クラス。
 class Component {
@@ -21,7 +21,7 @@ class Component {
 
     [[nodiscard]] WorldObject &owner() const;
     [[nodiscard]] World &world() const;
-    [[nodiscard]] Window &window() const;
+    [[nodiscard]] GUI &gui() const;
 
     // コンポーネントを削除する。
     void erase();
