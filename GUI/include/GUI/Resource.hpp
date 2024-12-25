@@ -109,6 +109,5 @@ ResourceHandle<T> ResourceManager::append(Args &&...args) {
     if (!inserted) {
         throw std::runtime_error("リソースのappendに失敗");
     }
-    auto ptr2 = dynamic_cast<T *>(it->second.get());
     return ResourceHandle<T>(*this, it->second.get());
 }

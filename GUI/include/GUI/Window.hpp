@@ -8,7 +8,7 @@ class GUI;
 struct CameraInterface;
 
 // 一つのウィンドウを表すクラス
-class Window : public GL::Window, public Resource {
+class Window : GL::Window, public Resource {
     GLFWwindow *gwin_ = nullptr; // GL::Windowのgwinと同じ
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
@@ -34,7 +34,11 @@ class Window : public GL::Window, public Resource {
     Window(Window &&) = delete;
     Window &operator=(Window &&) = delete;
 
-    void close() const;
+    // GL::Windowから継承
+    bool key(int key) { return GL::Window::key(key); }
+    bool should_close() { return GL::Window::should_close(); }
+
+    void close();
 
     // 前フレームからのカーソルの移動差分を得る。
     [[nodiscard]] std::pair<double, double> cursor_diff() const {

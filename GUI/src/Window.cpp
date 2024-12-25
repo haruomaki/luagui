@@ -47,8 +47,8 @@ Window::~Window() {
     destroy();
 }
 
-void Window::close() const {
-    glfwSetWindowShouldClose(gwin_, GL_TRUE);
+void Window::close() {
+    gui.resources.free(this);
 }
 
 // void Window::routine() {
