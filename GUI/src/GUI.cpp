@@ -53,6 +53,7 @@ void GUI::default_routine1() {
     }
 
     // 描画と後処理
+    windows.flush();
     windows.foreach ([](Window *window) {
         window->draw_routine();
         window->post_process();

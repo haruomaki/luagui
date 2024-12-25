@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Resource.hpp"
 #include <SumiGL/Window.hpp>
 #include <SumiGL/buffered_container.hpp>
 
@@ -7,7 +8,7 @@ class GUI;
 struct CameraInterface;
 
 // 一つのウィンドウを表すクラス
-class Window : public GL::Window {
+class Window : public GL::Window, public Resource {
     GLFWwindow *gwin_ = nullptr; // GL::Windowのgwinと同じ
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
@@ -25,7 +26,7 @@ class Window : public GL::Window {
     std::pair<int, int> fbsize_cache = {0, 0};
 
     Window(GUI &gui, int width, int height, const char *title);
-    ~Window();
+    ~Window() override;
 
     // コピーもムーブも禁止する
     Window(const Window &) = delete;
