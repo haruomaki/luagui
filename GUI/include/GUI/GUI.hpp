@@ -12,11 +12,11 @@ class GUI : public GL::Context {
     bool looping_ = false;
     long epoch_ = 0;
 
-    std::set<std::unique_ptr<Resource>> resources_;
     std::vector<std::unique_ptr<World>> worlds_;
 
   public:
     BufferedSet<Window *> windows;
+    ResourceManager resources;
     BufferedSet<std::function<void()> *> resource_updates;
     Window *current_window = nullptr; // 現在操作対象としているウィンドウ
 
@@ -71,37 +71,4 @@ class GUI : public GL::Context {
     World &create_world();
     void default_routine1();
     void default_routine2();
-
-    // -----------------
-    // リソース関係
-    // -----------------
-
-    template <typename T, typename... Args>
-        requires std::constructible_from<T, Args...> && // ArgsはTのコンストラクタの引数
-                 std::convertible_to<T *, Resource *>   // TはResourceの派生クラス
-    T &append_resource(Args &&...args) {
-        // WindowObjectのコンストラクタを呼ぶ直前には必ずset_gui_staticを呼び、直後nullptrにリセット
-        Resource::set_gui_static(this);
-        // argsを引数として使って、ヒープ上にT型のオブジェクトを作成
-        auto ptr = std::make_unique<T>(std::forward<Args>(args)...); // NOTE: &&やforwardは必要かよく分からない
-        Resource::set_gui_static(nullptr);
-
-        auto [it, inserted] = this->resources_.insert(std::move(ptr));
-        if (!inserted) {
-            throw std::runtime_error("make_childに失敗");
-        }
-        auto ptr2 = dynamic_cast<T *>(it->get());
-        return *ptr2;
-    }
-
-    template <typename T = Resource>
-        requires std::convertible_to<T *, Resource *> // TはResourceの派生クラス
-    T *find_resource(const std::string &name) {
-        // NOTE: 虱潰しに検索するので簡潔だが非効率
-        // 名前とリソースの対応を表すmapを新たに作りたいが、リソースの追加・削除によるバグが怖い
-        for (const auto &rc : this->resources_) {
-            if (rc->get_name() == name) return dynamic_cast<T *>(rc.get());
-        }
-        return nullptr;
-    }
 };

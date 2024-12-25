@@ -12,7 +12,7 @@ struct Material : public Resource {
     double line_width;
 
     Material(const Shader *shader, int priority, const glm::vec4 &color, std::optional<GLuint> texture, double point_size, double line_width)
-        : shader(shader == nullptr ? *gui().find_resource<Shader>("default_shader") : *shader)
+        : shader(shader == nullptr ? *gui().resources.find<Shader>("default_shader") : *shader)
         , priority(priority)
         , base_color(color)
         , texture(texture)
@@ -70,7 +70,7 @@ class MaterialBuilder {
     }
 
     Material &build(GUI &gui) {
-        auto &material = gui.append_resource<Material>(shader_, priority_, base_color_, texture_, point_size_, line_width_);
+        auto &material = gui.resources.append<Material>(shader_, priority_, base_color_, texture_, point_size_, line_width_);
         return material;
     }
 };

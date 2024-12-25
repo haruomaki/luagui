@@ -1,11 +1,12 @@
 #include "GUI.hpp"
 #include "World.hpp"
 
-GUI::GUI() {
+GUI::GUI()
+    : resources(*this) {
     // デフォルトシェーダの設定
     GL::ProgramObject pg{GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
                          GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))};
-    auto &default_shader = this->append_resource<Shader>(std::move(pg));
+    auto &default_shader = this->resources.append<Shader>(std::move(pg));
     default_shader.name = "default_shader";
 
     // デフォルトマテリアルの設定
@@ -15,8 +16,8 @@ GUI::GUI() {
 
 GUI::~GUI() {
     info("GUIのデストラクタ");
-    this->resources_.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
-    this->worlds_.clear();    // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
+    this->resources.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
+    this->worlds_.clear();   // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
     info("GUIのデストラクタおわり");
 }
 
