@@ -44,6 +44,7 @@ Window::Window(GUI &gui, int width, int height, const char *title)
 Window::~Window() {
     print("Windowのデストラクタです");
     gui.windows.request_erase(this);
+    destroy();
 }
 
 void Window::close() const {

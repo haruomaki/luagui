@@ -71,7 +71,13 @@ class ResourceManager {
 
     void clear() { elems_.clear(); }
     bool is_valid(Resource *id) { return elems_.contains(id); }
-    Resource *get(Resource *id) { return elems_.at(id).get(); }
+    Resource *get(Resource *id) {
+        if (!is_valid(id)) {
+            throw std::runtime_error("リソースが削除済みです。");
+        }
+        return elems_[id].get();
+    }
+    void free(Resource *id) { elems_.erase(id); }
 };
 
 template <std::derived_from<Resource> T>
@@ -86,6 +92,7 @@ class ResourceHandle {
 
     bool is_valid() { return manager_.is_valid(id_); }
     T &get() { return *dynamic_cast<T *>(manager_.get(id_)); }
+    void free() { manager_.free(id_); }
 };
 
 template <typename T, typename... Args>

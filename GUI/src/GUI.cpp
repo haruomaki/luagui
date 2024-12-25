@@ -30,10 +30,10 @@ World &GUI::create_world() {
 
 void GUI::default_routine1() {
     windows.flush();
-    windows.foreach ([](Window *window) {
+    windows.foreach ([&](Window *window) {
         // 閉じるべきウィンドウは閉じる
         if (window->should_close()) {
-            window->destroy();
+            resources.free(window);
             return;
         }
 
