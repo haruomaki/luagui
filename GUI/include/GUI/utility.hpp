@@ -157,3 +157,8 @@ class GridGround : public WorldObject {
         grid.owner().scale = 1;
     }
 };
+
+inline Window &create_window(GUI &gui, int width, int height, const std::string &title) {
+    auto h = gui.resources.append<Window>(gui, width, height, title.c_str());
+    return h.get();
+}

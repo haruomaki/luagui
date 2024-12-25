@@ -1,6 +1,7 @@
 #include <GUI/GUI.hpp>
 #include <GUI/Text.hpp>
 #include <GUI/Window.hpp>
+#include <GUI/utility.hpp>
 #include <SumiGL/Context.hpp>
 #include <luagui.hpp>
 
@@ -31,7 +32,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
     // C++側でウィンドウを作成し、Luaのグローバル変数に保持する
     print("ウィンドウ作成開始");
     GUI &gui = lua["__GUI"];
-    Window window = Window(gui, width, height, title.c_str());
+    auto &window = create_window(gui, width, height, title);
     print("ウィンドウ作成完了");
     lua["__CurrentWindow"] = &window;
 

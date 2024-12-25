@@ -3,7 +3,7 @@
 
 int main() {
     GUI gui;
-    Window window(gui, 600, 500, "めいん");
+    auto &window = create_window(gui, 600, 500, "めいん");
     World &main_world = gui.create_world();
 
     // バーテックスシェーダのコンパイル
@@ -23,7 +23,7 @@ int main() {
     cobj.rotate = ANGLE_Y(M_PIf);
     cobj.scale = 2000; // 速度調整
 
-    auto &migmix_font = gui.resources.append<Font>();
+    auto &migmix_font = gui.resources.append<Font>().get();
     auto &sample_text = main_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = main_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
 

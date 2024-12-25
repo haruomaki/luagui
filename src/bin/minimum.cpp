@@ -17,12 +17,12 @@ int main() {
 
     // ただウィンドウを作成し、Qキーで終了するプログラム。
     GUI gui;
-    auto window = gui.resources.append<Window>(gui, 500, 400, "minimum.cppのウィンドウ");
+    auto &window = create_window(gui, 500, 400, "minimum.cppのウィンドウ");
     World &world = gui.create_world(); // TODO: いちいちワールドを作らなくてもいいようにしたい
     world.add_component<UpdateComponent>([&](auto & /*self*/) {
-        if (window.get().key_down()[GLFW_KEY_W]) std::cout << "わん🐶\n";
-        if (window.get().key_down()[GLFW_KEY_N]) std::cout << "にゃん🐱\n";
-        if (window.get().key(GLFW_KEY_Q)) window.get().close();
+        if (window.key_down()[GLFW_KEY_W]) std::cout << "わん🐶\n";
+        if (window.key_down()[GLFW_KEY_N]) std::cout << "にゃん🐱\n";
+        if (window.key(GLFW_KEY_Q)) window.close();
     });
     gui.mainloop();
 }

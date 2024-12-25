@@ -35,6 +35,7 @@ class Window : GL::Window, public Resource {
     Window &operator=(Window &&) = delete;
 
     // GL::Windowから継承
+    GLFWwindow *gwin() { return GL::Window::gwin; }
     bool key(int key) { return GL::Window::key(key); }
     bool should_close() { return GL::Window::should_close(); }
 
