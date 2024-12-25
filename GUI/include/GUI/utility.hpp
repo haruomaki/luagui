@@ -113,20 +113,20 @@ inline Camera &mobile_normal_camera(WorldObject &parent, Window &window) { // NO
 
 inline MeshComponent &new_mesh(WorldObject &parent, Material *material = nullptr) {
     auto &gui = parent.get_world().gui;
-    auto &mesh = gui.resources.append<Mesh>();
+    auto &mesh = gui.resources.append<Mesh>().get();
     mesh.use_index = true;
     auto &obj = parent.child_component<MeshComponent>(mesh, material);
     return obj;
 }
 
 inline Mesh &new_mesh(GUI &gui, GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}) {
-    auto &mesh = gui.resources.append<Mesh>(draw_mode, coords, colors, uvs);
+    auto &mesh = gui.resources.append<Mesh>(draw_mode, coords, colors, uvs).get();
     return mesh;
 }
 
 inline MeshComponent &new_points(WorldObject &parent, Material *material = nullptr) {
     auto &gui = parent.get_world().gui;
-    auto &mesh = gui.resources.append<Mesh>();
+    auto &mesh = gui.resources.append<Mesh>().get();
     auto &obj = parent.child_component<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_POINTS;
     return obj;
@@ -134,7 +134,7 @@ inline MeshComponent &new_points(WorldObject &parent, Material *material = nullp
 
 inline MeshComponent &new_line(WorldObject &parent, Material *material = nullptr) {
     auto &gui = parent.get_world().gui;
-    auto &mesh = gui.resources.append<Mesh>();
+    auto &mesh = gui.resources.append<Mesh>().get();
     auto &obj = parent.child_component<MeshComponent>(mesh, material);
     mesh.draw_mode = GL_LINE_STRIP;
     return obj;

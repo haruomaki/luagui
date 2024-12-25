@@ -29,7 +29,7 @@ int main() {
     int points_num = 100;
 
     // 文字の表示
-    auto &migmix_font = gui.resources.append<Font>();
+    auto &migmix_font = gui.resources.append<Font>().get();
     auto &sample_text = ui_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = ui_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
     sample_text.owner().position = {0.005, -0.02, 0};

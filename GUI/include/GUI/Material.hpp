@@ -70,7 +70,7 @@ class MaterialBuilder {
     }
 
     Material &build(GUI &gui) {
-        auto &material = gui.resources.append<Material>(shader_, priority_, base_color_, texture_, point_size_, line_width_);
-        return material;
+        auto material = gui.resources.append<Material>(shader_, priority_, base_color_, texture_, point_size_, line_width_);
+        return material.get();
     }
 };

@@ -42,6 +42,9 @@ class Resource {
     PropertyGetSet<&Resource::get_name, &Resource::set_name> name{this};
 };
 
+template <std::derived_from<Resource> T>
+class ResourceHandle;
+
 class ResourceManager {
     GUI &gui_;
     std::unordered_map<Resource *, std::unique_ptr<Resource>> elems_;
@@ -53,20 +56,7 @@ class ResourceManager {
     template <typename T, typename... Args>
         requires std::constructible_from<T, Args...> && // ArgsはTのコンストラクタの引数
                  std::convertible_to<T *, Resource *>   // TはResourceの派生クラス
-    T &append(Args &&...args) {
-        // WindowObjectのコンストラクタを呼ぶ直前には必ずset_gui_staticを呼び、直後nullptrにリセット
-        Resource::set_gui_static(&gui_);
-        // argsを引数として使って、ヒープ上にT型のオブジェクトを作成
-        auto ptr = std::make_unique<T>(std::forward<Args>(args)...); // NOTE: &&やforwardは必要かよく分からない
-        Resource::set_gui_static(nullptr);
-
-        auto [it, inserted] = this->elems_.emplace(ptr.get(), std::move(ptr));
-        if (!inserted) {
-            throw std::runtime_error("リソースのappendに失敗");
-        }
-        auto ptr2 = dynamic_cast<T *>(it->second.get());
-        return *ptr2;
-    }
+    ResourceHandle<T> append(Args &&...args);
 
     template <typename T = Resource>
         requires std::convertible_to<T *, Resource *> // TはResourceの派生クラス
@@ -90,9 +80,28 @@ class ResourceHandle {
     Resource *id_ = nullptr;
 
   public:
-    ResourceHandle(ResourceManager &manager)
-        : manager_(manager) {}
+    ResourceHandle(ResourceManager &manager, Resource *id)
+        : manager_(manager)
+        , id_(id) {}
 
     bool is_valid() { return manager_.is_valid(id_); }
     T &get() { return *dynamic_cast<T *>(manager_.get(id_)); }
 };
+
+template <typename T, typename... Args>
+    requires std::constructible_from<T, Args...> && // ArgsはTのコンストラクタの引数
+             std::convertible_to<T *, Resource *>   // TはResourceの派生クラス
+ResourceHandle<T> ResourceManager::append(Args &&...args) {
+    // WindowObjectのコンストラクタを呼ぶ直前には必ずset_gui_staticを呼び、直後nullptrにリセット
+    Resource::set_gui_static(&gui_);
+    // argsを引数として使って、ヒープ上にT型のオブジェクトを作成
+    auto ptr = std::make_unique<T>(std::forward<Args>(args)...); // NOTE: &&やforwardは必要かよく分からない
+    Resource::set_gui_static(nullptr);
+
+    auto [it, inserted] = this->elems_.emplace(ptr.get(), std::move(ptr));
+    if (!inserted) {
+        throw std::runtime_error("リソースのappendに失敗");
+    }
+    auto ptr2 = dynamic_cast<T *>(it->second.get());
+    return ResourceHandle<T>(*this, it->second.get());
+}
