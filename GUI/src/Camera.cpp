@@ -69,19 +69,19 @@ glm::mat4 Camera::get_projection_matrix() const {
     const auto w = float(width) * ms.x;
     const auto h = float(height) * ms.y;
     const auto r = owner().get_scale().z;
-    const auto near = -1000.0f * r;
-    const auto far = 1000.0f * r;
+    const auto ne = -1000.0f * r; // "near"はWindowsだとダメ
+    const auto fa = 1000.0f * r; // "far"もWindowsだとダメ
     switch (mode) {
     case CameraMode::Center:
-        return glm::ortho(-w / 2, w / 2, -h / 2, h / 2, near, far);
+        return glm::ortho(-w / 2, w / 2, -h / 2, h / 2, ne, fa);
     case CameraMode::TopRight:
-        return glm::ortho(-w, 0.0f, -h, 0.0f, near, far);
+        return glm::ortho(-w, 0.0f, -h, 0.0f, ne, fa);
     case CameraMode::BottomRight:
-        return glm::ortho(-w, 0.0f, 0.0f, h, near, far);
+        return glm::ortho(-w, 0.0f, 0.0f, h, ne, fa);
     case CameraMode::TopLeft:
-        return glm::ortho(0.0f, w, -h, 0.0f, near, far);
+        return glm::ortho(0.0f, w, -h, 0.0f, ne, fa);
     case CameraMode::BottomLeft:
-        return glm::ortho(0.0f, w, 0.0f, h, near, far);
+        return glm::ortho(0.0f, w, 0.0f, h, ne, fa);
         // case CameraMode::Custom:
         //     // カスタム設定に基づく計算
         //     return glm::ortho(

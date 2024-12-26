@@ -5,6 +5,9 @@
     "glew",
     "libpng",
     "lua",
-    "glm"
+    "glm",
+    "physfs",
+    "openal-soft",
+    "libsndfile"
   ]
 }
