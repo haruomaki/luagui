@@ -1,7 +1,10 @@
 #include <Lunchbox/OpenAL.hpp>
 #include <Lunchbox/Storage.hpp>
+#include <SumiGL/misc.hpp>
 
 int main() {
+    setUTF8();
+
     lunchbox::OpenALContext openal_ctx;
     lunchbox::Storage storage;
 
