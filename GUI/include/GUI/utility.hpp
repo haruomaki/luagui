@@ -27,7 +27,8 @@ inline Camera &mobile_ortho_camera(WorldObject &parent, Window &window) {
     auto &camera = obj.add_component<Camera>(window, Camera::Orthographic);
 
     obj.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
-        constexpr float speed = 0.002;
+        const float speed = 0.12 / window.gui().refresh_rate();
+        const float zoom_speed = 1 + 0.6 / window.gui().refresh_rate();
 
         if (window.key(GLFW_KEY_RIGHT)) {
             obj.position += obj.get_left() * speed;
@@ -42,10 +43,10 @@ inline Camera &mobile_ortho_camera(WorldObject &parent, Window &window) {
             obj.position += obj.get_up() * speed;
         }
         if (window.key(GLFW_KEY_Z)) {
-            obj.scale /= 1.01F;
+            obj.scale /= zoom_speed;
         }
         if (window.key(GLFW_KEY_X)) {
-            obj.scale *= 1.01F;
+            obj.scale *= zoom_speed;
         }
         if (window.key(GLFW_KEY_Q)) {
             window.close();
@@ -60,9 +61,12 @@ inline Camera &mobile_normal_camera(WorldObject &parent, Window &window) { // NO
     auto &head = body.append_child<WorldObject>();
     auto &camera = head.add_component<Camera>(window);
 
-    constexpr float speed = 0.003;
-    constexpr float angle_speed = 0.02;
     body.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
+        const int rr = window.gui().refresh_rate();
+        const float speed = 0.3 / rr;
+        const float angle_speed = 0.8 / rr;
+        const float zoom_speed = 1 + 1.0 / rr;
+
         if (window.key(GLFW_KEY_W)) {
             body.position += body.get_front() * speed;
         }
@@ -95,18 +99,18 @@ inline Camera &mobile_normal_camera(WorldObject &parent, Window &window) { // NO
         }
         if (window.key(GLFW_KEY_Z)) {
             // 移動速度が変わる
-            body.scale *= 1.01;
+            body.scale *= zoom_speed;
         }
         if (window.key(GLFW_KEY_X)) {
-            body.scale /= 1.01;
+            body.scale /= zoom_speed;
         }
         if (window.key(GLFW_KEY_Q)) {
             window.close();
         }
 
         auto [dx, dy] = window.cursor_diff();
-        body.rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.1f);
-        head.rotate *= ANGLE_X(angle_speed * float(dy) * 0.1f);
+        body.rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.2f);
+        head.rotate *= ANGLE_X(angle_speed * float(dy) * 0.2f);
     });
     return camera;
 }
