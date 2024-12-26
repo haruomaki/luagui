@@ -7,8 +7,7 @@ using namespace std::chrono_literals;
 
 Window::Window(GUI &gui, int width, int height, const char *title)
     : GL::Window(gui, width, height, title)
-    , gwin_(gwin())
-    , gui(gui) {
+    , gwin_(gwin()) {
 
     this->GL::Window::routine = [this] { this->routine(); };
 
@@ -43,12 +42,12 @@ Window::Window(GUI &gui, int width, int height, const char *title)
 
 Window::~Window() {
     print("Windowのデストラクタです");
-    gui.windows.request_erase(this);
+    gui().windows.request_erase(this);
     destroy();
 }
 
 void Window::close() {
-    gui.resources.free(this);
+    gui().resources.free(this);
 }
 
 // void Window::routine() {
