@@ -33,6 +33,7 @@ Checks:
   - readability-*
   - -readability-isolate-declaration
   - -readability-magic-numbers #マジックナンバー
+  - -readability-math-missing-parentheses # 足し算と掛け算の順序を明記しなくていい
   - -readability-uppercase-literal-suffix # リテラルの小文字サフィックス
 WarningsAsErrors: ""
 HeaderFilterRegex: 'source.*\.(hpp|h)'

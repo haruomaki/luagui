@@ -5,7 +5,7 @@ int main() {
     Window window(gui, 1280, 720, "blank");
     World &main_world = gui.create_world();
 
-    glfwSetInputMode(window.gwin(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    window.set_input_mode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     auto &camera = mobile_normal_camera(main_world, window);
     auto &cobj = *camera.owner().get_parent();
@@ -20,7 +20,7 @@ int main() {
     mesh.indices = {0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5};
     mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}};
     // mesh.vertices.coords = {{0, 0, 0}, {1, 0, 0}, {0, 0, 1}, {1, 0, 1}, {0, 1, 0}, {1, 1, 0}, {0, 1, 1}, {1, 1, 1}};
-    mesh.vertices.colors = std::vector(8, RGBA{0.46, 0.85, 0.84, 0.9});
+    mesh.vertices.colors = std::vector(8, RGBA{.r = 0.46, .g = 0.85, .b = 0.84, .a = 0.9});
     std::vector<RGBA> colors_tmp = {};
     for (int i = 0; i < 8; i++) {
         auto r = float(pow(sin(0.4 * i + 1), 2));

@@ -16,7 +16,7 @@ int main() {
 
     // 再生
     source.play();
-    std::cout << "再生中..." << std::endl;
+    std::cout << "再生中...\n";
 
     // 再生が終了するまで待機
     while (source.is_playing());
