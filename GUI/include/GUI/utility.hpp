@@ -26,7 +26,7 @@ inline Camera &mobile_ortho_camera(WorldObject &parent, ResourceHandle<Window> r
     auto &obj = parent.append_child<WorldObject>();
     auto &camera = obj.add_component<Camera>(rh, Camera::Orthographic);
 
-    obj.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
+    obj.add_component<UpdateComponent>([&, rh](UpdateComponent & /*self*/) {
         auto &window = rh.get();
         const float speed = 0.12 / window.gui().refresh_rate();
         const float zoom_speed = 1 + 0.6 / window.gui().refresh_rate();
@@ -62,7 +62,7 @@ inline Camera &mobile_normal_camera(WorldObject &parent, ResourceHandle<Window> 
     auto &head = body.append_child<WorldObject>();
     auto &camera = head.add_component<Camera>(rh);
 
-    body.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
+    body.add_component<UpdateComponent>([&, rh](UpdateComponent & /*self*/) {
         auto &window = rh.get();
         const int rr = window.gui().refresh_rate();
         const float speed = 0.3 / rr;

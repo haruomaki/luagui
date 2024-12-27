@@ -90,9 +90,9 @@ class ResourceHandle {
         : manager_(manager)
         , id_(id) {}
 
-    bool is_valid() { return manager_.is_valid(id_); }
-    T &get() { return *dynamic_cast<T *>(manager_.get(id_)); }
-    void free() { manager_.free(id_); }
+    [[nodiscard]] bool is_valid() const { return manager_.is_valid(id_); }
+    [[nodiscard]] T &get() const { return *dynamic_cast<T *>(manager_.get(id_)); }
+    void free() const { manager_.free(id_); }
 };
 
 template <typename T, typename... Args>

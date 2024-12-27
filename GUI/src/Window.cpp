@@ -86,7 +86,7 @@ void Window::draw_routine() {
         if (camera->active) sorted_cameras.emplace(camera->priority, camera);
     });
     for (const auto &[priority, camera] : sorted_cameras) {
-        trace("[draw_routine] カメラ描画（優先度 ", priority, "）");
+        print("[draw_routine] カメラ描画（優先度 ", priority, "）");
         glClear(GL_DEPTH_BUFFER_BIT);
         camera->render();
     }

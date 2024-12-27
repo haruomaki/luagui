@@ -30,7 +30,7 @@ Camera::Camera(ResourceHandle<Window> window, ProjectionMode projection_mode)
         world.master_draw(*this);
     };
 
-    viewport_provider = [&] {
+    viewport_provider = [window] {
         auto [w, h] = window.get().fbsize_cache;
         return GL::Viewport{0, 0, w, h};
     };
