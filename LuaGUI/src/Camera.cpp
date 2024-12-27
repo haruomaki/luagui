@@ -9,7 +9,9 @@ void register_camera(sol::state &lua) {
         sol::base_classes, sol::bases<Component>());
 
     lua["WorldObject"]["add_camera_component"] = [&](WorldObject &obj, const std::string &projection_mode) -> Camera & {
-        Window &window = lua["__CurrentWindow"];
+        // Window &window = lua["__CurrentWindow"];
+        // FIXME: __CurrentWindowにはHandleを入れる？
+        ResourceHandle<Window> window = lua["__CurrentWindowResource"];
         return obj.add_component<Camera>(window, projection_mode == "Orthographic" ? Camera::Orthographic : Camera::Perspective);
     };
 }

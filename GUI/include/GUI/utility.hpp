@@ -22,11 +22,12 @@
 // };
 
 // キー操作が可能な正投影カメラを作成する。
-inline Camera &mobile_ortho_camera(WorldObject &parent, Window &window) {
+inline Camera &mobile_ortho_camera(WorldObject &parent, ResourceHandle<Window> rh) {
     auto &obj = parent.append_child<WorldObject>();
-    auto &camera = obj.add_component<Camera>(window, Camera::Orthographic);
+    auto &camera = obj.add_component<Camera>(rh, Camera::Orthographic);
 
     obj.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
+        auto &window = rh.get();
         const float speed = 0.12 / window.gui().refresh_rate();
         const float zoom_speed = 1 + 0.6 / window.gui().refresh_rate();
 
@@ -56,12 +57,13 @@ inline Camera &mobile_ortho_camera(WorldObject &parent, Window &window) {
 }
 
 // キー操作およびマウス操作が可能な透視投影カメラを作成する。
-inline Camera &mobile_normal_camera(WorldObject &parent, Window &window) { // NOLINT(readability-function-cognitive-complexity)
+inline Camera &mobile_normal_camera(WorldObject &parent, ResourceHandle<Window> rh) { // NOLINT(readability-function-cognitive-complexity)
     auto &body = parent.append_child<WorldObject>();
     auto &head = body.append_child<WorldObject>();
-    auto &camera = head.add_component<Camera>(window);
+    auto &camera = head.add_component<Camera>(rh);
 
     body.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
+        auto &window = rh.get();
         const int rr = window.gui().refresh_rate();
         const float speed = 0.3 / rr;
         const float angle_speed = 0.8 / rr;
@@ -162,7 +164,7 @@ class GridGround : public WorldObject {
     }
 };
 
-inline Window &create_window(GUI &gui, int width, int height, const std::string &title) {
+inline ResourceHandle<Window> create_window(GUI &gui, int width, int height, const std::string &title) {
     auto h = gui.resources.append<Window>(gui, width, height, title.c_str());
-    return h.get();
+    return h;
 }

@@ -2,10 +2,10 @@
 
 int main() {
     GUI gui;
-    auto &window = create_window(gui, 1280, 720, "blank");
+    auto window = create_window(gui, 1280, 720, "blank");
     World &main_world = gui.create_world();
 
-    glfwSetInputMode(window.gwin(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window.get().gwin(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     auto &camera = mobile_normal_camera(main_world, window);
     auto &cobj = *camera.owner().get_parent();

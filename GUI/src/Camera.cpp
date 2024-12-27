@@ -21,7 +21,7 @@ static int calc_default_priority(Window &window) {
     return one_level_higher;
 }
 
-Camera::Camera(Window &window, ProjectionMode projection_mode)
+Camera::Camera(ResourceHandle<Window> window, ProjectionMode projection_mode)
     : CameraInterface(window)
     , projection_mode(projection_mode) {
 
@@ -31,17 +31,17 @@ Camera::Camera(Window &window, ProjectionMode projection_mode)
     };
 
     viewport_provider = [&] {
-        auto [w, h] = window.fbsize_cache;
+        auto [w, h] = window.get().fbsize_cache;
         return GL::Viewport{0, 0, w, h};
     };
 
-    priority = calc_default_priority(window);
+    priority = calc_default_priority(window.get());
 
-    window.cameras.request_set(this);
+    window.get().cameras.request_set(this);
 }
 
 Camera::~Camera() {
-    window.cameras.request_erase(this);
+    window.get().cameras.request_erase(this);
 }
 
 glm::mat4 Camera::get_view_matrix() const {
@@ -70,7 +70,7 @@ glm::mat4 Camera::get_projection_matrix() const {
     const auto h = float(height) * ms.y;
     const auto r = owner().get_scale().z;
     const auto ne = -1000.0f * r; // "near"はWindowsだとダメ
-    const auto fa = 1000.0f * r; // "far"もWindowsだとダメ
+    const auto fa = 1000.0f * r;  // "far"もWindowsだとダメ
     switch (mode) {
     case CameraMode::Center:
         return glm::ortho(-w / 2, w / 2, -h / 2, h / 2, ne, fa);
