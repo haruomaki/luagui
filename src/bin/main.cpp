@@ -3,7 +3,7 @@
 
 int main() {
     GUI gui;
-    auto window = create_window(gui, 600, 500, "めいん");
+    Window window(gui, 600, 500, "めいん");
     World &main_world = gui.create_world();
 
     // バーテックスシェーダのコンパイル

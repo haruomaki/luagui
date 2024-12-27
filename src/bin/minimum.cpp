@@ -17,7 +17,7 @@ int main() {
 
     // ただウィンドウを作成し、Qキーで終了するプログラム。
     GUI gui;
-    auto &window = create_window(gui, 500, 400, "minimum.cppのウィンドウ").get();
+    Window window(gui, 500, 400, "minimum.cppのウィンドウ");
     World &world = gui.create_world(); // TODO: いちいちワールドを作らなくてもいいようにしたい
     world.add_component<UpdateComponent>([&](auto & /*self*/) {
         if (window.key_down()[GLFW_KEY_W]) std::cout << "わん🐶\n";

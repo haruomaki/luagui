@@ -33,7 +33,7 @@ void GUI::default_routine1() {
     windows.foreach ([&](Window *window) {
         // 閉じるべきウィンドウは閉じる
         if (window->should_close()) {
-            resources.free(window);
+            window->destroy();
             return;
         }
 

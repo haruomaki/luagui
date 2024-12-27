@@ -5,8 +5,9 @@
 
 using namespace std::chrono_literals;
 
-Window::Window(GUI &gui, int width, int height, const char *title)
+Window::Window(GUI &gui, int width, int height, const std::string &title)
     : GL::Window(gui, width, height, title)
+    , gui_(gui)
     , gwin_(gwin()) {
 
     this->GL::Window::routine = [this] { this->routine(); };
@@ -37,6 +38,9 @@ Window::Window(GUI &gui, int width, int height, const char *title)
     gui.windows.request_set(this);
 }
 
+// FIXME: ムーブ可能にする。
+// つまり、デストラクタで終了処理ではなく、destroy()関数で処理する。
+// nullウィンドウならデストラクタでは何もしない。
 Window::~Window() {
     print("Windowのデストラクタです");
     gui().windows.request_erase(this);
@@ -51,7 +55,7 @@ Window::~Window() {
 }
 
 void Window::close() {
-    gui().resources.free(this);
+    glfwSetWindowShouldClose(gwin(), GLFW_TRUE);
 }
 
 // void Window::routine() {

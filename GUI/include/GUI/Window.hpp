@@ -7,7 +7,8 @@ class GUI;
 struct CameraInterface;
 
 // 一つのウィンドウを表すクラス
-class Window : GL::Window, public Resource {
+class Window : public GL::Window {
+    GUI &gui_;
     GLFWwindow *gwin_ = nullptr; // GL::Windowのgwinと同じ
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
@@ -20,8 +21,8 @@ class Window : GL::Window, public Resource {
     // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。
     std::pair<int, int> fbsize_cache = {0, 0};
 
-    Window(GUI &gui, int width, int height, const char *title);
-    ~Window() override;
+    Window(GUI &gui, int width, int height, const std::string &title);
+    ~Window();
 
     // コピーもムーブも禁止する
     Window(const Window &) = delete;
@@ -29,10 +30,10 @@ class Window : GL::Window, public Resource {
     Window(Window &&) = delete;
     Window &operator=(Window &&) = delete;
 
-    // GL::Windowから継承
+    [[nodiscard]] GUI &gui() const { return gui_; }
+
+    // FIXME: GL::Windowに移動
     GLFWwindow *gwin() { return GL::Window::gwin; }
-    bool key(int key) { return GL::Window::key(key); }
-    bool should_close() { return GL::Window::should_close(); }
 
     void close();
 

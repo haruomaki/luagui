@@ -21,13 +21,13 @@
 //     }
 // };
 
+// FIXME: ウィンドウが途中で消える場合を考慮
 // キー操作が可能な正投影カメラを作成する。
-inline Camera &mobile_ortho_camera(WorldObject &parent, ResourceHandle<Window> rh) {
+inline Camera &mobile_ortho_camera(WorldObject &parent, Window &window) {
     auto &obj = parent.append_child<WorldObject>();
-    auto &camera = obj.add_component<Camera>(&rh.get(), Camera::Orthographic);
+    auto &camera = obj.add_component<Camera>(&window, Camera::Orthographic);
 
-    obj.add_component<UpdateComponent>([&, rh](UpdateComponent & /*self*/) {
-        auto &window = rh.get();
+    obj.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
         const float speed = 0.12 / window.gui().refresh_rate();
         const float zoom_speed = 1 + 0.6 / window.gui().refresh_rate();
 
@@ -58,13 +58,12 @@ inline Camera &mobile_ortho_camera(WorldObject &parent, ResourceHandle<Window> r
 }
 
 // キー操作およびマウス操作が可能な透視投影カメラを作成する。
-inline Camera &mobile_normal_camera(WorldObject &parent, ResourceHandle<Window> rh) { // NOLINT(readability-function-cognitive-complexity)
+inline Camera &mobile_normal_camera(WorldObject &parent, Window &window) { // NOLINT(readability-function-cognitive-complexity)
     auto &body = parent.append_child<WorldObject>();
     auto &head = body.append_child<WorldObject>();
-    auto &camera = head.add_component<Camera>(&rh.get());
+    auto &camera = head.add_component<Camera>(&window);
 
-    body.add_component<UpdateComponent>([&, rh](UpdateComponent & /*self*/) {
-        auto &window = rh.get();
+    body.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
         const int rr = window.gui().refresh_rate();
         const float speed = 0.3 / rr;
         const float angle_speed = 0.8 / rr;
@@ -165,8 +164,3 @@ class GridGround : public WorldObject {
         grid.owner().scale = 1;
     }
 };
-
-inline ResourceHandle<Window> create_window(GUI &gui, int width, int height, const std::string &title) {
-    auto h = gui.resources.append<Window>(gui, width, height, title.c_str());
-    return h;
-}

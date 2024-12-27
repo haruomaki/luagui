@@ -9,7 +9,7 @@ static float f(float x) {
 int main() {
     constexpr int width = 600, height = 500;
     GUI gui;
-    auto window = create_window(gui, width, height, "ウィンドウタイトル");
+    Window window(gui, width, height, "ウィンドウタイトル");
     // Window &another_window = gui.create_window(width, height, "２つめのウィンドウ");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
 
@@ -18,7 +18,7 @@ int main() {
 
     /*auto &camera = */ mobile_ortho_camera(world, window);
     auto &ui_camera_obj = ui_world.append_child<WorldObject>();
-    auto &ui_camera = ui_camera_obj.add_component<Camera>(&window.get(), Camera::Orthographic);
+    auto &ui_camera = ui_camera_obj.add_component<Camera>(&window, Camera::Orthographic);
     // camera.setScale(0.01F);
     // camera.setScale(100);
     ui_camera.mode = Camera::TopLeft;

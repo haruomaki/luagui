@@ -44,7 +44,7 @@ static MeshComponent &draw_rect(WorldObject &parent, float hx, float hy) { // NO
 void register_world(sol::state &lua) {
     lua.set_function("create_world", [&](std::optional<bool> debug) -> World & {
         GUI &gui = lua["__GUI"];
-        ResourceHandle<Window> window = lua["__CurrentWindow"]; // FIXME: これも明らかに動かない
+        Window &window = lua["__CurrentWindow"];
 
         auto &world = gui.create_world();
         lua["__CurrentWorld"] = &world;
