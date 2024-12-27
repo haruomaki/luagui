@@ -175,6 +175,7 @@ class WorldObject {
     friend class Component; // get_parent_static()のため
 
     template <std::derived_from<Component> T, typename... Args>
+        requires std::constructible_from<T, Args...>
     T &add_component(Args &&...args) {
         // コンポーネントの実体をヒープ上に生成
         WorldObject::set_parent_static(this); // componentのコンストラクタにthisを伝えるため

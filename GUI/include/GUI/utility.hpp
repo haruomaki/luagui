@@ -24,7 +24,7 @@
 // キー操作が可能な正投影カメラを作成する。
 inline Camera &mobile_ortho_camera(WorldObject &parent, ResourceHandle<Window> rh) {
     auto &obj = parent.append_child<WorldObject>();
-    auto &camera = obj.add_component<Camera>(rh, Camera::Orthographic);
+    auto &camera = obj.add_component<Camera>(&rh.get(), Camera::Orthographic);
 
     obj.add_component<UpdateComponent>([&, rh](UpdateComponent & /*self*/) {
         auto &window = rh.get();
@@ -61,7 +61,7 @@ inline Camera &mobile_ortho_camera(WorldObject &parent, ResourceHandle<Window> r
 inline Camera &mobile_normal_camera(WorldObject &parent, ResourceHandle<Window> rh) { // NOLINT(readability-function-cognitive-complexity)
     auto &body = parent.append_child<WorldObject>();
     auto &head = body.append_child<WorldObject>();
-    auto &camera = head.add_component<Camera>(rh);
+    auto &camera = head.add_component<Camera>(&rh.get());
 
     body.add_component<UpdateComponent>([&, rh](UpdateComponent & /*self*/) {
         auto &window = rh.get();

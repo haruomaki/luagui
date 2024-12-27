@@ -8,13 +8,13 @@
 
 // ビュー行列と射影行列を与える機能を持つワールドオブジェクト
 struct CameraInterface {
-    ResourceHandle<Window> window;
+    Window *window;
     std::function<void()> render;
     std::function<GL::Viewport()> viewport_provider;
     bool active = true;
     int priority = 0;
 
-    CameraInterface(ResourceHandle<Window> window)
+    CameraInterface(Window *window)
         : window(window) {}
     virtual ~CameraInterface() = default;
     [[nodiscard]] virtual glm::mat4 get_view_matrix() const = 0;
@@ -40,7 +40,7 @@ class Camera : public CameraInterface, public Component {
     ProjectionMode projection_mode;
     CameraMode mode = Center;
 
-    Camera(ResourceHandle<Window> window, Camera::ProjectionMode projection_mode = Perspective);
+    Camera(Window *window, Camera::ProjectionMode projection_mode = Perspective);
     ~Camera() override;
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;

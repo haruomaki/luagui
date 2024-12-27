@@ -22,7 +22,7 @@ static int calc_default_priority(Window &window) {
     return one_level_higher;
 }
 
-Camera::Camera(ResourceHandle<Window> window, ProjectionMode projection_mode)
+Camera::Camera(Window *window, ProjectionMode projection_mode)
     : CameraInterface(window)
     , projection_mode(projection_mode) {
 
@@ -31,12 +31,13 @@ Camera::Camera(ResourceHandle<Window> window, ProjectionMode projection_mode)
         world.master_draw(*this);
     };
 
-    viewport_provider = [window] {
-        auto [w, h] = window.get().fbsize_cache;
-        return GL::Viewport{0, 0, w, h};
+    viewport_provider = [this] {
+        if (!this->window) throw std::runtime_error("カメラとウィンドウが紐付いていません。");
+        auto [w, h] = this->window->fbsize_cache;
+        return GL::Viewport{.x = 0, .y = 0, .width = w, .height = h};
     };
 
-    priority = calc_default_priority(window.get());
+    priority = calc_default_priority(*window);
 
     gui().cameras.request_set(this);
 }

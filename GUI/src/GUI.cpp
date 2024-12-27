@@ -60,7 +60,7 @@ void GUI::default_routine1() {
     std::map<Window *, std::set<std::pair<int, CameraInterface *>>> sorted_cameras;
     cameras.flush();
     cameras.foreach ([&](CameraInterface *camera) {
-        if (camera->active && camera->window.is_valid()) sorted_cameras[&camera->window.get()].emplace(camera->priority, camera);
+        if (camera->active && camera->window) sorted_cameras[camera->window].emplace(camera->priority, camera);
     });
 
     for (const auto &[window, cam] : sorted_cameras) {
