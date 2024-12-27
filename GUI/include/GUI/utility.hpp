@@ -51,6 +51,7 @@ inline Camera &mobile_ortho_camera(WorldObject &parent, ResourceHandle<Window> r
         }
         if (window.key(GLFW_KEY_Q)) {
             window.close();
+            return;
         }
     });
     return camera;
@@ -108,6 +109,7 @@ inline Camera &mobile_normal_camera(WorldObject &parent, ResourceHandle<Window> 
         }
         if (window.key(GLFW_KEY_Q)) {
             window.close();
+            return;
         }
 
         auto [dx, dy] = window.cursor_diff();

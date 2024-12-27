@@ -2,14 +2,14 @@
 
 #include <gui.hpp>
 
-inline float f(float x) {
+static float f(float x) {
     return 3 * std::sin(x);
 }
 
 int main() {
     constexpr int width = 600, height = 500;
     GUI gui;
-    auto &window = create_window(gui, width, height, "ウィンドウタイトル");
+    auto window = create_window(gui, width, height, "ウィンドウタイトル");
     // Window &another_window = gui.create_window(width, height, "２つめのウィンドウ");
     // auto &viewport = window.registerSizeCallback(MaximumViewport()); // これだと一度リサイズしないと画面が出ない
 

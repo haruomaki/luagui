@@ -41,7 +41,7 @@ Camera::Camera(ResourceHandle<Window> window, ProjectionMode projection_mode)
 }
 
 Camera::~Camera() {
-    window.get().cameras.request_erase(this);
+    if (window.is_valid()) window.get().cameras.request_erase(this);
 }
 
 glm::mat4 Camera::get_view_matrix() const {
