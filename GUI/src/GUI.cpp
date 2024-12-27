@@ -52,10 +52,42 @@ void GUI::default_routine1() {
         world->master_physics();
     }
 
-    // 描画と後処理
+    // --------------------
+    // 描画
+    // --------------------
+
+    // prorityが高いものほど後に描画されるようにソートする
+    std::map<Window *, std::set<std::pair<int, CameraInterface *>>> sorted_cameras;
+    cameras.flush();
+    cameras.foreach ([&](CameraInterface *camera) {
+        if (camera->active && camera->window.is_valid()) sorted_cameras[&camera->window.get()].emplace(camera->priority, camera);
+    });
+
+    for (const auto &[window, cam] : sorted_cameras) {
+        // OpenGLの描画関数のターゲットにするウィンドウを指定
+        glfwMakeContextCurrent(window->gwin());
+
+        // 画面の初期化
+        constexpr RGBA bg_color{.r = 0.2f, .g = 0.2f, .b = 0.2f, .a = 1};
+        glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        for (const auto &[priority, camera] : cam) {
+            trace("[draw_routine] カメラ描画（優先度 ", priority, "）");
+            glClear(GL_DEPTH_BUFFER_BIT);
+            camera->render();
+        }
+
+        // 上記描画した図形を表画面のバッファにスワップする
+        glfwSwapBuffers(window->gwin());
+    }
+
+    //--------------------
+    // 後処理
+    // -------------------
+
     windows.flush();
     windows.foreach ([](Window *window) {
-        window->draw_routine();
         window->post_process();
     });
 }

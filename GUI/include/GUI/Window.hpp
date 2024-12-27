@@ -2,7 +2,6 @@
 
 #include "Resource.hpp"
 #include <SumiGL/Window.hpp>
-#include <SumiGL/buffered_container.hpp>
 
 class GUI;
 struct CameraInterface;
@@ -15,11 +14,8 @@ class Window : GL::Window, public Resource {
     std::pair<double, double> last_cursor_ = cursor_pos();
 
   public:
-    void draw_routine();
     void update_routine();
     void post_process();
-
-    BufferedSet<CameraInterface *> cameras;
 
     // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。
     std::pair<int, int> fbsize_cache = {0, 0};

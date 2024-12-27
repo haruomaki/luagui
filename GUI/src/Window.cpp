@@ -1,6 +1,5 @@
 #include "Window.hpp"
 #include "GUI.hpp"
-#include "World.hpp"
 #include <SumiGL/Context.hpp>
 
 using namespace std::chrono_literals;
@@ -66,31 +65,6 @@ void Window::close() {
 //     this->post_process();
 //     trace("[mainloop] p5");
 // }
-
-void Window::draw_routine() {
-    // OpenGLの描画関数のターゲットにするウィンドウを指定
-    glfwMakeContextCurrent(this->gwin_);
-
-    // 画面の初期化
-    constexpr RGBA bg_color{0.2f, 0.2f, 0.2f, 1};
-    glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // prorityが高いものほど後に描画されるようにソートする
-    std::set<std::pair<int, CameraInterface *>> sorted_cameras;
-    cameras.flush();
-    cameras.foreach ([&](CameraInterface *camera) {
-        if (camera->active) sorted_cameras.emplace(camera->priority, camera);
-    });
-    for (const auto &[priority, camera] : sorted_cameras) {
-        trace("[draw_routine] カメラ描画（優先度 ", priority, "）");
-        glClear(GL_DEPTH_BUFFER_BIT);
-        camera->render();
-    }
-
-    // 上記描画した図形を表画面のバッファにスワップする
-    glfwSwapBuffers(this->gwin_);
-}
 
 void Window::update_routine() {
     // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）

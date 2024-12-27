@@ -7,6 +7,7 @@
 struct Material;
 class World;
 class Window;
+struct CameraInterface;
 
 class GUI : public GL::Context {
     bool looping_ = false;
@@ -15,6 +16,7 @@ class GUI : public GL::Context {
     std::vector<std::unique_ptr<World>> worlds_;
 
   public:
+    BufferedSet<CameraInterface *> cameras;
     BufferedSet<Window *> windows;
     ResourceManager resources;
     BufferedSet<std::function<void()> *> resource_updates;
@@ -44,7 +46,7 @@ class GUI : public GL::Context {
             glfwPollEvents();
 
             trace("[mainloop] カスタムルーチン開始：", epoch_);
-            custom_routine(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
+            std::forward<F>(custom_routine)(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
             trace("[mainloop] ウィンドウ更新開始：", epoch_);
 
             // リソースの更新処理

@@ -4,12 +4,13 @@
 
 // カメラ優先度を初期設定するアルゴリズム。
 static int calc_default_priority(Window &window) {
-    if (window.cameras.is_locked()) throw std::runtime_error("camerasのロック中にカメラを追加することはできません。");
-    window.cameras.flush();
+    GUI &gui = window.gui();
+    if (gui.cameras.is_locked()) throw std::runtime_error("camerasのロック中にカメラを追加することはできません。");
+    gui.cameras.flush();
 
     // priorityの最大値
     int max_priority = std::numeric_limits<int>::min();
-    window.cameras.foreach ([&](const CameraInterface *camera) {
+    gui.cameras.foreach ([&](const CameraInterface *camera) {
         max_priority = std::max(max_priority, camera->priority);
     });
 
@@ -37,11 +38,11 @@ Camera::Camera(ResourceHandle<Window> window, ProjectionMode projection_mode)
 
     priority = calc_default_priority(window.get());
 
-    window.get().cameras.request_set(this);
+    gui().cameras.request_set(this);
 }
 
 Camera::~Camera() {
-    if (window.is_valid()) window.get().cameras.request_erase(this);
+    gui().cameras.request_erase(this);
 }
 
 glm::mat4 Camera::get_view_matrix() const {
@@ -66,8 +67,8 @@ glm::mat4 Camera::get_projection_matrix() const {
     }
 
     auto ms = gui().master_scale();
-    const auto w = float(width) * ms.x;
-    const auto h = float(height) * ms.y;
+    const auto w = width * ms.x;
+    const auto h = height * ms.y;
     const auto r = owner().get_scale().z;
     const auto ne = -1000.0f * r; // "near"はWindowsだとダメ
     const auto fa = 1000.0f * r;  // "far"もWindowsだとダメ
