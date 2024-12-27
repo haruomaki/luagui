@@ -21,15 +21,18 @@
 //     }
 // };
 
-// FIXME: ウィンドウが途中で消える場合を考慮
 // キー操作が可能な正投影カメラを作成する。
 inline Camera &mobile_ortho_camera(WorldObject &parent, Window &window) {
     auto &obj = parent.append_child<WorldObject>();
     auto &camera = obj.add_component<Camera>(&window, Camera::Orthographic);
 
-    obj.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
-        const float speed = 0.12 / window.gui().refresh_rate();
-        const float zoom_speed = 1 + 0.6 / window.gui().refresh_rate();
+    obj.add_component<UpdateComponent>([&obj, &camera](UpdateComponent & /*self*/) {
+        if (camera.window == nullptr) return; // カメラと紐付いたウィンドウを見て、キー入力を受け取るかどうか決める。
+        auto &window = *camera.window;
+
+        const auto fps = float(window.gui().refresh_rate());
+        const float speed = 0.12f / fps;
+        const float zoom_speed = 1 + (0.6f / fps);
 
         if (window.key(GLFW_KEY_RIGHT)) {
             obj.position += obj.get_left() * speed;
@@ -63,11 +66,14 @@ inline Camera &mobile_normal_camera(WorldObject &parent, Window &window) { // NO
     auto &head = body.append_child<WorldObject>();
     auto &camera = head.add_component<Camera>(&window);
 
-    body.add_component<UpdateComponent>([&](UpdateComponent & /*self*/) {
-        const int rr = window.gui().refresh_rate();
-        const float speed = 0.3 / rr;
-        const float angle_speed = 0.8 / rr;
-        const float zoom_speed = 1 + 1.0 / rr;
+    body.add_component<UpdateComponent>([&body, &head, &camera](UpdateComponent & /*self*/) {
+        if (camera.window == nullptr) return; // カメラと紐付いたウィンドウがあればキー入力を受け取る。
+        auto &window = *camera.window;
+
+        const auto rr = float(window.gui().refresh_rate());
+        const float speed = 0.3f / rr;
+        const float angle_speed = 0.8f / rr;
+        const float zoom_speed = 1 + (1.0f / rr);
 
         if (window.key(GLFW_KEY_W)) {
             body.position += body.get_front() * speed;
@@ -154,11 +160,11 @@ class GridGround : public WorldObject {
         auto &material = MaterialBuilder().line_width(1).build(this->get_world().gui);
         auto &grid = new_line(*this, &material);
         for (int i = -10; i <= 10; i++) {
-            constexpr RGBA grid_color = {0.1, 0.1, 0.1, 1};
-            grid.mesh.vertices.push_back(InterleavedVertexInfo{{i, 0, -10}, grid_color});
-            grid.mesh.vertices.push_back(InterleavedVertexInfo{{i, 0, 10}, grid_color});
-            grid.mesh.vertices.push_back(InterleavedVertexInfo{{-10, 0, i}, grid_color});
-            grid.mesh.vertices.push_back(InterleavedVertexInfo{{10, 0, i}, grid_color});
+            constexpr RGBA grid_color = {.r = 0.1, .g = 0.1, .b = 0.1, .a = 1};
+            grid.mesh.vertices.push_back(InterleavedVertexInfo{.coord = {i, 0, -10}, .color = grid_color});
+            grid.mesh.vertices.push_back(InterleavedVertexInfo{.coord = {i, 0, 10}, .color = grid_color});
+            grid.mesh.vertices.push_back(InterleavedVertexInfo{.coord = {-10, 0, i}, .color = grid_color});
+            grid.mesh.vertices.push_back(InterleavedVertexInfo{.coord = {10, 0, i}, .color = grid_color});
         }
         grid.mesh.draw_mode = GL_LINES;
         grid.owner().scale = 1;
