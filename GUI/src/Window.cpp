@@ -35,9 +35,6 @@ Window::Window(GUI &gui, int width, int height, const char *title)
     });
 
     gui.windows.request_set(this);
-
-    // FIXME: current_windowが切り替わるのは、現状ウィンドウが作成されたときだけ
-    gui.current_window = this;
 }
 
 Window::~Window() {

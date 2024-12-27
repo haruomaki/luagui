@@ -18,7 +18,6 @@ class GUI : public GL::Context {
     BufferedSet<Window *> windows;
     ResourceManager resources;
     BufferedSet<std::function<void()> *> resource_updates;
-    Window *current_window = nullptr; // 現在操作対象としているウィンドウ
 
     GUI();
     ~GUI();

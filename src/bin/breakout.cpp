@@ -8,6 +8,5 @@ int main() {
     std::cout << "Current Directory: " << current_path << std::endl;
 
     LuaGUI luagui;
-    std::cout << "！！！！！！！！" << std::endl;
     luagui.run("assets/scripts/breakout.lua");
 }
