@@ -11,6 +11,9 @@ Window::Window(GUI &gui, int width, int height, const std::string &title)
 
     this->GL::Window::routine = [this] { this->routine(); };
 
+    // ユーザー領域にこのインスタンスを設定。
+    GL::set_user_pointer(gwin(), this);
+
     // ブレンド（透明処理）の設定
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -20,7 +23,7 @@ Window::Window(GUI &gui, int width, int height, const std::string &title)
 
     // 押した/離した瞬間を記録するためのキーコールバック。key_down()/keu_up()に必要
     glfwSetKeyCallback(gwin(), [](GLFWwindow *gwin, int key, int scancode, int action, int mods) {
-        auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
+        auto *window = GL::get_user_pointer<Window>(gwin);
         try {
             if (action == GLFW_PRESS) {
                 // debug(key, scancode, mods);
