@@ -217,12 +217,12 @@ class WorldObject {
 
     Component *get_component_by_id(std::string_view id) {
         Component *ret = nullptr;
-        components_.foreach ([&](std::unique_ptr<Component> &comp) {
+        for (auto &[k, comp] : components_) {
             if (id == comp->id) {
                 if (ret != nullptr) warn("同一IDの異なるコンポーネントがあります: ", id);
                 ret = comp.get();
             }
-        });
+        }
         if (ret == nullptr) warn("ID=\"", id, "\"のコンポーネントが見つかりませんでした。");
         return ret;
     }
