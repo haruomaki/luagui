@@ -6,7 +6,9 @@
 class GUI;
 struct CameraInterface;
 
-// 一つのウィンドウを表すクラス
+// 一つのウィンドウを表すクラス。
+// ユニークポインタのようにムーブ可能で、無効なインスタンスもあり得る。
+// INFO: GUIおよびCameraと接続されていて、ムーブ時には自動で繋ぎ直される。
 class Window : public GL::Window {
     GUI *gui_ = nullptr; // インスタンスが有効か無効かの目印
     using KeyArray = std::array<bool, 512>;
@@ -31,8 +33,12 @@ class Window : public GL::Window {
     Window(Window &&other) noexcept;
     Window &operator=(Window &&other) noexcept;
 
+    // 親であるGUIインスタンスへの参照。
     [[nodiscard]] GUI &gui() const { return *gui_; }
 
+    // ウィンドウを即座に削除し、インスタンスを無効化する。
+    void destroy();
+    // ウィンドウの削除要求をイベントキューに投げる。
     void close();
 
     // 前フレームからのカーソルの移動差分を得る。

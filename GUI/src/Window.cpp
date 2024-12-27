@@ -40,31 +40,49 @@ Window::Window(GUI &gui, int width, int height, const std::string &title)
     gui.windows.request_set(this);
 }
 
-// FIXME: ムーブ可能にする。
-// つまり、デストラクタで終了処理ではなく、destroy()関数で処理する。
-// nullウィンドウならデストラクタでは何もしない。
 Window::~Window() {
     print("Windowのデストラクタです");
+    if (gui_) destroy();
+}
+
+Window::Window(Window &&other) noexcept { *this = std::move(other); }
+Window &Window::operator=(Window &&other) noexcept {
+    if (this != &other) {
+        GL::Window::operator=(std::move(other));
+        gui_ = other.gui_;
+        other.gui_ = nullptr; // ムーブ元のインスタンスを無効化
+        key_down_ = other.key_down_;
+        key_up_ = other.key_up_;
+        last_cursor_ = other.last_cursor_;
+
+        // GUIに引っ越し届
+        gui().windows.request_erase(&other);
+        gui().windows.request_set(this);
+
+        // Cameraに引っ越し届
+        gui().cameras.flush();
+        for (auto *camera : gui().cameras) {
+            if (camera->window == &other) camera->window = this;
+        }
+    }
+    return *this;
+}
+
+void Window::destroy() {
+    if (gui_ == nullptr) throw std::runtime_error("GUIとの関連が切れた、無効なWindowインスタンスを削除しています。");
+
     gui().windows.request_erase(this);
 
-    // カメラとの接続を切る（NOTE: 越権行為かも）
+    // カメラとの接続を切る
     gui().cameras.flush();
     for (auto *camera : gui().cameras) {
         if (camera->window == this) camera->window = nullptr;
     }
 
-    destroy();
-}
+    gui_ = nullptr;
 
-Window::Window(Window &&other) noexcept { *this = std::move(other); }
-Window &Window::operator=(Window &&other) noexcept {
-    GL::Window::operator=(std::move(other));
-    gui_ = other.gui_;
-    other.gui_ = nullptr; // ムーブ元のインスタンスを無効化
-    key_down_ = other.key_down_;
-    key_up_ = other.key_up_;
-    last_cursor_ = other.last_cursor_;
-    return *this;
+    // 親クラスのdestroy
+    GL::Window::destroy();
 }
 
 void Window::close() {
