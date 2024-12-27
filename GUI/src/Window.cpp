@@ -7,8 +7,7 @@ using namespace std::chrono_literals;
 
 Window::Window(GUI &gui, int width, int height, const std::string &title)
     : GL::Window(gui, width, height, title)
-    , gui_(gui)
-    , gwin_(gwin()) {
+    , gui_(gui) {
 
     this->GL::Window::routine = [this] { this->routine(); };
 
@@ -20,7 +19,7 @@ Window::Window(GUI &gui, int width, int height, const std::string &title)
     glEnable(GL_DEPTH_TEST);
 
     // 押した/離した瞬間を記録するためのキーコールバック。key_down()/keu_up()に必要
-    glfwSetKeyCallback(gwin_, [](GLFWwindow *gwin, int key, int scancode, int action, int mods) {
+    glfwSetKeyCallback(gwin(), [](GLFWwindow *gwin, int key, int scancode, int action, int mods) {
         auto *window = static_cast<Window *>(GL::Window::user_pointer(gwin));
         try {
             if (action == GLFW_PRESS) {

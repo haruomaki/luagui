@@ -9,7 +9,6 @@ struct CameraInterface;
 // 一つのウィンドウを表すクラス
 class Window : public GL::Window {
     GUI &gui_;
-    GLFWwindow *gwin_ = nullptr; // GL::Windowのgwinと同じ
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
     std::pair<double, double> last_cursor_ = cursor_pos();
@@ -31,9 +30,6 @@ class Window : public GL::Window {
     Window &operator=(Window &&) = delete;
 
     [[nodiscard]] GUI &gui() const { return gui_; }
-
-    // FIXME: GL::Windowに移動
-    GLFWwindow *gwin() { return GL::Window::gwin; }
 
     void close();
 
