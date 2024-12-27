@@ -7,7 +7,7 @@ using namespace std::chrono_literals;
 
 Window::Window(GUI &gui, int width, int height, const std::string &title)
     : GL::Window(gui, width, height, title)
-    , gui_(gui) {
+    , gui_(&gui) {
 
     this->GL::Window::routine = [this] { this->routine(); };
 
@@ -54,6 +54,17 @@ Window::~Window() {
     }
 
     destroy();
+}
+
+Window::Window(Window &&other) noexcept { *this = std::move(other); }
+Window &Window::operator=(Window &&other) noexcept {
+    GL::Window::operator=(std::move(other));
+    gui_ = other.gui_;
+    other.gui_ = nullptr; // ムーブ元のインスタンスを無効化
+    key_down_ = other.key_down_;
+    key_up_ = other.key_up_;
+    last_cursor_ = other.last_cursor_;
+    return *this;
 }
 
 void Window::close() {

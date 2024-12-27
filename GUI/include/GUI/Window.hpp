@@ -8,7 +8,7 @@ struct CameraInterface;
 
 // 一つのウィンドウを表すクラス
 class Window : public GL::Window {
-    GUI &gui_;
+    GUI *gui_ = nullptr; // インスタンスが有効か無効かの目印
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
     std::pair<double, double> last_cursor_ = cursor_pos();
@@ -23,13 +23,15 @@ class Window : public GL::Window {
     Window(GUI &gui, int width, int height, const std::string &title);
     ~Window();
 
-    // コピーもムーブも禁止する
+    // コピーは禁止する。
     Window(const Window &) = delete;
     Window &operator=(const Window &) = delete;
-    Window(Window &&) = delete;
-    Window &operator=(Window &&) = delete;
 
-    [[nodiscard]] GUI &gui() const { return gui_; }
+    // GL::Windowに引き続き、ムーブは可能にする。
+    Window(Window &&other) noexcept;
+    Window &operator=(Window &&other) noexcept;
+
+    [[nodiscard]] GUI &gui() const { return *gui_; }
 
     void close();
 
