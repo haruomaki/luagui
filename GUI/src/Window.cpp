@@ -1,4 +1,5 @@
 #include "Window.hpp"
+#include "Camera.hpp"
 #include "GUI.hpp"
 #include <SumiGL/Context.hpp>
 
@@ -39,6 +40,13 @@ Window::Window(GUI &gui, int width, int height, const char *title)
 Window::~Window() {
     print("Windowのデストラクタです");
     gui().windows.request_erase(this);
+
+    // カメラとの接続を切る（NOTE: 越権行為かも）
+    gui().cameras.flush();
+    for (auto *camera : gui().cameras) {
+        if (camera->window == this) camera->window = nullptr;
+    }
+
     destroy();
 }
 
