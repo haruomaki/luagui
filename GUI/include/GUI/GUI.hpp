@@ -43,7 +43,7 @@ class GUI : public GL::Context {
 
             // 受け取ったイベント（キーボードやマウス入力）を処理する
             // キー押下の瞬間などを捉えるために、ユーザ処理よりも前に置く
-            glfwPollEvents();
+            poll_events();
 
             trace("[mainloop] カスタムルーチン開始：", epoch_);
             std::forward<F>(custom_routine)(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く

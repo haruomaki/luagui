@@ -23,7 +23,7 @@ static void register_chrono(sol::state &lua) {
 }
 
 static void run_window(sol::state &lua, int width, int height, const std::string &title, sol::function func) {
-    std::cout << "Creating window: " << title << " (" << width << "x" << height << ")" << std::endl;
+    std::cout << "Creating window: " << title << " (" << width << "x" << height << ")" << '\n';
 
     sol::thread runner_thread = sol::thread::create(lua);
     sol::state_view runner_thread_state = runner_thread.state();
@@ -55,25 +55,25 @@ static void run_window(sol::state &lua, int width, int height, const std::string
                 // コルーチンが yield した
             } else if (status == sol::call_status::ok) {
                 // コルーチンが終了した
-                std::cout << "Game loop finished" << std::endl;
+                std::cout << "Game loop finished" << '\n';
                 coroutine_finished = true;
                 window.close();
             } else {
                 // エラーが発生した
                 sol::error err = result;
-                std::cerr << "Error in Lua coroutine: " << err.what() << std::endl;
+                std::cerr << "Error in Lua coroutine: " << err.what() << '\n';
                 coroutine_finished = true;
                 window.close();
             }
         }
     });
 
-    std::cout << "Window closed: " << title << std::endl;
+    std::cout << "Window closed: " << title << '\n';
 }
 
 LuaGUI::LuaGUI() {
     // print("LuaGUIのコンストラクタ");
-    lua["__GUI"] = &gui;
+    lua["__GUI"] = static_cast<GUI *>(this);
 
     lua.open_libraries(
         sol::lib::base,

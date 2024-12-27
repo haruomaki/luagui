@@ -3,10 +3,9 @@
 #include <GUI/GUI.hpp>
 #include <sol/sol.hpp>
 
-class LuaGUI {
+class LuaGUI : public GUI {
 
   public:
-    GUI gui;
     sol::state lua;
 
     LuaGUI();
