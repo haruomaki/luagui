@@ -2,10 +2,10 @@
 
 #include <GUI/utility.hpp>
 
-inline MeshObject &new_rect(WorldObject &parent, const std::vector<glm::vec3> &coords, Material &material) {
-    auto &window = parent.get_world().window;
-    auto &mesh = window.append_resource<StaticMesh>();
-    auto &obj = parent.append_child<MeshObject>(mesh, &material);
+inline MeshComponent &new_rect(WorldObject &parent, const std::vector<glm::vec3> &coords, Material &material) {
+    auto &gui = parent.get_world().gui;
+    auto &mesh = gui.resources.append<StaticMesh>().get();
+    auto &obj = parent.child_component<MeshComponent>(mesh, &material);
 
     mesh.vertices.coords = coords;
     mesh.vertices.colors = {{1, 1, 0, 1}};

@@ -1,23 +1,17 @@
 #include "World.hpp"
-#include "Physics.hpp"
+#include "Window.hpp"
 
 void World::master_physics() {
-    // まず各Rigidbodyの更新処理を呼び出す
-    this->rigidbodies.foreach_flush([](Rigidbody *rb) {
-        rb->tick();
-    });
-
-    this->rigidbodies.foreach_flush_combination([](auto *rb1, auto *rb2) {
-        (*rb1).collide(*rb2);
-    });
+    trace("master_physics: ", this);
 
     // Box2Dの毎フレーム更新処理
     // ディスプレイのリフレッシュレートに依存する
-    float dt = 1 / float(window.refresh_rate());
+    float dt = 1 / float(gui.refresh_rate());
     b2world.Step(dt, 4);
 
     // 物理演算結果をWorldObjectに反映
-    rigidbody_components.foreach_flush([](RigidbodyComponent *rbc) {
+    rigidbody_components.flush(); // flushはここのみ？
+    rigidbody_components.foreach ([](RigidbodyComponent *rbc) {
         const auto physics_position = rbc->b2body.GetPosition();
         rbc->owner().position = {physics_position.x, physics_position.y, 0};
 

@@ -1,63 +1,102 @@
 #include "GUI.hpp"
-#include "Window.hpp"
-#include "constants.hpp"
+#include "World.hpp"
 
-GUI::GUI() {
-    // ライブラリglfw の初期化
-    if (glfwInit() == 0) {
-        throw std::runtime_error("GLFWの初期化に失敗しました");
-    }
+GUI::GUI()
+    : resources(*this) {
+    // デフォルトシェーダの設定
+    GL::ProgramObject pg{GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
+                         GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))};
+    auto default_shader = this->resources.append<Shader>(std::move(pg));
+    default_shader.get().name = "default_shader";
 
-    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-    monitor_ = glfwGetPrimaryMonitor();
-
-    // DPIを計算
-    auto [width_mm, height_mm] = this->monitor_physical_size();
-    auto vm = this->video_mode();
-    dpi_ = {float(vm.width) / float(width_mm) * 1000.f * inch_meter, float(vm.height) / float(height_mm) * 1000.f * inch_meter};
-
-    // マスタースケールの設定。96DPIであると仮定し、1m=float値1の縮尺にする。
-    float s = inch_meter / 96;
-    auto [vx, vy] = monitor_content_scale();
-    master_scale_ = {s / vx, s / vy};
+    // デフォルトマテリアルの設定
+    auto &default_material = MaterialBuilder().build(*this);
+    default_material.name = "default_material";
 }
 
 GUI::~GUI() {
-    glfwTerminate();
+    info("GUIのデストラクタ");
+    this->resources.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
+    this->worlds_.clear();   // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
+    info("GUIのデストラクタおわり");
 }
 
-Window &GUI::create_window(int width, int height, const std::string &title) {
-    auto window = std::make_unique<Window>(*this, width, height, title.c_str());
-    this->windows_.push_back(std::move(window));
-    return *this->windows_.back();
+World &GUI::create_world() {
+    auto world = std::make_unique<World>(*this);
+    worlds_.emplace_back(std::move(world));
+
+    return *worlds_.back();
 }
 
-void GUI::refresh_windows() {
-    // auto vvv = this->windows_[0];
-    // this->windows_.clear();
-    // this->windows_.push_back(vvv);
+void GUI::default_routine1() {
+    windows.flush();
+    windows.foreach ([&](Window *window) {
+        // 閉じるべきウィンドウは閉じる
+        if (window->should_close()) {
+            window->destroy();
+            return;
+        }
 
-    // 閉じるべきウィンドウを見つけてvectorから削除
-    trace("mainloop starts deleting windows");
-    auto remove_begin = std::remove_if(this->windows_.begin(), this->windows_.end(), [](const auto &window) {
-        return glfwWindowShouldClose(window->gwin_) != 0;
-    });
-    this->windows_.erase(remove_begin, this->windows_.end());
-    trace("mainloop finished deleting windows");
-
-    // 生きている各ウィンドウに対して更新および描画＆後処理
-    for (const auto &window : this->windows_) {
-        // 更新処理。physicsとupdateは順不同？
-        trace("[mainloop] p1 《physics》->update->draw->post");
-        window->physics_routine();
-        trace("[mainloop] p2 physics->《update》->draw->post");
+        // フレームバッファサイズの更新
         window->update_routine();
+    });
 
-        // 更新処理ののち描画。
-        trace("[mainloop] p3 physics->update->《draw》->post");
-        window->draw_routine();
-        trace("[mainloop] p4 physics->update->draw->《post》");
+    // 各ワールドの更新処理
+    trace("[update] resource->《world》");
+    for (const auto &world : this->worlds_) {
+        world->master_update();
+    }
+
+    // 各ワールドの物理演算処理
+    for (const auto &world : this->worlds_) {
+        world->master_physics();
+    }
+
+    // --------------------
+    // 描画
+    // --------------------
+
+    // prorityが高いものほど後に描画されるようにソートする
+    std::map<Window *, std::set<std::pair<int, CameraInterface *>>> sorted_cameras;
+    cameras.flush();
+    cameras.foreach ([&](CameraInterface *camera) {
+        if (camera->active && camera->window) sorted_cameras[camera->window].emplace(camera->priority, camera);
+    });
+
+    for (const auto &[window, cam] : sorted_cameras) {
+        // OpenGLの描画関数のターゲットにするウィンドウを指定
+        glfwMakeContextCurrent(window->gwin());
+
+        // 画面の初期化
+        constexpr RGBA bg_color{.r = 0.2f, .g = 0.2f, .b = 0.2f, .a = 1};
+        glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        for (const auto &[priority, camera] : cam) {
+            trace("[draw_routine] カメラ描画（優先度 ", priority, "）");
+            glClear(GL_DEPTH_BUFFER_BIT);
+            camera->render();
+        }
+
+        // 上記描画した図形を表画面のバッファにスワップする
+        glfwSwapBuffers(window->gwin());
+    }
+
+    //--------------------
+    // 後処理
+    // -------------------
+
+    windows.flush();
+    windows.foreach ([](Window *window) {
         window->post_process();
-        trace("[mainloop] p5");
+    });
+}
+
+void GUI::default_routine2() {
+    for (std::unique_ptr<World> &world : this->worlds_) {
+        // 各種フラッシュ TODO: 場所はここでいい？
+        world->draws.flush();
+        world->updates.flush();
+        world->rigidbodies.flush();
     }
 }

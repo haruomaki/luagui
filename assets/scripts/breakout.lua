@@ -9,18 +9,21 @@ StageHW = 0.1
 BarHW = 0.02
 
 ---丸を生成
----@return MeshObject
+---@return MeshComponent
 local function maru(x, y)
-    local obj = __CurrentWorld:draw_circle({ x, y }, 0.003)
+    local mesh = __CurrentWorld:draw_circle({ x, y }, 0.003)
+    local obj = mesh.owner
     local rb = obj:add_rigidbody_component({ type = "dynamic", isBullet = true })
     rb:add_shape({ shape = "circle", radius = 0.003, friction = 0, restitution = 1 })
-    return obj
+    return mesh
 end
 
 ---ブロックを生成
----@return MeshObject
+---@param parent WorldObject
+---@return MeshComponent
 local function block(parent, x, y)
-    local obj = parent:draw_rect(BlockHalfWidth, BlockHalfHeight)
+    local mesh = parent:draw_rect(BlockHalfWidth, BlockHalfHeight)
+    local obj = mesh.owner
     obj.position = { x, y }
     local rb = obj:add_rigidbody_component()
     rb:add_shape({
@@ -34,31 +37,31 @@ local function block(parent, x, y)
             self.owner:erase()
         end
     })
-    return obj
+    return mesh
 end
 
 ---直線を生成
 ---@param p1 Point
 ---@param p2 Point
 ---@param on_collision_enter? fun(self: Collider, other: Collider)
----@return MeshObject
+---@return MeshComponent
 local function sen(p1, p2, on_collision_enter)
-    local obj = __CurrentWorld:draw_line({ p1, p2 })
-    local rb = obj:add_rigidbody_component()
+    local mesh = __CurrentWorld:draw_line({ p1, p2 })
+    local rb = mesh.owner:add_rigidbody_component()
     rb:add_shape({
         shape = "edge",
         points = { p1, p2 },
         on_collision_enter = on_collision_enter
     })
-    return obj
+    return mesh
 end
 
 ---折れ線を生成
 ---@param points Points
 ---@param on_collision_enter? fun(self: ChainCollider, collider: Collider)
 local function oresen(points, on_collision_enter)
-    local obj = __CurrentWorld:draw_line(slice(points, 2, 4))
-    local rb = obj:add_rigidbody_component()
+    local mesh = __CurrentWorld:draw_line(slice(points, 2, 4))
+    local rb = mesh.owner:add_rigidbody_component()
     rb:add_chain({
         points = points,
         on_collision_enter = on_collision_enter
@@ -69,7 +72,8 @@ end
 ---@param points Points
 ---@param on_collision_enter? fun(self: ChainCollider, collider: Collider)
 local function wakka(points, on_collision_enter)
-    local obj = __CurrentWorld:draw_line(points, true)
+    local mesh = __CurrentWorld:draw_line(points, true)
+    local obj = mesh.owner
     local rb = obj:add_rigidbody_component()
     rb:add_chain({
         points = points,
@@ -84,28 +88,28 @@ run_window(800, 600, "ブロック崩し", function()
 
     local world = create_world()
     local camera = supercamera_2d("quit", "zoom")
-    camera.position = { 0, 0.05 }
-    camera.scale_prop = 2
+    camera.owner.position = { 0, 0.05 }
+    camera.owner.scale_prop = 2
     world.b2world.gravity = { 0, -0.1 }
 
     local text_world = create_world()
     supercamera_2d("zoom")
     __CurrentWorld = world
 
-    text_world:draw_text("mochi-mochi panic", { position = { 0, 0 } })
-    text_world:draw_text("mochi-mochi panic", { position = { -0.05, 0.02 } })
+    text_world:child_text("mochi-mochi panic", { position = { 0, 0 } })
+    text_world:child_text("mochi-mochi panic", { position = { -0.05, 0.02 } })
 
     -- 床と壁の剛体を作成
     wakka({ { -StageHW, -0.1 }, { -StageHW, 0.2 }, { StageHW, 0.2 }, { StageHW, -0.1 } })
 
     -- 落下判定を作成
     sen({ -0.5, -0.07 }, { 0.5, -0.07 }, function(self, other)
-        -- printf("衝突しました！ %d,%d", self.index, other.index)
+        printf("衝突しました！ %d,%d", self.index, other.index)
         other.owner:erase()
     end)
 
     -- 操作バーを追加
-    local bar_obj = world:draw_rect(BarHW, 0.003)
+    local bar_obj = world:draw_rect(BarHW, 0.003).owner
     bar_obj.position = { 0, -0.05 }
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
@@ -123,7 +127,7 @@ run_window(800, 600, "ブロック崩し", function()
         -- スペースキーで連射
         if GetKeyDown('Space') then
             bar_obj:add_update_component("ショット", IntervalFun(function()
-                local m = maru(bar.position.x, -0.04):get_component("Rigidbody")
+                local m = maru(bar.position.x, -0.04).owner:get_component("Rigidbody")
                 local theta = (math.random() - 0.5) * 0.2
                 local speed = math.random() * 0.1 + 0.25
                 m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }

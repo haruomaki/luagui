@@ -1,41 +1,32 @@
 #pragma once
 
-#include <GUI/graphical_base.hpp>
+#include "Resource.hpp"
+#include <SumiGL/Context.hpp>
+#include <SumiGL/buffered_container.hpp>
 
+struct Material;
+class World;
 class Window;
+struct CameraInterface;
 
-class GUI {
-    std::vector<std::unique_ptr<Window>> windows_;
+class GUI : public GL::Context {
     bool looping_ = false;
-    GLFWmonitor *monitor_ = nullptr; // 初期化時のプライマリモニターを保持
-                                     // NOTE: モニターはプログラム初期化時のものをずっとメインとみなす。
+    long epoch_ = 0;
 
-    // INFO: Windowクラスへ移動したいが、ウィンドウ自身に今いるモニターを認識させる機能がなさそうなため、このままでいいかも。
-    std::pair<float, float> dpi_; // ディスプレイのDPI。プログラムを通して、初期化時に算出した値をずっと使い回す。
-                                  // 描画のたびにDPIを再計算してもいいが、パフォーマンス上の懸念が拭えず、マルチモニターや途中のDPI変更などの際は結局多少なりとも乱れてしまうだろうから、シンプルなこの方式が最良と判断。
-
-    glm::vec2 master_scale_ = {1, 1}; // 描画する物体のスケールを決定する。これが1のとき、1ピクセル＝float値1の縮尺となる。
+    std::vector<std::unique_ptr<World>> worlds_;
 
   public:
-    int tick = 0;
+    BufferedSet<CameraInterface *> cameras;
+    BufferedSet<Window *> windows;
+    ResourceManager resources;
+    BufferedSet<std::function<void()> *> resource_updates;
 
     GUI();
     ~GUI();
-
-    // コピーコンストラクタ、コピー代入演算子を削除
-    GUI(const GUI &) = delete;
-    GUI &operator=(const GUI &) const = delete;
-
-    // ムーブコンストラクタ、ムーブ代入演算子を削除
+    GUI(GUI &) = delete;
+    GUI &operator=(GUI &) = delete;
     GUI(GUI &&) = delete;
-    GUI &operator=(GUI &&) const = delete;
-
-    // ウィンドウを新規作成する。
-    Window &create_window(int width, int height, const std::string &title);
-
-    // 毎フレーム呼び出してウィンドウの更新＆イベント処理を行う。
-    // 直接触らず、`mainloop()`関数から呼び出すことを推奨。
-    void refresh_windows();
+    GUI &operator=(GUI &&) = delete;
 
     // メインループに制御を移す。
     template <typename F = void (*)()>
@@ -46,48 +37,39 @@ class GUI {
         looping_ = true;
 
         // 描画のループ
-        while (!this->windows_.empty()) {
-            tick++;
-            trace("[mainloop] メインループ：", tick);
+        while (!windows.empty()) {
+            epoch_++;
+            trace("[mainloop] メインループ：", epoch_);
 
             // 受け取ったイベント（キーボードやマウス入力）を処理する
             // キー押下の瞬間などを捉えるために、ユーザ処理よりも前に置く
             glfwPollEvents();
 
-            trace("[mainloop] カスタムルーチン開始：", tick);
-            custom_routine(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
-            trace("[mainloop] ウィンドウ更新開始：", tick);
-            this->refresh_windows();
+            trace("[mainloop] カスタムルーチン開始：", epoch_);
+            std::forward<F>(custom_routine)(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
+            trace("[mainloop] ウィンドウ更新開始：", epoch_);
+
+            // リソースの更新処理
+            trace("[update] 《resource》->world");
+            this->resource_updates.foreach ([](const auto *update) {
+                (*update)();
+            });
+
+            default_routine1();
+
+            default_routine2();
+
+            // フラッシュ TODO: 場所はここでいい？
+            resource_updates.flush();
         }
 
         looping_ = false;
     }
 
-    // ビデオモード（解像度・リフレッシュレート・色情報）を取得する。
-    // 戻り値の参照は指定したモニターが切断されるか、ライブラリが終了するまで有効
-    [[nodiscard]] const GLFWvidmode &video_mode() const {
-        return *glfwGetVideoMode(monitor_);
-    }
+    // 経過フレーム数を取得する
+    [[nodiscard]] long epoch() const { return epoch_; }
 
-    // ディスプレイの物理サイズ（ミリメートル単位）を取得する。
-    [[nodiscard]] std::pair<int, int> monitor_physical_size() const {
-        int width_mm, height_mm;
-        glfwGetMonitorPhysicalSize(monitor_, &width_mm, &height_mm);
-        return {width_mm, height_mm};
-    }
-
-    // モニターのcontent scaleを取得する。TODO: glfwGetWindowContentScale()との違いは謎。
-    [[nodiscard]] std::pair<float, float> monitor_content_scale() const {
-        float xscale, yscale;
-        glfwGetMonitorContentScale(monitor_, &xscale, &yscale);
-        return {xscale, yscale};
-    }
-
-    // 計算済みのDPIを取得する。
-    [[nodiscard]] std::pair<float, float> dpi() const { return dpi_; }
-
-    // マスタースケールを取得する。
-    [[nodiscard]] glm::vec2 master_scale() const {
-        return master_scale_;
-    }
+    World &create_world();
+    void default_routine1();
+    void default_routine2();
 };

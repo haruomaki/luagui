@@ -1,11 +1,9 @@
 #pragma once
 
-#include <chrono>
 #include <fstream>
 #include <functional> // 関数型 std::function
-#include <memory>
-#include <sstream>   // 文字列のストリーム
-#include <stdexcept> // 例外はとりあえずこれ std::runime_error
+#include <sstream>    // 文字列のストリーム
+#include <stdexcept>  // 例外はとりあえずこれ std::runime_error
 
 using std::ostream, std::stringstream, std::vector, std::pair, std::string, std::cout, std::cerr, std::endl, std::function;
 
@@ -30,7 +28,7 @@ static std::string strip(const std::string &str, const std::string &chars = " \t
 inline std::vector<std::string> split(const std::string &str, const std::string &delimiter = ",", const std::string &strip_chars = " \t\r\n") {
     std::vector<std::string> list = {};
     size_t head = 0, tail = 0;
-    do { // TODO: while文に
+    do {
         tail = str.find(delimiter, head);
         // cout << head << "~" << tail << endl;
         // cout << "progress: " << list << " + " << str.substr(head, tail - head) << endl;
@@ -161,16 +159,5 @@ inline T &dereference(Ptr *ptr) {
 
 using namespace base;
 
-
-#if _WIN32
-#define NOMINMAX // 無いと`std::numeric_limits<int>::min()`などがコンパイルできなくなる
-#include <Windows.h>
-#endif
-
-// Windows環境での文字化け対策。
-// コンソールの出力コードページをUTF-8に設定する。
-inline void setUTF8() {
-#if _WIN32
-    SetConsoleOutputCP(CP_UTF8);
-#endif
-}
+// setUTF8, errors, viewportを使えるように
+#include <SumiGL/misc.hpp>

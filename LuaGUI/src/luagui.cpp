@@ -1,7 +1,12 @@
 #include <GUI/GUI.hpp>
+#include <GUI/Text.hpp>
+#include <GUI/Window.hpp>
+#include <GUI/utility.hpp>
+#include <SumiGL/Context.hpp>
 #include <luagui.hpp>
 
 #include "Box2D.hpp"
+#include "Camera.hpp"
 #include "Text.hpp"
 #include "Window.hpp"
 #include "World.hpp"
@@ -26,15 +31,15 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 
     // C++側でウィンドウを作成し、Luaのグローバル変数に保持する
     print("ウィンドウ作成開始");
-    GUI gui;
-    Window &window = gui.create_window(width, height, title);
+    GUI &gui = lua["__GUI"];
+    Window window(gui, width, height, title); // FIXME: 応急処置でget()
     print("ウィンドウ作成完了");
     lua["__CurrentWindow"] = &window;
 
     debug(gui.dpi());
 
     // デフォルトのフォントを生成
-    auto &default_font = window.append_resource<Font>();
+    auto &default_font = gui.resources.append<Font>().get();
     lua["__CurrentFont"] = &default_font;
 
     bool coroutine_finished = false;
@@ -67,6 +72,9 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 }
 
 LuaGUI::LuaGUI() {
+    // print("LuaGUIのコンストラクタ");
+    lua["__GUI"] = &gui;
+
     lua.open_libraries(
         sol::lib::base,
         sol::lib::os,
@@ -92,6 +100,7 @@ LuaGUI::LuaGUI() {
     register_window(lua);
     register_world_object(lua);
     register_world(lua);
+    register_camera(lua);
     register_box2d(lua);
     register_text(lua);
 }

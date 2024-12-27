@@ -1,4 +1,5 @@
 -- プロパティのテスト
+---@diagnostic disable: undefined-global
 
 -- Usage example
 local hoge = new_hoge()

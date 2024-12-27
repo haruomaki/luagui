@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "meta.hpp"
+#include <SumiGL/meta.hpp>
 #include <functional>
 
 // 読み取り専用プロパティ

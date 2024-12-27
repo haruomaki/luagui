@@ -1,11 +1,10 @@
 #pragma once
 
-#include <variant>
-
-#include <box2cpp/box2cpp.h>
+#include <string>
 
 class WorldObject;
 class World;
+class GUI;
 
 // コンポーネントの基底クラス。
 class Component {
@@ -22,52 +21,8 @@ class Component {
 
     [[nodiscard]] WorldObject &owner() const;
     [[nodiscard]] World &world() const;
-    [[nodiscard]] Window &window() const;
+    [[nodiscard]] GUI &gui() const;
 
     // コンポーネントを削除する。
-    bool erase();
-};
-
-class UpdateComponent : public Component {
-    std::function<void()> func_;
-
-  public:
-    UpdateComponent(std::function<void(UpdateComponent &)> &&f);
-    ~UpdateComponent() override;
-    UpdateComponent(const UpdateComponent &) = delete;
-    UpdateComponent &operator=(const UpdateComponent &) const = delete;
-    UpdateComponent(UpdateComponent &&) = delete;
-    UpdateComponent &operator=(UpdateComponent &&) const = delete;
-};
-
-class RigidbodyComponent : public Component {
-  public:
-    b2::Body b2body;
-
-    RigidbodyComponent(b2::Body::Params body_params = {});
-    ~RigidbodyComponent() override;
-};
-
-// Box2DのShapeたちをまとめるタグ付きユニオン
-using ShapeVariant = std::variant<b2Circle, b2Capsule, b2Segment, b2Polygon>;
-
-class ColliderComponent : public Component {
-  public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    b2::ShapeRef shape_ref_; // publicだが直接触るのは非推奨
-    std::optional<std::function<void(ColliderComponent &self, ColliderComponent &other)>> on_collision_enter = std::nullopt;
-
-    ColliderComponent(ShapeVariant shape, b2::Shape::Params shape_params);
-
-    ~ColliderComponent() override;
-};
-
-class ChainColliderComponent : public Component {
-  public:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    b2::ChainRef chain_ref_; // publicだが直接触るのは非推奨
-    std::optional<std::function<void(ChainColliderComponent &self, ColliderComponent &collider)>> on_collision_enter = std::nullopt;
-
-    ChainColliderComponent(b2::Chain::Params chain_params);
-    ~ChainColliderComponent() override;
+    void erase();
 };

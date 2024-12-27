@@ -1,37 +1,33 @@
 #pragma once
 
 #include "Mesh.hpp"
+#include "Rigidbody.hpp"
 #include "Timer.hpp"
 
-#include <box2cpp/box2cpp.h>
-
-class Camera;
+struct CameraInterface;
 class Rigidbody;
 
 class World : public WorldObject {
-    Camera *active_camera_ = nullptr;
-
-    friend class Window;
-    int draw_priority_ = 0;
+    // ステートフルに目まぐるしく変わる。
+    CameraInterface *rendering_camera_ = nullptr;
 
     // メッシュ描画を一元管理するクラス
-    friend class MeshObject;
+    friend class MeshComponent;
     MeshDrawManager mesh_draw_manager_;
     friend class WorldObject; // mesh_draw_manager_にアクセスするため
 
   public:
-    Window &window;
+    GUI &gui;
     Timer timer;
-    BufferedSet<std::function<void(const Camera &)> *> draws;
+    BufferedSet<std::function<void()> *> draws;
     BufferedSet<std::function<void()> *> updates;
     BufferedSet<Rigidbody *> rigidbodies;
     BufferedSet<RigidbodyComponent *> rigidbody_components;
     b2::World b2world;
 
-    World(Window &window, int draw_priority)
+    World(GUI &gui)
         : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
-        , draw_priority_(draw_priority)
-        , window(window) {
+        , gui(gui) {
         // Box2Dの世界を生成
         b2::World::Params world_params;
         world_params.gravity = b2Vec2{};
@@ -40,10 +36,20 @@ class World : public WorldObject {
 
     ~World() override {
         info("Worldのデストラクタ");
-        children_.foreach ([&](WorldObject &obj) {
-            obj.erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
+
+        // WARNING: バグ応急処置で、worldに直接付いているコンポーネントの削除。
+        // こんな場当たり的でなく、Worldのシステムから改善したい。
+        components_.foreach ([](auto &comp) {
+            trace("component iteration ", comp->id);
+            comp->erase();
+        });
+        components_.flush();
+
+        children_.foreach ([&](std::unique_ptr<WorldObject> &obj) {
+            obj->erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
         });
         children_.flush(); // 即時flushしないと子オブジェクトがメモリから消えない
+        info("Worldのデストラクタおわり");
     }
 
     World(const World &) = delete;
@@ -52,51 +58,50 @@ class World : public WorldObject {
     World &operator=(World &&) const = delete;
 
     void master_update() {
-        // trace("World::master_update開始:", this);
-        this->updates.foreach_flush([&](const auto update) {
+        trace("World::master_update開始:", this);
+        this->updates.foreach ([&](const auto update) {
             (*update)();
         });
 
-        // trace("World::master_update途中1:", this);
+        trace("World::master_update途中1:", this);
 
         // 子（および子孫）オブジェクトの追加／削除を再帰的に適用
         this->flush_components_children();
 
-        // trace("World::master_update途中2:", this);
+        trace("World::master_update途中2:", this);
 
         this->timer.step(); // タイマーを進める
-        // trace("World::master_update終了:", this);
+        trace("World::master_update終了:", this);
     }
 
     void master_physics();
 
-    void master_draw() {
-        if (this->active_camera_ == nullptr) {
-            print("警告: アクティブなカメラが存在しません");
-        }
-        this->draws.foreach_flush([&](const auto *draw) {
-            (*draw)(*this->active_camera_);
+    void master_draw(CameraInterface &camera) {
+        // 描画処理中だけrrendering_cameraが有効になる。
+        rendering_camera_ = &camera;
+
+        // ビューポートを設定
+        GL::viewport(camera.viewport_provider());
+
+        this->draws.foreach ([&](const auto *draw) {
+            (*draw)();
         });
 
         // メッシュを描画
         this->mesh_draw_manager_.step();
-        this->mesh_draw_manager_.draw_all_registered_objects(*active_camera());
+        this->mesh_draw_manager_.draw_all_registered_objects(camera);
+
+        // 描画処理が終わるとrendering_cameraは無効になる。
+        rendering_camera_ = nullptr;
     }
 
     // void register_to_draw(const MeshObject &obj) {
     //     this->mesh_draw_manager_.register_to_draw(obj);
     // }
 
-    Camera *&active_camera() {
-        return this->active_camera_;
+    // 描画処理の最中は、現在描画に用いているカメラへのポインタを返す。
+    // 描画処理外ではnullptrを返す。
+    CameraInterface *rendering_camera() {
+        return this->rendering_camera_;
     }
-
-    [[nodiscard]] int get_draw_priority() const {
-        return this->draw_priority_;
-    }
-    void set_draw_priority(int priority) {
-        this->draw_priority_ = priority;
-        this->window.refresh_world_order();
-    }
-    PropertyGetSet<&World::get_draw_priority, &World::set_draw_priority> draw_priority{this};
 };

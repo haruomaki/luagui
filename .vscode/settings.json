@@ -1,7 +1,7 @@
 {
     "search.exclude": {
         "**/external": true, // 全体検索から除外
-        "**/GUI/glfw": true,
+        "**/GUI/sumigl/glfw": true,
         "**/GUI/box2d": true,
     }
 }

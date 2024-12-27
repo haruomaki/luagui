@@ -1,4 +1,6 @@
 #include "Window.hpp"
+#include <GUI/GUI.hpp>
+#include <GUI/Window.hpp>
 
 using Keymap = std::unordered_map<std::string_view, int>;
 
@@ -85,7 +87,7 @@ void register_window(sol::state &lua) {
     lua.new_usertype<Screen>(
         "Screen",
         "refreshRate", sol::readonly_property([&lua]() {
-            Window &window = lua["__CurrentWindow"];
-            return window.refresh_rate();
+            GUI &gui = lua["__GUI"];
+            return gui.refresh_rate();
         }));
 }

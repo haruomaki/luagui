@@ -18,9 +18,9 @@ void WorldObject::flush_components_children() {
     // trace("flush_childrenです:", this);
     components_.flush(); // コンポーネントとchildrenの順番はどっちでもいい？
     children_.flush();
-    for (WorldObject *child : children_.elements()) {
+    children_.foreach ([](std::unique_ptr<WorldObject> &child) {
         child->flush_components_children();
-    }
+    });
     // trace("flush_childrenおわり:", this);
 }
 
@@ -28,14 +28,13 @@ void WorldObject::refresh_absolute_transform() {
     const auto &parent_abs_transform = (parent_ != nullptr ? parent_->abs_transform_ : glm::mat4(1));
     abs_transform_ = parent_abs_transform * TRANSLATE(pos_) * glm::mat4_cast(rotate_) * SCALE(scale_);
 
-    // メッシュオブジェクトの場合は描画のための更新
-    const auto *obj = dynamic_cast<MeshObject *>(this);
-    if (obj != nullptr) {
-        this->world_.mesh_draw_manager_.set_model_matrix(obj);
+    // メッシュコンポーネントの場合は描画のための更新
+    for (auto *mc : this->get_components<MeshComponent>()) {
+        this->world_.mesh_draw_manager_.set_model_matrix(mc);
     }
 
-    children_.foreach ([](WorldObject &child) {
-        child.refresh_absolute_transform();
+    children_.foreach ([](std::unique_ptr<WorldObject> &child) {
+        child->refresh_absolute_transform();
     });
 }
 
@@ -57,11 +56,11 @@ WorldObject::WorldObject()
 }
 
 WorldObject::~WorldObject() {
-    trace("WorldObjectのデストラクタ開始 components_: ", components_.elements());
+    trace("WorldObjectのデストラクタ開始 components_: ", components_.keys());
     // オブジェクトの寿命はコンポーネントの寿命より長い（コンポーネントのデストラクタでget_owner()が無効にならないようにする）
-    components_.foreach ([](auto, Component &comp) {
-        trace("component iteration ", &comp);
-        comp.erase();
+    components_.foreach ([](auto &comp) {
+        trace("component iteration ", comp->id);
+        comp->erase();
     });
     components_.flush();
 

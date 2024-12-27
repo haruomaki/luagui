@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Camera.hpp"
-#include "Draw.hpp"
 #include "Material.hpp"
 #include "ResourceUpdate.hpp"
+#include "WorldObject.hpp"
 #include "core.hpp"
 
 #include <algorithm>
@@ -11,7 +11,7 @@
 
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
 class StaticMesh : virtual public Resource {
-    friend class MeshObject;
+    friend class MeshComponent;
     friend struct MeshDrawManager;
 
   protected:
@@ -91,20 +91,20 @@ class Mesh : public StaticMesh, public ResourceUpdate {
         : StaticMesh(draw_mode, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
 };
 
-class MeshObject : virtual public WorldObject {
+class MeshComponent : public Component {
   public:
     StaticMesh &mesh;
     Material &material;
 
-    MeshObject(StaticMesh &mesh, Material *material = nullptr);
-    ~MeshObject() override;
+    MeshComponent(StaticMesh &mesh, Material *material = nullptr);
+    ~MeshComponent() override;
 };
 
 struct ModelMatricesObservation {
     vector<glm::mat4> model_matrices;
-    std::unordered_map<const MeshObject *, size_t> object_index_map;
-    std::vector<const MeshObject *> initial_list;
-    std::vector<const MeshObject *> delete_list;
+    std::unordered_map<const MeshComponent *, size_t> object_index_map;
+    std::vector<const MeshComponent *> initial_list;
+    std::vector<const MeshComponent *> delete_list;
 
     // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
     const glm::mat4 *matrices_raw = nullptr;
@@ -117,7 +117,7 @@ struct MeshDrawManager {
     // この行列キューごとに一回ドローコールを行う
     std::map<KeyType, ModelMatricesObservation> observations;
 
-    static inline KeyType key_from(const MeshObject *obj) {
+    static inline KeyType key_from(const MeshComponent *obj) {
         StaticMesh *mesh = &obj->mesh;
         const Material *material = &obj->material;
         const GL::ProgramObject *shader = &obj->material.shader;
@@ -125,29 +125,29 @@ struct MeshDrawManager {
         return key;
     }
 
-    void set_model_matrix(const MeshObject *obj) {
-        auto key = key_from(obj);
+    void set_model_matrix(const MeshComponent *mc) {
+        auto key = key_from(mc);
 
         if (observations.contains(key)) {
             auto &obj_ix_map = observations[key].object_index_map;
 
-            if (obj_ix_map.contains(obj)) {
+            if (obj_ix_map.contains(mc)) {
                 // すでに登録済みのメッシュオブジェクトの場合、ただちに書き換え
-                size_t index = obj_ix_map[obj];
-                const auto &model_matrix = obj->get_absolute_transform();
+                size_t index = obj_ix_map[mc];
+                const auto &model_matrix = mc->owner().get_absolute_transform();
                 observations[key].model_matrices[index] = model_matrix;
             } else {
                 // 新たなメッシュオブジェクトの場合、一旦initial_valuesに蓄えておく
-                observations[key].initial_list.emplace_back(obj);
+                observations[key].initial_list.emplace_back(mc);
             }
         } else {
             // そもそも初めてのkeyのオブジェクトだった場合、キーを追加してやはりinitial_valuesに蓄える
             observations[key] = ModelMatricesObservation{};
-            observations[key].initial_list.emplace_back(obj);
+            observations[key].initial_list.emplace_back(mc);
         }
     }
 
-    void delete_model_matrix(const MeshObject *obj) {
+    void delete_model_matrix(const MeshComponent *obj) {
         auto key = key_from(obj);
         assert(observations.contains(key)); // 一度も登録されていないキーを持つオブジェクトの削除要求
         observations[key].delete_list.push_back(obj);
@@ -173,16 +173,16 @@ struct MeshDrawManager {
                 auto queue_size = obj_ix_map.size();
                 obs.model_matrices = std::vector<glm::mat4>(queue_size); // モデル行列キュー再生成
                 size_t counter = 0;
-                for (auto &[obj, index] : obj_ix_map) {
-                    const auto &model_matrix = obj->get_absolute_transform();
+                for (auto &[mc, index] : obj_ix_map) {
+                    const auto &model_matrix = mc->owner().get_absolute_transform();
                     index = counter++;
                     obs.model_matrices[index] = model_matrix;
                 }
             }
 
             // 各キューを削除
-            obs.initial_list = std::vector<const MeshObject *>();
-            obs.delete_list = std::vector<const MeshObject *>();
+            obs.initial_list = std::vector<const MeshComponent *>();
+            obs.delete_list = std::vector<const MeshComponent *>();
         }
 
         // 使われなくなったモデル行列キューは削除する
@@ -214,7 +214,7 @@ struct MeshDrawManager {
         return vao;
     }
 
-    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const Camera &camera) {
+    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const CameraInterface &camera) {
         // シェーダを有効化
         const auto &shader = material.shader;
         shader.use();
@@ -260,7 +260,7 @@ struct MeshDrawManager {
         });
     }
 
-    void draw_observation(KeyType key, const Camera &camera) {
+    void draw_observation(KeyType key, const CameraInterface &camera) {
         auto &obs = observations[key];
         StaticMesh &mesh = *std::get<0>(key);
         const Material &material = *std::get<1>(key);
@@ -285,7 +285,7 @@ struct MeshDrawManager {
         draw_instanced(mesh, material, batch_vao, model_matrices.size(), camera);
     }
 
-    void draw_all_registered_objects(const Camera &camera) {
+    void draw_all_registered_objects(const CameraInterface &camera) {
         // マテリアルの優先度に基づいてキーをソート
         std::vector<KeyType> sorted_keys{};
         sorted_keys.reserve(observations.size());

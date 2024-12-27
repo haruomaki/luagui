@@ -1,19 +1,18 @@
 #pragma once
 
-#include "Window.hpp"
-
-class ProgramObject;
+#include "GUI.hpp"
+#include "Shader.hpp"
 
 struct Material : public Resource {
-    const GL::ProgramObject &shader;
+    const Shader &shader;
     int priority;
     glm::vec4 base_color;
     std::optional<GLuint> texture;
     double point_size;
     double line_width;
 
-    Material(const GL::ProgramObject *shader, int priority, const glm::vec4 &color, std::optional<GLuint> texture, double point_size, double line_width)
-        : shader(shader == nullptr ? *this->get_window().default_shader : *shader)
+    Material(const Shader *shader, int priority, const glm::vec4 &color, std::optional<GLuint> texture, double point_size, double line_width)
+        : shader(shader == nullptr ? *gui().resources.find<Shader>("default_shader") : *shader)
         , priority(priority)
         , base_color(color)
         , texture(texture)
@@ -23,7 +22,7 @@ struct Material : public Resource {
 };
 
 class MaterialBuilder {
-    const GL::ProgramObject *shader_ = nullptr;
+    const Shader *shader_ = nullptr;
     int priority_ = 0;
     glm::vec4 base_color_ = {1, 1, 1, 1};
     std::optional<GLuint> texture_ = std::nullopt;
@@ -40,7 +39,7 @@ class MaterialBuilder {
         , point_size_(src.point_size)
         , line_width_(src.line_width) {}
 
-    MaterialBuilder shader(const GL::ProgramObject &shader) {
+    MaterialBuilder shader(const Shader &shader) {
         this->shader_ = &shader;
         return *this;
     }
@@ -70,8 +69,8 @@ class MaterialBuilder {
         return *this;
     }
 
-    Material &build(Window &window) {
-        auto &material = window.append_resource<Material>(shader_, priority_, base_color_, texture_, point_size_, line_width_);
-        return material;
+    Material &build(GUI &gui) {
+        auto material = gui.resources.append<Material>(shader_, priority_, base_color_, texture_, point_size_, line_width_);
+        return material.get();
     }
 };

@@ -1,3 +1,6 @@
+#pragma once
+
+#include <GUI/GUI.hpp>
 #include <sol/sol.hpp>
 
 class LuaGUI {
