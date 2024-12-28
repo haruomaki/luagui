@@ -1,6 +1,7 @@
 #include "Camera.hpp"
 #include "Window.hpp"
 #include "World.hpp"
+#include <cassert>
 
 // カメラ優先度を初期設定するアルゴリズム。
 static int calc_default_priority(Window &window) {
@@ -53,6 +54,7 @@ glm::mat4 Camera::get_view_matrix() const {
     case Orthographic:
         return glm::inverse(owner().get_absolute_transform());
     }
+    assert(false && "投影モードが未知の値です。");
 }
 
 glm::mat4 Camera::get_projection_matrix() const {
