@@ -4,7 +4,8 @@
 GUI::GUI()
     : resources(*this)
     , resume_condition([this] {
-        return !this->windows.empty() && this->epoch() < 5;
+        return !this->windows.empty();
+        // return !this->windows.empty() && this->epoch() < 5;
     }) {
     // デフォルトシェーダの設定
     GL::ProgramObject pg{GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),

@@ -13,7 +13,7 @@ class Window : public GL::Window {
     GUI *gui_ = nullptr; // インスタンスが有効か無効かの目印
     using KeyArray = std::array<bool, 512>;
     KeyArray key_down_{}, key_up_{};
-    std::pair<double, double> last_cursor_ = {0, 0}, diff_ = {0, 0};
+    std::pair<double, double> last_cursor_ = cursor_pos(), diff_ = {0, 0};
 
     friend class GUI; // step()を呼ぶため
     // 毎フレーム一度だけ呼び出し、ウィンドウサイズの変更やキー・マウス入力を監視する。
