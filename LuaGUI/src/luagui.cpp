@@ -32,7 +32,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
     // C++側でウィンドウを作成し、Luaのグローバル変数に保持する
     print("ウィンドウ作成開始");
     GUI &gui = lua["__GUI"];
-    Window window(gui, width, height, title); // FIXME: 応急処置でget()
+    Window window(gui, width, height, title);
     print("ウィンドウ作成完了");
     lua["__CurrentWindow"] = &window;
 
@@ -103,4 +103,10 @@ LuaGUI::LuaGUI() {
     register_camera(lua);
     register_box2d(lua);
     register_text(lua);
+}
+
+LuaGUI::~LuaGUI() {
+    // ワールドの各物体はluaステートに依存している場合があるため、ワールドが先に消えることを保証する。
+    // NOTE: GUIのデストラクタで二重クリーンになってしまっていることには注意。瑕疵なく動くので黙殺。
+    cleanup();
 }

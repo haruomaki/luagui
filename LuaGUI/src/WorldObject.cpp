@@ -26,13 +26,13 @@ static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, 
         } else {
             // エラーが発生した
             sol::error err = result;
-            std::cerr << "Error in Lua coroutine: " << err.what() << std::endl;
+            std::cerr << "Error in Lua coroutine: " << err.what() << '\n';
             self.erase();
         }
         trace("[LuaGUI] UpdateComponent runner end");
     };
 
-    auto &uc = obj->add_component<UpdateComponent>(runner);
+    auto &uc = obj->add_component<UpdateComponent>(std::move(runner));
     uc.id = std::move(id);
     // print("add_update_componentおわり,", uc, ", ", uc->id);
     return &uc;
@@ -52,7 +52,7 @@ static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject 
     body_params.isBullet = tbl["isBullet"].get_or(false);
 
     auto pos = obj->get_absolute_position();
-    body_params.position = {pos.x, pos.y};
+    body_params.position = {.x = pos.x, .y = pos.y};
     body_params.sleepThreshold = 0.0005f; // スリープ状態を防ぐ
 
     auto &rbc = obj->add_component<RigidbodyComponent>(body_params);
@@ -91,6 +91,9 @@ void register_world_object(sol::state &lua) {
 
         "scale_prop",
         sol::property([](WorldObject *obj) { return obj->get_scale_prop(); }, [](WorldObject *obj, float scale) { obj->set_scale_prop(scale); }),
+
+        "id",
+        &WorldObject::id,
 
         "add_update_component",
         [&lua](WorldObject *obj, std::string id, sol::function f) { return add_update_component(lua, obj, std::move(id), std::move(f)); },

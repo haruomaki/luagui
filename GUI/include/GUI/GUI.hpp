@@ -20,6 +20,7 @@ class GUI : public GL::Context {
     BufferedSet<Window *> windows;
     ResourceManager resources;
     BufferedSet<std::function<void()> *> resource_updates;
+    std::function<bool()> resume_condition;
 
     GUI();
     ~GUI();
@@ -27,6 +28,9 @@ class GUI : public GL::Context {
     GUI &operator=(GUI &) = delete;
     GUI(GUI &&) = delete;
     GUI &operator=(GUI &&) = delete;
+
+    // ワールドとリソースを完全に削除する。
+    void cleanup();
 
     // メインループに制御を移す。
     template <typename F = void (*)()>
@@ -37,7 +41,7 @@ class GUI : public GL::Context {
         looping_ = true;
 
         // 描画のループ
-        while (!windows.empty()) {
+        while (resume_condition()) {
             epoch_++;
             trace("[mainloop] メインループ：", epoch_);
 
@@ -45,16 +49,7 @@ class GUI : public GL::Context {
             std::forward<F>(custom_routine)(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
             trace("[mainloop] ウィンドウ更新開始：", epoch_);
 
-            // リソースの更新処理
-            trace("[update] 《resource》->world");
-            this->resource_updates.foreach ([](const auto *update) {
-                (*update)();
-            });
-
             default_routine1();
-
-            // フラッシュ TODO: 場所はここでいい？
-            resource_updates.flush();
         }
 
         looping_ = false;

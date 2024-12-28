@@ -47,4 +47,7 @@ void World::master_physics() {
         }
         // print("衝突おわり");
     }
+
+    // TODO: テスト用なので削除
+    this->flush_components_children();
 }
