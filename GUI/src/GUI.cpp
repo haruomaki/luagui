@@ -4,7 +4,7 @@
 GUI::GUI()
     : resources(*this)
     , resume_condition([this] {
-        return !this->windows.empty();
+        return !this->windows.empty() && this->epoch() < 5;
     }) {
     // デフォルトシェーダの設定
     GL::ProgramObject pg{GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
@@ -49,6 +49,7 @@ void GUI::default_routine1() {
 
     // 各ワールドの更新処理
     trace("[update] resource->《world》");
+    print("<<<更新>>> epoch=", epoch());
     for (const auto &world : this->worlds_) {
         world->master_update();
     }
@@ -95,8 +96,6 @@ void GUI::default_routine1() {
     for (std::unique_ptr<World> &world : this->worlds_) {
         // 各種フラッシュ TODO: 場所はここでいい？
         world->draws.flush();
-        world->updates.flush();
-        world->rigidbodies.flush();
     }
 
     // ウィンドウのキー入力などを毎フレーム監視する。

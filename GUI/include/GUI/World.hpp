@@ -59,6 +59,7 @@ class World : public WorldObject {
 
     void master_update() {
         trace("World::master_update開始:", this);
+        updates.flush(); // フラッシュはここだけ
         this->updates.foreach ([&](const auto update) {
             (*update)();
         });

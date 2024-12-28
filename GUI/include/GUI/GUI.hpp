@@ -42,7 +42,6 @@ class GUI : public GL::Context {
 
         // 描画のループ
         while (resume_condition()) {
-            epoch_++;
             trace("[mainloop] メインループ：", epoch_);
 
             trace("[mainloop] カスタムルーチン開始：", epoch_);
@@ -50,6 +49,8 @@ class GUI : public GL::Context {
             trace("[mainloop] ウィンドウ更新開始：", epoch_);
 
             default_routine1();
+
+            epoch_++;
         }
 
         looping_ = false;

@@ -10,7 +10,7 @@ void World::master_physics() {
     b2world.Step(dt, 4);
 
     // 物理演算結果をWorldObjectに反映
-    rigidbody_components.flush(); // flushはここのみ？
+    rigidbody_components.flush(); // flushはここのみ
     rigidbody_components.foreach ([](RigidbodyComponent *rbc) {
         const auto physics_position = rbc->b2body.GetPosition();
         rbc->owner().position = {physics_position.x, physics_position.y, 0};
