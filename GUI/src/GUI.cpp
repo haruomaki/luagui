@@ -33,15 +33,6 @@ void GUI::default_routine1() {
     // 更新
     // --------------------
 
-    // ウィンドウのキー入力などを毎フレーム監視する。
-    // INFO: 場所はここでいいのか謎。キーアップダウンのために、poll_eventsの直前がいい？
-    windows.flush();
-    for (Window *window : windows) window->step();
-
-    // 受け取ったイベント（キーボードやマウス入力）を処理する
-    // キー押下の瞬間などを捉えるために、ユーザ処理よりも前に置く
-    poll_events();
-
     // 各ワールドの更新処理
     trace("[update] resource->《world》");
     for (const auto &world : this->worlds_) {
@@ -93,4 +84,14 @@ void GUI::default_routine1() {
         world->updates.flush();
         world->rigidbodies.flush();
     }
+
+    // ウィンドウのキー入力などを毎フレーム監視する。
+    // キーアップダウンを正確に処理するために、step()とpoll_events()をすぐ隣接させている。
+    // ウィンドウの削除処理があるため、ルーチンのできるだけ最後に置いている。
+    windows.flush();
+    for (Window *window : windows) window->step();
+
+    // 受け取ったイベント（キーボードやマウス入力）を処理する。
+    // キー押下の瞬間などを捉えるために、ユーザ処理の直前（間に描画を挟まず）に置く。
+    poll_events();
 }
