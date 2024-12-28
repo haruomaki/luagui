@@ -113,6 +113,12 @@ bool Window::alive() const { return gui_ != nullptr && GL::Window::alive(); }
 // }
 
 void Window::step() {
+    // 閉じるべきウィンドウは閉じる
+    if (should_close()) {
+        destroy();
+        return;
+    }
+
     // フレームバッファサイズを更新
     fbsize_cache = framebuffer_size();
 

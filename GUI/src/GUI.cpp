@@ -29,16 +29,6 @@ World &GUI::create_world() {
 }
 
 void GUI::default_routine1() {
-    // TODO: ウィンドウの削除処理をstepに移動
-    windows.flush();
-    windows.foreach ([&](Window *window) {
-        // 閉じるべきウィンドウは閉じる
-        if (window->should_close()) {
-            window->destroy();
-            return;
-        }
-    });
-
     // --------------------
     // 更新
     // --------------------
