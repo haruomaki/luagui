@@ -1,6 +1,7 @@
 ---@meta WorldObject
 
 ---@class WorldObject
+---@field id string オブジェクトのID
 ---@field position vec3 物体の位置
 ---@field scale_prop number 物体の幾何平均スケール
 WorldObject = {}

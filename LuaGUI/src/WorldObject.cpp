@@ -92,6 +92,9 @@ void register_world_object(sol::state &lua) {
         "scale_prop",
         sol::property([](WorldObject *obj) { return obj->get_scale_prop(); }, [](WorldObject *obj, float scale) { obj->set_scale_prop(scale); }),
 
+        "id",
+        &WorldObject::id,
+
         "add_update_component",
         [&lua](WorldObject *obj, std::string id, sol::function f) { return add_update_component(lua, obj, std::move(id), std::move(f)); },
 

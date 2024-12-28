@@ -37,6 +37,8 @@ class WorldObject {
         , world_(world) {}
 
   public:
+    std::string id;
+
     // 子孫ノードを生成するコンストラクタ
     // このコンストラクタを呼ぶ直前には必ずset_parent_staticを実行しておく
     WorldObject();
