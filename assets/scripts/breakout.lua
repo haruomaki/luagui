@@ -1,6 +1,6 @@
 -- ブロックの大きさ
-BlockHalfWidth = 0.01
-BlockHalfHeight = 0.005
+BlockHalfWidth = 0.1
+BlockHalfHeight = 0.05
 
 -- ステージの大きさ
 StageHW = 0.1

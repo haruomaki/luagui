@@ -17,10 +17,7 @@ void WorldObject::set_parent_static(WorldObject *parent) {
 void WorldObject::flush_components_children() {
     // trace("flush_childrenです:", this);
     components_.flush(); // コンポーネントとchildrenの順番はどっちでもいい？
-    auto errors = children_.flush();
-    for (auto *p : errors) {
-        warn("errors: ", p, " ", p->id);
-    }
+    children_.flush();
     children_.foreach ([](std::unique_ptr<WorldObject> &child) {
         child->flush_components_children();
     });
