@@ -29,6 +29,7 @@ World &GUI::create_world() {
 }
 
 void GUI::default_routine1() {
+    // TODO: ウィンドウの削除処理をstepに移動
     windows.flush();
     windows.foreach ([&](Window *window) {
         // 閉じるべきウィンドウは閉じる
@@ -42,6 +43,15 @@ void GUI::default_routine1() {
     // 更新
     // --------------------
 
+    // ウィンドウのキー入力などを毎フレーム監視する。
+    // INFO: 場所はここでいいのか謎。キーアップダウンのために、poll_eventsの直前がいい？
+    windows.flush();
+    for (Window *window : windows) window->step();
+
+    // 受け取ったイベント（キーボードやマウス入力）を処理する
+    // キー押下の瞬間などを捉えるために、ユーザ処理よりも前に置く
+    poll_events();
+
     // 各ワールドの更新処理
     trace("[update] resource->《world》");
     for (const auto &world : this->worlds_) {
@@ -52,11 +62,6 @@ void GUI::default_routine1() {
     for (const auto &world : this->worlds_) {
         world->master_physics();
     }
-
-    // ウィンドウのキー入力などを毎フレーム監視する。
-    // WARNING: 場所はここでいいのか謎。とりあえずマウス操作取得がうまく動作するのでここにした。
-    windows.flush();
-    for (Window *window : windows) window->step();
 
     // --------------------
     // 描画
@@ -92,10 +97,6 @@ void GUI::default_routine1() {
     // 後処理
     // -------------------
 
-    // 後処理は何もない？
-}
-
-void GUI::default_routine2() {
     for (std::unique_ptr<World> &world : this->worlds_) {
         // 各種フラッシュ TODO: 場所はここでいい？
         world->draws.flush();

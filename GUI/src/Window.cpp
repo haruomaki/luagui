@@ -54,6 +54,7 @@ Window &Window::operator=(Window &&other) noexcept {
         key_down_ = other.key_down_;
         key_up_ = other.key_up_;
         last_cursor_ = other.last_cursor_;
+        diff_ = other.diff_;
 
         // GUIに引っ越し届
         gui().windows.request_erase(&other);
@@ -118,5 +119,7 @@ void Window::step() {
     key_up_.fill(false);
 
     // カーソル位置を更新
-    last_cursor_ = cursor_pos();
+    const auto [x, y] = cursor_pos();
+    diff_ = {x - last_cursor_.first, y - last_cursor_.second};
+    last_cursor_ = {x, y};
 }

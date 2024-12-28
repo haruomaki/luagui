@@ -41,10 +41,6 @@ class GUI : public GL::Context {
             epoch_++;
             trace("[mainloop] メインループ：", epoch_);
 
-            // 受け取ったイベント（キーボードやマウス入力）を処理する
-            // キー押下の瞬間などを捉えるために、ユーザ処理よりも前に置く
-            poll_events();
-
             trace("[mainloop] カスタムルーチン開始：", epoch_);
             std::forward<F>(custom_routine)(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
             trace("[mainloop] ウィンドウ更新開始：", epoch_);
@@ -56,8 +52,6 @@ class GUI : public GL::Context {
             });
 
             default_routine1();
-
-            default_routine2();
 
             // フラッシュ TODO: 場所はここでいい？
             resource_updates.flush();
@@ -71,5 +65,4 @@ class GUI : public GL::Context {
 
     World &create_world();
     void default_routine1();
-    void default_routine2();
 };
