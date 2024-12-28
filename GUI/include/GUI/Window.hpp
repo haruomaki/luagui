@@ -41,7 +41,8 @@ class Window : public GL::Window {
     void destroy();
     // ウィンドウの削除要求をイベントキューに投げる。
     void close();
-    // TODO: is_valid追加
+    // インスタンスが有効かどうか（実際にウィンドウを管理しているか）調べる。
+    [[nodiscard]] bool alive() const;
 
     // 前フレームからのカーソルの移動差分を得る。
     [[nodiscard]] std::pair<double, double> cursor_diff() const { return diff_; }

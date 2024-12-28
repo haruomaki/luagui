@@ -90,6 +90,8 @@ void Window::close() {
     glfwSetWindowShouldClose(gwin(), GLFW_TRUE);
 }
 
+bool Window::alive() const { return gui_ != nullptr && GL::Window::alive(); }
+
 // void Window::routine() {
 //     if (glfwWindowShouldClose(gwin)) {
 //         this->destroy();
