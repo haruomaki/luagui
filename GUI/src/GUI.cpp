@@ -2,7 +2,10 @@
 #include "World.hpp"
 
 GUI::GUI()
-    : resources(*this) {
+    : resources(*this)
+    , resume_condition([this] {
+        return !this->windows.empty();
+    }) {
     // デフォルトシェーダの設定
     GL::ProgramObject pg{GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
                          GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))};

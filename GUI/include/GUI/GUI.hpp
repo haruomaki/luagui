@@ -20,6 +20,7 @@ class GUI : public GL::Context {
     BufferedSet<Window *> windows;
     ResourceManager resources;
     BufferedSet<std::function<void()> *> resource_updates;
+    std::function<bool()> resume_condition;
 
     GUI();
     ~GUI();
@@ -37,7 +38,7 @@ class GUI : public GL::Context {
         looping_ = true;
 
         // 描画のループ
-        while (!windows.empty()) {
+        while (resume_condition()) {
             epoch_++;
             trace("[mainloop] メインループ：", epoch_);
 
