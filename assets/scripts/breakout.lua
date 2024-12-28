@@ -33,7 +33,7 @@ local function block(parent, x, y)
         halfWidth = BlockHalfWidth,
         halfHeight = BlockHalfHeight,
         on_collision_enter = function(self, other)
-            print("ブロックにぶつかりました", other.index)
+            -- print("ブロックにぶつかりました", other.index)
             self.owner:erase()
         end
     })
@@ -104,7 +104,7 @@ run_window(800, 600, "ブロック崩し", function()
 
     -- 落下判定を作成
     sen({ -0.5, -0.07 }, { 0.5, -0.07 }, function(self, other)
-        printf("衝突しました！ %d,%d", self.index, other.index)
+        -- printf("衝突しました！ %d,%d", self.index, other.index)
         other.owner:erase()
     end)
 
