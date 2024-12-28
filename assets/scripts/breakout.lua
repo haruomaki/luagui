@@ -104,7 +104,7 @@ run_window(800, 600, "ブロック崩し", function()
 
     -- 落下判定を作成
     sen({ -0.5, -0.07 }, { 0.5, -0.07 }, function(self, other)
-        printf("衝突しました！ %d,%d (%p)", self.index, other.index, other.owner)
+        -- printf("衝突しました！ %d,%d (%p)", self.index, other.index, other.owner)
         other.owner:erase()
     end)
 
@@ -151,9 +151,10 @@ run_window(800, 600, "ブロック崩し", function()
 
     while true do
         -- ブロックを配置
-        local block_container = world:append_empty_child()
-        for i = 0, 5, 1 do
-            for j = 0, 9, 1 do
+        local prepre = world:append_empty_child()
+        local block_container = prepre:append_empty_child()
+        for i = 0, 0, 1 do
+            for j = 0, 0, 1 do
                 local mesh = block(block_container, -0.03 + 0.02 * i, 0.08 + 0.01 * j)
                 mesh.owner.id = string.format("(%d,%d)のブロック", i, j)
                 print(mesh.owner.id, mesh.owner)
