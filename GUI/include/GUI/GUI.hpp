@@ -45,16 +45,7 @@ class GUI : public GL::Context {
             std::forward<F>(custom_routine)(); // 削除されたウィンドウへのアクセスを避けるため、ウィンドウ処理よりも前に置く
             trace("[mainloop] ウィンドウ更新開始：", epoch_);
 
-            // リソースの更新処理
-            trace("[update] 《resource》->world");
-            this->resource_updates.foreach ([](const auto *update) {
-                (*update)();
-            });
-
             default_routine1();
-
-            // フラッシュ TODO: 場所はここでいい？
-            resource_updates.flush();
         }
 
         looping_ = false;

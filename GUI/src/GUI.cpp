@@ -33,6 +33,13 @@ void GUI::default_routine1() {
     // 更新
     // --------------------
 
+    // リソースの更新処理 TODO: 場所はどこがいい？
+    trace("[update] 《resource》->world");
+    resource_updates.flush();
+    for (const auto *update : this->resource_updates) {
+        (*update)();
+    }
+
     // 各ワールドの更新処理
     trace("[update] resource->《world》");
     for (const auto &world : this->worlds_) {
