@@ -31,6 +31,7 @@ Checks:
   - performance-*
   - portability-*
   - readability-*
+  - -readability-avoid-nested-conditional-operator # 三項演算子のネストを許可
   - -readability-isolate-declaration
   - -readability-magic-numbers #マジックナンバー
   - -readability-math-missing-parentheses # 足し算と掛け算の順序を明記しなくていい
