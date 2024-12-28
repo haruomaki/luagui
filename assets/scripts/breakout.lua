@@ -1,12 +1,16 @@
 -- ブロックの大きさ
-BlockHalfWidth = 0.1
-BlockHalfHeight = 0.05
+BlockHalfWidth = 0.01
+BlockHalfHeight = 0.005
 
 -- ステージの大きさ
 StageHW = 0.1
 
 -- バーの長さ
 BarHW = 0.02
+
+-- 同時衝突の際、現フレームで削除されたブロックを記録していく
+local ERASED_BLOCKS = {}
+
 
 ---丸を生成
 ---@return MeshComponent
@@ -33,8 +37,11 @@ local function block(parent, x, y)
         halfWidth = BlockHalfWidth,
         halfHeight = BlockHalfHeight,
         on_collision_enter = function(self, other)
-            -- print("ブロックにぶつかりました", other.index)
-            self.owner:erase()
+            -- 削除済みチェック。複数のボールが同時にぶつかったときに二重削除を防止する。
+            if not ERASED_BLOCKS[self.owner.id] then
+                ERASED_BLOCKS[self.owner.id] = true
+                self.owner:erase()
+            end
         end
     })
     return mesh
@@ -137,6 +144,9 @@ run_window(800, 600, "ブロック崩し", function()
         if GetKeyUp('Space') then
             bar_obj:get_component_by_id("ショット"):erase()
         end
+
+        -- 削除済みチェック用リストを毎フレーム初期化する
+        ERASED_BLOCKS = {}
     end))
 
     -- フリッパーを作成
@@ -151,13 +161,12 @@ run_window(800, 600, "ブロック崩し", function()
 
     while true do
         -- ブロックを配置
-        local prepre = world:append_empty_child()
-        local block_container = prepre:append_empty_child()
-        for i = 0, 0, 1 do
-            for j = 0, 0, 1 do
+        local block_container = world:append_empty_child()
+        for i = 0, 5, 1 do
+            for j = 0, 9, 1 do
                 local mesh = block(block_container, -0.03 + 0.02 * i, 0.08 + 0.01 * j)
                 mesh.owner.id = string.format("(%d,%d)のブロック", i, j)
-                print(mesh.owner.id, mesh.owner)
+                -- print(mesh.owner.id, mesh.owner)
             end
         end
 
