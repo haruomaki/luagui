@@ -15,10 +15,11 @@ class Window : public GL::Window {
     KeyArray key_down_{}, key_up_{};
     std::pair<double, double> last_cursor_ = cursor_pos();
 
-  public:
-    void update_routine();
-    void post_process();
+    friend class GUI; // step()を呼ぶため
+    // 毎フレーム一度だけ呼び出し、ウィンドウサイズの変更やキー・マウス入力を監視する。
+    void step();
 
+  public:
     // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。
     std::pair<int, int> fbsize_cache = {0, 0};
 

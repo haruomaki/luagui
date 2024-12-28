@@ -36,10 +36,11 @@ void GUI::default_routine1() {
             window->destroy();
             return;
         }
-
-        // フレームバッファサイズの更新
-        window->update_routine();
     });
+
+    // --------------------
+    // 更新
+    // --------------------
 
     // 各ワールドの更新処理
     trace("[update] resource->《world》");
@@ -51,6 +52,11 @@ void GUI::default_routine1() {
     for (const auto &world : this->worlds_) {
         world->master_physics();
     }
+
+    // ウィンドウのキー入力などを毎フレーム監視する。
+    // WARNING: 場所はここでいいのか謎。とりあえずマウス操作取得がうまく動作するのでここにした。
+    windows.flush();
+    for (Window *window : windows) window->step();
 
     // --------------------
     // 描画
@@ -86,10 +92,7 @@ void GUI::default_routine1() {
     // 後処理
     // -------------------
 
-    windows.flush();
-    windows.foreach ([](Window *window) {
-        window->post_process();
-    });
+    // 後処理は何もない？
 }
 
 void GUI::default_routine2() {

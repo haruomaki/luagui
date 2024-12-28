@@ -109,15 +109,10 @@ void Window::close() {
 //     trace("[mainloop] p5");
 // }
 
-void Window::update_routine() {
-    // // WorldObjectの更新 TODO: 一フレームごとに更新 vs setPosition()ごとに更新（重いかも）
-    // world_object_root_.refreshAbsolutePosition();
-
+void Window::step() {
     // フレームバッファサイズを更新
     fbsize_cache = framebuffer_size();
-}
 
-void Window::post_process() {
     // 今フレームのキーイベント発生状況を0にリセットする
     key_down_.fill(false);
     key_up_.fill(false);

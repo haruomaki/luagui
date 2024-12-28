@@ -6,6 +6,8 @@ int main() {
     Window window(gui, 600, 500, "めいん");
     World &main_world = gui.create_world();
 
+    // window.set_input_mode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     // バーテックスシェーダのコンパイル
     auto vsh_string = load_string("assets/shaders/default.vsh");
     auto vsh_id = GL::create_shader(GL_VERTEX_SHADER, vsh_string);
