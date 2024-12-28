@@ -104,3 +104,9 @@ LuaGUI::LuaGUI() {
     register_box2d(lua);
     register_text(lua);
 }
+
+LuaGUI::~LuaGUI() {
+    // ワールドの各物体はluaステートに依存している場合があるため、ワールドが先に消えることを保証する。
+    // NOTE: GUIのデストラクタで二重クリーンになってしまっていることには注意。瑕疵なく動くので黙殺。
+    cleanup();
+}

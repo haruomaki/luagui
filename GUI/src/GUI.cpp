@@ -19,9 +19,13 @@ GUI::GUI()
 
 GUI::~GUI() {
     info("GUIのデストラクタ");
-    this->resources.clear(); // resource_updatesが消える前にResourceUpdateのデストラクタを呼ぶ
-    this->worlds_.clear();   // key_callbacksが消える前にKeyCallbackObjectが消えないといけない
+    cleanup(); // ワールド本体とGUI（やその子クラス）のメンバが相互依存していたとき、ワールドの方が先に消えることを明示する。
     info("GUIのデストラクタおわり");
+}
+
+void GUI::cleanup() {
+    this->resources.clear();
+    this->worlds_.clear();
 }
 
 World &GUI::create_world() {

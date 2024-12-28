@@ -9,6 +9,7 @@ class LuaGUI : public GUI {
     sol::state lua;
 
     LuaGUI();
+    ~LuaGUI();
 
     void run(const std::string &filename) {
         print("LuaGUIのrun開始");

@@ -12,9 +12,9 @@ UpdateComponent::UpdateComponent(const std::function<void(UpdateComponent &)> &f
 }
 
 UpdateComponent::~UpdateComponent() {
-    print("UpdateComponentのデストラクタです。");
-    func_ = [] {};
-    print("func_解放");
+    // print("UpdateComponentのデストラクタです。");
+    // func_ = [] {};
+    // print("func_解放");
     if (category_ == "Update") {
         world().updates.request_erase(&this->func_);
     } else if (category_ == "Draw") {

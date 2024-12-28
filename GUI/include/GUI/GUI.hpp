@@ -29,6 +29,9 @@ class GUI : public GL::Context {
     GUI(GUI &&) = delete;
     GUI &operator=(GUI &&) = delete;
 
+    // ワールドとリソースを完全に削除する。
+    void cleanup();
+
     // メインループに制御を移す。
     template <typename F = void (*)()>
     void mainloop(F &&custom_routine = [] {}) {
