@@ -92,6 +92,13 @@ void Window::close() {
 
 bool Window::alive() const { return gui_ != nullptr && GL::Window::alive(); }
 
+std::pair<double, double> Window::cursor_diff() const {
+    // HACK: ウィンドウ作成直後、一部環境でマウスカーソルの位置が一瞬おかしくなるという現象が治せないため、苦肉の策で最初の数フレームを飛ばすことにする。
+    // https://www.reddit.com/r/opengl/comments/l1iufq/glfwgetcursorpos_bug/
+    // https://github.com/glfw/glfw/issues/1523
+    return (gui().epoch() < 3) ? std::make_pair(0., 0.) : diff_;
+}
+
 // void Window::routine() {
 //     if (glfwWindowShouldClose(gwin)) {
 //         this->destroy();

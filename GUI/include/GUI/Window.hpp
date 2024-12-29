@@ -46,7 +46,7 @@ class Window : public GL::Window {
     [[nodiscard]] bool alive() const;
 
     // 前フレームからのカーソルの移動差分を得る。
-    [[nodiscard]] std::pair<double, double> cursor_diff() const { return diff_; }
+    [[nodiscard]] std::pair<double, double> cursor_diff() const;
 
     // 現在フレームにおける、キー変更イベント（押した）の有無を表す
     [[nodiscard]] const KeyArray &key_down() const { return key_down_; }
