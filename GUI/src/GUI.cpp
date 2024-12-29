@@ -25,8 +25,8 @@ GUI::~GUI() {
 }
 
 void GUI::cleanup() {
+    this->worlds_.clear(); // リソースよりも前に解放する。
     this->resources.clear();
-    this->worlds_.clear();
 }
 
 World &GUI::create_world() {

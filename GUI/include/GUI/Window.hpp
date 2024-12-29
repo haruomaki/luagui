@@ -2,6 +2,7 @@
 
 #include "Resource.hpp"
 #include <SumiGL/Window.hpp>
+#include <array>
 
 class GUI;
 struct CameraInterface;
