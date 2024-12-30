@@ -15,7 +15,7 @@ class LuaGUI : public GUI {
 
     void run(const std::string &filename) {
         print("LuaGUIのrun開始");
-        lua.script_file(filename);
+        lua.script(storage.get_text(filename));
         print("LuaGUIのrun終了");
     }
 };

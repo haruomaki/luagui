@@ -93,10 +93,10 @@ LuaGUI::LuaGUI() {
     lua["package"]["path"] = lua["package"]["path"].get<std::string>() + ";./assets/scripts/?.lua";
 
     // コルーチンまわりの関数を読み込み
-    lua.script_file("assets/scripts/coroutines.lua");
+    lua.script(storage.get_text("assets/scripts/coroutines.lua"));
 
     // その他ユーティリティ関数などを読み込み
-    lua.script_file("assets/scripts/misc.lua");
+    lua.script(storage.get_text("assets/scripts/misc.lua"));
 
     lua.set_function("run_window", [this](int width, int height, const std::string &title, sol::function func) {
         run_window(this->lua, width, height, title, std::move(func));

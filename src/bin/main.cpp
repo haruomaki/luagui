@@ -8,20 +8,6 @@ int main() {
     Window window(gui, 600, 500, "めいん");
     World &main_world = gui.create_world();
 
-    // window.set_input_mode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    // バーテックスシェーダのコンパイル
-    // FIXME: default.vshを消してしまったので動かない
-    auto vsh_string = storage.get_text("assets/shaders/default.vsh");
-    auto vsh_id = GL::create_shader(GL_VERTEX_SHADER, vsh_string);
-
-    // フラグメントシェーダのコンパイル
-    auto fsh_string = storage.get_text("assets/shaders/default.fsh");
-    auto fsh_id = GL::create_shader(GL_FRAGMENT_SHADER, fsh_string);
-
-    auto main_shader = GL::ProgramObject{vsh_id, fsh_id};
-
-    // FIXME: cursor_diffを使うようにしてからガクガクになってしまった
     auto &camera = mobile_normal_camera(main_world, window);
     auto &cobj = *camera.owner().get_parent();
     cobj.position = {0, 0, 1000};
