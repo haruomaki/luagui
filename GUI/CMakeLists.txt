@@ -27,10 +27,6 @@ target_include_directories(GUI SYSTEM PRIVATE ${PNG_INCLUDE_DIRS}) # SYSTEMを�
 target_link_libraries(GUI PRIVATE ${PNG_LIBRARIES})
 # message("libpng: ${PNG_FOUND} ${PNG_INCLUDE_DIRS} ${PNG_LIBRARIES}")
 
-# FuriType（FreeTypeのラッパー）
-add_subdirectory(furitype)
-target_link_libraries(GUI PUBLIC furitype)
-
 # Launchbox（マルチメディア読み書き＆アセット埋め込み）
 add_subdirectory(lunchbox)
 target_link_libraries(GUI PUBLIC lunchbox)

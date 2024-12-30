@@ -4,9 +4,6 @@
 [submodule "GUI/box2d"]
 	path = GUI/box2d
 	url = https://github.com/erincatto/box2d.git
-[submodule "GUI/furitype"]
-	path = GUI/furitype
-	url = git@codeberg.org:haruomaki/furitype.git
 [submodule "GUI/sumigl"]
 	path = GUI/sumigl
 	url = git@codeberg.org:haruomaki/sumigl.git
