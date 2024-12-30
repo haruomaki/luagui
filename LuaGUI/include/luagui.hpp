@@ -9,6 +9,7 @@ class LuaGUI : public GUI {
   public:
     sol::state lua;
     lunchbox::Storage storage;
+    OpenAL::Context openal_ctx;
 
     LuaGUI();
     ~LuaGUI();

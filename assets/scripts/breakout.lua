@@ -159,6 +159,13 @@ run_window(800, 600, "ブロック崩し", function()
     -- flipper_right_rb.angular_velocity = -4
 
 
+    -- HACK: テスト音声を再生してみる
+    local music = load_music("assets/audio/テスト音声.wav")
+    print(music)
+    local source = world:add_soundsource_component(music)
+    source:play()
+
+
     while true do
         -- ブロックを配置
         local block_container = world:append_empty_child()
