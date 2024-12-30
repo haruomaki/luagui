@@ -17,7 +17,8 @@ Font::Font(const std::string &font_path)
     freetype::Context ft;
 
     // フォントを読み込む
-    FT_Face face = ft.load_font(font_path);
+    auto wrap = ft.load_font(font_path);
+    FT_Face face = wrap.get();
 
     // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
     FT_Set_Pixel_Sizes(face, 0, 48);
@@ -58,10 +59,6 @@ Font::Font(const std::string &font_path)
             static_cast<unsigned int>(face->glyph->advance.x)};
         characters_.insert(std::pair<char, Character>(c, character));
     }
-
-    // FreeTypeのリソースを解放
-    // TODO: faceの自動解放
-    FT_Done_Face(face);
 
     this->vbo_ = GL::VertexBuffer(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     this->vao_.bind([&] {
