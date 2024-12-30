@@ -28,7 +28,9 @@ int main() {
     credit_text.owner().set_position({200, 400, 1});
     credit_text.owner().set_scale_one(2000);
 
-    GLuint cat_texture = load_texture("assets/images/cat.raw");
+    // GLuint cat_texture = load_texture("assets/images/cat.raw");
+    auto img = storage.get_image("assets/images/ピンクレンガ.png");
+    GLuint cat_texture = create_texture(img.width, img.height, img.channels, img.pixels.get());
     Material &cat_material = MaterialBuilder().texture(cat_texture).build(gui);
 
     auto &gon = new_mesh(gui, GL_TRIANGLE_FAN, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},
