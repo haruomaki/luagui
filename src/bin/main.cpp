@@ -3,6 +3,7 @@
 #include <lunchbox.hpp>
 
 int main() {
+    lunchbox::Storage storage;
     GUI gui;
     Window window(gui, 600, 500, "めいん");
     World &main_world = gui.create_world();
@@ -10,11 +11,12 @@ int main() {
     // window.set_input_mode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // バーテックスシェーダのコンパイル
-    auto vsh_string = load_string("assets/shaders/default.vsh");
+    // FIXME: default.vshを消してしまったので動かない
+    auto vsh_string = storage.get_text("assets/shaders/default.vsh");
     auto vsh_id = GL::create_shader(GL_VERTEX_SHADER, vsh_string);
 
     // フラグメントシェーダのコンパイル
-    auto fsh_string = load_string("assets/shaders/default.fsh");
+    auto fsh_string = storage.get_text("assets/shaders/default.fsh");
     auto fsh_id = GL::create_shader(GL_FRAGMENT_SHADER, fsh_string);
 
     auto main_shader = GL::ProgramObject{vsh_id, fsh_id};
@@ -26,9 +28,12 @@ int main() {
     cobj.rotate = ANGLE_Y(M_PIf);
     cobj.scale = 2000; // 速度調整
 
-    lunchbox::Storage storage;
+    auto text_shader = GL::ProgramObject{
+        GL::create_shader(GL_VERTEX_SHADER, storage.get_text("assets/shaders/font.vsh")),
+        GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("assets/shaders/font.fsh"))};
+
     auto font = storage.get_font("assets/fonts/main.ttf");
-    auto &migmix_font = gui.resources.append<Font>(font).get();
+    auto &migmix_font = gui.resources.append<Font>(std::move(text_shader), font).get();
     auto &sample_text = main_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = main_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
 

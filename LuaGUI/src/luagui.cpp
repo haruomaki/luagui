@@ -40,9 +40,11 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 
     // デフォルトのフォントを生成
     lunchbox::Storage &storage = lua["__STORAGE"];
+    auto text_shader = GL::ProgramObject{
+        GL::create_shader(GL_VERTEX_SHADER, storage.get_text("assets/shaders/font.vsh")),
+        GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("assets/shaders/font.fsh"))};
     auto font = storage.get_font("assets/fonts/main.ttf");
-
-    auto &default_font = gui.resources.append<Font>(font).get();
+    auto &default_font = gui.resources.append<Font>(std::move(text_shader), font).get();
     lua["__CurrentFont"] = &default_font;
 
     bool coroutine_finished = false;

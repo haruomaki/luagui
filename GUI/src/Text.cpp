@@ -9,10 +9,8 @@ DEFINE_RUNTIME_ERROR(FreeTypeException);
 // NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
-Font::Font(const freetype::Face &ft_face)
-    : shader_(GL::ProgramObject{
-          GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
-          GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))}) {
+Font::Font(GL::ProgramObject &&shader, const freetype::Face &ft_face)
+    : shader_(std::move(shader)) {
     // フォントを読み込む
     FT_Face face = ft_face.get();
 

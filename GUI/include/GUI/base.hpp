@@ -1,9 +1,9 @@
 #pragma once
 
-#include <fstream>
 #include <functional> // 関数型 std::function
-#include <sstream>    // 文字列のストリーム
-#include <stdexcept>  // 例外はとりあえずこれ std::runime_error
+#include <iostream>
+#include <sstream>   // 文字列のストリーム
+#include <stdexcept> // 例外はとりあえずこれ std::runime_error
 
 using std::ostream, std::stringstream, std::vector, std::pair, std::string, std::cout, std::cerr, std::endl, std::function;
 
@@ -44,19 +44,6 @@ inline std::vector<std::string> split(const std::string &str, const std::string 
     class name : public std::runtime_error { \
         using runtime_error::runtime_error;  \
     }
-
-// ファイルから文字列を読み込む
-inline string load_string(const string &path) {
-    std::ifstream file(path);
-    if (!file.is_open()) {
-        cerr << "Failed to open shader file: " << path << '\n';
-        return "";
-    }
-    stringstream ss;
-    ss << file.rdbuf();
-    file.close();
-    return ss.str();
-}
 
 auto relu(const auto &x) { return std::max(x, 0); }
 

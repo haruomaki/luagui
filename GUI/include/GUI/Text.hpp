@@ -24,7 +24,7 @@ class Font : public Resource {
     friend class Text;
 
   public:
-    Font(const freetype::Face &ft_face);
+    Font(GL::ProgramObject &&shader, const freetype::Face &ft_face);
 };
 
 class Text : public UpdateComponent {
