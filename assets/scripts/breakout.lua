@@ -103,7 +103,7 @@ run_window(800, 600, "ブロック崩し", function()
     supercamera_2d("zoom")
     __CurrentWorld = world
 
-    text_world:child_text("mochi-mochi panic", { position = { 0, 0 } })
+    text_world:child_text("MAYO Cheeze", { position = { 0, 0 } })
     text_world:child_text("mochi-mochi panic", { position = { -0.05, 0.02 } })
 
     -- 床と壁の剛体を作成
