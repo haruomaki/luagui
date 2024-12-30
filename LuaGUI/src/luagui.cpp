@@ -89,9 +89,6 @@ LuaGUI::LuaGUI() {
         sol::lib::package,
         sol::lib::coroutine);
 
-    // requireで検索するパスを追加
-    lua["package"]["path"] = lua["package"]["path"].get<std::string>() + ";./assets/scripts/?.lua";
-
     // コルーチンまわりの関数を読み込み
     lua.script(storage.get_text("assets/scripts/coroutines.lua"));
 
