@@ -1,5 +1,5 @@
 # ビルド方法
-GLEW, glm, libpng, FreeType, Luaが必要。
+GLEW, glm, FreeType, Luaが必要。
 ```bash
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_CXX_COMPILER:FILEPATH=clang++ -B ./build -G "Ninja Multi-Config"
 cmake --build build --target main  # ビルド

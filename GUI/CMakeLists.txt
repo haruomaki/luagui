@@ -21,12 +21,6 @@ target_compile_options(GUI PRIVATE ${WARNINGS})
 add_subdirectory(sumigl)
 target_link_libraries(GUI PUBLIC sumigl)
 
-# libpng
-find_package(PNG REQUIRED)
-target_include_directories(GUI SYSTEM PRIVATE ${PNG_INCLUDE_DIRS}) # SYSTEMを指定して警告対象から除外
-target_link_libraries(GUI PRIVATE ${PNG_LIBRARIES})
-# message("libpng: ${PNG_FOUND} ${PNG_INCLUDE_DIRS} ${PNG_LIBRARIES}")
-
 # Launchbox（マルチメディア読み書き＆アセット埋め込み）
 add_subdirectory(lunchbox)
 target_link_libraries(GUI PUBLIC lunchbox)

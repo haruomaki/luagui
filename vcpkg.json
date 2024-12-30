@@ -3,7 +3,6 @@
   "dependencies": [
     "freetype",
     "glew",
-    "libpng",
     "lua",
     "glm",
     "physfs",
