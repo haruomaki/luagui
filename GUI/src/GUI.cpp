@@ -1,6 +1,42 @@
 #include "GUI.hpp"
 #include "World.hpp"
 
+static const char *const DEFAULT_VSH = R"(
+#version 330 core
+
+in vec3 position;
+in vec2 uv;
+in vec4 color;
+in mat4 instanceModelMatrix;
+out vec2 vuv;
+out vec4 vColor;
+// uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
+void main(void){
+    gl_Position = projectionMatrix * viewMatrix * instanceModelMatrix * vec4(position, 1.0);
+    vuv = uv;
+    vColor = color;
+}
+)";
+
+static const char *const DEFAULT_FSH = R"(
+varying vec2 vuv;
+uniform sampler2D texture;
+uniform bool is_tex;
+uniform vec4 baseColor;
+varying vec4 vColor;
+
+void main(void){
+    if (is_tex) {
+        gl_FragColor = texture2D(texture, vuv);
+    } else {
+        gl_FragColor = vColor * baseColor;
+    }
+}
+)";
+
 GUI::GUI()
     : resources(*this)
     , resume_condition([this] {
@@ -8,8 +44,8 @@ GUI::GUI()
         // return !this->windows.empty() && this->epoch() < 5;
     }) {
     // デフォルトシェーダの設定
-    GL::ProgramObject pg{GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/default.vsh")),
-                         GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/default.fsh"))};
+    GL::ProgramObject pg{GL::create_shader(GL_VERTEX_SHADER, DEFAULT_VSH),
+                         GL::create_shader(GL_FRAGMENT_SHADER, DEFAULT_FSH)};
     auto default_shader = this->resources.append<Shader>(std::move(pg));
     default_shader.get().name = "default_shader";
 
