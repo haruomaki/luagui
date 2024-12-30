@@ -25,7 +25,7 @@ Font::Font(const freetype::Face &ft_face)
     for (unsigned char c = 0; c < 128; c++) {
         // load character glyph
         if (FT_Load_Char(face, c, FT_LOAD_RENDER) != 0) {
-            std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
+            std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << '\n';
             continue;
         }
         // generate texture

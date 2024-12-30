@@ -1,5 +1,6 @@
 #include <SumiGL/Texture.hpp>
 #include <gui.hpp>
+#include <lunchbox.hpp>
 
 int main() {
     GUI gui;
@@ -25,12 +26,16 @@ int main() {
     cobj.rotate = ANGLE_Y(M_PIf);
     cobj.scale = 2000; // 速度調整
 
-    auto &migmix_font = gui.resources.append<Font>().get();
+    lunchbox::Storage storage;
+    auto font = storage.get_font("assets/fonts/main.ttf");
+    auto &migmix_font = gui.resources.append<Font>(font).get();
     auto &sample_text = main_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = main_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
 
     sample_text.owner().set_position({-200, 50, 200});
+    sample_text.owner().set_scale_one(2000);
     credit_text.owner().set_position({200, 400, 1});
+    credit_text.owner().set_scale_one(2000);
 
     GLuint cat_texture = load_texture("assets/images/cat.raw");
     Material &cat_material = MaterialBuilder().texture(cat_texture).build(gui);

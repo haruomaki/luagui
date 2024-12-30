@@ -1,12 +1,14 @@
 // FIXME: 正確な寸法に修正したのに合わせ、文字サイズ要再調整。
 
 #include <gui.hpp>
+#include <lunchbox.hpp>
 
 static float f(float x) {
     return 3 * std::sin(x);
 }
 
 int main() {
+    lunchbox::Storage storage;
     constexpr int width = 600, height = 500;
     GUI gui;
     Window window(gui, width, height, "ウィンドウタイトル");
@@ -29,7 +31,8 @@ int main() {
     int points_num = 100;
 
     // 文字の表示
-    auto &migmix_font = gui.resources.append<Font>().get();
+    auto font = storage.get_font("assets/fonts/main.ttf");
+    auto &migmix_font = gui.resources.append<Font>(font).get();
     auto &sample_text = ui_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = ui_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
     sample_text.owner().position = {0.005, -0.02, 0};

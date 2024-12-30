@@ -39,8 +39,9 @@ static void run_window(sol::state &lua, int width, int height, const std::string
     debug(gui.dpi());
 
     // デフォルトのフォントを生成
-    freetype::Context ft_ctx;
-    auto font = ft_ctx.load_font("assets/fonts/main.ttf");
+    lunchbox::Storage &storage = lua["__STORAGE"];
+    auto font = storage.get_font("assets/fonts/main.ttf");
+
     auto &default_font = gui.resources.append<Font>(font).get();
     lua["__CurrentFont"] = &default_font;
 
@@ -76,6 +77,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 LuaGUI::LuaGUI() {
     // print("LuaGUIのコンストラクタ");
     lua["__GUI"] = static_cast<GUI *>(this);
+    lua["__STORAGE"] = &this->storage;
 
     lua.open_libraries(
         sol::lib::base,
