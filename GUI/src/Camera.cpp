@@ -55,6 +55,7 @@ glm::mat4 Camera::get_view_matrix() const {
         return glm::inverse(owner().get_absolute_transform());
     }
     assert(false && "投影モードが未知の値です。");
+    return {1.0f}; // 適当なデフォルトの戻り値でGCCの警告を抑制
 }
 
 glm::mat4 Camera::get_projection_matrix() const {
