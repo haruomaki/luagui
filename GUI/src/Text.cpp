@@ -9,16 +9,12 @@ DEFINE_RUNTIME_ERROR(FreeTypeException);
 // NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
-Font::Font(const std::string &font_path)
+Font::Font(const freetype::Face &ft_face)
     : shader_(GL::ProgramObject{
           GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
           GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))}) {
-    // FreeTypeを初期化
-    freetype::Context ft;
-
     // フォントを読み込む
-    auto wrap = ft.load_font(font_path);
-    FT_Face face = wrap.get();
+    FT_Face face = ft_face.get();
 
     // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
     FT_Set_Pixel_Sizes(face, 0, 48);

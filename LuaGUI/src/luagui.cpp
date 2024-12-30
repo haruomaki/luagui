@@ -39,7 +39,9 @@ static void run_window(sol::state &lua, int width, int height, const std::string
     debug(gui.dpi());
 
     // デフォルトのフォントを生成
-    auto &default_font = gui.resources.append<Font>().get();
+    freetype::Context ft_ctx;
+    auto font = ft_ctx.load_font("assets/fonts/main.ttf");
+    auto &default_font = gui.resources.append<Font>(font).get();
     lua["__CurrentFont"] = &default_font;
 
     bool coroutine_finished = false;

@@ -3,6 +3,7 @@
 #include "Resource.hpp"
 #include "Update.hpp"
 #include "graphical_base.hpp"
+#include <Lunchbox/core/FreeType.hpp>
 #include <SumiGL/Shader.hpp>
 #include <map>
 
@@ -23,7 +24,7 @@ class Font : public Resource {
     friend class Text;
 
   public:
-    Font(const std::string &font_path = "assets/fonts/main.ttf");
+    Font(const freetype::Face &ft_face);
 };
 
 class Text : public UpdateComponent {
