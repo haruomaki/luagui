@@ -86,7 +86,7 @@ void GUI::default_routine1() {
 
     // 各ワールドの更新処理
     trace("[update] resource->《world》");
-    print("<<<更新>>> epoch=", epoch());
+    // print("<<<更新>>> epoch=", epoch());
     for (const auto &world : this->worlds_) {
         world->master_update();
     }

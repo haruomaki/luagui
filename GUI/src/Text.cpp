@@ -1,10 +1,8 @@
 #include "Text.hpp"
 #include "Camera.hpp"
 #include "World.hpp"
+#include <Lunchbox/core/FreeType.hpp>
 #include <SumiGL/Shader.hpp>
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
 
 DEFINE_RUNTIME_ERROR(FreeTypeException);
 
@@ -16,16 +14,10 @@ Font::Font(const std::string &font_path)
           GL::create_shader(GL_VERTEX_SHADER, load_string("assets/shaders/font.vsh")),
           GL::create_shader(GL_FRAGMENT_SHADER, load_string("assets/shaders/font.fsh"))}) {
     // FreeTypeを初期化
-    FT_Library ft;
-    if (FT_Init_FreeType(&ft) != 0) {
-        throw FreeTypeException("ERROR::FREETYPE: Could not init FreeType Library");
-    }
+    freetype::Context ft;
 
     // フォントを読み込む
-    FT_Face face;
-    if (FT_New_Face(ft, font_path.c_str(), 0, &face) != 0) {
-        throw FreeTypeException("ERROR::FREETYPE: Failed to load font");
-    }
+    FT_Face face = ft.load_font(font_path);
 
     // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
     FT_Set_Pixel_Sizes(face, 0, 48);
@@ -68,8 +60,8 @@ Font::Font(const std::string &font_path)
     }
 
     // FreeTypeのリソースを解放
+    // TODO: faceの自動解放
     FT_Done_Face(face);
-    FT_Done_FreeType(ft);
 
     this->vbo_ = GL::VertexBuffer(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     this->vao_.bind([&] {

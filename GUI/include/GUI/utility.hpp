@@ -118,7 +118,6 @@ inline Camera &mobile_normal_camera(WorldObject &parent, Window &window) { // NO
         }
 
         auto [dx, dy] = window.cursor_diff();
-        debug(dx, dy);
         body.rotate *= ANGLE_Y(-angle_speed * float(dx) * 0.2f);
         head.rotate *= ANGLE_X(angle_speed * float(dy) * 0.2f);
     });
