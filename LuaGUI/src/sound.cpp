@@ -1,7 +1,7 @@
 #include "sound.hpp"
 #include <GUI/GUI.hpp>
-#include <GUI/SoundSource.hpp>
 #include <GUI/WorldObject.hpp>
+#include <GUI/sound.hpp>
 #include <lunchbox.hpp>
 
 void register_sound(sol::state &lua) {

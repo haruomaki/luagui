@@ -16,6 +16,7 @@ int main() {
 
     // 再生
     source.play();
+    source.set_gain(1); // 音量調節も可能
     std::cout << "再生中...\n";
 
     // 再生が終了するまで待機

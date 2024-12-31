@@ -1,9 +1,9 @@
 #include "WorldObject.hpp"
 #include <GUI/Mesh.hpp>
 #include <GUI/Rigidbody.hpp>
-#include <GUI/SoundSource.hpp>
 #include <GUI/Update.hpp>
 #include <GUI/WorldObject.hpp>
+#include <GUI/sound.hpp>
 
 static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, std::string id, sol::function f) {
     // fをコルーチンとして毎フレーム実行し、コルーチンが終了したらコンポーネントも削除する
