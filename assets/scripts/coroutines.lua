@@ -26,6 +26,16 @@ function Wait(seconds, action)
     end
 end
 
+---指定の関数がtrueを返す限り待ち続ける
+---@param condition fun(): boolean
+function WaitWhile(condition)
+    while condition() do
+        coroutine.yield()
+    end
+end
+
+---指定の関数がfalseを返す限り待ち続ける
+---@param condition fun(): boolean
 function WaitUntil(condition)
     while not condition() do
         coroutine.yield()

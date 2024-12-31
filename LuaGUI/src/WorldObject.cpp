@@ -1,6 +1,7 @@
 #include "WorldObject.hpp"
 #include <GUI/Mesh.hpp>
 #include <GUI/Rigidbody.hpp>
+#include <GUI/SoundSource.hpp>
 #include <GUI/Update.hpp>
 #include <GUI/WorldObject.hpp>
 
@@ -63,6 +64,10 @@ static sol::object get_component(sol::state &lua, WorldObject *obj, const std::s
     if (component_type == "Rigidbody") {
         auto *rbc = obj->get_component<RigidbodyComponent>();
         return sol::make_object(lua, rbc);
+    }
+    if (component_type == "SoundSource") {
+        auto *ss = obj->get_component<SoundSource>();
+        return sol::make_object(lua, ss);
     }
     return sol::nil;
 }

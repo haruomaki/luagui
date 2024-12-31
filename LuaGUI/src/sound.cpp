@@ -12,6 +12,7 @@ void register_sound(sol::state &lua) {
     lua.new_usertype<SoundSource>(
         "SoundSource",
         "play", [](SoundSource *source) { source->play(); },
+        "is_playing", [](SoundSource *source) -> bool { return source->is_playing(); },
         sol::base_classes, sol::bases<Component>());
 
     lua.set_function("load_music", [&lua](const std::string &file_path) -> Music * {

@@ -18,3 +18,7 @@ function WorldObject:add_soundsource_component(music) end
 
 ---音声を再生する。
 function SoundSource:play() end
+
+---音声が再生中かどうか調べる。
+---@return boolean
+function SoundSource:is_playing() end
