@@ -12,15 +12,24 @@ class Music : public Resource, public OpenAL::Buffer {
         : OpenAL::Buffer(sound.wave, sound.channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, sound.samplerate) {}
 };
 
-class SoundSource : public Component, public OpenAL::Source {
+class AudioManager;
+
+// AudioManagerと密結合する。
+// 音声の追加や削除、音量調整のタイミングをフックして全体音量等を即座に調整するため。
+class SoundSource : public Component, OpenAL::Source {
+    friend class AudioManager; // OpenAL::Sourceのメソッドに触れるように
+
   public:
     SoundSource(const Music &music);
     ~SoundSource() override;
+
+    void play() { OpenAL::Source::play(); }
+    bool is_playing() { return OpenAL::Source::is_playing(); }
 };
 
 class AudioManager {
   public:
-    BufferedSet<SoundSource *> sources; // 管理対象のSource一覧
+    BufferedSet<SoundSource *> sources; // 管理対象のSource一覧 INFO: Bufferedである必要は無いけど念のため。
     float master_volume = 1.0f;         // 全体の最大音量
 
     AudioManager() = default;

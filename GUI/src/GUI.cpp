@@ -96,9 +96,6 @@ void GUI::default_routine1() {
         world->master_physics();
     }
 
-    // 音量調整
-    audio.adjust_overall_gain();
-
     // --------------------
     // 描画
     // --------------------
