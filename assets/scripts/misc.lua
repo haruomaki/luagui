@@ -96,3 +96,15 @@ function supercamera_2d(...)
 
     return camera
 end
+
+---音声を再生するだけの物体を生成する。再生し終わったら消滅する。
+---@param music Music 再生する音声
+function play_music(music)
+    local obj = __CurrentWorld:append_empty_child()
+    obj:add_update_component("_(play_music)音声再生用", function()
+        local ss = obj:add_soundsource_component(music)
+        ss:play()
+        WaitWhile(function() return ss:is_playing() end)
+        obj:erase()
+    end)
+end

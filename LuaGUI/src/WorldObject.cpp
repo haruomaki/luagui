@@ -3,6 +3,7 @@
 #include <GUI/Rigidbody.hpp>
 #include <GUI/Update.hpp>
 #include <GUI/WorldObject.hpp>
+#include <GUI/sound.hpp>
 
 static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, std::string id, sol::function f) {
     // fをコルーチンとして毎フレーム実行し、コルーチンが終了したらコンポーネントも削除する
@@ -63,6 +64,10 @@ static sol::object get_component(sol::state &lua, WorldObject *obj, const std::s
     if (component_type == "Rigidbody") {
         auto *rbc = obj->get_component<RigidbodyComponent>();
         return sol::make_object(lua, rbc);
+    }
+    if (component_type == "SoundSource") {
+        auto *ss = obj->get_component<SoundSource>();
+        return sol::make_object(lua, ss);
     }
     return sol::nil;
 }

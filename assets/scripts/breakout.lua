@@ -9,7 +9,7 @@ StageHW = 0.1
 BarHW = 0.02
 
 -- 同時衝突の際、現フレームで削除されたブロックを記録していく
-local ERASED_BLOCKS = {}
+-- local ERASED_BLOCKS = {}
 
 
 ---丸を生成
@@ -39,8 +39,10 @@ local function block(parent, x, y)
         on_collision_enter = function(self, other)
             -- 削除済みチェック。複数のボールが同時にぶつかったときに二重削除を防止する。
             if not ERASED_BLOCKS[self.owner.id] then
+                -- 音を再生して消滅する
                 ERASED_BLOCKS[self.owner.id] = true
                 self.owner:erase()
+                play_music(BlockSound)
             end
         end
     })
@@ -103,7 +105,11 @@ run_window(800, 600, "ブロック崩し", function()
     supercamera_2d("zoom")
     __CurrentWorld = world
 
-    text_world:child_text("mochi-mochi panic", { position = { 0, 0 } })
+    -- ブロックにボールがぶつかったときの音
+    BlockSound = load_music("assets/audio/泡がはじける.mp3")
+
+
+    text_world:child_text("MAYO Cheeze", { position = { 0, 0 } })
     text_world:child_text("mochi-mochi panic", { position = { -0.05, 0.02 } })
 
     -- 床と壁の剛体を作成

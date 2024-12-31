@@ -11,6 +11,7 @@
 #include "Window.hpp"
 #include "World.hpp"
 #include "WorldObject.hpp"
+#include "sound.hpp"
 
 // 時刻関連の関数を登録
 static void register_chrono(sol::state &lua) {
@@ -39,7 +40,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
     debug(gui.dpi());
 
     // デフォルトのフォントを生成
-    lunchbox::Storage &storage = lua["__STORAGE"];
+    lunchbox::Storage &storage = lua["__Storage"];
     auto text_shader = GL::ProgramObject{
         GL::create_shader(GL_VERTEX_SHADER, storage.get_text("assets/shaders/font.vsh")),
         GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("assets/shaders/font.fsh"))};
@@ -79,7 +80,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 LuaGUI::LuaGUI() {
     // print("LuaGUIのコンストラクタ");
     lua["__GUI"] = static_cast<GUI *>(this);
-    lua["__STORAGE"] = &this->storage;
+    lua["__Storage"] = &this->storage;
 
     lua.open_libraries(
         sol::lib::base,
@@ -106,6 +107,7 @@ LuaGUI::LuaGUI() {
     register_camera(lua);
     register_box2d(lua);
     register_text(lua);
+    register_sound(lua);
 }
 
 LuaGUI::~LuaGUI() {

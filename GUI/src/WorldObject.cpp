@@ -58,6 +58,7 @@ WorldObject::WorldObject()
 WorldObject::~WorldObject() {
     trace("WorldObjectのデストラクタ開始 components_: ", components_.keys());
     // オブジェクトの寿命はコンポーネントの寿命より長い（コンポーネントのデストラクタでget_owner()が無効にならないようにする）
+    components_.flush(); // これが無いと、コンポーネントとその親の物体を同時に消すときなどに二重削除になる。
     components_.foreach ([](auto &comp) {
         trace("component iteration ", comp->id);
         comp->erase();

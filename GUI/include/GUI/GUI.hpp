@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Resource.hpp"
+#include "sound.hpp"
 #include <SumiGL/Context.hpp>
 #include <SumiGL/buffered_container.hpp>
 
@@ -19,6 +20,7 @@ class GUI : public GL::Context {
     BufferedSet<CameraInterface *> cameras;
     BufferedSet<Window *> windows;
     ResourceManager resources;
+    AudioManager audio;
     BufferedSet<std::function<void()> *> resource_updates;
     std::function<bool()> resume_condition;
 
