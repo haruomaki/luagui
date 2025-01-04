@@ -6,9 +6,6 @@
 ---@field scale_prop number 物体の幾何平均スケール
 WorldObject = {}
 
----@class MeshComponent : Component
-MeshComponent = {}
-
 ---コンポーネント基底クラス
 ---@class Component
 ---@field id string コンポーネントのID

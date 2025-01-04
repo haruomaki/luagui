@@ -11,6 +11,7 @@
 #include "Window.hpp"
 #include "World.hpp"
 #include "WorldObject.hpp"
+#include "mesh.hpp"
 #include "sound.hpp"
 
 // 時刻関連の関数を登録
@@ -108,6 +109,7 @@ LuaGUI::LuaGUI() {
     register_box2d(lua);
     register_text(lua);
     register_sound(lua);
+    register_mesh(lua);
 }
 
 LuaGUI::~LuaGUI() {

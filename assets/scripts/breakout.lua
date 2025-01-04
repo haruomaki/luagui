@@ -176,6 +176,11 @@ run_window(800, 600, "ブロック崩し", function()
             end
         end
 
+        local material = new_material()
+        local mesh = new_mesh()
+        print(material, mesh)
+        -- block_container:add_mesh_component(material, mesh);
+
         WaitUntil(function()
             return #block_container:children() == 0
         end)
