@@ -20,7 +20,7 @@ void register_mesh(sol::state &lua) {
     lua.set_function("new_material", [&lua](Image &img) -> Material * {
         GUI &gui = lua["__GUI"];
         auto texture = GL::create_texture(img.width, img.height, img.channels, img.pixels.get());
-        Material &material = MaterialBuilder().texture(texture.get()).build(gui);
+        Material &material = MaterialBuilder().texture(std::move(texture)).build(gui);
         return &material;
     });
 

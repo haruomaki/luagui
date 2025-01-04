@@ -244,7 +244,7 @@ struct MeshDrawManager {
         shader.set_uniform("projectionMatrix", projection_matrix);
 
         // モデルの描画
-        GLuint tex_id = material.texture.value_or(0);
+        GLuint tex_id = material.texture.get();
         shader.set_uniform("is_tex", (tex_id == 0 ? GL_FALSE : GL_TRUE));
         shader.set_uniform("baseColor", material.base_color);
         vao.bind([&] {
