@@ -127,6 +127,10 @@ run_window(800, 600, "ブロック崩し", function()
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
 
+    local material = new_material()
+    local mesh = new_mesh()
+    bar_obj:add_mesh_component(material, mesh);
+
     bar_obj:add_update_component("バーのキー操作", ForeverFun(function()
         -- バーをキー操作で動かす
         local bar_x = bar.position.x
@@ -175,11 +179,6 @@ run_window(800, 600, "ブロック崩し", function()
                 -- print(mesh.owner.id, mesh.owner)
             end
         end
-
-        local material = new_material()
-        local mesh = new_mesh()
-        print(material, mesh)
-        block_container:add_mesh_component(material, mesh);
 
         WaitUntil(function()
             return #block_container:children() == 0
