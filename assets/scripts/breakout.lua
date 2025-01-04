@@ -43,6 +43,7 @@ local function block(parent, x, y)
                 -- 音を再生して消滅する
                 ERASED_BLOCKS[self.owner.id] = true
                 self.owner:erase()
+                Score = Score + 1
                 play_music(BlockSound)
             end
         end
@@ -117,8 +118,11 @@ run_window(800, 600, "ブロック崩し", function()
         { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
 
 
-    text_world:child_text("MAYO Cheeze", { position = { 0, 0 } })
-    text_world:child_text("mochi-mochi panic", { position = { -0.05, 0.02 } })
+    text_world:child_text("SCORE", { position = { 0.06, 0.02 }, scale = 0.5 })
+    local score_text = text_world:child_text("mochi-mochi panic", { position = { 0.06, 0 } })
+
+    -- ゲームのスコア
+    Score = 0
 
     -- 床と壁の剛体を作成
     wakka({ { -StageHW, -0.1 }, { -StageHW, 0.2 }, { StageHW, 0.2 }, { StageHW, -0.1 } })
@@ -161,6 +165,9 @@ run_window(800, 600, "ブロック崩し", function()
 
         -- 削除済みチェック用リストを毎フレーム初期化する
         ERASED_BLOCKS = {}
+
+        -- テキストを毎フレーム更新
+        score_text.message = string.format("%d", Score)
     end))
 
     -- フリッパーを作成

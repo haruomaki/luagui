@@ -8,6 +8,7 @@ __CurrentFont = {}
 
 ---テキストコンポーネント。
 ---@class Text
+---@field message string 表示する文字列。
 local Text = {}
 
 ---テキストを表示する
@@ -19,4 +20,5 @@ function WorldObject:child_text(text, options) end
 ---draw_textに指定できるオプション集
 ---@class TextOptions
 ---@field position Point? 位置
+---@field scale number? 拡大率
 local TextOptions = {}

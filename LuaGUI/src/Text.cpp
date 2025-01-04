@@ -6,6 +6,7 @@ void register_text(sol::state &lua) {
     // Textクラス
     lua.new_usertype<Text>(
         "Text",
+        "message", sol::property([](Text *t) { return t->text; }, [](Text *t, std::string msg) { t->text = std::move(msg); }),
         sol::base_classes, sol::bases<UpdateComponent>());
 
     lua["WorldObject"]["child_text"] = [&](WorldObject &obj, const std::string &text, const sol::table &options) -> Text & {
@@ -14,6 +15,10 @@ void register_text(sol::state &lua) {
 
         vector<float> p = options.get_or<vector<float>>("position", {0, 0});
         tt.owner().set_position({p.at(0), p.at(1), 0});
+
+        float s = options.get_or<float>("scale", 1);
+        tt.owner().set_scale_prop(s);
+
         return tt;
     };
 }
