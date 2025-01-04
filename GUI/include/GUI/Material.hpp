@@ -72,7 +72,6 @@ class MaterialBuilder {
 
     Material &build(GUI &gui) {
         auto material = gui.resources.append<Material>(shader_, priority_, base_color_, std::move(texture_), point_size_, line_width_);
-        debug(material.get().texture.get());
         return material.get();
     }
 };

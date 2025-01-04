@@ -26,7 +26,8 @@ end
 ---@param parent WorldObject
 ---@return MeshComponent
 local function block(parent, x, y)
-    local mesh = parent:draw_rect(BlockHalfWidth, BlockHalfHeight)
+    local block_obj = parent:append_empty_child()
+    local mesh = block_obj:add_mesh_component(BlockMaterial, BlockMesh);
     local obj = mesh.owner
     obj.position = { x, y }
     local rb = obj:add_rigidbody_component()
@@ -107,6 +108,13 @@ run_window(800, 600, "ブロック崩し", function()
 
     -- ブロックにボールがぶつかったときの音
     BlockSound = load_music("assets/audio/泡がはじける.mp3")
+    -- ブロックの画像
+    BlockImage = load_image("assets/images/ピンクレンガ.png")
+    -- ブロックのマテリアルとメッシュ
+    BlockMaterial = new_material(BlockImage)
+    BlockMesh = new_mesh(
+        { { -BlockHalfWidth, -BlockHalfHeight, 0 }, { BlockHalfWidth, -BlockHalfHeight, 0 }, { BlockHalfWidth, BlockHalfHeight, 0 }, { -BlockHalfWidth, BlockHalfHeight, 0 } },
+        { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
 
 
     text_world:child_text("MAYO Cheeze", { position = { 0, 0 } })
@@ -126,12 +134,6 @@ run_window(800, 600, "ブロック崩し", function()
     bar_obj.position = { 0, -0.05 }
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
-
-    local img = load_image("assets/images/ピンクレンガ.png")
-    local material = new_material(img)
-    local mesh = new_mesh({ { 0, 0, 0 }, { 0.1, 0, 0 }, { 0.1, 0.05, 0 }, { 0, 0.05, 0 } },
-        { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
-    bar_obj:add_mesh_component(material, mesh);
 
     bar_obj:add_update_component("バーのキー操作", ForeverFun(function()
         -- バーをキー操作で動かす
