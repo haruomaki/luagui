@@ -23,8 +23,11 @@ function WorldObject:append_empty_child() end
 ---@return table<number, WorldObject> children
 function WorldObject:children() end
 
----オブジェクトを削除する
+---オブジェクトを削除する。
 function WorldObject:erase() end
+
+---オブジェクトをただちに削除する。
+function WorldObject:force_erase() end
 
 ---Updateコンポーネントを追加する。（＝毎フレーム実行してほしい処理を追加する）
 ---@param id string コンポーネントのID

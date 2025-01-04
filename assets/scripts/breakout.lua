@@ -42,7 +42,7 @@ local function block(parent, x, y)
             if not ERASED_BLOCKS[self.owner.id] then
                 -- 音を再生して消滅する
                 ERASED_BLOCKS[self.owner.id] = true
-                self.owner:erase()
+                self.owner:force_erase()
                 play_music(BlockSound)
             end
         end

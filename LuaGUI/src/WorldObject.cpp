@@ -113,7 +113,10 @@ void register_world_object(sol::state &lua) {
         [&lua](WorldObject *obj, const std::string &id) { return get_component_by_id(lua, obj, id); },
 
         "erase",
-        [](WorldObject *obj) { obj->erase(); });
+        [](WorldObject *obj) { obj->erase(); },
+
+        "force_erase",
+        [](WorldObject *obj) { obj->force_erase(); });
 
     // Componentクラス
     lua.new_usertype<Component>(

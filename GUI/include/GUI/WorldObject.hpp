@@ -85,6 +85,12 @@ class WorldObject {
         return this->parent_->children_.request_erase(this);
     }
 
+    // ただちに削除。
+    void force_erase() {
+        erase();
+        this->parent_->children_.flush();
+    }
+
     std::vector<WorldObject *> children() {
         return children_.keys();
     }
