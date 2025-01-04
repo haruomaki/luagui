@@ -32,7 +32,21 @@ void register_mesh(sol::state &lua) {
     lua.new_usertype<Material>("Material");
     lua.new_usertype<Mesh>("Mesh");
 
-    lua["WorldObject"]["add_mesh_component"] = [&lua](WorldObject *obj, Material *material, Mesh *mesh) -> MeshComponent * {
-        return &obj->add_component<MeshComponent>(*mesh, material);
+    lua["WorldObject"]["add_mesh_component"] = [&lua](WorldObject &parent, Material *material, Mesh *mesh) -> MeshComponent * {
+        const int segments = 12;
+        std::vector<glm::vec3> coords(segments + 1);
+
+        float radius = 0.03;
+        for (int i = 0; i <= segments; ++i) {
+            float theta = 2 * M_PIf * float(i) / float(segments); // 角度を計算
+            float x = radius * cosf(theta);                       // x座標
+            float y = radius * sinf(theta);                       // y座標
+            coords[i] = glm::vec3(x, y, 0);
+        }
+        auto &line_obj = new_line(parent);
+        line_obj.owner().position = {0, 0, 0};
+        line_obj.mesh.vertices.setCoords(coords);
+
+        return &line_obj;
     };
 }
