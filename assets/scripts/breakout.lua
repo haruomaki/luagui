@@ -168,9 +168,9 @@ run_window(800, 600, "ブロック崩し", function()
     while true do
         -- ブロックを配置
         local block_container = world:append_empty_child()
-        for i = 0, 5, 1 do
-            for j = 0, 9, 1 do
-                local mesh = block(block_container, -0.03 + 0.02 * i, 0.08 + 0.01 * j)
+        for i = -4, 4, 1 do
+            for j = 5, 18, 1 do
+                local mesh = block(block_container, BlockHalfWidth * 2 * i, BlockHalfHeight * 2 * j)
                 mesh.owner.id = string.format("(%d,%d)のブロック", i, j)
                 -- print(mesh.owner.id, mesh.owner)
             end
