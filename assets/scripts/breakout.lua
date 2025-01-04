@@ -127,7 +127,8 @@ run_window(800, 600, "ブロック崩し", function()
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
 
-    local material = new_material()
+    local img = load_image("assets/images/ピンクレンガ.png")
+    local material = new_material(img)
     local mesh = new_mesh()
     bar_obj:add_mesh_component(material, mesh);
 
