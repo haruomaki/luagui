@@ -27,10 +27,19 @@ void World::master_physics() {
     for (int i = 0; i < contact_events.beginCount; i++) {
         // print("衝突かいし");
         auto event = contact_events.beginEvents[i]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto &cca = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdA));
-        auto &ccb = dereference<ColliderComponent>(b2Shape_GetUserData(event.shapeIdB));
-        auto chain_id_a = b2Shape_GetParentChain(event.shapeIdA);
-        auto chain_id_b = b2Shape_GetParentChain(event.shapeIdB);
+        auto id1 = event.shapeIdA;
+        auto id2 = event.shapeIdB;
+
+        // ループ中にShapeが削除されることで、idが無効になっている場合がある。
+        if (!b2Shape_IsValid(id1) || !b2Shape_IsValid(id2)) {
+            print("無効なShapeらしいよ");
+            continue;
+        }
+
+        auto &cca = dereference<ColliderComponent>(b2Shape_GetUserData(id1));
+        auto &ccb = dereference<ColliderComponent>(b2Shape_GetUserData(id2));
+        auto chain_id_a = b2Shape_GetParentChain(id1);
+        auto chain_id_b = b2Shape_GetParentChain(id2);
 
         // AとBのどちらかがChainなら(Chain,Shape)の衝突、どちらもShapeなら(A,B)＆(B,A)の衝突。どちらもChainはあり得ないはず？
         if (b2Chain_IsValid(chain_id_a)) {
@@ -47,7 +56,4 @@ void World::master_physics() {
         }
         // print("衝突おわり");
     }
-
-    // TODO: テスト用なので削除
-    this->flush_components_children();
 }
