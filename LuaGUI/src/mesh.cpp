@@ -24,22 +24,25 @@ void register_mesh(sol::state &lua) {
         return &material;
     });
 
-    lua.set_function("new_mesh", [&lua]() -> Mesh * {
+    lua.set_function("new_mesh", [&lua](std::vector<std::vector<float>> coords, std::vector<std::vector<float>> uvs) -> Mesh * {
         GUI &gui = lua["__GUI"];
         auto &mesh = gui.resources.append<Mesh>().get();
 
-        const int segments = 12;
-        std::vector<glm::vec3> coords(segments + 1);
-
-        float radius = 0.03;
-        for (int i = 0; i <= segments; ++i) {
-            float theta = 2 * M_PIf * float(i) / float(segments); // 角度を計算
-            float x = radius * cosf(theta);                       // x座標
-            float y = radius * sinf(theta);                       // y座標
-            coords[i] = glm::vec3(x, y, 0);
+        std::vector<glm::vec3> coords_v(coords.size());
+        for (size_t i = 0; i < coords.size(); i++) {
+            coords_v[i][0] = coords[i].at(0);
+            coords_v[i][1] = coords[i].at(1);
+            coords_v[i][2] = coords[i].at(2);
         }
+        mesh.vertices.setCoords(coords_v);
 
-        mesh.vertices.setCoords(coords);
+        std::vector<glm::vec2> uvs_v(uvs.size());
+        for (size_t i = 0; i < uvs.size(); i++) {
+            uvs_v[i][0] = uvs[i].at(0);
+            uvs_v[i][1] = uvs[i].at(1);
+        }
+        mesh.vertices.set_uvs(uvs_v);
+
         mesh.draw_mode = GL_TRIANGLE_FAN;
 
         return &mesh;

@@ -18,7 +18,9 @@ function new_material(image) end
 
 ---マテリアルを作成する。
 ---@return Mesh
-function new_mesh() end
+---@param coords Points
+---@param uvs Points
+function new_mesh(coords, uvs) end
 
 ---姿かたちを描画するコンポーネントを付与。
 ---@param material Material

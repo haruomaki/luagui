@@ -129,7 +129,8 @@ run_window(800, 600, "ブロック崩し", function()
 
     local img = load_image("assets/images/ピンクレンガ.png")
     local material = new_material(img)
-    local mesh = new_mesh()
+    local mesh = new_mesh({ { 0, 0, 0 }, { 0.1, 0, 0 }, { 0.1, 0.05, 0 }, { 0, 0.05, 0 } },
+        { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
     bar_obj:add_mesh_component(material, mesh);
 
     bar_obj:add_update_component("バーのキー操作", ForeverFun(function()
