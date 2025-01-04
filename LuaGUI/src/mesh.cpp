@@ -1,7 +1,6 @@
 #include "mesh.hpp"
 #include <GUI/GUI.hpp>
 #include <GUI/Mesh.hpp>
-#include <GUI/utility.hpp>
 #include <Lunchbox/Storage.hpp>
 #include <SumiGL/Texture.hpp>
 
@@ -17,14 +16,7 @@ void register_mesh(sol::state &lua) {
 
     lua.set_function("new_mesh", [&lua]() -> Mesh * {
         GUI &gui = lua["__GUI"];
-        auto &mesh = new_mesh(gui, GL_TRIANGLE_FAN, {{0, 0, 0}, {0, 0.01, 0}, {0.01, 0.01, 0}, {0.01, 0, 0}},
-                              {
-                                  {0.9, 0.3, 0, 1},
-                                  {0.1, 0.2, 0.7, 0.3},
-                                  {0.9, 0.2, 0.7, 0.3},
-                                  {0.3, 0.7, 0.5f, 0.5},
-                              },
-                              {{1, 0}, {0, 0}, {0, 1}, {1, 1}});
+        auto &mesh = gui.resources.append<Mesh>().get();
 
         const int segments = 12;
         std::vector<glm::vec3> coords(segments + 1);
@@ -46,10 +38,6 @@ void register_mesh(sol::state &lua) {
     lua.new_usertype<Mesh>("Mesh");
 
     lua["WorldObject"]["add_mesh_component"] = [&lua](WorldObject &parent, Material *material, Mesh *mesh) -> MeshComponent * {
-        auto &line_obj = parent.child_component<MeshComponent>(*mesh, material);
-
-        line_obj.owner().position = {0, 0, 0};
-
-        return &line_obj;
+        return &parent.child_component<MeshComponent>(*mesh, material);
     };
 }
