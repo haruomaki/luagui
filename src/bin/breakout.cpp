@@ -1,6 +1,8 @@
 #include <filesystem>
 #include <luagui.hpp>
 
+#pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
+
 namespace fs = std::filesystem;
 
 int main() {

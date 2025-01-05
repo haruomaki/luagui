@@ -1,5 +1,7 @@
 #include <gui.hpp>
 
+#pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
+
 int main() {
     GUI gui;
     Window window(gui, 1280, 720, "blank");
