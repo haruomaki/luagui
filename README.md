@@ -9,6 +9,15 @@ configureの部分（一行目）はvscodeのcmake拡張などでもok
 
 `--target`後にはmainの他にも、`src/bin/`直下にある.cppファイルの拡張子を抜いた名前が入る。
 
+## clangd
+
+CMakeのコンフィグを実行すると、成果物ディレクトリ直下に`compile_commands.json`が自動生成される。しかし、clangdは（何も設定しない限り）プロジェクトルートディレクトリに置いてある`compile_commands.json`しか見つけてくれない。
+
+したがって、自動生成したjsonを手動なり何なりでプロジェクトルートにコピー/リンクする必要がある。
+
+VSCodeを使っている場合は`"cmake.copyCompileCommands": "${workspaceRoot}/compile_commands.json"`と設定するのがおすすめ。
+
+
 # 動作確認
 clang16
 libstdc++

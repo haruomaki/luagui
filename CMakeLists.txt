@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 project(cppgui CXX)
 
 # CMakeLists.txt内でコンパイラを指定する
@@ -49,13 +49,15 @@ else()
 endif()
 
 set(CMAKE_COLOR_DIAGNOSTICS ON)
+set(CMAKE_CXX_STANDARD 20) # -std=c++20
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (MSVC)
     # ソースファイルのエンコードをUTF-8に決め打ち
-    set(CMAKE_CXX_FLAGS "/std:c++20 /Zc:preprocessor /EHsc /utf-8")
+    set(CMAKE_CXX_FLAGS "/Zc:preprocessor /EHsc /utf-8")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi /Od /DDEBUG")
 else()
-    set(CMAKE_CXX_FLAGS "-std=c++20 -fPIC -msse4.1")
+    set(CMAKE_CXX_FLAGS "-fPIC -msse4.1")
     set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -march=x86-64 -mtune=generic")
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g3 -Og")

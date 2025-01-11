@@ -1,6 +1,7 @@
 /.cache/
 /build/
 gmon.out
+compile_commands.json
 
 # Windows
 /.vs/
