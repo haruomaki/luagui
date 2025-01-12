@@ -3,7 +3,6 @@
 #include <GUI/Window.hpp>
 #include <GUI/utility.hpp>
 #include <SumiGL/Context.hpp>
-#include <filesystem>
 #include <luagui.hpp>
 
 #include "Box2D.hpp"
@@ -123,11 +122,11 @@ LuaGUI::LuaGUI() {
         sol::lib::package,
         sol::lib::coroutine);
 
-    // コルーチンまわりの関数を読み込み
-    // lua.script(storage.get_text("assets/scripts/coroutines.lua"));
-
-    // その他ユーティリティ関数などを読み込み
-    lua.script(storage.get_text("scripts/misc.lua"));
+    // scripts/modules以下にある全てのファイルは自動でロードされる。
+    for (auto &file : storage.list("scripts/modules")) {
+        auto content = storage.get_text("scripts/modules" / file);
+        lua.script(content);
+    }
 
     // アセット内からモジュールを検索する機能を追加
     add_custom_searcher(lua, storage);

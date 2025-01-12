@@ -1,10 +1,3 @@
-print(#package.searchers)
-require("coroutines")
-
-print(_CWD)
-require("breakout.resource")
-Hello()
-
 -- ブロックの大きさ
 BlockHalfWidth = 0.01
 BlockHalfHeight = 0.005
@@ -118,23 +111,8 @@ run_window(800, 600, "ブロック崩し", function()
     supercamera_2d("zoom")
     __CurrentWorld = world
 
-    -- ブロックにボールがぶつかったときの音
-    BlockSound = load_music("audio/泡がはじける.mp3")
-    -- ブロックの画像
-    BlockImage = load_image("images/ピンクレンガ.png")
-    -- ブロックのマテリアルとメッシュ
-    BlockMaterial = new_material(BlockImage)
-    BlockMesh = new_mesh(
-        { { -BlockHalfWidth, -BlockHalfHeight, 0 }, { BlockHalfWidth, -BlockHalfHeight, 0 }, { BlockHalfWidth, BlockHalfHeight, 0 }, { -BlockHalfWidth, BlockHalfHeight, 0 } },
-        { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
-
-    BallImage = load_image("images/青いガラス玉.png")
-    BallMaterial = new_material(BallImage)
-    BallMaterial.write_depth = false
-    BallMesh = new_mesh(
-        { { -BallRadius, -BallRadius, 0 }, { BallRadius, -BallRadius, 0 }, { BallRadius, BallRadius, 0 }, { -BallRadius, BallRadius, 0 } },
-        { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
-
+    -- 音声や画像の読み込み
+    require("breakout.resource")
 
     text_world.root:child_text("SCORE", { position = { 0.06, 0.02 }, scale = 0.5 })
     local score_text = text_world.root:child_text("mochi-mochi panic", { position = { 0.06, 0 } })
