@@ -2,5 +2,5 @@
 
 int main() {
     LuaGUI luagui;
-    luagui.run("scripts/breakout.lua");
+    luagui.run("scripts/breakout/main.lua");
 }

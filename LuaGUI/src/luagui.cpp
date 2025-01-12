@@ -152,10 +152,9 @@ LuaGUI::~LuaGUI() {
     cleanup();
 }
 
-void LuaGUI::run(const std::string &file_path) {
+void LuaGUI::run(const Path &file_path) {
     print("LuaGUIのrun開始");
-    fs::path path(file_path);
-    lua["_CWD"] = path.parent_path().c_str();
+    lua["_CWD"] = file_path.parent_path().c_str();
     lua.script(storage.get_text(file_path));
     print("LuaGUIのrun終了");
 }

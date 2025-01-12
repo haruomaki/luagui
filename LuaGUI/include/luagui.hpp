@@ -4,6 +4,8 @@
 #include <lunchbox.hpp>
 #include <sol/sol.hpp>
 
+using Path = std::filesystem::path;
+
 class LuaGUI : public GUI {
 
   public:
@@ -14,5 +16,5 @@ class LuaGUI : public GUI {
     LuaGUI();
     ~LuaGUI();
 
-    void run(const std::string &file_path);
+    void run(const Path &file_path);
 };
