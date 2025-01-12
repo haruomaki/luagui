@@ -9,3 +9,7 @@
 ---@field x number
 ---@field y number
 local Point = {}
+
+---今実行中のスクリプトのパス（assetsディレクトリからの相対パス）が格納されている。
+---@type string
+_CWD = ""
