@@ -78,6 +78,25 @@ static void run_window(sol::state &lua, int width, int height, const std::string
     std::cout << "Window closed: " << title << '\n';
 }
 
+static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storage) {
+    sol::table searchers = lua["package"]["searchers"];
+    searchers.add([&](const std::string &module_name) -> sol::object {
+        // モジュール名をスクリプトファイル名に変換
+        std::string file_path = "assets/scripts/" + module_name + ".lua";
+
+        try {
+            // スクリプトのテキストを取得し、ロードする。
+            std::string script_content = storage.get_text(file_path);
+            auto module = lua.load(script_content);
+            // ロードに成功すればモジュールを返す。
+            return module;
+        } catch (const std::exception & /*e*/) {
+            // ロードに失敗すればエラーメッセージを返す。
+            return sol::make_object(lua, "no asset '" + file_path + "'");
+        }
+    });
+}
+
 LuaGUI::LuaGUI() {
     // print("LuaGUIのコンストラクタ");
     lua["__GUI"] = static_cast<GUI *>(this);
@@ -92,10 +111,13 @@ LuaGUI::LuaGUI() {
         sol::lib::coroutine);
 
     // コルーチンまわりの関数を読み込み
-    lua.script(storage.get_text("assets/scripts/coroutines.lua"));
+    // lua.script(storage.get_text("assets/scripts/coroutines.lua"));
 
     // その他ユーティリティ関数などを読み込み
     lua.script(storage.get_text("assets/scripts/misc.lua"));
+
+    // アセット内からモジュールを検索する機能を追加
+    add_custom_searcher(lua, storage);
 
     lua.set_function("run_window", [this](int width, int height, const std::string &title, sol::function func) {
         run_window(this->lua, width, height, title, std::move(func));

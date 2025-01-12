@@ -1,3 +1,6 @@
+print(#package.searchers)
+require("coroutines")
+
 -- ブロックの大きさ
 BlockHalfWidth = 0.01
 BlockHalfHeight = 0.005
