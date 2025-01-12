@@ -43,9 +43,9 @@ static void run_window(sol::state &lua, int width, int height, const std::string
     // デフォルトのフォントを生成
     lunchbox::Storage &storage = lua["__Storage"];
     auto text_shader = GL::ProgramObject{
-        GL::create_shader(GL_VERTEX_SHADER, storage.get_text("assets/shaders/font.vsh")),
-        GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("assets/shaders/font.fsh"))};
-    auto font = storage.get_font("assets/fonts/main.ttf");
+        GL::create_shader(GL_VERTEX_SHADER, storage.get_text("shaders/font.vsh")),
+        GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("shaders/font.fsh"))};
+    auto font = storage.get_font("fonts/main.ttf");
     auto &default_font = gui.resources.append<Font>(std::move(text_shader), font).get();
     lua["__CurrentFont"] = &default_font;
 
@@ -82,7 +82,7 @@ static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storag
     sol::table searchers = lua["package"]["searchers"];
     searchers.add([&](const std::string &module_name) -> sol::object {
         // モジュール名をスクリプトファイル名に変換
-        std::string file_path = "assets/scripts/" + module_name + ".lua";
+        std::string file_path = "scripts/" + module_name + ".lua";
 
         try {
             // スクリプトのテキストを取得し、ロードする。
@@ -114,7 +114,7 @@ LuaGUI::LuaGUI() {
     // lua.script(storage.get_text("assets/scripts/coroutines.lua"));
 
     // その他ユーティリティ関数などを読み込み
-    lua.script(storage.get_text("assets/scripts/misc.lua"));
+    lua.script(storage.get_text("scripts/misc.lua"));
 
     // アセット内からモジュールを検索する機能を追加
     add_custom_searcher(lua, storage);

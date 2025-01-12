@@ -15,10 +15,10 @@ int main() {
     cobj.scale = 2000; // 速度調整
 
     auto text_shader = GL::ProgramObject{
-        GL::create_shader(GL_VERTEX_SHADER, storage.get_text("assets/shaders/font.vsh")),
-        GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("assets/shaders/font.fsh"))};
+        GL::create_shader(GL_VERTEX_SHADER, storage.get_text("shaders/font.vsh")),
+        GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("shaders/font.fsh"))};
 
-    auto font = storage.get_font("assets/fonts/main.ttf");
+    auto font = storage.get_font("fonts/main.ttf");
     auto &migmix_font = gui.resources.append<Font>(std::move(text_shader), font).get();
     auto &sample_text = main_world.root.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = main_world.root.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
@@ -28,9 +28,8 @@ int main() {
     credit_text.owner().set_position({200, 400, 1});
     credit_text.owner().set_scale_one(2000);
 
-    // GLuint cat_texture = load_texture("assets/images/cat.raw");
-    auto img = storage.get_image("assets/images/ピンクレンガ.png");
-    auto cat_texture = GL::create_texture(img.width, img.height, img.channels, img.pixels.get());
+    auto raw = storage.get_binary("images/cat.raw");
+    auto cat_texture = GL::create_texture(256, 256, 3, raw.data());
     Material &cat_material = MaterialBuilder().texture(std::move(cat_texture)).build(gui);
 
     auto &gon = new_mesh(gui, GL_TRIANGLE_FAN, {{0.9f, 0.9f, 0.4}, {0.5f, 0.f, 0}, {0.f, 0.f, 0.2}, {0.f, 0.5f, 0}},

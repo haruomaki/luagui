@@ -32,9 +32,9 @@ int main() {
 
     // 文字の表示
     auto text_shader = GL::ProgramObject{
-        GL::create_shader(GL_VERTEX_SHADER, storage.get_text("assets/shaders/font.vsh")),
-        GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("assets/shaders/font.fsh"))};
-    auto font = storage.get_font("assets/fonts/main.ttf");
+        GL::create_shader(GL_VERTEX_SHADER, storage.get_text("shaders/font.vsh")),
+        GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("shaders/font.fsh"))};
+    auto font = storage.get_font("fonts/main.ttf");
     auto &migmix_font = gui.resources.append<Font>(std::move(text_shader), font).get();
     auto &sample_text = ui_world.root.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = ui_world.root.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
