@@ -2,6 +2,9 @@
 BlockHalfWidth = 0.01
 BlockHalfHeight = 0.005
 
+-- ボールの大きさ
+BallRadius = 0.006
+
 -- ステージの大きさ
 StageHW = 0.1
 
@@ -15,10 +18,11 @@ BarHW = 0.02
 ---丸を生成
 ---@return MeshComponent
 local function maru(x, y)
-    local mesh = __CurrentWorld:draw_circle({ x, y }, 0.003)
-    local obj = mesh.owner
+    local obj = __CurrentWorld:append_empty_child()
+    obj.position = { x, y }
+    local mesh = obj:add_mesh_component(BallMaterial, BallMesh)
     local rb = obj:add_rigidbody_component({ type = "dynamic", isBullet = true })
-    rb:add_shape({ shape = "circle", radius = 0.003, friction = 0, restitution = 1 })
+    rb:add_shape({ shape = "circle", radius = BallRadius, friction = 0, restitution = 1 })
     return mesh
 end
 
@@ -115,6 +119,12 @@ run_window(800, 600, "ブロック崩し", function()
     BlockMaterial = new_material(BlockImage)
     BlockMesh = new_mesh(
         { { -BlockHalfWidth, -BlockHalfHeight, 0 }, { BlockHalfWidth, -BlockHalfHeight, 0 }, { BlockHalfWidth, BlockHalfHeight, 0 }, { -BlockHalfWidth, BlockHalfHeight, 0 } },
+        { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
+
+    BallImage = load_image("assets/images/青いガラス玉.png")
+    BallMaterial = new_material(BallImage)
+    BallMesh = new_mesh(
+        { { -BallRadius, -BallRadius, 0 }, { BallRadius, -BallRadius, 0 }, { BallRadius, BallRadius, 0 }, { -BallRadius, BallRadius, 0 } },
         { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
 
 

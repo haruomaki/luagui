@@ -8,6 +8,9 @@
 void register_mesh(sol::state &lua) {
     lua.new_usertype<Image>(
         "Image",
+        "width", &Image::width,
+        "height", &Image::height,
+        "channels", &Image::channels,
         sol::base_classes, sol::bases<Resource>());
 
     lua.set_function("load_image", [&lua](const std::string &file_path) -> Image * {
