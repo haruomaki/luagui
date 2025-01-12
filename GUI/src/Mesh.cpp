@@ -148,6 +148,9 @@ void MeshDrawManager::drawcall(const StaticMesh &mesh, const Material &material,
     const auto projection_matrix = camera.get_projection_matrix();
     shader.set_uniform("projectionMatrix", projection_matrix);
 
+    // デプスバッファに書き込むかどうか
+    glDepthMask(material.write_depth ? GL_TRUE : GL_FALSE);
+
     // モデルの描画
     shader.set_uniform("is_tex", (material.texture.is_valid() ? GL_TRUE : GL_FALSE));
     shader.set_uniform("baseColor", material.base_color);

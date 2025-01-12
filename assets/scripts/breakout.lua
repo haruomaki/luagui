@@ -123,6 +123,7 @@ run_window(800, 600, "ブロック崩し", function()
 
     BallImage = load_image("assets/images/青いガラス玉.png")
     BallMaterial = new_material(BallImage)
+    BallMaterial.write_depth = false
     BallMesh = new_mesh(
         { { -BallRadius, -BallRadius, 0 }, { BallRadius, -BallRadius, 0 }, { BallRadius, BallRadius, 0 }, { -BallRadius, BallRadius, 0 } },
         { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })

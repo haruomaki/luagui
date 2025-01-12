@@ -2,6 +2,7 @@
 
 ---描画設定。
 ---@class Material
+---@field write_depth boolean デプスバッファに書き込むかどうか
 Material = {}
 
 ---物体形状。

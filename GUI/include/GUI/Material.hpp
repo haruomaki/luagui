@@ -11,6 +11,7 @@ struct Material : public Resource {
     GL::Texture texture;
     double point_size;
     double line_width;
+    bool write_depth = true;
 
     Material(const Shader *shader, int priority, const glm::vec4 &color, GL::Texture &&texture, double point_size, double line_width)
         : shader(shader == nullptr ? *gui().resources.find<Shader>("default_shader") : *shader)

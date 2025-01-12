@@ -52,7 +52,10 @@ void register_mesh(sol::state &lua) {
         return &mesh;
     });
 
-    lua.new_usertype<Material>("Material");
+    lua.new_usertype<Material>(
+        "Material",
+        "write_depth", &Material::write_depth,
+        sol::base_classes, sol::bases<Resource>());
     lua.new_usertype<Mesh>("Mesh");
 
     lua["WorldObject"]["add_mesh_component"] = [](WorldObject &parent, Material *material, Mesh *mesh) -> MeshComponent * {
