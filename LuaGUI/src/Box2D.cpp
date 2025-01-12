@@ -89,7 +89,7 @@ static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
     // 衝突時のコールバックを設定
     if (tbl["on_collision_enter"].valid()) {
         sol::function callback = tbl["on_collision_enter"];
-        ccc.on_collision_enter = [callback](ChainColliderComponent &self, ColliderComponent &collider) { callback(self, collider); };
+        ccc.on_collision_enter = callback;
     }
 }
 

@@ -83,8 +83,8 @@ class WorldObject {
     // 物体を初期化する。
     void clear();
 
+    // 物体の削除要請を出す。
     void erase(bool flush = false) {
-        clear();
         if (this->parent_ == nullptr) {
             warn("根オブジェクトをeraseしています。代わりにclearを使ってください。");
             return;
