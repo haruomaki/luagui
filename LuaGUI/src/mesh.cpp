@@ -1,6 +1,7 @@
 #include "mesh.hpp"
 #include <GUI/GUI.hpp>
 #include <GUI/Mesh.hpp>
+#include <GUI/WorldObject.hpp>
 #include <GUI/image.hpp>
 #include <Lunchbox/Storage.hpp>
 #include <SumiGL/Texture.hpp>

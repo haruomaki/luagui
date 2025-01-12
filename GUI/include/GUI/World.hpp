@@ -3,6 +3,7 @@
 #include "Mesh.hpp"
 #include "Rigidbody.hpp"
 #include "Timer.hpp"
+#include "WorldObject.hpp"
 
 struct CameraInterface;
 class Rigidbody;
