@@ -91,7 +91,7 @@ class World : public WorldObject {
 
         // メッシュを描画
         this->mesh_draw_manager_.step();
-        this->mesh_draw_manager_.draw_all_registered_objects(camera);
+        this->mesh_draw_manager_.draw_all(camera);
 
         // 描画処理が終わるとrendering_cameraは無効になる。
         rendering_camera_ = nullptr;

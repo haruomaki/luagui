@@ -9,7 +9,7 @@
 // VRAMとの同期を毎フレーム自動で行わないメッシュ
 class StaticMesh : virtual public Resource {
     friend class MeshComponent;
-    friend struct MeshDrawManager;
+    friend class MeshDrawManager;
 
   protected:
     bool vao_should_regen_ = true;
@@ -108,18 +108,22 @@ struct ModelMatricesObservation {
     std::pair<GL::VertexBuffer, GL::VertexArray> vbovao;
 };
 
-struct MeshDrawManager {
+class MeshDrawManager {
     // メッシュ・マテリアル・シェーダの三項組ごとに一つモデル行列のvectorが決まる。
     using KeyType = std::tuple<StaticMesh *, const Material *, const GL::ProgramObject *>;
     // この行列キューごとに一回ドローコールを行う
-    std::map<KeyType, ModelMatricesObservation> observations;
+    std::map<KeyType, ModelMatricesObservation> observations_;
 
     static KeyType key_from(const MeshComponent *obj);
-    void set_model_matrix(const MeshComponent *mc);
-    void delete_model_matrix(const MeshComponent *obj);
-    void step();
     static GL::VertexArray generate_vao(StaticMesh &mesh, const GL::ProgramObject &shader, const GL::VertexBuffer &model_matrices_vbo);
     static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const CameraInterface &camera);
     void draw_observation(KeyType key, const CameraInterface &camera);
-    void draw_all_registered_objects(const CameraInterface &camera);
+
+    friend class World; // stepとdraw_allため
+    void step();
+    void draw_all(const CameraInterface &camera);
+
+  public:
+    void set_model_matrix(const MeshComponent *mc);
+    void delete_model_matrix(const MeshComponent *obj);
 };

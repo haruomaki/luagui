@@ -29,34 +29,34 @@ MeshDrawManager::KeyType MeshDrawManager::key_from(const MeshComponent *obj) {
 void MeshDrawManager::set_model_matrix(const MeshComponent *mc) {
     auto key = key_from(mc);
 
-    if (observations.contains(key)) {
-        auto &obj_ix_map = observations[key].object_index_map;
+    if (observations_.contains(key)) {
+        auto &obj_ix_map = observations_[key].object_index_map;
 
         if (obj_ix_map.contains(mc)) {
             // すでに登録済みのメッシュオブジェクトの場合、ただちに書き換え
             size_t index = obj_ix_map[mc];
             const auto &model_matrix = mc->owner().get_absolute_transform();
-            observations[key].model_matrices[index] = model_matrix;
+            observations_[key].model_matrices[index] = model_matrix;
         } else {
             // 新たなメッシュオブジェクトの場合、一旦initial_valuesに蓄えておく
-            observations[key].initial_list.emplace_back(mc);
+            observations_[key].initial_list.emplace_back(mc);
         }
     } else {
         // そもそも初めてのkeyのオブジェクトだった場合、キーを追加してやはりinitial_valuesに蓄える
-        observations[key] = ModelMatricesObservation{};
-        observations[key].initial_list.emplace_back(mc);
+        observations_[key] = ModelMatricesObservation{};
+        observations_[key].initial_list.emplace_back(mc);
     }
 }
 
 void MeshDrawManager::delete_model_matrix(const MeshComponent *obj) {
     auto key = key_from(obj);
-    assert(observations.contains(key)); // 一度も登録されていないキーを持つオブジェクトの削除要求
-    observations[key].delete_list.push_back(obj);
+    assert(observations_.contains(key)); // 一度も登録されていないキーを持つオブジェクトの削除要求
+    observations_[key].delete_list.push_back(obj);
 }
 
 void MeshDrawManager::step() {
     // initial_listとdelete_listのいずれかが空でないすべてのキーについてモデル行列キューを再生成
-    for (auto &[key, obs] : observations) {
+    for (auto &[key, obs] : observations_) {
         if (obs.initial_list.size() != 0 || obs.delete_list.size() != 0) {
             auto &obj_ix_map = obs.object_index_map;
 
@@ -87,7 +87,7 @@ void MeshDrawManager::step() {
     }
 
     // 使われなくなったモデル行列キューは削除する
-    std::erase_if(observations, [](const auto &item) {
+    std::erase_if(observations_, [](const auto &item) {
         const auto &[key, obs] = item;
         return (obs.model_matrices.size() == 0); // 必ず obs.object_index_map == 0 でもあるはず
     });
@@ -162,7 +162,7 @@ void MeshDrawManager::draw_instanced(const StaticMesh &mesh, const Material &mat
 }
 
 void MeshDrawManager::draw_observation(KeyType key, const CameraInterface &camera) {
-    auto &obs = observations[key];
+    auto &obs = observations_[key];
     StaticMesh &mesh = *std::get<0>(key);
     const Material &material = *std::get<1>(key);
     const auto &model_matrices = obs.model_matrices; // モデル行列キュー
@@ -186,11 +186,11 @@ void MeshDrawManager::draw_observation(KeyType key, const CameraInterface &camer
     draw_instanced(mesh, material, batch_vao, model_matrices.size(), camera);
 }
 
-void MeshDrawManager::draw_all_registered_objects(const CameraInterface &camera) {
+void MeshDrawManager::draw_all(const CameraInterface &camera) {
     // マテリアルの優先度に基づいてキーをソート
     std::vector<KeyType> sorted_keys{};
-    sorted_keys.reserve(observations.size());
-    for (const auto &[key, obs] : observations) {
+    sorted_keys.reserve(observations_.size());
+    for (const auto &[key, obs] : observations_) {
         sorted_keys.push_back(key);
     }
     std::sort(sorted_keys.begin(), sorted_keys.end(), [](const auto &key1, const auto &key2) {
