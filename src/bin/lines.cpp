@@ -18,14 +18,14 @@ int main() {
     World &world = gui.create_world();
     World &ui_world = gui.create_world();
 
-    /*auto &camera = */ mobile_ortho_camera(world, window);
-    auto &ui_camera_obj = ui_world.append_child<WorldObject>();
+    /*auto &camera = */ mobile_ortho_camera(world.root, window);
+    auto &ui_camera_obj = ui_world.root.append_child<WorldObject>();
     auto &ui_camera = ui_camera_obj.add_component<Camera>(&window, Camera::Orthographic);
     // camera.setScale(0.01F);
     // camera.setScale(100);
     ui_camera.mode = Camera::TopLeft;
 
-    auto &line = new_points(world);
+    auto &line = new_points(world.root);
     auto &line_mesh = line.mesh;
     line.owner().scale = 0.03;
     int points_num = 100;
@@ -36,8 +36,8 @@ int main() {
         GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("assets/shaders/font.fsh"))};
     auto font = storage.get_font("assets/fonts/main.ttf");
     auto &migmix_font = gui.resources.append<Font>(std::move(text_shader), font).get();
-    auto &sample_text = ui_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
-    auto &credit_text = ui_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
+    auto &sample_text = ui_world.root.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
+    auto &credit_text = ui_world.root.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
     sample_text.owner().position = {0.005, -0.02, 0};
     credit_text.owner().position = {0.1, -0.1, 0};
 
@@ -48,7 +48,7 @@ int main() {
                                           {0.9, 0.2, 0.7, 0.3},
                                           {0.3, 0.7, 0.5, 0.5},
                                       });
-    auto &my_triangle = world.child_component<MeshComponent>(my_triangle_mesh);
+    auto &my_triangle = world.root.child_component<MeshComponent>(my_triangle_mesh);
     my_triangle.owner().scale = 0.1;
     my_triangle.owner().position = {-0.1, 0, 0};
 

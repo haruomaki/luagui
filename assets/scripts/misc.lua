@@ -62,7 +62,7 @@ end
 ---@param ... "quit"|"move"|"zoom"
 ---@return Camera camera
 function supercamera_2d(...)
-    local cobj = __CurrentWorld:append_empty_child()
+    local cobj = __CurrentWorld.root:append_empty_child()
     local camera = cobj:add_camera_component("Orthographic")
 
     __CurrentCamera = camera
@@ -100,7 +100,7 @@ end
 ---音声を再生するだけの物体を生成する。再生し終わったら消滅する。
 ---@param music Music 再生する音声
 function play_music(music)
-    local obj = __CurrentWorld:append_empty_child()
+    local obj = __CurrentWorld.root:append_empty_child()
     obj:add_update_component("_(play_music)音声再生用", function()
         local ss = obj:add_soundsource_component(music)
         ss:play()

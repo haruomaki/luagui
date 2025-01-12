@@ -80,15 +80,22 @@ class WorldObject {
         return *raw;
     }
 
-    bool erase() {
-        // 生ポインタを使用して要素を削除する
-        return this->parent_->children_.request_erase(this);
+    // 物体を初期化する。
+    void clear();
+
+    void erase(bool flush = false) {
+        clear();
+        if (this->parent_ == nullptr) {
+            warn("根オブジェクトをeraseしています。代わりにclearを使ってください。");
+            return;
+        }
+        this->parent_->children_.request_erase(this);
+        if (flush) this->parent_->children_.flush();
     }
 
     // ただちに削除。
     void force_erase() {
-        erase();
-        this->parent_->children_.flush();
+        erase(true);
     }
 
     std::vector<WorldObject *> children() {

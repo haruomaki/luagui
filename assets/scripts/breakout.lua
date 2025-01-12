@@ -18,7 +18,7 @@ BarHW = 0.02
 ---丸を生成
 ---@return MeshComponent
 local function maru(x, y)
-    local obj = __CurrentWorld:append_empty_child()
+    local obj = __CurrentWorld.root:append_empty_child()
     obj.position = { x, y }
     local mesh = obj:add_mesh_component(BallMaterial, BallMesh)
     local rb = obj:add_rigidbody_component({ type = "dynamic", isBullet = true })
@@ -61,7 +61,7 @@ end
 ---@param on_collision_enter? fun(self: Collider, other: Collider)
 ---@return MeshComponent
 local function sen(p1, p2, on_collision_enter)
-    local mesh = __CurrentWorld:draw_line({ p1, p2 })
+    local mesh = __CurrentWorld.root:draw_line({ p1, p2 })
     local rb = mesh.owner:add_rigidbody_component()
     rb:add_shape({
         shape = "edge",
@@ -75,7 +75,7 @@ end
 ---@param points Points
 ---@param on_collision_enter? fun(self: ChainCollider, collider: Collider)
 local function oresen(points, on_collision_enter)
-    local mesh = __CurrentWorld:draw_line(slice(points, 2, 4))
+    local mesh = __CurrentWorld.root:draw_line(slice(points, 2, 4))
     local rb = mesh.owner:add_rigidbody_component()
     rb:add_chain({
         points = points,
@@ -87,7 +87,7 @@ end
 ---@param points Points
 ---@param on_collision_enter? fun(self: ChainCollider, collider: Collider)
 local function wakka(points, on_collision_enter)
-    local mesh = __CurrentWorld:draw_line(points, true)
+    local mesh = __CurrentWorld.root:draw_line(points, true)
     local obj = mesh.owner
     local rb = obj:add_rigidbody_component()
     rb:add_chain({
@@ -129,8 +129,8 @@ run_window(800, 600, "ブロック崩し", function()
         { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
 
 
-    text_world:child_text("SCORE", { position = { 0.06, 0.02 }, scale = 0.5 })
-    local score_text = text_world:child_text("mochi-mochi panic", { position = { 0.06, 0 } })
+    text_world.root:child_text("SCORE", { position = { 0.06, 0.02 }, scale = 0.5 })
+    local score_text = text_world.root:child_text("mochi-mochi panic", { position = { 0.06, 0 } })
 
     -- ゲームのスコア
     Score = 0
@@ -145,7 +145,7 @@ run_window(800, 600, "ブロック崩し", function()
     end)
 
     -- 操作バーを追加
-    local bar_obj = world:draw_rect(BarHW, 0.003).owner
+    local bar_obj = world.root:draw_rect(BarHW, 0.003).owner
     bar_obj.position = { 0, -0.05 }
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
@@ -193,7 +193,7 @@ run_window(800, 600, "ブロック崩し", function()
 
     while true do
         -- ブロックを配置
-        local block_container = world:append_empty_child()
+        local block_container = world.root:append_empty_child()
         for i = -4, 4, 1 do
             for j = 5, 18, 1 do
                 local mesh = block(block_container, BlockHalfWidth * 2 * i, BlockHalfHeight * 2 * j)

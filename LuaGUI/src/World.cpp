@@ -50,7 +50,7 @@ void register_world(sol::state &lua) {
         lua["__CurrentWorld"] = &world;
 
         if (debug) {
-            mobile_ortho_camera(world, window);
+            mobile_ortho_camera(world.root, window);
         }
 
         // auto migmix_font = new Font();
@@ -62,7 +62,7 @@ void register_world(sol::state &lua) {
     lua.new_usertype<World>(
         "World",
         "b2world", sol::readonly_property([](World *world) { return &world->b2world; }),
-        sol::base_classes, sol::bases<WorldObject>());
+        "root", &World::root);
 
     // TODO: WorldObject.cppなどへ移動
     lua["WorldObject"]["draw_line"] = draw_line;

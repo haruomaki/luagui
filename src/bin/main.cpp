@@ -8,7 +8,7 @@ int main() {
     Window window(gui, 600, 500, "めいん");
     World &main_world = gui.create_world();
 
-    auto &camera = mobile_normal_camera(main_world, window);
+    auto &camera = mobile_normal_camera(main_world.root, window);
     auto &cobj = *camera.owner().get_parent();
     cobj.position = {0, 0, 1000};
     cobj.rotate = ANGLE_Y(M_PIf);
@@ -20,8 +20,8 @@ int main() {
 
     auto font = storage.get_font("assets/fonts/main.ttf");
     auto &migmix_font = gui.resources.append<Font>(std::move(text_shader), font).get();
-    auto &sample_text = main_world.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
-    auto &credit_text = main_world.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
+    auto &sample_text = main_world.root.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
+    auto &credit_text = main_world.root.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
 
     sample_text.owner().set_position({-200, 50, 200});
     sample_text.owner().set_scale_one(2000);
@@ -60,20 +60,20 @@ int main() {
 
     auto &poly = new_mesh(gui, GL_TRIANGLE_FAN, {{-50, -50, 0}, {-50, 50, 0}, {50, 50, 0}, {50, -50, 0}}, {{0.3, 0.7, 0.1, 0.5}});
 
-    auto &ins3 = main_world.child_component<MeshComponent>(gon3);
+    auto &ins3 = main_world.root.child_component<MeshComponent>(gon3);
     /* auto &ins = */ ins3.owner().child_component<MeshComponent>(gon, &cat_material);
-    auto &ins2 = main_world.child_component<MeshComponent>(gon2);
-    auto &inspoly = main_world.child_component<MeshComponent>(poly);
+    auto &ins2 = main_world.root.child_component<MeshComponent>(gon2);
+    auto &inspoly = main_world.root.child_component<MeshComponent>(poly);
     ins3.owner().scale = 1000;
     ins2.owner().scale = 1500;
     inspoly.owner().set_position({0, 100, 100});
 
     for (int i = -500; i <= 500; i += 100) {
-        auto &instance = main_world.child_component<MeshComponent>(poly);
+        auto &instance = main_world.root.child_component<MeshComponent>(poly);
         instance.owner().set_position({-200, -50, i});
     }
     for (int i = -300; i <= 300; i += 100) {
-        auto &instance = main_world.child_component<MeshComponent>(poly);
+        auto &instance = main_world.root.child_component<MeshComponent>(poly);
         instance.owner().set_position({-0, 300, i});
     }
 
@@ -94,7 +94,7 @@ int main() {
         {0.1, 0.4, 0.7, 1},
     };
 
-    auto &cube = new_mesh(main_world);
+    auto &cube = new_mesh(main_world.root);
     auto &mesh = cube.mesh;
     // mesh.vertices.xs = {1, 0, 0, 8};
     // mesh.vertices.ys = {1, 2, 3, -1};
@@ -108,7 +108,7 @@ int main() {
     cube.owner().scale = 200;
     cube.owner().position = {100, 100, 500};
 
-    auto &grid = new_line(main_world);
+    auto &grid = new_line(main_world.root);
     // grid.indices = {0, 1, 2, 3, 4, 5};
     for (int i = -10; i <= 10; i++) {
         constexpr RGBA grid_color = {0.1, 0.1, 0.1, 1};

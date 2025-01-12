@@ -5,8 +5,9 @@
 ---@return World
 function create_world(debug) end
 
----@class World : WorldObject
+---@class World
 ---@field b2world b2World
+---@field root WorldObject
 World = {}
 
 ---@type World

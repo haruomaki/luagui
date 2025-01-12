@@ -19,7 +19,7 @@ int main() {
     GUI gui;
     Window window(gui, 500, 400, "minimum.cppのウィンドウ");
     World &world = gui.create_world(); // TODO: いちいちワールドを作らなくてもいいようにしたい
-    world.add_component<UpdateComponent>([&](auto & /*self*/) {
+    world.root.add_component<UpdateComponent>([&](auto & /*self*/) {
         if (window.key_down()[GLFW_KEY_W]) std::cout << "わん🐶\n";
         if (window.key_down()[GLFW_KEY_N]) std::cout << "にゃん🐱\n";
         if (window.key(GLFW_KEY_Q)) window.close();

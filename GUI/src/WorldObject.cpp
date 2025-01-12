@@ -57,14 +57,7 @@ WorldObject::WorldObject()
 
 WorldObject::~WorldObject() {
     trace("WorldObjectのデストラクタ開始 components_: ", components_.keys());
-    // オブジェクトの寿命はコンポーネントの寿命より長い（コンポーネントのデストラクタでget_owner()が無効にならないようにする）
-    components_.flush(); // これが無いと、コンポーネントとその親の物体を同時に消すときなどに二重削除になる。
-    components_.foreach ([](auto &comp) {
-        trace("component iteration ", comp->id);
-        comp->erase();
-    });
-    components_.flush();
-
+    clear();
     // print("WorldObjectのデストラクタ終了");
 }
 
@@ -90,3 +83,20 @@ WorldObject::~WorldObject() {
 //         parent_->append_child<WorldObject>(*child); // FIXME: 派生クラスのコピーコンストラクタを呼ぶ必要がある
 //     }
 // }
+
+void WorldObject::clear() {
+    // オブジェクトの寿命はコンポーネントの寿命より長い（コンポーネントのデストラクタでget_owner()が無効にならないようにする）
+    components_.flush(); // これが無いと、コンポーネントとその親の物体を同時に消すときなどに二重削除になる。
+    components_.foreach ([](auto &comp) {
+        trace("component iteration ", comp->id);
+        comp->erase();
+    });
+    components_.flush();
+
+    // 子オブジェクトの削除
+    children_.flush(); // 二重解放防止
+    children_.foreach ([&](std::unique_ptr<WorldObject> &obj) {
+        obj->erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
+    });
+    children_.flush(); // 即時flushしないと子オブジェクトがメモリから消えない
+}

@@ -8,7 +8,7 @@
 struct CameraInterface;
 class Rigidbody;
 
-class World : public WorldObject {
+class World {
     // ステートフルに目まぐるしく変わる。
     CameraInterface *rendering_camera_ = nullptr;
 
@@ -25,31 +25,20 @@ class World : public WorldObject {
     BufferedSet<Rigidbody *> rigidbodies;
     BufferedSet<RigidbodyComponent *> rigidbody_components;
     b2::World b2world;
+    WorldObject root;
 
     World(GUI &gui)
-        : WorldObject(*this) // Worldにのみ許されたプライベートコンストラクタ
-        , gui(gui) {
+        : gui(gui)
+        , root(*this) {
         // Box2Dの世界を生成
         b2::World::Params world_params;
         world_params.gravity = b2Vec2{};
         b2world = b2::World(world_params);
     }
 
-    ~World() override {
+    ~World() {
         info("Worldのデストラクタ");
-
-        // WARNING: バグ応急処置で、worldに直接付いているコンポーネントの削除。
-        // こんな場当たり的でなく、Worldのシステムから改善したい。
-        components_.foreach ([](auto &comp) {
-            trace("component iteration ", comp->id);
-            comp->erase();
-        });
-        components_.flush();
-
-        children_.foreach ([&](std::unique_ptr<WorldObject> &obj) {
-            obj->erase(); // drawsやupdatesが消える前にUpdate等のデストラクタを呼ぶ
-        });
-        children_.flush(); // 即時flushしないと子オブジェクトがメモリから消えない
+        root.clear();
         info("Worldのデストラクタおわり");
     }
 
@@ -68,7 +57,7 @@ class World : public WorldObject {
         trace("World::master_update途中1:", this);
 
         // 子（および子孫）オブジェクトの追加／削除を再帰的に適用
-        this->flush_components_children();
+        root.flush_components_children();
 
         trace("World::master_update途中2:", this);
 

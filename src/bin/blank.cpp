@@ -1,7 +1,5 @@
 #include <gui.hpp>
 
-#pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
-
 int main() {
     GUI gui;
     Window window(gui, 1280, 720, "blank");
@@ -9,13 +7,13 @@ int main() {
 
     window.set_input_mode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    auto &camera = mobile_normal_camera(main_world, window);
+    auto &camera = mobile_normal_camera(main_world.root, window);
     auto &cobj = *camera.owner().get_parent();
     cobj.position = {0, 0, 10};
     cobj.rotate = ANGLE_Y(M_PIf);
     cobj.scale = 10;
 
-    auto &cube = new_mesh(main_world);
+    auto &cube = new_mesh(main_world.root);
     auto &mesh = cube.mesh;
     // mesh.vertices.xs = {1, 0, 0, 8};
     // mesh.vertices.ys = {1, 2, 3, -1};
@@ -37,7 +35,7 @@ int main() {
     cube.owner().scale = 2;
     cube.owner().position = {1, 1, 5};
 
-    main_world.append_child<GridGround>();
+    main_world.root.append_child<GridGround>();
 
     // レンダリングループ
     gui.mainloop();
