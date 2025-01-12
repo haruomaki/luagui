@@ -3,6 +3,7 @@
 #include <GUI/Window.hpp>
 #include <GUI/utility.hpp>
 #include <SumiGL/Context.hpp>
+#include <filesystem>
 #include <luagui.hpp>
 
 #include "Box2D.hpp"
@@ -13,6 +14,8 @@
 #include "WorldObject.hpp"
 #include "mesh.hpp"
 #include "sound.hpp"
+
+namespace fs = std::filesystem;
 
 // 時刻関連の関数を登録
 static void register_chrono(sol::state &lua) {
@@ -78,11 +81,21 @@ static void run_window(sol::state &lua, int width, int height, const std::string
     std::cout << "Window closed: " << title << '\n';
 }
 
+// "modules.hoge"といったモジュール名を「modules/hoge.lua」の形に変換する。
+static fs::path convert_module_to_path(const std::string &module_name) {
+    std::string path_str = module_name;
+    std::replace(path_str.begin(), path_str.end(), '.', '/');
+    path_str += ".lua";
+    return path_str;
+}
+
 static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storage) {
     sol::table searchers = lua["package"]["searchers"];
     searchers.add([&](const std::string &module_name) -> sol::object {
         // モジュール名をスクリプトファイル名に変換
-        std::string file_path = "scripts/" + module_name + ".lua";
+        std::string cwd = lua["_CWD"];
+        auto module_path = convert_module_to_path(module_name);
+        std::string file_path = cwd / module_path;
 
         try {
             // スクリプトのテキストを取得し、ロードする。
@@ -138,4 +151,12 @@ LuaGUI::~LuaGUI() {
     // ワールドの各物体はluaステートに依存している場合があるため、ワールドが先に消えることを保証する。
     // NOTE: GUIのデストラクタで二重クリーンになってしまっていることには注意。瑕疵なく動くので黙殺。
     cleanup();
+}
+
+void LuaGUI::run(const std::string &file_path) {
+    print("LuaGUIのrun開始");
+    fs::path path(file_path);
+    lua["_CWD"] = path.parent_path().c_str();
+    lua.script(storage.get_text(file_path));
+    print("LuaGUIのrun終了");
 }

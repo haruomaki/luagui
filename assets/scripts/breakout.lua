@@ -2,6 +2,8 @@ print(#package.searchers)
 require("coroutines")
 
 print(_CWD)
+require("breakout.resource")
+Hello()
 
 -- ブロックの大きさ
 BlockHalfWidth = 0.01
