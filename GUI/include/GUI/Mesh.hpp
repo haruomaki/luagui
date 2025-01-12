@@ -97,14 +97,23 @@ class MeshComponent : public Component {
     ~MeshComponent() override;
 };
 
+// モデル行列の保持、および追加/削除を担う構造体。
 struct ModelMatricesObservation {
+    // 同一のKey三項組を持つ物体たちのモデル行列をひとまとめに格納する。
+    // 物体が一つでも追加/削除されるたび、再生成される。
     vector<glm::mat4> model_matrices;
+    // とある物体のモデル行列がmodel_matrices内のどの位置に格納されているかを記録する。
+    // ここのキーに無い物体は、そもそもモデル行列が格納されていない。
+    // 物体が一つでも追加/削除されるたび、model_matricesに付随して再生成される。
     std::unordered_map<const MeshComponent *, size_t> object_index_map;
+    // 物体の追加要請。毎フレーム１回フラッシュされ、非空ならmodel_matricesおよびobject_index_mapが再生成される。
     std::vector<const MeshComponent *> initial_list;
+    // initial_listと同様に、物体の削除要請。TODO: 順序を正確にするために、initial_listと統合すべきか。
     std::vector<const MeshComponent *> delete_list;
 
-    // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
+    // 普段はmodel_matricesのdata()と一致する。vector内部でメモリ再確保が行われるのを検知するのに利用。
     const glm::mat4 *matrices_raw = nullptr;
+    // メッシュ・マテリアル・シェーダ・"モデル行列の生配列"の四項組ごとに一つVBO&VAOが決まる
     std::pair<GL::VertexBuffer, GL::VertexArray> vbovao;
 };
 
@@ -116,7 +125,9 @@ class MeshDrawManager {
 
     static KeyType key_from(const MeshComponent *obj);
     static GL::VertexArray generate_vao(StaticMesh &mesh, const GL::ProgramObject &shader, const GL::VertexBuffer &model_matrices_vbo);
-    static inline void draw_instanced(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const CameraInterface &camera);
+    // マテリアルに基づいて描画設定しつつ、インスタンス描画を実行する。
+    static inline void drawcall(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const CameraInterface &camera);
+    // 一つのKey三項組に対して一回の描画処理（VAOなどの更新＆ドローコール）を行う。
     void draw_observation(KeyType key, const CameraInterface &camera);
 
     friend class World; // stepとdraw_allため

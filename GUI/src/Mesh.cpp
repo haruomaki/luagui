@@ -57,7 +57,7 @@ void MeshDrawManager::delete_model_matrix(const MeshComponent *obj) {
 void MeshDrawManager::step() {
     // initial_listとdelete_listのいずれかが空でないすべてのキーについてモデル行列キューを再生成
     for (auto &[key, obs] : observations_) {
-        if (obs.initial_list.size() != 0 || obs.delete_list.size() != 0) {
+        if (!obs.initial_list.empty() || !obs.delete_list.empty()) {
             auto &obj_ix_map = obs.object_index_map;
 
             // 登録予定キーを追加
@@ -70,13 +70,16 @@ void MeshDrawManager::step() {
                 obj_ix_map.erase(ptr);
             }
 
+            // この時点では、obj_ix_mapのキーのみに意味がある。
+            // キーが物体の一覧を意味する。
+
             // インデックスの振り直しとモデル行列キューの再生成を一挙に行う
             auto queue_size = obj_ix_map.size();
             obs.model_matrices = std::vector<glm::mat4>(queue_size); // モデル行列キュー再生成
             size_t counter = 0;
             for (auto &[mc, index] : obj_ix_map) {
                 const auto &model_matrix = mc->owner().get_absolute_transform();
-                index = counter++;
+                index = counter++; // indexは参照であることに注意。
                 obs.model_matrices[index] = model_matrix;
             }
         }
@@ -96,6 +99,7 @@ void MeshDrawManager::step() {
 GL::VertexArray MeshDrawManager::generate_vao(StaticMesh &mesh, const GL::ProgramObject &shader, const GL::VertexBuffer &model_matrices_vbo) {
     info("VAO生成");
     auto vao = GL::VertexArray();
+    // TODO: gen関数を作成
 
     // VAOに頂点の座標と色を関連付ける
     vao.bind([&] {
@@ -115,7 +119,7 @@ GL::VertexArray MeshDrawManager::generate_vao(StaticMesh &mesh, const GL::Progra
     return vao;
 }
 
-void MeshDrawManager::draw_instanced(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const CameraInterface &camera) {
+void MeshDrawManager::drawcall(const StaticMesh &mesh, const Material &material, const GL::VertexArray &vao, size_t count_instances, const CameraInterface &camera) {
     // シェーダを有効化
     const auto &shader = material.shader;
     shader.use();
@@ -145,19 +149,18 @@ void MeshDrawManager::draw_instanced(const StaticMesh &mesh, const Material &mat
     shader.set_uniform("projectionMatrix", projection_matrix);
 
     // モデルの描画
-    GLuint tex_id = material.texture.get();
-    shader.set_uniform("is_tex", (tex_id == 0 ? GL_FALSE : GL_TRUE));
+    shader.set_uniform("is_tex", (material.texture.is_valid() ? GL_TRUE : GL_FALSE));
     shader.set_uniform("baseColor", material.base_color);
     vao.bind([&] {
-        glBindTexture(GL_TEXTURE_2D, tex_id); // テクスチャを指定
-        if (mesh.use_index) {
-            size_t indices_length = mesh.indices_n_;
-            glDrawElements(mesh.draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
-        } else {
-            size_t vertices_length = mesh.n_;
-            glDrawArraysInstanced(mesh.draw_mode, 0, GLsizei(vertices_length), GLsizei(count_instances));
-        }
-        glBindTexture(GL_TEXTURE_2D, 0); // テクスチャのバインドを解除
+        material.texture.bind([&] {
+            if (mesh.use_index) {
+                size_t indices_length = mesh.indices_n_;
+                glDrawElements(mesh.draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
+            } else {
+                size_t vertices_length = mesh.n_;
+                glDrawArraysInstanced(mesh.draw_mode, 0, GLsizei(vertices_length), GLsizei(count_instances));
+            }
+        });
     });
 }
 
@@ -183,7 +186,7 @@ void MeshDrawManager::draw_observation(KeyType key, const CameraInterface &camer
     model_matrices_vbo.subdata(0, sizeof(glm::mat4) * model_matrices.size(), model_matrices.data());
 
     // 描画
-    draw_instanced(mesh, material, batch_vao, model_matrices.size(), camera);
+    drawcall(mesh, material, batch_vao, model_matrices.size(), camera);
 }
 
 void MeshDrawManager::draw_all(const CameraInterface &camera) {
