@@ -37,7 +37,7 @@ run_window(800, 600, "ブロック崩し", function()
     local bar_obj = world.root:append_empty_child()
     bar_obj.position = { 0, -0.05 }
     bar_obj:add_mesh_component(BarMaterial, BarMesh)
-    local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
+    local bar = bar_obj:add_rigidbody2d_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = BarHW, halfHeight = BarHH })
 
     bar_obj:add_update_component("バーのキー操作", ForeverFun(function()

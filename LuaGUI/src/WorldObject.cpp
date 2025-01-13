@@ -104,7 +104,7 @@ void register_world_object(sol::state &lua) {
         "add_update_component",
         [&lua](WorldObject *obj, std::string id, sol::function f) { return add_update_component(lua, obj, std::move(id), std::move(f)); },
 
-        "add_rigidbody_component",
+        "add_rigidbody2d_component",
         [&lua](WorldObject *obj, const sol::optional<sol::table> &tbl_opt) { return add_rigidbody_component(lua, obj, tbl_opt); },
 
         "get_component",
