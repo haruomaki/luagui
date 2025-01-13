@@ -37,6 +37,8 @@ int main() {
 
     main_world.root.append_child<GridGround>();
 
+    cube.owner().add_component<Rigidbody>();
+
     // レンダリングループ
     gui.mainloop();
     // TODO: Windowの開放タイミングのバグ調査

@@ -4,6 +4,7 @@
 #include "Rigidbody2D.hpp"
 #include "Timer.hpp"
 #include "WorldObject.hpp"
+#include "bullet_physics.hpp"
 
 struct CameraInterface;
 
@@ -23,6 +24,7 @@ class World {
     BufferedSet<std::function<void()> *> updates;
     BufferedSet<Rigidbody2D *> rigidbody_components;
     b2::World b2world;
+    BulletWorld bullet_world;
     WorldObject root;
 
     World(GUI &gui)

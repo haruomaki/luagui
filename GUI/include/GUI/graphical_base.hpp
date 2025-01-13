@@ -52,6 +52,25 @@ inline glm::quat ANGLE_X(float angle) { return glm::angleAxis(angle, glm::vec3{1
 inline glm::quat ANGLE_Y(float angle) { return glm::angleAxis(angle, glm::vec3{0, 1, 0}); }
 inline glm::quat ANGLE_Z(float angle) { return glm::angleAxis(angle, glm::vec3{0, 0, 1}); }
 
+// モデル行列（4x4）から平行移動成分・回転成分・拡縮成分を抽出する。
+inline void decompose_transform(const glm::mat4 &transform, glm::vec3 &position, glm::quat &rotation, glm::vec3 &scale) {
+    // 平行移動成分を取得
+    position = glm::vec3(transform[3]);
+
+    // スケール成分を取得
+    scale = glm::vec3(
+        glm::length(glm::vec3(transform[0])),
+        glm::length(glm::vec3(transform[1])),
+        glm::length(glm::vec3(transform[2])));
+
+    // 回転成分を取得
+    glm::mat3 rotation_matrix = glm::mat3(
+        glm::vec3(transform[0]) / scale.x,
+        glm::vec3(transform[1]) / scale.y,
+        glm::vec3(transform[2]) / scale.z);
+    rotation = glm::quat_cast(rotation_matrix);
+}
+
 } // namespace base
 
 using namespace base;

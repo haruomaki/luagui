@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.hpp"
+#include "graphical_base.hpp"
 #include "property.hpp"
 #include <SumiGL/buffered_container.hpp>
 
@@ -145,6 +146,11 @@ class WorldObject {
     [[nodiscard]] float get_absolute_scale_prop() const {
         glm::mat3 scale_rotate = {abs_transform_};
         return std::cbrtf(glm::determinant(scale_rotate));
+    }
+
+    void set_transform(const glm::mat4 transform) {
+        decompose_transform(transform, pos_, rotate_, scale_);
+        refresh_absolute_transform();
     }
 
     void set_position(const glm::vec3 &pos) {

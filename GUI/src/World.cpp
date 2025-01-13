@@ -56,4 +56,10 @@ void World::master_physics() {
         }
         // print("衝突おわり");
     }
+
+    // -------------------------------
+    // Bullet Physicsによる3D物理演算
+    // -------------------------------
+
+    bullet_world.step_simulation(dt);
 }
