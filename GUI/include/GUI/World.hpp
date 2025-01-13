@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Mesh.hpp"
-#include "Rigidbody.hpp"
+#include "Rigidbody2D.hpp"
 #include "Timer.hpp"
 #include "WorldObject.hpp"
 

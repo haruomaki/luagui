@@ -1,4 +1,4 @@
-#include "Rigidbody.hpp"
+#include "Rigidbody2D.hpp"
 #include "World.hpp"
 
 // ---------------------

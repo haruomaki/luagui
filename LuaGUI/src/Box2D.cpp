@@ -1,5 +1,5 @@
 #include "Box2D.hpp"
-#include <GUI/Rigidbody.hpp>
+#include <GUI/Rigidbody2D.hpp>
 #include <GUI/WorldObject.hpp>
 
 // b2::World::SetGravityなど、「b2Vec2を受け取るメンバ関数」を「テーブルを受け取るメンバ関数」に変換する高階関数。

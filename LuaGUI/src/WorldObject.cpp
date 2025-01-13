@@ -1,6 +1,6 @@
 #include "WorldObject.hpp"
 #include <GUI/Mesh.hpp>
-#include <GUI/Rigidbody.hpp>
+#include <GUI/Rigidbody2D.hpp>
 #include <GUI/Update.hpp>
 #include <GUI/WorldObject.hpp>
 #include <GUI/sound.hpp>
