@@ -6,7 +6,6 @@
 #include "WorldObject.hpp"
 
 struct CameraInterface;
-class Rigidbody;
 
 class World {
     // ステートフルに目まぐるしく変わる。
@@ -22,7 +21,6 @@ class World {
     Timer timer;
     BufferedSet<std::function<void()> *> draws;
     BufferedSet<std::function<void()> *> updates;
-    BufferedSet<Rigidbody *> rigidbodies;
     BufferedSet<RigidbodyComponent *> rigidbody_components;
     b2::World b2world;
     WorldObject root;
