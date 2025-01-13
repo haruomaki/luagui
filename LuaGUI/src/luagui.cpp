@@ -81,43 +81,48 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 }
 
 // "modules.hoge"といったモジュール名を「modules/hoge.lua」の形に変換する。
-static fs::path convert_module_to_path(const std::string &module_name) {
-    std::string path_str = module_name;
+static fs::path convert_module_to_path(const std::optional<Path> &cwd, const std::string &module_name) {
+    std::string path_str = cwd.value_or("").string() + "/" + module_name;
     std::replace(path_str.begin(), path_str.end(), '.', '/');
     path_str += ".lua";
     return path_str;
 }
 
-static std::string inject_custom_require(const std::string &code, const Path &file_path) {
-    std::string header = R"(
-        local __CWD__ = ')" +
-                         file_path.parent_path().string() + R"('
-        local original_require = require
+// assetsからluaスクリプトを取得し、冒頭に「自身のファイルパス」を保持するコードを付加する。
+static std::string get_code_injected(const lunchbox::Storage &storage, const Path &file_path) {
+    auto code = storage.get_text(file_path);
+    auto cwd = file_path.parent_path().string();
+    // 各モジュールは__CWD__というローカル変数で自身のファイルパスを保持する。
+    // また、require関数をオーバーライドし、呼ぶ直前に__CWD_global__を設定するようにする。
+    std::string header =
+        "local __CWD__ = '" + cwd + R"('
+        local __original_require = require
         local function require(module)
-            return original_require(__CWD__ .. "/" .. module)
+            __CWD_global__ = __CWD__
+            return __original_require(module)
         end
     )";
     return header + code;
 }
 
+// assetsディレクトリからの相対パスで検索できるようにする。
 static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storage) {
     sol::table searchers = lua["package"]["searchers"];
     searchers.add([&](const std::string &module_name) -> sol::object {
-        // モジュール名をスクリプトファイル名に変換
-        auto module_path = convert_module_to_path(module_name);
-        debug(module_path);
-        std::string file_path = module_path;
+        // requireを呼ぶ直前に、`__CWD_global__`という変数にパスを格納しておくと、そこを基準とした相対パスでアセット内を検索する。
+        std::string cwd = lua["__CWD_global__"];
+        // モジュール名をスクリプトアセットのフルパスに変換。
+        auto module_path = convert_module_to_path(cwd, module_name);
 
         try {
             // スクリプトのテキストを取得し、ロードする。
-            std::string script_content = storage.get_text(file_path);
-            script_content = inject_custom_require(script_content, file_path);
+            std::string script_content = get_code_injected(storage, module_path);
             auto module = lua.load(script_content);
             // ロードに成功すればモジュールを返す。
             return module;
         } catch (const std::exception & /*e*/) {
             // ロードに失敗すればエラーメッセージを返す。
-            return sol::make_object(lua, "no asset '" + file_path + "'");
+            return sol::make_object(lua, "no asset '" + module_path.string() + "'");
         }
     });
 }
@@ -167,8 +172,7 @@ LuaGUI::~LuaGUI() {
 
 void LuaGUI::run(const Path &file_path) {
     print("LuaGUIのrun開始");
-    auto scr = storage.get_text(file_path);
-    scr = inject_custom_require(scr, file_path);
+    auto scr = get_code_injected(storage, file_path);
     lua.script(scr);
     print("LuaGUIのrun終了");
 }
