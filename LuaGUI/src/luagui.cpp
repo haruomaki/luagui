@@ -88,20 +88,30 @@ static fs::path convert_module_to_path(const std::string &module_name) {
     return path_str;
 }
 
+static std::string inject_custom_require(const std::string &code, const Path &file_path) {
+    std::string header = R"(
+        local __CWD__ = ')" +
+                         file_path.parent_path().string() + R"('
+        local original_require = require
+        local function require(module)
+            return original_require(__CWD__ .. "/" .. module)
+        end
+    )";
+    return header + code;
+}
+
 static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storage) {
     sol::table searchers = lua["package"]["searchers"];
     searchers.add([&](const std::string &module_name) -> sol::object {
         // モジュール名をスクリプトファイル名に変換
-        // std::string mod = lua["__MODULE__"];
-        // debug(mod);
-        std::string cwd = lua["_CWD"];
         auto module_path = convert_module_to_path(module_name);
-        std::string file_path = cwd / module_path;
+        debug(module_path);
+        std::string file_path = module_path;
 
         try {
             // スクリプトのテキストを取得し、ロードする。
             std::string script_content = storage.get_text(file_path);
-            script_content = "local __MODULE__ = \"" + file_path + "\"\n" + script_content;
+            script_content = inject_custom_require(script_content, file_path);
             auto module = lua.load(script_content);
             // ロードに成功すればモジュールを返す。
             return module;
@@ -157,8 +167,8 @@ LuaGUI::~LuaGUI() {
 
 void LuaGUI::run(const Path &file_path) {
     print("LuaGUIのrun開始");
-    lua["_CWD"] = file_path.parent_path().c_str();
-    // lua["__MODULE__"] = file_path.c_str();
-    lua.script(storage.get_text(file_path));
+    auto scr = storage.get_text(file_path);
+    scr = inject_custom_require(scr, file_path);
+    lua.script(scr);
     print("LuaGUIのrun終了");
 }

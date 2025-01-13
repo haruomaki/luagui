@@ -1,1 +1,1 @@
-print("trivです。", __MODULE__)
+print("trivです。", __CWD__)

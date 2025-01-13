@@ -1,3 +1,3 @@
-print("mikanです。", __MODULE__)
+print("mikanです。", __CWD__)
 
-require("test.core.triv")
+require("core.triv")
