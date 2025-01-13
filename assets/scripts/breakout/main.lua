@@ -1,4 +1,7 @@
+local __MODULE__ = "aa"
 local figure = require("figure")
+
+require("test/mikan")
 
 run_window(800, 600, "ブロック崩し", function()
     b2SetLengthUnitsPerMeter(0.001)

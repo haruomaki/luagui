@@ -13,3 +13,7 @@ local Point = {}
 ---今実行中のスクリプトのパス（assetsディレクトリからの相対パス）が格納されている。
 ---@type string
 _CWD = ""
+
+---モジュール自分自身のパスが格納される。
+---@type string
+__MODULE__ = ""

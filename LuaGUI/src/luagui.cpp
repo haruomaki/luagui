@@ -92,6 +92,8 @@ static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storag
     sol::table searchers = lua["package"]["searchers"];
     searchers.add([&](const std::string &module_name) -> sol::object {
         // モジュール名をスクリプトファイル名に変換
+        // std::string mod = lua["__MODULE__"];
+        // debug(mod);
         std::string cwd = lua["_CWD"];
         auto module_path = convert_module_to_path(module_name);
         std::string file_path = cwd / module_path;
@@ -99,6 +101,7 @@ static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storag
         try {
             // スクリプトのテキストを取得し、ロードする。
             std::string script_content = storage.get_text(file_path);
+            script_content = "local __MODULE__ = \"" + file_path + "\"\n" + script_content;
             auto module = lua.load(script_content);
             // ロードに成功すればモジュールを返す。
             return module;
@@ -155,6 +158,7 @@ LuaGUI::~LuaGUI() {
 void LuaGUI::run(const Path &file_path) {
     print("LuaGUIのrun開始");
     lua["_CWD"] = file_path.parent_path().c_str();
+    // lua["__MODULE__"] = file_path.c_str();
     lua.script(storage.get_text(file_path));
     print("LuaGUIのrun終了");
 }
