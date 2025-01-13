@@ -37,7 +37,7 @@ function WorldObject:add_update_component(id, f) end
 
 ---Rigidbodyコンポーネントを追加する。（＝物理演算を追加する）
 ---@param body_params? BodyOptions b2::Bodyを作成するときに指定するオプション。位置や速度、摩擦など。
----@return Rigidbody rbc
+---@return Rigidbody2D rbc
 function WorldObject:add_rigidbody_component(body_params) end
 
 ---物体に付いているコンポーネントを取得する

@@ -5,31 +5,31 @@
 -------------
 
 ---コンポーネントおよび剛体そのものを表すクラス。RigidbodyComponentとb2::Bodyの機能を統合する。
----@class Rigidbody : Component
+---@class Rigidbody2D : Component
 ---@field position Point 《読み取り専用》位置
 ---@field rotation number 《読み取り専用》回転角
 ---@field transform b2Transform 剛体の空間的配置
 ---@field linear_velocity Point 速度ベクトル
 ---@field angular_velocity number 角速度のz軸成分
-local Rigidbody = {}
+local Rigidbody2D = {}
 
 ---剛体に衝突形状を追加する。
 ---@param shape_options ShapeOptions
-function Rigidbody:add_shape(shape_options) end
+function Rigidbody2D:add_shape(shape_options) end
 
 ---衝突判定体を表すクラス。
----@class Collider : Component
+---@class Collider2D : Component
 ---@field index integer Shapeのインデックス番号
-local Collider = {}
+local Collider2D = {}
 
 ---Chain（折れ線形の衝突判定体）を表すクラス。
----@class ChainCollider : Component
+---@class ChainCollider2D : Component
 ---@field index integer Shapeのインデックス番号
-local ChainCollider = {}
+local ChainCollider2D = {}
 
 ---剛体にChainを追加する。
 ---@param chain_options ChainOptions
-function Rigidbody:add_chain(chain_options) end
+function Rigidbody2D:add_chain(chain_options) end
 
 -------------
 -- box2cppから
@@ -75,7 +75,7 @@ local BodyOptions = {}
 ---@field points Points? 辺の端点（shapeが"edge"の場合に必要）。
 ---@field friction number? 摩擦係数
 ---@field restitution number? 反発係数
----@field on_collision_enter fun(self: Collider, other: Collider)? 衝突したときに実行するコールバック関数。
+---@field on_collision_enter fun(self: Collider2D, other: Collider2D)? 衝突したときに実行するコールバック関数。
 local ShapeOptions = {}
 
 ---衝突形状の種類
@@ -87,5 +87,5 @@ local ShapeOptions = {}
 ---@field isLoop boolean? チェーンの両端を閉じるかどうか
 ---@field friction number? 摩擦係数
 ---@field restitution number? 反発係数
----@field on_collision_enter fun(self: ChainCollider, collider: Collider)? 衝突したときに実行するコールバック関数。
+---@field on_collision_enter fun(self: ChainCollider2D, collider: Collider2D)? 衝突したときに実行するコールバック関数。
 local ChainOptions = {}

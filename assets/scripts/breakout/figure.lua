@@ -61,7 +61,7 @@ end
 ---直線を生成
 ---@param p1 Point
 ---@param p2 Point
----@param on_collision_enter? fun(self: Collider, other: Collider)
+---@param on_collision_enter? fun(self: Collider2D, other: Collider2D)
 ---@return MeshComponent
 function figure.sen(p1, p2, on_collision_enter)
     local mesh = __CurrentWorld.root:draw_line({ p1, p2 })
@@ -76,7 +76,7 @@ end
 
 ---折れ線を生成
 ---@param points Points
----@param on_collision_enter? fun(self: ChainCollider, collider: Collider)
+---@param on_collision_enter? fun(self: ChainCollider2D, collider: Collider2D)
 function figure.oresen(points, on_collision_enter)
     local mesh = __CurrentWorld.root:draw_line(slice(points, 2, 4))
     local rb = mesh.owner:add_rigidbody_component()
@@ -88,7 +88,7 @@ end
 
 ---閉じた折れ線を生成
 ---@param points Points
----@param on_collision_enter? fun(self: ChainCollider, collider: Collider)
+---@param on_collision_enter? fun(self: ChainCollider2D, collider: Collider2D)
 function figure.wakka(points, on_collision_enter)
     local mesh = __CurrentWorld.root:draw_line(points, true)
     local obj = mesh.owner

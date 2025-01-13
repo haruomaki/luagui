@@ -39,7 +39,7 @@ static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, 
     return &uc;
 }
 
-static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject *obj, const sol::optional<sol::table> &tbl_opt) {
+static Rigidbody2D *add_rigidbody_component(sol::state &lua, WorldObject *obj, const sol::optional<sol::table> &tbl_opt) {
     // tblにはb2::Body::Paramsで設定できる要素が入れられる
     sol::table tbl = tbl_opt.value_or(lua.create_table());
 
@@ -56,13 +56,14 @@ static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject 
     body_params.position = {.x = pos.x, .y = pos.y};
     body_params.sleepThreshold = 0.0005f; // スリープ状態を防ぐ
 
-    auto &rbc = obj->add_component<RigidbodyComponent>(body_params);
+    auto &rbc = obj->add_component<Rigidbody2D>(body_params);
     return &rbc;
 }
 
 static sol::object get_component(sol::state &lua, WorldObject *obj, const std::string &component_type) {
-    if (component_type == "Rigidbody") {
-        auto *rbc = obj->get_component<RigidbodyComponent>();
+    // TODO: あらゆるクラス名に対応
+    if (component_type == "Rigidbody2D") {
+        auto *rbc = obj->get_component<Rigidbody2D>();
         return sol::make_object(lua, rbc);
     }
     if (component_type == "SoundSource") {
@@ -75,8 +76,8 @@ static sol::object get_component(sol::state &lua, WorldObject *obj, const std::s
 static sol::object get_component_by_id(sol::state &lua, WorldObject *obj, const std::string &id) {
     Component *comp = obj->get_component_by_id(id);
     // debug(id, comp);
-    if (auto *p = dynamic_cast<RigidbodyComponent *>(comp)) return sol::make_object(lua, p);
-    if (auto *p = dynamic_cast<ColliderComponent *>(comp)) return sol::make_object(lua, p);
+    if (auto *p = dynamic_cast<Rigidbody2D *>(comp)) return sol::make_object(lua, p);
+    if (auto *p = dynamic_cast<Collider2D *>(comp)) return sol::make_object(lua, p);
     if (auto *p = dynamic_cast<UpdateComponent *>(comp)) return sol::make_object(lua, p);
     return sol::nil;
 }

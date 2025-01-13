@@ -21,7 +21,7 @@ class World {
     Timer timer;
     BufferedSet<std::function<void()> *> draws;
     BufferedSet<std::function<void()> *> updates;
-    BufferedSet<RigidbodyComponent *> rigidbody_components;
+    BufferedSet<Rigidbody2D *> rigidbody_components;
     b2::World b2world;
     WorldObject root;
 

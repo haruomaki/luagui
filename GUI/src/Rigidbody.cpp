@@ -5,10 +5,10 @@
 // RigidbodyComponent
 // ---------------------
 
-RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
+Rigidbody2D::Rigidbody2D(b2::Body::Params body_params) {
     trace("RigidbodyComponentのコンストラクタです。", this);
 
-    if (owner().get_components<RigidbodyComponent>().size() != 0) throw std::runtime_error("１つの物体に２つ以上のRigidbodyを付けることは不正です。");
+    if (owner().get_components<Rigidbody2D>().size() != 0) throw std::runtime_error("１つの物体に２つ以上のRigidbodyを付けることは不正です。");
 
     // Worldのrigidbodyリストに追加
     world().rigidbody_components.request_set(this);
@@ -18,28 +18,28 @@ RigidbodyComponent::RigidbodyComponent(b2::Body::Params body_params) {
     b2body = std::move(tmp_body);
 
     // 既にColliderが付いていたら、Shapeを遅延的に作成。
-    for (auto *cc : owner().get_components<ColliderComponent>()) {
+    for (auto *cc : owner().get_components<Collider2D>()) {
         cc->append_shape(this);
     }
 
     // Chainについても同様。
-    for (auto *ccc : owner().get_components<ChainColliderComponent>()) {
+    for (auto *ccc : owner().get_components<ChainCollider2D>()) {
         ccc->append_chain(this);
     }
 }
 
-RigidbodyComponent::~RigidbodyComponent() {
+Rigidbody2D::~Rigidbody2D() {
     trace("RigidbodyComponentのデストラクタです。", this);
 
     // Shapeを外す
-    auto ccs = owner().get_components<ColliderComponent>();
+    auto ccs = owner().get_components<Collider2D>();
     for (auto *cc : ccs) {
         info("ShapeはあるけどRigidbodyを消すよ。handle: ", cc->shape_ref_.Handle().index1, ", ", cc);
         cc->drop_shape(this);
     }
 
     // Chainも外す
-    auto cccs = owner().get_components<ChainColliderComponent>();
+    auto cccs = owner().get_components<ChainCollider2D>();
     for (auto *ccc : cccs) {
         info("ChainはあるけどRigidbodyを消すよ。handle: ", ccc->chain_ref_.Handle().index1, ", ", ccc);
         ccc->drop_chain(this);
@@ -57,7 +57,7 @@ RigidbodyComponent::~RigidbodyComponent() {
 // ColliderComponent
 // ---------------------
 
-void ColliderComponent::append_shape(RigidbodyComponent *rbc) {
+void Collider2D::append_shape(Rigidbody2D *rbc) {
     // どの型が代入されていたとしても、共通のインタフェースを呼び出す
     std::visit(
         [&](auto &s) {
@@ -68,15 +68,15 @@ void ColliderComponent::append_shape(RigidbodyComponent *rbc) {
         shape_);
 }
 
-void ColliderComponent::drop_shape(RigidbodyComponent * /*rbc*/) {
+void Collider2D::drop_shape(Rigidbody2D * /*rbc*/) {
     active_ = false;
     this->shape_ref_.Destroy();
 }
 
-ColliderComponent::ColliderComponent(ShapeVariant shape, b2::Shape::Params shape_params)
+Collider2D::Collider2D(ShapeVariant shape, b2::Shape::Params shape_params)
     : shape_(shape)
     , shape_params_(shape_params) {
-    auto rbcs = owner().get_components<RigidbodyComponent>();
+    auto rbcs = owner().get_components<Rigidbody2D>();
     if (rbcs.size() == 0) {
         info("RigidbodyComponentが無いため、Shapeを付けずに保留。");
     } else {
@@ -84,9 +84,9 @@ ColliderComponent::ColliderComponent(ShapeVariant shape, b2::Shape::Params shape
     }
 }
 
-ColliderComponent::~ColliderComponent() {
+Collider2D::~Collider2D() {
     trace("start ColliderComponent dtor");
-    auto rbcs = owner().get_components<RigidbodyComponent>();
+    auto rbcs = owner().get_components<Rigidbody2D>();
     if (rbcs.size() == 0) {
         info("RigidbodyComponentが無いため、そのまま終了。");
     } else {
@@ -99,19 +99,19 @@ ColliderComponent::~ColliderComponent() {
 // ChainColliderComponent
 // ---------------------
 
-void ChainColliderComponent::append_chain(RigidbodyComponent *rbc) {
+void ChainCollider2D::append_chain(Rigidbody2D *rbc) {
     chain_params_.userData = static_cast<void *>(this);
     chain_ref_ = rbc->b2body.CreateChain(b2::DestroyWithParent, chain_params_);
 }
 
-void ChainColliderComponent::drop_chain(RigidbodyComponent * /*rbc*/) {
+void ChainCollider2D::drop_chain(Rigidbody2D * /*rbc*/) {
     active_ = false;
     this->chain_ref_.Destroy();
 }
 
-ChainColliderComponent::ChainColliderComponent(b2::Chain::Params chain_params)
+ChainCollider2D::ChainCollider2D(b2::Chain::Params chain_params)
     : chain_params_(chain_params) {
-    auto rbcs = owner().get_components<RigidbodyComponent>();
+    auto rbcs = owner().get_components<Rigidbody2D>();
     if (rbcs.size() == 0) {
         info("RigidbodyComponentが無いため、Chainを付けずに保留。");
     } else {
@@ -119,8 +119,8 @@ ChainColliderComponent::ChainColliderComponent(b2::Chain::Params chain_params)
     }
 }
 
-ChainColliderComponent::~ChainColliderComponent() {
-    auto rbcs = owner().get_components<RigidbodyComponent>();
+ChainCollider2D::~ChainCollider2D() {
+    auto rbcs = owner().get_components<Rigidbody2D>();
     if (rbcs.size() == 0) {
         info("RigidbodyComponentが無いため、そのまま終了。");
     } else {

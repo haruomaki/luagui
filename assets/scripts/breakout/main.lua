@@ -53,7 +53,7 @@ run_window(800, 600, "ブロック崩し", function()
         -- スペースキーで連射
         if GetKeyDown('Space') then
             bar_obj:add_update_component("ショット", IntervalFun(function()
-                local m = figure.maru(bar.position.x, -0.04).owner:get_component("Rigidbody")
+                local m = figure.maru(bar.position.x, -0.04).owner:get_component("Rigidbody2D")
                 local theta = (math.random() - 0.5) * 0.2
                 local speed = math.random() * 0.1 + 0.25
                 m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }
