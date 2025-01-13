@@ -32,10 +32,11 @@ run_window(800, 600, "ブロック崩し", function()
     end)
 
     -- 操作バーを追加
-    local bar_obj = world.root:draw_rect(BarHW, 0.003).owner
+    local bar_obj = world.root:append_empty_child()
     bar_obj.position = { 0, -0.05 }
+    bar_obj:add_mesh_component(BarMaterial, BarMesh)
     local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
-    bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = 0.02, halfHeight = 0.003 })
+    bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = BarHW, halfHeight = BarHH })
 
     bar_obj:add_update_component("バーのキー操作", ForeverFun(function()
         -- バーをキー操作で動かす

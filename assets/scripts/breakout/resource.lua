@@ -17,3 +17,11 @@ BallMaterial.write_depth = false
 BallMesh = new_mesh(
     { { -BallRadius, -BallRadius, 0 }, { BallRadius, -BallRadius, 0 }, { BallRadius, BallRadius, 0 }, { -BallRadius, BallRadius, 0 } },
     { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
+
+-- ボールの画像
+BarImage = load_image("images/不思議なバー.png")
+-- ボールのマテリアルとメッシュ
+BarMaterial = new_material(BarImage)
+BarMesh = new_mesh(
+    { { -BarHW, -BarHH, 0 }, { BarHW, -BarHH, 0 }, { BarHW, BarHH, 0 }, { -BarHW, BarHH, 0 } },
+    { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })

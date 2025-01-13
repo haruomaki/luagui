@@ -8,8 +8,9 @@ BallRadius = 0.006
 -- ステージの大きさ
 StageHW = 0.1
 
--- バーの長さ
+-- バーの大きさ
 BarHW = 0.02
+BarHH = 0.004
 
 -- 同時衝突の際、現フレームで削除されたブロックを記録していく
 -- local ERASED_BLOCKS = {}
