@@ -92,16 +92,16 @@ static fs::path convert_module_to_path(const std::optional<Path> &cwd, const std
 static std::string get_code_injected(const lunchbox::Storage &storage, const Path &file_path) {
     auto code = storage.get_text(file_path);
     auto cwd = file_path.parent_path().string();
-    // 各モジュールは__CWD__というローカル変数で自身のファイルパスを保持する。
-    // また、require関数をオーバーライドし、呼ぶ直前に__CWD_global__を設定するようにする。
+
+    // エラー行通知の際にズレないように、すべてを1行に収める
     std::string header =
-        "local __CWD__ = '" + cwd + R"('
-        local __original_require = require
-        local function require(module)
-            __CWD_global__ = __CWD__
-            return __original_require(module)
-        end
-    )";
+        "local __CWD__ = '" + cwd + "';" +
+        "local __original_require = require;"
+        "local function require(module)"
+        "    __CWD_global__ = __CWD__"
+        "    return __original_require(module)"
+        "end;";
+
     return header + code;
 }
 
@@ -117,7 +117,7 @@ static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storag
         try {
             // スクリプトのテキストを取得し、ロードする。
             std::string script_content = get_code_injected(storage, module_path);
-            auto module = lua.load(script_content);
+            auto module = lua.load(script_content, "@" + module_path.string());
             // ロードに成功すればモジュールを返す。
             return module;
         } catch (const std::exception & /*e*/) {
@@ -173,6 +173,6 @@ LuaGUI::~LuaGUI() {
 void LuaGUI::run(const Path &file_path) {
     print("LuaGUIのrun開始");
     auto scr = get_code_injected(storage, file_path);
-    lua.script(scr);
+    lua.script(scr, "@" + file_path.string()); // @を付けるとsolがうまく表示してくれる
     print("LuaGUIのrun終了");
 }
