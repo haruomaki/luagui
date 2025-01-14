@@ -36,19 +36,22 @@ function CreateCamera(...)
             local speed = 0.001
             cobj:add_update_component("move by CreateCamera", ForeverFun(function()
                 if GetKey('W') then
-                    cobj.position = cobj.position + vec3.new(0, 0, speed)
+                    cobj.position = cobj.position + cobj:front() * speed
                 end
                 if GetKey('A') then
-                    cobj.position = cobj.position + vec3.new(-speed, 0, 0)
+                    cobj.position = cobj.position + cobj:left() * speed
                 end
                 if GetKey('S') then
-                    cobj.position = cobj.position + vec3.new(0, 0, -speed)
+                    cobj.position = cobj.position + cobj:back() * speed
                 end
                 if GetKey('D') then
-                    cobj.position = cobj.position + vec3.new(speed, 0, 0)
+                    cobj.position = cobj.position + cobj:right() * speed
                 end
                 if GetKey('Space') then
-                    cobj.position = cobj.position + vec3.new(0, speed, 0)
+                    cobj.position = cobj.position + cobj:up() * speed
+                end
+                if GetKey('LeftShift') then
+                    cobj.position = cobj.position + cobj:down() * speed
                 end
             end))
         end

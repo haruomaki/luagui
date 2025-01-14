@@ -41,6 +41,7 @@ __CurrentWindow = {}
 ---| 'Up'
 ---| 'Enter'
 ---| 'Escape'
+---| 'LeftShift'
 
 --- キー入力をチェックする関数
 ---@param key Keys キーの名前

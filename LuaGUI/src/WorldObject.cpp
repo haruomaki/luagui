@@ -89,9 +89,11 @@ void register_world_object(sol::state &lua) {
         "x", &glm::vec3::x,
         "y", &glm::vec3::y,
         "z", &glm::vec3::z,
-        sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 {
-            return a + b;
-        });
+        sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a + b; },
+        sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; });
+
+    lua.new_usertype<glm::quat>(
+        "quat");
 
     lua.new_usertype<WorldObject>(
         "WorldObject",
@@ -105,11 +107,21 @@ void register_world_object(sol::state &lua) {
         "position",
         sol::property([](WorldObject *obj) { return obj->get_position(); }, [](WorldObject *obj, glm::vec3 pos) { obj->set_position(pos); }),
 
+        "rotation",
+        sol::property([](WorldObject *obj) { return obj->get_rotate(); }, [](WorldObject *obj, glm::quat rot) { obj->set_rotate(rot); }),
+
         "scale_prop",
         sol::property([](WorldObject *obj) { return obj->get_scale_prop(); }, [](WorldObject *obj, float scale) { obj->set_scale_prop(scale); }),
 
         "id",
         &WorldObject::id,
+
+        "front", &WorldObject::get_front,
+        "back", &WorldObject::get_back,
+        "right", &WorldObject::get_right,
+        "left", &WorldObject::get_left,
+        "up", &WorldObject::get_up,
+        "down", &WorldObject::get_down,
 
         "add_update_component",
         [&lua](WorldObject *obj, std::string id, sol::function f) { return add_update_component(lua, obj, std::move(id), std::move(f)); },

@@ -40,6 +40,24 @@ function WorldObject:erase() end
 ---オブジェクトをただちに削除する。
 function WorldObject:force_erase() end
 
+---@return vec3
+function WorldObject:front() end
+
+---@return vec3
+function WorldObject:back() end
+
+---@return vec3
+function WorldObject:right() end
+
+---@return vec3
+function WorldObject:left() end
+
+---@return vec3
+function WorldObject:up() end
+
+---@return vec3
+function WorldObject:down() end
+
 ---Updateコンポーネントを追加する。（＝毎フレーム実行してほしい処理を追加する）
 ---@param id string コンポーネントのID
 ---@param f fun(self: Update) 毎フレームresumeされるコルーチン。このコルーチンが終了したらコンポーネントも削除される。
