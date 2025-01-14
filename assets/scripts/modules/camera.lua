@@ -23,22 +23,25 @@ function CreateCamera(...)
             end))
         end
 
-        -- if option == "zoom" then
-        --     -- Z/Xキーでカメラを拡大縮小する
-        --     cobj:add_update_component("zoom by supercamera_2d", ForeverFun(function()
-        --         if GetKey('Z') then
-        --             cobj.scale_prop = cobj.scale_prop * 0.99
-        --         end
-        --         if GetKey('X') then
-        --             cobj.scale_prop = cobj.scale_prop * 1.01
-        --         end
-        --     end))
-        -- end
+        if option == "zoom" then
+            -- Z/Xキーでカメラを拡大縮小する
+            body:add_update_component("zoom by CreateCamera", ForeverFun(function()
+                local dt = 1 / Screen.refreshRate
+                local zoom_speed = 1 + (1.0 * dt)
+                if GetKey('Z') then
+                    body.scale_prop = body.scale_prop * zoom_speed
+                end
+                if GetKey('X') then
+                    body.scale_prop = body.scale_prop / zoom_speed
+                end
+            end))
+        end
 
         if option == "move" then
-            local speed = 0.001
-            local angle_speed = 0.01
             body:add_update_component("move by CreateCamera", ForeverFun(function()
+                local dt = 1 / Screen.refreshRate
+                local speed = 1.5 * dt
+                local angle_speed = 0.8 * dt
                 if GetKey('W') then
                     body.position = body.position + body:front() * speed
                 end
