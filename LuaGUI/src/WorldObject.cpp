@@ -83,6 +83,16 @@ static sol::object get_component_by_id(sol::state &lua, WorldObject *obj, const 
 }
 
 void register_world_object(sol::state &lua) {
+    lua.new_usertype<glm::vec3>(
+        "vec3",
+        sol::constructors<glm::vec3(), glm::vec3(float, float, float)>(),
+        "x", &glm::vec3::x,
+        "y", &glm::vec3::y,
+        "z", &glm::vec3::z,
+        sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 {
+            return a + b;
+        });
+
     lua.new_usertype<WorldObject>(
         "WorldObject",
 
@@ -93,7 +103,7 @@ void register_world_object(sol::state &lua) {
         [](WorldObject *obj) { return sol::as_table(obj->children()); },
 
         "position",
-        sol::property([](WorldObject *obj) { return obj->get_position(); }, [](WorldObject *obj, std::vector<float> pos) { obj->set_position({pos[0], pos[1], 0}); }),
+        sol::property([](WorldObject *obj) { return obj->get_position(); }, [](WorldObject *obj, glm::vec3 pos) { obj->set_position(pos); }),
 
         "scale_prop",
         sol::property([](WorldObject *obj) { return obj->get_scale_prop(); }, [](WorldObject *obj, float scale) { obj->set_scale_prop(scale); }),

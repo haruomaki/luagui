@@ -22,7 +22,7 @@ local figure = {}
 ---@return MeshComponent
 function figure.maru(x, y)
     local obj = __CurrentWorld.root:append_empty_child()
-    obj.position = { x, y }
+    obj.position = vec3.new(x, y, 0)
     local mesh = obj:add_mesh_component(BallMaterial, BallMesh)
     local rb = obj:add_rigidbody2d_component({ type = "dynamic", isBullet = true })
     rb:add_shape({ shape = "circle", radius = BallRadius, friction = 0, restitution = 1 })
@@ -36,7 +36,7 @@ function figure.block(parent, x, y)
     local block_obj = parent:append_empty_child()
     local mesh = block_obj:add_mesh_component(BlockMaterial, BlockMesh);
     local obj = mesh.owner
-    obj.position = { x, y }
+    obj.position = vec3.new(x, y, 0)
     local rb = obj:add_rigidbody2d_component()
     rb:add_shape({
         shape = "rect",

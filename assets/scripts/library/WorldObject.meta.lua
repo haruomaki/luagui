@@ -13,7 +13,18 @@ WorldObject = {}
 Component = {}
 
 ---@class vec3
+---@field x number
+---@field y number
+---@field z number
 vec3 = {}
+
+---空のvec3を作成する。
+---@return vec3
+function vec3.new() end
+
+---vec3を作成する。
+---@return vec3
+function vec3.new(x, y, z) end
 
 ---空のオブジェクトを子として追加する
 ---@return WorldObject child

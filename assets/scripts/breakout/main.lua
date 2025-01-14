@@ -7,7 +7,7 @@ run_window(800, 600, "ブロック崩し", function()
 
     local world = create_world()
     local camera = supercamera_2d("quit", "zoom")
-    camera.owner.position = { 0, 0.05 }
+    camera.owner.position = vec3.new(0, 0.05, 0)
     camera.owner.scale_prop = 2
     world.b2world.gravity = { 0, -0.1 }
 
@@ -35,7 +35,7 @@ run_window(800, 600, "ブロック崩し", function()
 
     -- 操作バーを追加
     local bar_obj = world.root:append_empty_child()
-    bar_obj.position = { 0, -0.05 }
+    bar_obj.position = vec3.new(0, -0.05, 0)
     bar_obj:add_mesh_component(BarMaterial, BarMesh)
     local bar = bar_obj:add_rigidbody2d_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = BarHW, halfHeight = BarHH })
