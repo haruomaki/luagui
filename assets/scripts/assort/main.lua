@@ -1,7 +1,7 @@
 run_window(800, 600, "assort", function()
     local world = create_world()
     local camera = CreateCamera("quit", "move")
-    camera.owner.position = vec3.new(0, 0, -0.1)
+    -- camera.owner.rotation = quat.angle_y(math.pi)
     -- camera.owner.scale_prop = 2
     -- world.b2world.gravity = { 0, -0.1 }
 
@@ -11,6 +11,6 @@ run_window(800, 600, "assort", function()
 
     camera.owner.position = vec3.new(0, 0, 0)
 
-    world.root:draw_circle({ 0, 0 }, 0.05)
+    world.root:draw_circle({ 0, 0 }, 1)
     Forever()
 end)

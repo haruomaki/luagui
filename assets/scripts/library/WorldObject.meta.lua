@@ -3,6 +3,7 @@
 ---@class WorldObject
 ---@field id string オブジェクトのID
 ---@field position vec3 物体の位置
+---@field rotation quat 物体の回転
 ---@field scale_prop number 物体の幾何平均スケール
 WorldObject = {}
 
@@ -25,6 +26,16 @@ function vec3.new() end
 ---vec3を作成する。
 ---@return vec3
 function vec3.new(x, y, z) end
+
+---３次元空間内の回転を表す。
+---@class quat
+quat = {}
+
+---指定の軸周りにangleラジアン回転させる四元数表現を得る。
+---@param angle number
+---@param axis vec3
+---@return quat
+function quat.angle_axis(angle, axis) end
 
 ---空のオブジェクトを子として追加する
 ---@return WorldObject child

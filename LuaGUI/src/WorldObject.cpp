@@ -93,7 +93,9 @@ void register_world_object(sol::state &lua) {
         sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; });
 
     lua.new_usertype<glm::quat>(
-        "quat");
+        "quat",
+        "angle_axis", [](float angle, glm::vec3 axis) { return glm::angleAxis(angle, axis); },
+        sol::meta_function::multiplication, [](glm::quat a, glm::quat b) { return a * b; });
 
     lua.new_usertype<WorldObject>(
         "WorldObject",

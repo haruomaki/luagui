@@ -2,8 +2,11 @@
 ---@param ... "quit"|"move"|"zoom"
 ---@return Camera camera
 function CreateCamera(...)
-    local cobj = __CurrentWorld.root:append_empty_child()
-    local camera = cobj:add_camera_component("Perspective")
+    local body = __CurrentWorld.root:append_empty_child()
+    body.position = vec3.new(0, 0, 10)
+    body.rotation = quat.angle_y(math.pi)
+    local head = body:append_empty_child()
+    local camera = head:add_camera_component("Perspective")
 
     __CurrentCamera = camera
 
@@ -12,7 +15,7 @@ function CreateCamera(...)
     for option, _ in pairs(options) do
         if option == "quit" then
             -- Qキーでウィンドウを閉じる
-            cobj:add_update_component("quit by CreateCamera", ForeverFun(function()
+            body:add_update_component("quit by CreateCamera", ForeverFun(function()
                 if GetKeyDown "Q" then
                     print("Qキーが押されたためウィンドウを閉じます")
                     CloseWindow()
@@ -34,24 +37,37 @@ function CreateCamera(...)
 
         if option == "move" then
             local speed = 0.001
-            cobj:add_update_component("move by CreateCamera", ForeverFun(function()
+            local angle_speed = 0.01
+            body:add_update_component("move by CreateCamera", ForeverFun(function()
                 if GetKey('W') then
-                    cobj.position = cobj.position + cobj:front() * speed
+                    body.position = body.position + body:front() * speed
                 end
                 if GetKey('A') then
-                    cobj.position = cobj.position + cobj:left() * speed
+                    body.position = body.position + body:left() * speed
                 end
                 if GetKey('S') then
-                    cobj.position = cobj.position + cobj:back() * speed
+                    body.position = body.position + body:back() * speed
                 end
                 if GetKey('D') then
-                    cobj.position = cobj.position + cobj:right() * speed
+                    body.position = body.position + body:right() * speed
                 end
                 if GetKey('Space') then
-                    cobj.position = cobj.position + cobj:up() * speed
+                    body.position = body.position + body:up() * speed
                 end
                 if GetKey('LeftShift') then
-                    cobj.position = cobj.position + cobj:down() * speed
+                    body.position = body.position + body:down() * speed
+                end
+                if GetKey('Left') then
+                    body.rotation = body.rotation * quat.angle_y(angle_speed)
+                end
+                if GetKey('Right') then
+                    body.rotation = body.rotation * quat.angle_y(-angle_speed)
+                end
+                if GetKey('Up') then
+                    head.rotation = head.rotation * quat.angle_x(-angle_speed)
+                end
+                if GetKey('Down') then
+                    head.rotation = head.rotation * quat.angle_x(angle_speed)
                 end
             end))
         end
