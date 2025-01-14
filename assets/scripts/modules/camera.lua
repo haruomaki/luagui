@@ -3,7 +3,7 @@
 ---@return Camera camera
 function CreateCamera(...)
     local cobj = __CurrentWorld.root:append_empty_child()
-    local camera = cobj:add_camera_component("Orthographic")
+    local camera = cobj:add_camera_component("Perspective")
 
     __CurrentCamera = camera
 
@@ -33,10 +33,22 @@ function CreateCamera(...)
         -- end
 
         if option == "move" then
+            local speed = 0.001
             cobj:add_update_component("move by CreateCamera", ForeverFun(function()
+                if GetKey('W') then
+                    cobj.position = cobj.position + vec3.new(0, 0, speed)
+                end
+                if GetKey('A') then
+                    cobj.position = cobj.position + vec3.new(-speed, 0, 0)
+                end
+                if GetKey('S') then
+                    cobj.position = cobj.position + vec3.new(0, 0, -speed)
+                end
+                if GetKey('D') then
+                    cobj.position = cobj.position + vec3.new(speed, 0, 0)
+                end
                 if GetKey('Space') then
-                    -- TODO: vec3対応
-                    cobj.position = cobj.position + { 0, 0.01, 0 }
+                    cobj.position = cobj.position + vec3.new(0, speed, 0)
                 end
             end))
         end

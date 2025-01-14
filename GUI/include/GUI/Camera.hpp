@@ -10,7 +10,7 @@
 struct CameraInterface {
     Window *window;
     std::function<void()> render;
-    std::function<GL::Viewport()> viewport_provider;
+    std::function<GL::Viewport()> viewport_provider; // このカメラがどの領域のビューポートに描画するかを定義する。
     bool active = true;
     int priority = 0;
 
