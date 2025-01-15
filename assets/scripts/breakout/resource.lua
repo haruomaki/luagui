@@ -1,27 +1,27 @@
 -- ブロックにボールがぶつかったときの音
-BlockSound = load_music("audio/泡がはじける.mp3")
+BlockSound = Music.load("audio/泡がはじける.mp3")
 
 -- ブロックの画像
-BlockImage = load_image("images/ピンクレンガ.png")
+BlockImage = Image.load("images/ピンクレンガ.png")
 -- ブロックのマテリアルとメッシュ
-BlockMaterial = new_material(BlockImage)
-BlockMesh = new_mesh(
+BlockMaterial = Material.from_image(BlockImage)
+BlockMesh = Mesh.new(
     { { -BlockHalfWidth, -BlockHalfHeight, 0 }, { BlockHalfWidth, -BlockHalfHeight, 0 }, { BlockHalfWidth, BlockHalfHeight, 0 }, { -BlockHalfWidth, BlockHalfHeight, 0 } },
     { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
 
 -- ボールの画像
-BallImage = load_image("images/青いガラス玉.png")
+BallImage = Image.load("images/青いガラス玉.png")
 -- ボールのマテリアルとメッシュ
-BallMaterial = new_material(BallImage)
+BallMaterial = Material.from_image(BallImage)
 BallMaterial.write_depth = false
-BallMesh = new_mesh(
+BallMesh = Mesh.new(
     { { -BallRadius, -BallRadius, 0 }, { BallRadius, -BallRadius, 0 }, { BallRadius, BallRadius, 0 }, { -BallRadius, BallRadius, 0 } },
     { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })
 
 -- ボールの画像
-BarImage = load_image("images/不思議なバー.png")
+BarImage = Image.load("images/不思議なバー.png")
 -- ボールのマテリアルとメッシュ
-BarMaterial = new_material(BarImage)
-BarMesh = new_mesh(
+BarMaterial = Material.from_image(BarImage)
+BarMesh = Mesh.new(
     { { -BarHW, -BarHH, 0 }, { BarHW, -BarHH, 0 }, { BarHW, BarHH, 0 }, { -BarHW, BarHH, 0 } },
     { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } })

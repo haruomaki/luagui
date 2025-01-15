@@ -1,15 +1,15 @@
 ---@meta sound
 
 ---@class Music
-local Music = {}
+Music = {}
 
 ---@class SoundSource : Component
-local SoundSource = {}
+SoundSource = {}
 
 ---音声データを読み込む。
 ---@param file_path string
 ---@return Music
-function load_music(file_path) end
+function Music.load(file_path) end
 
 ---音源を表すコンポーネントを追加する。
 ---@param music Music
