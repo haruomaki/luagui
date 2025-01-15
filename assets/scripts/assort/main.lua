@@ -7,8 +7,7 @@ run_window(800, 600, "assort", function()
     Util.cube()
 
     V2 { { 0, 1, 1 } }
-    print(V2.new { { 0, 1 }, { 12 } })
-    -- V2.hello()
+    print(V3.new { { 0, 1 }, { 12 } })
 
     world.root:draw_circle({ 0, 0 }, 1)
     Forever(function()
