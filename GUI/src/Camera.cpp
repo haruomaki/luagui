@@ -99,3 +99,5 @@ glm::mat4 Camera::get_projection_matrix() const {
     }
     throw std::runtime_error("Unsupported camera mode");
 }
+
+void Camera::toggle_mode() { projection_mode = (projection_mode == Camera::Perspective ? Camera::Orthographic : Camera::Perspective); }

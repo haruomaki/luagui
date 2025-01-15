@@ -5,6 +5,7 @@ function CreateCamera(...)
     local body = __CurrentWorld.root:append_empty_child()
     body.position = vec3.new(0, 0, 10)
     body.rotation = quat.angle_y(math.pi)
+    body.scale_prop = 10
     local head = body:append_empty_child()
     local camera = head:add_camera_component("Perspective")
 
@@ -40,7 +41,7 @@ function CreateCamera(...)
         if option == "move" then
             body:add_update_component("move by CreateCamera", ForeverFun(function()
                 local dt = 1 / Screen.refreshRate
-                local speed = 1.5 * dt
+                local speed = 0.15 * dt
                 local angle_speed = 0.8 * dt
                 if GetKey('W') then
                     body.position = body.position + body:front() * speed

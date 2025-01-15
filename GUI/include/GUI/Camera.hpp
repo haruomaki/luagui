@@ -45,4 +45,6 @@ class Camera : public CameraInterface, public Component {
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;
+
+    void toggle_mode();
 };

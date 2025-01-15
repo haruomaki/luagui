@@ -6,12 +6,6 @@ run_window(800, 600, "assort", function()
 
     world.root:draw_circle({ 0, 0 }, 1)
     Forever(function()
-        if GetKey('Enter') then
-            if camera.projection_mode == 'Perspective' then
-                camera.projection_mode = 'Orthographic'
-            else
-                camera.projection_mode = 'Perspective'
-            end
-        end
+        if GetKeyDown('Enter') then camera:toggle_mode() end
     end)
 end)
