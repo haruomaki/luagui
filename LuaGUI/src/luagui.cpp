@@ -13,6 +13,7 @@
 #include "WorldObject.hpp"
 #include "mesh.hpp"
 #include "sound.hpp"
+#include "vec.hpp"
 
 namespace fs = std::filesystem;
 
@@ -147,6 +148,7 @@ LuaGUI::LuaGUI() {
         run_window(this->lua, width, height, title, std::move(func));
     });
 
+    register_vec(lua);
     register_chrono(lua);
     register_window(lua);
     register_world_object(lua);
