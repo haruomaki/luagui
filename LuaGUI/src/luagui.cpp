@@ -159,8 +159,9 @@ LuaGUI::LuaGUI() {
 
     // scripts/modules以下にある全てのファイルは自動でロードされる。
     for (auto &file : storage.list("scripts/modules")) {
-        auto content = storage.get_text("scripts/modules" / file);
-        lua.script(content);
+        auto full_path = "scripts/modules" / file;
+        auto content = storage.get_text(full_path);
+        lua.script(content, "@" + full_path.string());
     }
 }
 

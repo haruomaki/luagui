@@ -5,10 +5,10 @@
 Util = {}
 
 function Util.cube()
-    local img = load_image("images/青いガラス玉.png")
-    local material = new_material(img)
+    local img = Image.load("images/青いガラス玉.png")
+    local material = Material.from_image(img)
     local a = 0.1
-    local mesh = new_mesh(
+    local mesh = Mesh.new(
         { { 0, 0, 0 }, { a, 0, 0 }, { 0, a, 0 }, { a, 0, 0 }, { a, a, a, } },
         { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 }, { 1, 1 } })
 
