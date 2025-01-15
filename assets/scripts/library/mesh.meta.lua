@@ -7,9 +7,11 @@ Material = {}
 
 ---物体形状。
 ---@class Mesh
+---@field indices VI
 ---@field coords V3
 ---@field colors CV
 ---@field uvs V2
+---@field use_index boolean
 Mesh = {}
 
 ---@class MeshComponent : Component

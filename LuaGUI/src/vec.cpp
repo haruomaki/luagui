@@ -6,6 +6,9 @@ inline float get_or(const vector<float> &v, size_t index, float default_value) {
     return (index < v.size() ? v[index] : default_value);
 }
 
+VI::VI(std::vector<int> tbl)
+    : std::vector<int>(std::move(tbl)) {}
+
 V2::V2(Points tbl)
     : std::vector<glm::vec2>(tbl.size()) {
     for (size_t i = 0; i < tbl.size(); i++) {
@@ -34,6 +37,12 @@ CV::CV(Points tbl)
 }
 
 void register_vec(sol::state &lua) {
+    lua.new_usertype<VI>(
+        "VI",
+        sol::constructors<VI(std::vector<int>)>());
+
+    lua["VI"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<int> tbl) { return VI(std::move(tbl)); };
+
     lua.new_usertype<V2>(
         "V2",
         sol::constructors<V2(Points)>());

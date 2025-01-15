@@ -9,6 +9,8 @@ function Util.cube()
 
     local a = 0.5
     local mesh = Mesh.new()
+    mesh.use_index = true
+    mesh.indices = VI { 0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5 }
     mesh.coords = V3 { { 0, 0, 0 }, { a, 0, 0 }, { 0, a, 0 }, { a, a, 0 }, { 0, 0, a }, { a, 0, a }, { 0, a, a }, { a, a, a } }
 
     local color_tmp = {}

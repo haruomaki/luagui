@@ -3,6 +3,10 @@
 
 using Points = std::vector<std::vector<float>>;
 
+struct VI : std::vector<int> {
+    VI(std::vector<int> tbl);
+};
+
 struct V2 : std::vector<glm::vec2> {
     V2(Points tbl);
 };
