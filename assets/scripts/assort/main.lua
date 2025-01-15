@@ -4,6 +4,8 @@ run_window(800, 600, "assort", function()
 
     camera.owner.position = vec3.new(0, 0, 0)
 
+    Util.cube()
+
     world.root:draw_circle({ 0, 0 }, 1)
     Forever(function()
         if GetKeyDown('Enter') then camera:toggle_mode() end

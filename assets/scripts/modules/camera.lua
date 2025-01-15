@@ -43,7 +43,7 @@ end
 ---@return Camera camera
 function CreateCamera(...)
     local body = __CurrentWorld.root:append_empty_child()
-    body.position = vec3.new(0, 0, 10)
+    body.position = vec3.new(0, 0, 3)
     body.rotation = quat.angle_y(math.pi)
     body.scale_prop = 10
     local head = body:append_empty_child()
