@@ -25,3 +25,16 @@ function V3(points) end
 ---@param points Points
 ---@return V3
 function V3.new(points) end
+
+---@class CV
+CV = {}
+
+---テーブルをRGBAの配列に変換する。
+---@param points Points
+---@return CV
+function CV(points) end
+
+---テーブルをRGBAの配列に変換する。
+---@param points Points
+---@return CV
+function CV.new(points) end

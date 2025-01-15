@@ -8,6 +8,7 @@ Material = {}
 ---物体形状。
 ---@class Mesh
 ---@field coords V3
+---@field colors CV
 ---@field uvs V2
 Mesh = {}
 

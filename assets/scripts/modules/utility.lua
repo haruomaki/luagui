@@ -11,6 +11,7 @@ function Util.cube()
     local a = 0.1
     local mesh = Mesh.new()
     mesh.coords = V3 { { 0, 0, 0 }, { a, 0, 0 }, { 0, a, 0 }, { a, a, 0 }, { 0, 0, a }, { a, 0, a }, { 0, a, a }, { a, a, a } }
+    mesh.colors = CV { { 0, 0, 1, 1 }, { 0, 1, 0, 0.5 }, { 1, 0, 0, 0.8 } }
     mesh.uvs = V2 { { 0, 0 }, { 0, 1 }, { 1, 1 }, { 1, 0 } }
 
     local obj = __CurrentWorld.root:append_empty_child()

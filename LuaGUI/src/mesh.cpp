@@ -49,6 +49,7 @@ void register_mesh(sol::state &lua) {
         "Mesh",
         "new", sol::overload([&lua]() -> Mesh * { GUI &gui = lua["__GUI"]; return &gui.resources.append<Mesh>().get(); }, [&lua](V3 coords, V2 uvs) { return new_mesh(lua, std::move(coords), std::move(uvs)); }),
         "coords", sol::property([](Mesh *m) { return m->vertices.getCoords(); }, [](Mesh *m, const V3 &c) { m->vertices.setCoords(c); }),
+        "colors", sol::property([](Mesh *m) { return m->vertices.getColors(); }, [](Mesh *m, const CV &c) { m->vertices.setColors(c); }),
         "uvs", sol::property([](Mesh *m) { return m->vertices.get_uvs(); }, [](Mesh *m, const V2 &u) { m->vertices.set_uvs(u); }),
         sol::base_classes, sol::bases<Resource>());
 
