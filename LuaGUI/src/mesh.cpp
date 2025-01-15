@@ -1,4 +1,5 @@
 #include "mesh.hpp"
+#include "vec.hpp"
 #include <GUI/GUI.hpp>
 #include <GUI/Mesh.hpp>
 #include <GUI/WorldObject.hpp>
@@ -7,24 +8,12 @@
 #include <SumiGL/Texture.hpp>
 #include <utility>
 
-static Mesh *new_mesh(const sol::state &lua, std::vector<std::vector<float>> &&coords, std::vector<std::vector<float>> &&uvs) {
+static Mesh *new_mesh(const sol::state &lua, V3 &&coords, V2 &&uvs) {
     GUI &gui = lua["__GUI"];
     auto &mesh = gui.resources.append<Mesh>().get();
 
-    std::vector<glm::vec3> coords_v(coords.size());
-    for (size_t i = 0; i < coords.size(); i++) {
-        coords_v[i][0] = coords[i].at(0);
-        coords_v[i][1] = coords[i].at(1);
-        coords_v[i][2] = coords[i].at(2);
-    }
-    mesh.vertices.setCoords(coords_v);
-
-    std::vector<glm::vec2> uvs_v(uvs.size());
-    for (size_t i = 0; i < uvs.size(); i++) {
-        uvs_v[i][0] = uvs[i].at(0);
-        uvs_v[i][1] = uvs[i].at(1);
-    }
-    mesh.vertices.set_uvs(uvs_v);
+    mesh.vertices.setCoords(coords);
+    mesh.vertices.set_uvs(uvs);
 
     mesh.draw_mode = GL_TRIANGLE_FAN;
 
@@ -58,8 +47,9 @@ void register_mesh(sol::state &lua) {
 
     lua.new_usertype<Mesh>(
         "Mesh",
-        "new", [&lua]() { return new_mesh(lua, {}, {}); },
-        "new", [&lua](std::vector<std::vector<float>> coords, std::vector<std::vector<float>> uvs) { return new_mesh(lua, std::move(coords), std::move(uvs)); },
+        "new", sol::overload([&lua]() -> Mesh * { GUI &gui = lua["__GUI"]; return &gui.resources.append<Mesh>().get(); }, [&lua](V3 coords, V2 uvs) { return new_mesh(lua, std::move(coords), std::move(uvs)); }),
+        "coords", sol::property([](Mesh *m) { return m->vertices.getCoords(); }, [](Mesh *m, const V3 &c) { m->vertices.setCoords(c); }),
+        "uvs", sol::property([](Mesh *m) { return m->vertices.get_uvs(); }, [](Mesh *m, const V2 &u) { m->vertices.set_uvs(u); }),
         sol::base_classes, sol::bases<Resource>());
 
     lua["WorldObject"]["add_mesh_component"] = [](WorldObject &parent, Material *material, Mesh *mesh) -> MeshComponent * {

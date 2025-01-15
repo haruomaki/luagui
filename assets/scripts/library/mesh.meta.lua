@@ -7,6 +7,8 @@ Material = {}
 
 ---物体形状。
 ---@class Mesh
+---@field coords V3
+---@field uvs V2
 Mesh = {}
 
 ---@class MeshComponent : Component
@@ -23,8 +25,8 @@ function Mesh.new() end
 
 ---メッシュを作成する。
 ---@return Mesh
----@param coords Points
----@param uvs Points
+---@param coords V3
+---@param uvs V2
 function Mesh.new(coords, uvs) end
 
 ---姿かたちを描画するコンポーネントを付与。
