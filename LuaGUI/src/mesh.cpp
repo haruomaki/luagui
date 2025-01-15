@@ -36,13 +36,13 @@ void register_mesh(sol::state &lua) {
 
     lua.new_usertype<Material>(
         "Material",
+        "new", [&lua]() -> Material * {GUI &gui = lua["__GUI"]; return &MaterialBuilder().build(gui); },
         "write_depth", &Material::write_depth,
         "from_image", [&lua](Image &img) -> Material * {
             GUI &gui = lua["__GUI"];
             auto texture = GL::create_texture(img.width, img.height, img.channels, img.pixels.get());
             Material &material = MaterialBuilder().texture(std::move(texture)).build(gui);
-            return &material;
-        },
+            return &material; },
         sol::base_classes, sol::bases<Resource>());
 
     lua.new_usertype<Mesh>(

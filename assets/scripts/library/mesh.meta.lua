@@ -15,6 +15,10 @@ Mesh = {}
 ---@class MeshComponent : Component
 MeshComponent = {}
 
+---空のマテリアルを作成する。
+---@return Material
+function Material.new() end
+
 ---マテリアルを作成する。
 ---@param image Image テクスチャ画像
 ---@return Material
