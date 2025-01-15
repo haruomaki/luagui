@@ -5,6 +5,8 @@
 ---@field write_depth boolean デプスバッファに書き込むかどうか
 Material = {}
 
+---@alias DrawMode "triangle_strip" | "triangle_fan"
+
 ---物体形状。
 ---@class Mesh
 ---@field indices VI
@@ -12,6 +14,7 @@ Material = {}
 ---@field colors CV
 ---@field uvs V2
 ---@field use_index boolean
+---@field draw_mode DrawMode
 Mesh = {}
 
 ---@class MeshComponent : Component
