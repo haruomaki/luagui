@@ -3,9 +3,21 @@
 ---描画設定。
 ---@class Material
 ---@field write_depth boolean デプスバッファに書き込むかどうか
+---@field line_width number 線の太さ
+---@field point_size number 点の大きさ
 Material = {}
 
----@alias DrawMode "triangle_strip" | "triangle_fan"
+---@alias DrawMode
+---| 'points'
+---| 'lines'
+---| 'line_strip'
+---| 'line_loop'
+---| 'triangles'
+---| 'triangle_strip'
+---| 'triangle_fan'
+---| 'quads'
+---| 'quad_strip'
+---| 'polygon'
 
 ---物体形状。
 ---@class Mesh

@@ -6,10 +6,12 @@ Util = {}
 
 function Util.cube()
     local material = Material.new()
+    material.point_size = 20
 
     local a = 0.5
     local mesh = Mesh.new()
     mesh.use_index = true
+    mesh.draw_mode = 'points'
     mesh.indices = VI { 0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5 }
     mesh.coords = V3 { { 0, 0, 0 }, { a, 0, 0 }, { 0, a, 0 }, { a, a, 0 }, { 0, 0, a }, { a, 0, a }, { 0, a, a }, { a, a, a } }
 
@@ -23,6 +25,6 @@ function Util.cube()
     mesh.colors = CV(color_tmp)
 
     local obj = __CurrentWorld.root:append_empty_child()
-    obj.rotation = quat.angle_z(math.pi / 6) * quat.angle_x(math.pi / 6)
+    obj.rotation = quat.angle_z(math.pi / 6) * quat.angle_y(math.pi / 6) * quat.angle_x(math.pi / 6)
     obj:add_mesh_component(material, mesh)
 end

@@ -8,23 +8,10 @@
 #include <SumiGL/Texture.hpp>
 #include <utility>
 
-static std::string mode_to_string(GLenum mode) {
-    static const auto *m = new std::unordered_map<GLenum, std::string>{
-        {GL_POINTS, "points"},
-        {GL_LINES, "lines"},
-        {GL_LINE_STRIP, "line_strip"},
-        {GL_LINE_LOOP, "line_loop"},
-        {GL_TRIANGLES, "triangles"},
-        {GL_TRIANGLE_STRIP, "triangle_strip"},
-        {GL_TRIANGLE_FAN, "triangle_fan"},
-        {GL_QUADS, "quads"},
-        {GL_QUAD_STRIP, "quad_strip"},
-        {GL_POLYGON, "polygon"}};
-    return m->at(mode);
-}
+using DrawModeMap = std::unordered_map<std::string, GLenum>;
 
-static GLenum string_to_mode(const std::string &s) {
-    static const auto *m = new std::unordered_map<std::string, GLenum>{
+static const DrawModeMap &draw_mode_map() {
+    static const auto *m = new DrawModeMap{
         {"points", GL_POINTS},
         {"lines", GL_LINES},
         {"line_strip", GL_LINE_STRIP},
@@ -35,7 +22,19 @@ static GLenum string_to_mode(const std::string &s) {
         {"quads", GL_QUADS},
         {"quad_strip", GL_QUAD_STRIP},
         {"polygon", GL_POLYGON}};
-    return m->at(s);
+    return *m;
+}
+
+static std::string mode_to_string(GLenum mode) {
+    for (const auto &[s, m] : draw_mode_map()) {
+        if (mode == m) return s;
+    }
+    warn("未知のドローモード番号です。");
+    return "";
+}
+
+static GLenum string_to_mode(const std::string &s) {
+    return draw_mode_map().at(s);
 }
 
 static Mesh *new_mesh(const sol::state &lua, V3 &&coords, V2 &&uvs) {
@@ -68,6 +67,8 @@ void register_mesh(sol::state &lua) {
         "Material",
         "new", [&lua]() -> Material * {GUI &gui = lua["__GUI"]; return &MaterialBuilder().build(gui); },
         "write_depth", &Material::write_depth,
+        "line_width", &Material::line_width,
+        "point_size", &Material::point_size,
         "from_image", [&lua](Image &img) -> Material * {
             GUI &gui = lua["__GUI"];
             auto texture = GL::create_texture(img.width, img.height, img.channels, img.pixels.get());
