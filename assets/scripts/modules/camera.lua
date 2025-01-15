@@ -1,3 +1,43 @@
+---2Dカメラを作成する
+---@param ... "quit"|"move"|"zoom"
+---@return Camera camera
+function CreateCamera2D(...)
+    local cobj = __CurrentWorld.root:append_empty_child()
+    cobj.rotation = quat.angle_y(math.pi)
+    local camera = cobj:add_camera_component("Orthographic")
+
+    __CurrentCamera = camera
+
+    -- オプションに応じた機能を追加
+    -- print(to_set({ 3, 3, 5, 5, 7, 8 }))
+    local options = to_set { ... }
+    for option, _ in pairs(options) do
+        if option == "quit" then
+            -- Qキーでウィンドウを閉じる
+            cobj:add_update_component("quit by CreateCamera2D", ForeverFun(function()
+                if GetKeyDown "Q" then
+                    print("Qキーが押されたためウィンドウを閉じます")
+                    CloseWindow()
+                end
+            end))
+        end
+
+        if option == "zoom" then
+            -- Z/Xキーでカメラを拡大縮小する
+            cobj:add_update_component("zoom by supercamera_2d", ForeverFun(function()
+                if GetKey('Z') then
+                    cobj.scale_prop = cobj.scale_prop * 0.99
+                end
+                if GetKey('X') then
+                    cobj.scale_prop = cobj.scale_prop * 1.01
+                end
+            end))
+        end
+    end
+
+    return camera
+end
+
 ---カメラを作成する
 ---@param ... "quit"|"move"|"zoom"
 ---@return Camera camera

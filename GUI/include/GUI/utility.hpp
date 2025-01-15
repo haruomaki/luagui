@@ -24,6 +24,7 @@
 // キー操作が可能な正投影カメラを作成する。
 inline Camera &mobile_ortho_camera(WorldObject &parent, Window &window) {
     auto &obj = parent.append_child<WorldObject>();
+    obj.rotate = ANGLE_Y(M_PIf);
     auto &camera = obj.add_component<Camera>(&window, Camera::Orthographic);
 
     obj.add_component<UpdateComponent>([&obj, &camera](UpdateComponent & /*self*/) {
@@ -35,10 +36,10 @@ inline Camera &mobile_ortho_camera(WorldObject &parent, Window &window) {
         const float zoom_speed = 1 + (0.6f / fps);
 
         if (window.key(GLFW_KEY_RIGHT)) {
-            obj.position += obj.get_left() * speed;
+            obj.position += obj.get_right() * speed;
         }
         if (window.key(GLFW_KEY_LEFT)) {
-            obj.position += obj.get_right() * speed;
+            obj.position += obj.get_left() * speed;
         }
         if (window.key(GLFW_KEY_DOWN)) {
             obj.position += obj.get_down() * speed;

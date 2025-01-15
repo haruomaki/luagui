@@ -1,18 +1,16 @@
 local figure = require("figure")
 
-require("test.mikan")
-
 run_window(800, 600, "ブロック崩し", function()
     b2SetLengthUnitsPerMeter(0.001)
 
     local world = create_world()
-    local camera = supercamera_2d("quit", "zoom")
+    local camera = CreateCamera2D("quit", "zoom")
     camera.owner.position = vec3.new(0, 0.05, 0)
     camera.owner.scale_prop = 2
     world.b2world.gravity = { 0, -0.1 }
 
     local text_world = create_world()
-    supercamera_2d("zoom")
+    CreateCamera2D("zoom")
     __CurrentWorld = world
 
     -- 音声や画像の読み込み
