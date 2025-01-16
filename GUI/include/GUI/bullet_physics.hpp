@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.hpp"
+#include "WorldObject.hpp"
 #include <btBulletDynamicsCommon.h>
 #include <memory>
 
@@ -58,6 +59,37 @@ class Collider : public Component {
   public:
     std::unique_ptr<btCollisionShape> shape;
 
-    Collider();
-    ~Collider() override;
+    Collider() = default;
+    ~Collider() override { clear_shape(); }
+    Collider(Collider &) = delete;
+    Collider &operator=(Collider &) = delete;
+    Collider(Collider &&) = delete;
+    Collider &operator=(Collider &&) = delete;
+
+    template <std::derived_from<btCollisionShape> T, std::constructible_from<T>... Args>
+    void set_shape(Args... args) {
+        clear_shape();
+
+        T *s = new T(std::forward(args...)); // NOLINT(cppcoreguidelines-owning-memory)
+        btScalar mass = 0;
+        btVector3 inertia(0, 0, 0);
+        s->calculateLocalInertia(mass, inertia);
+        shape = std::unique_ptr<btCollisionShape>(static_cast<btCollisionShape *>(s));
+
+        // 既にRigidbodyが物体に付いていれば、そこにShapeを追加。
+        if (auto *rbc = owner().get_component<Rigidbody>(false)) {
+            rbc->attach_shape(*this);
+        }
+    }
+
+    void clear_shape() {
+        // Rigidbodyが物体に付いていれば、そこからShapeを削除。
+        // Rigidbodyが無い場合は、Shapeの実体もどこにも無いはずなので何もしなくてok。
+        if (auto *rbc = owner().get_component<Rigidbody>(false)) {
+            rbc->detach_shape(*this);
+        }
+        shape.reset();
+    }
+
+    [[nodiscard]] bool is_valid() const { return shape != nullptr; }
 };
