@@ -9,7 +9,6 @@ Rigidbody::Rigidbody() {
     shape->calculateLocalInertia(mass, fall_inertia);
     btRigidBody::btRigidBodyConstructionInfo fall_rigid_body_ci(mass, this, shape.get(), fall_inertia);
     rigid_body = std::make_unique<btRigidBody>(fall_rigid_body_ci);
-    rigid_body->setRestitution(0.5f); // ボールの反発係数を設定
     world().bullet_world.add_rigidbody(rigid_body);
 }
 
