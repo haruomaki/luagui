@@ -6,6 +6,7 @@
 #include <luagui.hpp>
 
 #include "Box2D.hpp"
+#include "BulletPhysics.hpp"
 #include "Camera.hpp"
 #include "Text.hpp"
 #include "Window.hpp"
@@ -155,6 +156,7 @@ LuaGUI::LuaGUI() {
     register_world(lua);
     register_camera(lua);
     register_box2d(lua);
+    register_bullet_physics(lua);
     register_text(lua);
     register_sound(lua);
     register_mesh(lua);

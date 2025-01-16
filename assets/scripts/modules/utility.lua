@@ -4,6 +4,7 @@
 
 Util = {}
 
+---@return WorldObject
 function Util.cube()
     local material = Material.new()
     material.point_size = 20
@@ -27,4 +28,5 @@ function Util.cube()
     local obj = __CurrentWorld.root:append_empty_child()
     obj.rotation = quat.angle_z(math.pi / 6) * quat.angle_y(math.pi / 6) * quat.angle_x(math.pi / 6)
     obj:add_mesh_component(material, mesh)
+    return obj
 end
