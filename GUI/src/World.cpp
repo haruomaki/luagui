@@ -61,5 +61,5 @@ void World::master_physics() {
     // Bullet Physicsによる3D物理演算
     // -------------------------------
 
-    bullet_world.step_simulation(dt);
+    bullet_world.step_simulation(dt, 10);
 }

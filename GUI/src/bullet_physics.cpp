@@ -68,6 +68,17 @@ void Rigidbody::set_mass(float mass) const {
 //     // refresh();
 // }
 
+Collider &Rigidbody::box_shape(float x, float y, float z) {
+    auto &cc = owner().add_component<Collider>();
+    cc.set_shape<btBoxShape>(btVector3{x, y, z});
+    return cc;
+}
+Collider &Rigidbody::plane_shape(float x, float y, float z, float distance) {
+    auto &cc = owner().add_component<Collider>();
+    cc.set_shape<btStaticPlaneShape>(btVector3{x, y, z}, distance);
+    return cc;
+}
+
 static glm::mat4 bt_to_glm(const btTransform &transform) {
     btScalar matrix[16];
     transform.getOpenGLMatrix(matrix);

@@ -55,6 +55,9 @@ class Rigidbody : public Component, public btMotionState {
     // void refresh() const;
     // void switch_type();
 
+    Collider &box_shape(float x, float y, float z);
+    Collider &plane_shape(float x, float y, float z, float distance);
+
     void getWorldTransform(btTransform &world_trans) const override;
     void setWorldTransform(const btTransform &world_trans) override;
 };
@@ -70,11 +73,12 @@ class Collider : public Component {
     Collider(Collider &&) = delete;
     Collider &operator=(Collider &&) = delete;
 
-    template <std::derived_from<btCollisionShape> T, std::constructible_from<T>... Args>
+    template <std::derived_from<btCollisionShape> T, typename... Args>
+        requires std::constructible_from<T, Args...>
     void set_shape(Args... args) {
         clear_shape();
 
-        T *s = new T(std::forward(args...)); // NOLINT(cppcoreguidelines-owning-memory)
+        T *s = new T(std::forward<Args>(args)...); // NOLINT(cppcoreguidelines-owning-memory)
         btScalar mass = 0;
         btVector3 inertia(0, 0, 0);
         s->calculateLocalInertia(mass, inertia);

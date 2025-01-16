@@ -17,10 +17,11 @@ int main() {
     // 地面の作成
     auto ground_shape = std::make_unique<btStaticPlaneShape>(btVector3(0, 1, 0), 1);
     auto ground_motion_state = std::make_unique<btDefaultMotionState>(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -1, 0)));
-    btRigidBody::btRigidBodyConstructionInfo ground_rigid_body_ci(0, ground_motion_state.get(), ground_shape.get(), btVector3(0, 0, 0));
+    btRigidBody::btRigidBodyConstructionInfo ground_rigid_body_ci(1, ground_motion_state.get(), ground_shape.get(), btVector3(0, 0, 0));
     auto ground_rigid_body = std::make_unique<btRigidBody>(ground_rigid_body_ci);
-    ground_rigid_body->setRestitution(0.5f); // 地面の反発係数を設定
+    // ground_rigid_body->setRestitution(0.5f); // 地面の反発係数を設定
     dynamics_world->addRigidBody(ground_rigid_body.get());
+    ground_rigid_body->setMassProps(0, {0, 0, 0});
 
     // 動く物体の作成
     auto fall_shape = std::make_unique<btSphereShape>(1);
@@ -30,7 +31,7 @@ int main() {
     fall_shape->calculateLocalInertia(mass, fall_inertia);
     btRigidBody::btRigidBodyConstructionInfo fall_rigid_body_ci(mass, fall_motion_state.get(), fall_shape.get(), fall_inertia);
     auto fall_rigid_body = std::make_unique<btRigidBody>(fall_rigid_body_ci);
-    fall_rigid_body->setRestitution(0.5f); // ボールの反発係数を設定
+    // fall_rigid_body->setRestitution(0.5f); // ボールの反発係数を設定
     dynamics_world->addRigidBody(fall_rigid_body.get());
 
     // シミュレーションのステップ
