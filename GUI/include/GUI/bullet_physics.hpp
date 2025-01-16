@@ -34,15 +34,30 @@ class BulletWorld {
     }
 };
 
+class Collider;
+
 /// 一つの剛体を表すコンポーネント。
 /// オブジェクトに対してRigidbodyComponentは一つだけ付与できる。
 class Rigidbody : public Component, public btMotionState {
+    friend Collider;
+    void attach_shape(const Collider &cc) const;
+    void detach_shape(const Collider &cc) const;
+
   public:
-    std::unique_ptr<btSphereShape> shape;
     std::unique_ptr<btRigidBody> rigid_body;
+    std::unique_ptr<btCompoundShape> shapes;
 
     Rigidbody();
+    ~Rigidbody() override;
 
     void getWorldTransform(btTransform &world_trans) const override;
     void setWorldTransform(const btTransform &world_trans) override;
+};
+
+class Collider : public Component {
+  public:
+    std::unique_ptr<btCollisionShape> shape;
+
+    Collider();
+    ~Collider() override;
 };

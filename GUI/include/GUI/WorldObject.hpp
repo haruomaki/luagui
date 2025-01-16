@@ -218,10 +218,10 @@ class WorldObject {
     }
 
     template <std::derived_from<Component> T>
-    T *get_component() {
+    T *get_component(bool assert_null = true) {
         auto comps = get_components<T>();
         if (comps.empty()) {
-            warn(typeid(T).name(), "型のコンポーネントがありません。");
+            if (assert_null) warn(typeid(T).name(), "型のコンポーネントがありません。");
             return nullptr;
         }
         return comps[0];

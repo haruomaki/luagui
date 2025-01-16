@@ -2,7 +2,7 @@
 
 int main() {
     GUI gui;
-    Window window(gui, 1280, 720, "blank");
+    Window window(gui, 600, 500, "blank");
     World &main_world = gui.create_world();
 
     window.set_input_mode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -37,6 +37,7 @@ int main() {
 
     main_world.root.append_child<GridGround>();
 
+    cube.owner().add_component<Collider>();
     cube.owner().add_component<Rigidbody>();
 
     // レンダリングループ
