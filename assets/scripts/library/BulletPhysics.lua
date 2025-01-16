@@ -10,3 +10,11 @@ Rigidbody = {}
 ---物体に剛体を付与する。
 ---@return Rigidbody
 function WorldObject:add_rigidbody() end
+
+---衝突判定形状を表すコンポーネント。
+---@class Collider
+Collider = {}
+
+---物体に剛体を付与する。
+---@return Collider
+function WorldObject:add_collider() end

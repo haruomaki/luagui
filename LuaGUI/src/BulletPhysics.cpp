@@ -20,4 +20,12 @@ void register_bullet_physics(sol::state &lua) {
     lua["WorldObject"]["add_rigidbody"] = [](WorldObject *obj) -> Rigidbody * {
         return &obj->add_component<Rigidbody>();
     };
+
+    lua.new_usertype<Collider>(
+        "Collider",
+        sol::base_classes, sol::bases<Component>());
+
+    lua["WorldObject"]["add_collider"] = [](WorldObject *obj) -> Collider * {
+        return &obj->add_component<Collider>();
+    };
 }

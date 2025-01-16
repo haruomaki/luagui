@@ -4,9 +4,9 @@ run_window(800, 600, "assort", function()
 
     camera.owner.position = vec3.new(0, 0, 0)
 
-    local rb = Util.cube():add_rigidbody()
-    rb.mass = 0
-    rb.inertia = { 1, 1, 1 }
+    local cube = Util.cube()
+    cube:add_collider()
+    local rb = cube:add_rigidbody()
     rb.restitution = 0.5
 
     world.root:draw_circle({ 0, 0 }, 1)
