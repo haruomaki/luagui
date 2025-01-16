@@ -38,9 +38,7 @@ int main() {
     main_world.root.append_child<GridGround>();
 
     auto &rbc = cube.owner().add_component<Rigidbody>();
-    rbc.rigid_body->setMassProps(1, {0, 0, 0});
-    rbc.rigid_body->updateInertiaTensor();
-    rbc.rigid_body->setCollisionFlags((rbc.rigid_body->getCollisionFlags() & ~btCollisionObject::CF_STATIC_OBJECT) & ~btCollisionObject::CF_KINEMATIC_OBJECT);
+    rbc.set_mass(1);
 
     // レンダリングループ
     gui.mainloop();

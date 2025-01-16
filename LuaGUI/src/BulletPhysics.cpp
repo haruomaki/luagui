@@ -12,7 +12,7 @@ static btVector3 bt3(std::vector<float> &&vec) {
 void register_bullet_physics(sol::state &lua) {
     lua.new_usertype<Rigidbody>(
         "Rigidbody",
-        "mass", sol::property([](Rigidbody *r) { return r->rigid_body->getMass(); }, [](Rigidbody *r, float mass) { r->rigid_body->setMassProps(mass, r->rigid_body->getLocalInertia()); }),
+        "mass", sol::property([](Rigidbody *r) { return r->rigid_body->getMass(); }, [](Rigidbody *r, float mass) { r->set_mass(mass); }),
         "inertia", sol::property([](Rigidbody *r) { return r->rigid_body->getLocalInertia(); }, [](Rigidbody *r, std::vector<float> inertia) { r->rigid_body->setMassProps(r->rigid_body->getMass(), bt3(std::move(inertia))); }),
         "restitution", sol::property([](Rigidbody *r) { return r->rigid_body->getRestitution(); }, [](Rigidbody *r, float rest) { r->rigid_body->setRestitution(rest); }),
         sol::base_classes, sol::bases<Component>());

@@ -26,9 +26,8 @@ class BulletWorld {
     }
 
     // 必要に応じて初期化やリソースの追加用メソッドを追加
-    void add_rigidbody(const std::unique_ptr<btRigidBody> &body) const {
-        dynamics_world->addRigidBody(body.get());
-    }
+    void add_rigidbody(const std::unique_ptr<btRigidBody> &body) const { dynamics_world->addRigidBody(body.get()); }
+    void remove_rigidbody(const std::unique_ptr<btRigidBody> &body) const { dynamics_world->removeRigidBody(body.get()); }
 
     void step_simulation(float delta_time, int max_sub_steps = 1) const {
         dynamics_world->stepSimulation(delta_time, max_sub_steps);
@@ -50,6 +49,11 @@ class Rigidbody : public Component, public btMotionState {
 
     Rigidbody();
     ~Rigidbody() override;
+
+    void set_mass(float mass) const;
+
+    // void refresh() const;
+    // void switch_type();
 
     void getWorldTransform(btTransform &world_trans) const override;
     void setWorldTransform(const btTransform &world_trans) override;
