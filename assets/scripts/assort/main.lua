@@ -4,12 +4,9 @@ run_window(800, 600, "assort", function()
 
     camera.owner.position = vec3.new(0, 0, 0)
 
+    local grid = Util.grid()
     local cube = Util.cube()
 
-    local circle = world.root:draw_circle({ 0, 0 }, 1)
-    local crb = circle.owner:add_rigidbody()
-    crb:plane_shape(0, 1, 0, 0)
-    crb.restitution = 0.5
     Thread.forever("toggle camera mode", function()
         if GetKeyDown('Enter') then camera:toggle_mode() end
     end)
@@ -18,5 +15,5 @@ run_window(800, 600, "assort", function()
 
     print("動かします。")
     cube.position = vec3.new(0, 2, 0)
-    Wait(2)
+    Forever()
 end)
