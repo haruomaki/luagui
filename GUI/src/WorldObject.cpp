@@ -26,7 +26,7 @@ void WorldObject::flush_components_children() {
 
 void WorldObject::refresh_absolute_transform() {
     const auto &parent_abs_transform = (parent_ != nullptr ? parent_->abs_transform_ : glm::mat4(1));
-    abs_transform_ = parent_abs_transform * TRANSLATE(pos_) * glm::mat4_cast(rotate_) * SCALE(scale_);
+    abs_transform_ = parent_abs_transform * triple_to_glm(pos_, rotate_, scale_);
 
     // メッシュコンポーネントの場合は描画のための更新
     for (auto *mc : this->get_components<MeshComponent>()) {
@@ -36,6 +36,13 @@ void WorldObject::refresh_absolute_transform() {
     children_.foreach ([](std::unique_ptr<WorldObject> &child) {
         child->refresh_absolute_transform();
     });
+}
+
+void WorldObject::sync_bullet() {
+    if (auto *rbc = get_component<Rigidbody>(false)) {
+        auto transform = glm_to_bt(triple_to_glm(pos_, rotate_, scale_));
+        rbc->rigid_body->setWorldTransform(transform);
+    }
 }
 
 WorldObject::WorldObject()

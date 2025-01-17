@@ -5,6 +5,10 @@
 #include "property.hpp"
 #include <SumiGL/buffered_container.hpp>
 
+inline glm::mat4 triple_to_glm(glm::vec3 p, glm::quat r, glm::vec3 s) {
+    return TRANSLATE(p) * glm::mat4_cast(r) * SCALE(s);
+}
+
 class World;
 
 // ユーザはこのクラスを必ずappend_child関数経由でインスタンス化する
@@ -23,6 +27,9 @@ class WorldObject {
 
     // フレーム終わりに、すべてのコンポーネントの追加/削除および子孫ノードの追加/削除要求を再帰的に適用する関数
     void flush_components_children();
+
+    // 位置を再設定時、Bullet Physicsの剛体位置を変更する。
+    void sync_bullet();
 
     static WorldObject *get_parent_static();
     static void set_parent_static(WorldObject *parent);
@@ -148,23 +155,27 @@ class WorldObject {
         return std::cbrtf(glm::determinant(scale_rotate));
     }
 
-    void set_transform(const glm::mat4 transform) {
+    void set_transform(const glm::mat4 transform, bool raw = false) {
         decompose_transform(transform, pos_, rotate_, scale_);
+        if (!raw) sync_bullet();
         refresh_absolute_transform();
     }
 
     void set_position(const glm::vec3 &pos) {
         pos_ = pos;
+        sync_bullet();
         this->refresh_absolute_transform();
     }
 
     void set_rotate(const glm::quat &rotate) {
         rotate_ = rotate;
+        sync_bullet();
         this->refresh_absolute_transform();
     }
 
     void set_scale(const glm::vec3 &scale) {
         scale_ = scale;
+        sync_bullet();
         this->refresh_absolute_transform();
     }
     void set_scale_one(float scale) {

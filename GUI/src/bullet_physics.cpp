@@ -79,23 +79,6 @@ Collider &Rigidbody::plane_shape(float x, float y, float z, float distance) {
     return cc;
 }
 
-static glm::mat4 bt_to_glm(const btTransform &transform) {
-    btScalar matrix[16];
-    transform.getOpenGLMatrix(matrix);
-    return glm::make_mat4(matrix);
-}
-
-static btTransform glm_to_bt(const glm::mat4 &mat) {
-    btTransform transform;
-    btScalar matrix[16];
-    const float *mat_ptr = glm::value_ptr(mat);
-    for (int i = 0; i < 16; ++i) {
-        matrix[i] = mat_ptr[i];
-    }
-    transform.setFromOpenGLMatrix(matrix);
-    return transform;
-}
-
 void Rigidbody::getWorldTransform(btTransform &world_trans) const {
     auto btt = owner().get_absolute_transform();
     world_trans = glm_to_bt(btt);
@@ -103,5 +86,5 @@ void Rigidbody::getWorldTransform(btTransform &world_trans) const {
 
 void Rigidbody::setWorldTransform(const btTransform &world_trans) {
     auto transform = bt_to_glm(world_trans);
-    owner().set_transform(transform);
+    owner().set_transform(transform, true);
 }

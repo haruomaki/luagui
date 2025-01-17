@@ -34,6 +34,23 @@ class BulletWorld {
     }
 };
 
+inline glm::mat4 bt_to_glm(const btTransform &transform) {
+    btScalar matrix[16];
+    transform.getOpenGLMatrix(matrix);
+    return glm::make_mat4(matrix);
+}
+
+inline btTransform glm_to_bt(const glm::mat4 &mat) {
+    btTransform transform;
+    btScalar matrix[16];
+    const float *mat_ptr = glm::value_ptr(mat);
+    for (int i = 0; i < 16; ++i) {
+        matrix[i] = mat_ptr[i];
+    }
+    transform.setFromOpenGLMatrix(matrix);
+    return transform;
+}
+
 class Collider;
 
 /// 一つの剛体を表すコンポーネント。
