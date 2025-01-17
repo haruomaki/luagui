@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Mesh.hpp"
-#include "Rigidbody.hpp"
+#include "Rigidbody2D.hpp"
 #include "Timer.hpp"
 #include "WorldObject.hpp"
+#include "bullet_physics.hpp"
 
 struct CameraInterface;
-class Rigidbody;
 
 class World {
     // ステートフルに目まぐるしく変わる。
@@ -22,9 +22,9 @@ class World {
     Timer timer;
     BufferedSet<std::function<void()> *> draws;
     BufferedSet<std::function<void()> *> updates;
-    BufferedSet<Rigidbody *> rigidbodies;
-    BufferedSet<RigidbodyComponent *> rigidbody_components;
+    BufferedSet<Rigidbody2D *> rigidbody_components;
     b2::World b2world;
+    BulletWorld bullet_world;
     WorldObject root;
 
     World(GUI &gui)

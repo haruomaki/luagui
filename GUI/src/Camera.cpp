@@ -48,14 +48,9 @@ Camera::~Camera() {
 }
 
 glm::mat4 Camera::get_view_matrix() const {
-    switch (projection_mode) {
-    case Perspective:
-        return SCALE({-1, 1, -1}) * glm::inverse(owner().get_absolute_transform());
-    case Orthographic:
-        return glm::inverse(owner().get_absolute_transform());
-    }
-    assert(false && "投影モードが未知の値です。");
-    return {1.0f}; // 適当なデフォルトの戻り値でGCCの警告を抑制
+    // ビュー行列を「カメラのモデル行列の逆行列」と愚直に定義してしまうと、カメラが後ろに付いているような視界になってしまう。
+    // {-1, 1, -1}を掛けることでカメラ物体の前方を撮影するようになる。
+    return SCALE({-1, 1, -1}) * glm::inverse(owner().get_absolute_transform());
 }
 
 glm::mat4 Camera::get_projection_matrix() const {
@@ -99,3 +94,5 @@ glm::mat4 Camera::get_projection_matrix() const {
     }
     throw std::runtime_error("Unsupported camera mode");
 }
+
+void Camera::toggle_mode() { projection_mode = (projection_mode == Camera::Perspective ? Camera::Orthographic : Camera::Perspective); }

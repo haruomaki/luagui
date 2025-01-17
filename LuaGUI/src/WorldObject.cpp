@@ -1,6 +1,6 @@
 #include "WorldObject.hpp"
 #include <GUI/Mesh.hpp>
-#include <GUI/Rigidbody.hpp>
+#include <GUI/Rigidbody2D.hpp>
 #include <GUI/Update.hpp>
 #include <GUI/WorldObject.hpp>
 #include <GUI/sound.hpp>
@@ -39,7 +39,7 @@ static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, 
     return &uc;
 }
 
-static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject *obj, const sol::optional<sol::table> &tbl_opt) {
+static Rigidbody2D *add_rigidbody_component(sol::state &lua, WorldObject *obj, const sol::optional<sol::table> &tbl_opt) {
     // tblにはb2::Body::Paramsで設定できる要素が入れられる
     sol::table tbl = tbl_opt.value_or(lua.create_table());
 
@@ -56,13 +56,14 @@ static RigidbodyComponent *add_rigidbody_component(sol::state &lua, WorldObject 
     body_params.position = {.x = pos.x, .y = pos.y};
     body_params.sleepThreshold = 0.0005f; // スリープ状態を防ぐ
 
-    auto &rbc = obj->add_component<RigidbodyComponent>(body_params);
+    auto &rbc = obj->add_component<Rigidbody2D>(body_params);
     return &rbc;
 }
 
 static sol::object get_component(sol::state &lua, WorldObject *obj, const std::string &component_type) {
-    if (component_type == "Rigidbody") {
-        auto *rbc = obj->get_component<RigidbodyComponent>();
+    // TODO: あらゆるクラス名に対応
+    if (component_type == "Rigidbody2D") {
+        auto *rbc = obj->get_component<Rigidbody2D>();
         return sol::make_object(lua, rbc);
     }
     if (component_type == "SoundSource") {
@@ -75,13 +76,27 @@ static sol::object get_component(sol::state &lua, WorldObject *obj, const std::s
 static sol::object get_component_by_id(sol::state &lua, WorldObject *obj, const std::string &id) {
     Component *comp = obj->get_component_by_id(id);
     // debug(id, comp);
-    if (auto *p = dynamic_cast<RigidbodyComponent *>(comp)) return sol::make_object(lua, p);
-    if (auto *p = dynamic_cast<ColliderComponent *>(comp)) return sol::make_object(lua, p);
+    if (auto *p = dynamic_cast<Rigidbody2D *>(comp)) return sol::make_object(lua, p);
+    if (auto *p = dynamic_cast<Collider2D *>(comp)) return sol::make_object(lua, p);
     if (auto *p = dynamic_cast<UpdateComponent *>(comp)) return sol::make_object(lua, p);
     return sol::nil;
 }
 
 void register_world_object(sol::state &lua) {
+    lua.new_usertype<glm::vec3>(
+        "vec3",
+        sol::constructors<glm::vec3(), glm::vec3(float, float, float)>(),
+        "x", &glm::vec3::x,
+        "y", &glm::vec3::y,
+        "z", &glm::vec3::z,
+        sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a + b; },
+        sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; });
+
+    lua.new_usertype<glm::quat>(
+        "quat",
+        "angle_axis", [](float angle, glm::vec3 axis) { return glm::angleAxis(angle, axis); },
+        sol::meta_function::multiplication, [](glm::quat a, glm::quat b) { return a * b; });
+
     lua.new_usertype<WorldObject>(
         "WorldObject",
 
@@ -92,7 +107,10 @@ void register_world_object(sol::state &lua) {
         [](WorldObject *obj) { return sol::as_table(obj->children()); },
 
         "position",
-        sol::property([](WorldObject *obj) { return obj->get_position(); }, [](WorldObject *obj, std::vector<float> pos) { obj->set_position({pos[0], pos[1], 0}); }),
+        sol::property([](WorldObject *obj) { return obj->get_position(); }, [](WorldObject *obj, glm::vec3 pos) { obj->set_position(pos); }),
+
+        "rotation",
+        sol::property([](WorldObject *obj) { return obj->get_rotate(); }, [](WorldObject *obj, glm::quat rot) { obj->set_rotate(rot); }),
 
         "scale_prop",
         sol::property([](WorldObject *obj) { return obj->get_scale_prop(); }, [](WorldObject *obj, float scale) { obj->set_scale_prop(scale); }),
@@ -100,10 +118,17 @@ void register_world_object(sol::state &lua) {
         "id",
         &WorldObject::id,
 
+        "front", &WorldObject::get_front,
+        "back", &WorldObject::get_back,
+        "right", &WorldObject::get_right,
+        "left", &WorldObject::get_left,
+        "up", &WorldObject::get_up,
+        "down", &WorldObject::get_down,
+
         "add_update_component",
         [&lua](WorldObject *obj, std::string id, sol::function f) { return add_update_component(lua, obj, std::move(id), std::move(f)); },
 
-        "add_rigidbody_component",
+        "add_rigidbody2d_component",
         [&lua](WorldObject *obj, const sol::optional<sol::table> &tbl_opt) { return add_rigidbody_component(lua, obj, tbl_opt); },
 
         "get_component",

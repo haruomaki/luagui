@@ -10,7 +10,7 @@
 struct CameraInterface {
     Window *window;
     std::function<void()> render;
-    std::function<GL::Viewport()> viewport_provider;
+    std::function<GL::Viewport()> viewport_provider; // このカメラがどの領域のビューポートに描画するかを定義する。
     bool active = true;
     int priority = 0;
 
@@ -45,4 +45,6 @@ class Camera : public CameraInterface, public Component {
 
     [[nodiscard]] glm::mat4 get_view_matrix() const override;
     [[nodiscard]] glm::mat4 get_projection_matrix() const override;
+
+    void toggle_mode();
 };

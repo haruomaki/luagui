@@ -21,6 +21,7 @@ int main() {
     /*auto &camera = */ mobile_ortho_camera(world.root, window);
     auto &ui_camera_obj = ui_world.root.append_child<WorldObject>();
     auto &ui_camera = ui_camera_obj.add_component<Camera>(&window, Camera::Orthographic);
+    ui_camera_obj.rotate = ANGLE_Y(M_PIf);
     // camera.setScale(0.01F);
     // camera.setScale(100);
     ui_camera.mode = Camera::TopLeft;

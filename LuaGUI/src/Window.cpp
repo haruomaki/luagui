@@ -41,6 +41,7 @@ static const Keymap &keymap() {
         {"Left", GLFW_KEY_LEFT},
         {"Down", GLFW_KEY_DOWN},
         {"Up", GLFW_KEY_UP},
+        {"LeftShift", GLFW_KEY_LEFT_SHIFT},
         // TODO: 他のキーも随時追加
     };
     return *keymap_inner;

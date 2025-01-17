@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.hpp"
+#include "graphical_base.hpp"
 #include "property.hpp"
 #include <SumiGL/buffered_container.hpp>
 
@@ -147,6 +148,11 @@ class WorldObject {
         return std::cbrtf(glm::determinant(scale_rotate));
     }
 
+    void set_transform(const glm::mat4 transform) {
+        decompose_transform(transform, pos_, rotate_, scale_);
+        refresh_absolute_transform();
+    }
+
     void set_position(const glm::vec3 &pos) {
         pos_ = pos;
         this->refresh_absolute_transform();
@@ -212,10 +218,10 @@ class WorldObject {
     }
 
     template <std::derived_from<Component> T>
-    T *get_component() {
+    T *get_component(bool assert_null = true) {
         auto comps = get_components<T>();
         if (comps.empty()) {
-            warn(typeid(T).name(), "型のコンポーネントがありません。");
+            if (assert_null) warn(typeid(T).name(), "型のコンポーネントがありません。");
             return nullptr;
         }
         return comps[0];

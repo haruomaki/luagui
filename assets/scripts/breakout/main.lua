@@ -1,18 +1,16 @@
 local figure = require("figure")
 
-require("test.mikan")
-
 run_window(800, 600, "ブロック崩し", function()
     b2SetLengthUnitsPerMeter(0.001)
 
     local world = create_world()
-    local camera = supercamera_2d("quit", "zoom")
-    camera.owner.position = { 0, 0.05 }
+    local camera = CreateCamera2D("quit", "zoom")
+    camera.owner.position = vec3.new(0, 0.05, 0)
     camera.owner.scale_prop = 2
     world.b2world.gravity = { 0, -0.1 }
 
     local text_world = create_world()
-    supercamera_2d("zoom")
+    CreateCamera2D("zoom")
     __CurrentWorld = world
 
     -- 音声や画像の読み込み
@@ -35,9 +33,9 @@ run_window(800, 600, "ブロック崩し", function()
 
     -- 操作バーを追加
     local bar_obj = world.root:append_empty_child()
-    bar_obj.position = { 0, -0.05 }
+    bar_obj.position = vec3.new(0, -0.05, 0)
     bar_obj:add_mesh_component(BarMaterial, BarMesh)
-    local bar = bar_obj:add_rigidbody_component({ type = "kinematic" })
+    local bar = bar_obj:add_rigidbody2d_component({ type = "kinematic" })
     bar:add_shape({ shape = "rect", friction = 1, restitution = 1, halfWidth = BarHW, halfHeight = BarHH })
 
     bar_obj:add_update_component("バーのキー操作", ForeverFun(function()
@@ -53,7 +51,7 @@ run_window(800, 600, "ブロック崩し", function()
         -- スペースキーで連射
         if GetKeyDown('Space') then
             bar_obj:add_update_component("ショット", IntervalFun(function()
-                local m = figure.maru(bar.position.x, -0.04).owner:get_component("Rigidbody")
+                local m = figure.maru(bar.position.x, -0.04).owner:get_component("Rigidbody2D")
                 local theta = (math.random() - 0.5) * 0.2
                 local speed = math.random() * 0.1 + 0.25
                 m.linear_velocity = { speed * math.sin(theta), speed * math.cos(theta) }

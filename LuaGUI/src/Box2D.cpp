@@ -1,5 +1,5 @@
 #include "Box2D.hpp"
-#include <GUI/Rigidbody.hpp>
+#include <GUI/Rigidbody2D.hpp>
 #include <GUI/WorldObject.hpp>
 
 // b2::World::SetGravityなど、「b2Vec2を受け取るメンバ関数」を「テーブルを受け取るメンバ関数」に変換する高階関数。
@@ -13,10 +13,10 @@ static std::function<void(b2::World *, const sol::table &)> wrap_table(void (b2:
 static float to_angle(b2Rot rot) { return atan2(rot.s, rot.c); }
 static b2Rot to_rot(float angle) { return b2Rot{.c = cos(angle), .s = sin(angle)}; };
 
-static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
+static void add_shape(Rigidbody2D *rbc, const sol::table &tbl) {
     // tblにはShapeを作るときのオプション（形状の種類とそれに必要なパラメータ）を指定できる
 
-    ColliderComponent *cc = nullptr;
+    Collider2D *cc = nullptr;
 
     // Shape間に共通のパラメータをパースする
     b2::Shape::Params shape_params;
@@ -35,7 +35,7 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
 
         float radius = tbl["radius"].get<float>();
 
-        cc = &rbc->owner().add_component<ColliderComponent>(b2Circle{.center = b2Vec2{x, y}, .radius = radius}, shape_params);
+        cc = &rbc->owner().add_component<Collider2D>(b2Circle{.center = b2Vec2{x, y}, .radius = radius}, shape_params);
     } else if (shape == "edge") {
         using Points = std::vector<std::vector<float>>;
         Points points = tbl["points"].get_or(Points{});
@@ -44,13 +44,13 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
         auto x2 = points.at(1).at(0);
         auto y2 = points.at(1).at(1);
 
-        cc = &rbc->owner().add_component<ColliderComponent>(b2Segment{{x1, y1}, {x2, y2}}, shape_params);
+        cc = &rbc->owner().add_component<Collider2D>(b2Segment{{x1, y1}, {x2, y2}}, shape_params);
     } else if (shape == "rect") {
         float hx = tbl["halfWidth"].get_or(0.01f);
         float hy = tbl["halfHeight"].get_or(0.01f);
 
         auto poly = b2MakeBox(hx, hy);
-        cc = &rbc->owner().add_component<ColliderComponent>(poly, shape_params);
+        cc = &rbc->owner().add_component<Collider2D>(poly, shape_params);
     } else {
         warn("未知の形状種です: ", shape);
     }
@@ -58,11 +58,11 @@ static void add_shape(RigidbodyComponent *rbc, const sol::table &tbl) {
     // 衝突時のコールバックを設定
     if (cc != nullptr && tbl["on_collision_enter"].valid()) {
         sol::function callback = tbl["on_collision_enter"];
-        cc->on_collision_enter = [callback](ColliderComponent &self, ColliderComponent &other) { callback(self, other); };
+        cc->on_collision_enter = [callback](Collider2D &self, Collider2D &other) { callback(self, other); };
     }
 }
 
-static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
+static void add_chain(Rigidbody2D *rbc, const sol::table &tbl) {
     auto chain_params = b2::Chain::Params();
 
     // Chainの頂点座標を取得
@@ -84,7 +84,7 @@ static void add_chain(RigidbodyComponent *rbc, const sol::table &tbl) {
     chain_params.friction = tbl["friction"].get_or(0.1f);
     chain_params.restitution = tbl["restitution"].get_or(0.3f);
 
-    auto &ccc = rbc->owner().add_component<ChainColliderComponent>(chain_params);
+    auto &ccc = rbc->owner().add_component<ChainCollider2D>(chain_params);
 
     // 衝突時のコールバックを設定
     if (tbl["on_collision_enter"].valid()) {
@@ -97,28 +97,28 @@ void register_box2d(sol::state &lua) {
     // Box2Dのシミュレーション縮尺を設定する関数
     lua.set_function("b2SetLengthUnitsPerMeter", b2SetLengthUnitsPerMeter);
 
-    // Rigidbodyコンポーネント
-    lua.new_usertype<RigidbodyComponent>(
-        "Rigidbody",
-        "position", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetPosition(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetTransform({pos[0], pos[1]}, rbc->b2body.GetRotation()); }),
-        "rotation", sol::property([](RigidbodyComponent *rbc) { return to_angle(rbc->b2body.GetRotation()); }, [](RigidbodyComponent *rbc, float angle) { rbc->b2body.SetTransform(rbc->b2body.GetPosition(), to_rot(angle)); }),
-        "transform", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetTransform(); }, [](RigidbodyComponent *rbc, std::vector<float> pos, float angle) { rbc->b2body.SetTransform({pos[0], pos[1]}, {cos(angle), sin(angle)}); }),
-        "linear_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetLinearVelocity(); }, [](RigidbodyComponent *rbc, std::vector<float> pos) { rbc->b2body.SetLinearVelocity({pos[0], pos[1]}); }),
-        "angular_velocity", sol::property([](RigidbodyComponent *rbc) { return rbc->b2body.GetAngularVelocity(); }, [](RigidbodyComponent *rbc, float av) { rbc->b2body.SetAngularVelocity(av); }),
+    // Rigidbody2Dコンポーネント
+    lua.new_usertype<Rigidbody2D>(
+        "Rigidbody2D",
+        "position", sol::property([](Rigidbody2D *rbc) { return rbc->b2body.GetPosition(); }, [](Rigidbody2D *rbc, std::vector<float> pos) { rbc->b2body.SetTransform({pos[0], pos[1]}, rbc->b2body.GetRotation()); }),
+        "rotation", sol::property([](Rigidbody2D *rbc) { return to_angle(rbc->b2body.GetRotation()); }, [](Rigidbody2D *rbc, float angle) { rbc->b2body.SetTransform(rbc->b2body.GetPosition(), to_rot(angle)); }),
+        "transform", sol::property([](Rigidbody2D *rbc) { return rbc->b2body.GetTransform(); }, [](Rigidbody2D *rbc, std::vector<float> pos, float angle) { rbc->b2body.SetTransform({pos[0], pos[1]}, {cos(angle), sin(angle)}); }),
+        "linear_velocity", sol::property([](Rigidbody2D *rbc) { return rbc->b2body.GetLinearVelocity(); }, [](Rigidbody2D *rbc, std::vector<float> pos) { rbc->b2body.SetLinearVelocity({pos[0], pos[1]}); }),
+        "angular_velocity", sol::property([](Rigidbody2D *rbc) { return rbc->b2body.GetAngularVelocity(); }, [](Rigidbody2D *rbc, float av) { rbc->b2body.SetAngularVelocity(av); }),
         "add_shape", add_shape,
         "add_chain", add_chain,
         sol::base_classes, sol::bases<Component>());
 
-    // Colliderコンポーネント
-    lua.new_usertype<ColliderComponent>(
-        "Collider",
-        "index", sol::readonly_property([](ColliderComponent *cc) { return cc->shape_ref_.Handle().index1; }),
+    // Collider2Dコンポーネント
+    lua.new_usertype<Collider2D>(
+        "Collider2D",
+        "index", sol::readonly_property([](Collider2D *cc) { return cc->shape_ref_.Handle().index1; }),
         sol::base_classes, sol::bases<Component>());
 
-    // ChainColliderコンポーネント
-    lua.new_usertype<ChainColliderComponent>(
-        "ChainCollider",
-        "index", sol::readonly_property([](ChainColliderComponent *ccc) { return ccc->chain_ref_.Handle().index1; }),
+    // ChainCollider2Dコンポーネント
+    lua.new_usertype<ChainCollider2D>(
+        "ChainCollider2D",
+        "index", sol::readonly_property([](ChainCollider2D *ccc) { return ccc->chain_ref_.Handle().index1; }),
         sol::base_classes, sol::bases<Component>());
 
     // Box2Dの各型

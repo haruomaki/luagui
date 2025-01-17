@@ -3,25 +3,53 @@
 ---描画設定。
 ---@class Material
 ---@field write_depth boolean デプスバッファに書き込むかどうか
+---@field line_width number 線の太さ
+---@field point_size number 点の大きさ
 Material = {}
+
+---@alias DrawMode
+---| 'points'
+---| 'lines'
+---| 'line_strip'
+---| 'line_loop'
+---| 'triangles'
+---| 'triangle_strip'
+---| 'triangle_fan'
+---| 'quads'
+---| 'quad_strip'
+---| 'polygon'
 
 ---物体形状。
 ---@class Mesh
+---@field indices VI
+---@field coords V3
+---@field colors CV
+---@field uvs V2
+---@field use_index boolean
+---@field draw_mode DrawMode
 Mesh = {}
 
 ---@class MeshComponent : Component
 MeshComponent = {}
 
+---空のマテリアルを作成する。
+---@return Material
+function Material.new() end
+
 ---マテリアルを作成する。
 ---@param image Image テクスチャ画像
 ---@return Material
-function new_material(image) end
+function Material.from_image(image) end
 
----マテリアルを作成する。
+---空のメッシュを作成する。
 ---@return Mesh
----@param coords Points
----@param uvs Points
-function new_mesh(coords, uvs) end
+function Mesh.new() end
+
+---メッシュを作成する。
+---@return Mesh
+---@param coords V3
+---@param uvs V2
+function Mesh.new(coords, uvs) end
 
 ---姿かたちを描画するコンポーネントを付与。
 ---@param material Material

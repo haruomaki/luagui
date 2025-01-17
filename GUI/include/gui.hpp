@@ -5,7 +5,7 @@
 #include <GUI/Material.hpp>
 #include <GUI/Mesh.hpp>
 #include <GUI/Resource.hpp>
-#include <GUI/Rigidbody.hpp>
+#include <GUI/Rigidbody2D.hpp>
 #include <GUI/Text.hpp>
 #include <GUI/Timer.hpp>
 #include <GUI/Update.hpp>

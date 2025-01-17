@@ -3,6 +3,7 @@
 ---@class WorldObject
 ---@field id string オブジェクトのID
 ---@field position vec3 物体の位置
+---@field rotation quat 物体の回転
 ---@field scale_prop number 物体の幾何平均スケール
 WorldObject = {}
 
@@ -13,7 +14,28 @@ WorldObject = {}
 Component = {}
 
 ---@class vec3
+---@field x number
+---@field y number
+---@field z number
 vec3 = {}
+
+---空のvec3を作成する。
+---@return vec3
+function vec3.new() end
+
+---vec3を作成する。
+---@return vec3
+function vec3.new(x, y, z) end
+
+---３次元空間内の回転を表す。
+---@class quat
+quat = {}
+
+---指定の軸周りにangleラジアン回転させる四元数表現を得る。
+---@param angle number
+---@param axis vec3
+---@return quat
+function quat.angle_axis(angle, axis) end
 
 ---空のオブジェクトを子として追加する
 ---@return WorldObject child
@@ -29,16 +51,34 @@ function WorldObject:erase() end
 ---オブジェクトをただちに削除する。
 function WorldObject:force_erase() end
 
+---@return vec3
+function WorldObject:front() end
+
+---@return vec3
+function WorldObject:back() end
+
+---@return vec3
+function WorldObject:right() end
+
+---@return vec3
+function WorldObject:left() end
+
+---@return vec3
+function WorldObject:up() end
+
+---@return vec3
+function WorldObject:down() end
+
 ---Updateコンポーネントを追加する。（＝毎フレーム実行してほしい処理を追加する）
 ---@param id string コンポーネントのID
 ---@param f fun(self: Update) 毎フレームresumeされるコルーチン。このコルーチンが終了したらコンポーネントも削除される。
 ---@return Update
 function WorldObject:add_update_component(id, f) end
 
----Rigidbodyコンポーネントを追加する。（＝物理演算を追加する）
----@param body_params? BodyOptions b2::Bodyを作成するときに指定するオプション。位置や速度、摩擦など。
----@return Rigidbody rbc
-function WorldObject:add_rigidbody_component(body_params) end
+---Rigidbody2Dコンポーネントを追加する。（＝物理演算を追加する）
+---@param body_params? Body2DOptions b2::Bodyを作成するときに指定するオプション。位置や速度、摩擦など。
+---@return Rigidbody2D rbc
+function WorldObject:add_rigidbody2d_component(body_params) end
 
 ---物体に付いているコンポーネントを取得する
 ---@generic T : Component

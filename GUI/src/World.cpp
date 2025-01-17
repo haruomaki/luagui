@@ -11,7 +11,7 @@ void World::master_physics() {
 
     // 物理演算結果をWorldObjectに反映
     rigidbody_components.flush(); // flushはここのみ
-    rigidbody_components.foreach ([](RigidbodyComponent *rbc) {
+    rigidbody_components.foreach ([](Rigidbody2D *rbc) {
         const auto physics_position = rbc->b2body.GetPosition();
         rbc->owner().position = {physics_position.x, physics_position.y, 0};
 
@@ -36,18 +36,18 @@ void World::master_physics() {
             continue;
         }
 
-        auto &cca = dereference<ColliderComponent>(b2Shape_GetUserData(id1));
-        auto &ccb = dereference<ColliderComponent>(b2Shape_GetUserData(id2));
+        auto &cca = dereference<Collider2D>(b2Shape_GetUserData(id1));
+        auto &ccb = dereference<Collider2D>(b2Shape_GetUserData(id2));
         auto chain_id_a = b2Shape_GetParentChain(id1);
         auto chain_id_b = b2Shape_GetParentChain(id2);
 
         // AとBのどちらかがChainなら(Chain,Shape)の衝突、どちらもShapeなら(A,B)＆(B,A)の衝突。どちらもChainはあり得ないはず？
         if (b2Chain_IsValid(chain_id_a)) {
-            auto &ccca = dereference<ChainColliderComponent>(b2Shape_GetUserData(event.shapeIdA));
+            auto &ccca = dereference<ChainCollider2D>(b2Shape_GetUserData(event.shapeIdA));
             // NOTE: ここでもしccbがchainだったらクラッシュする
             if (ccca.on_collision_enter.has_value()) ccca.on_collision_enter.value()(ccca, ccb);
         } else if (b2Chain_IsValid(chain_id_b)) {
-            auto &cccb = dereference<ChainColliderComponent>(b2Shape_GetUserData(event.shapeIdB));
+            auto &cccb = dereference<ChainCollider2D>(b2Shape_GetUserData(event.shapeIdB));
             if (cccb.on_collision_enter.has_value()) cccb.on_collision_enter.value()(cccb, cca);
         } else {
             if (cca.on_collision_enter.has_value()) cca.on_collision_enter.value()(cca, ccb);
@@ -56,4 +56,10 @@ void World::master_physics() {
         }
         // print("衝突おわり");
     }
+
+    // -------------------------------
+    // Bullet Physicsによる3D物理演算
+    // -------------------------------
+
+    bullet_world.step_simulation(dt, 10);
 }
