@@ -1,7 +1,7 @@
 ---@meta BulletPhysics
 
 ---一つの剛体を表すコンポーネント。
----@class Rigidbody
+---@class Rigidbody : Component
 ---@field mass number 質量
 ---@field inertia Point 回転のしにくさ
 ---@field restitution number 反発係数
@@ -27,7 +27,7 @@ function Rigidbody:plane_shape(x, y, z, distance) end
 function WorldObject:add_rigidbody() end
 
 ---衝突判定形状を表すコンポーネント。
----@class Collider
+---@class Collider : Component
 Collider = {}
 
 ---物体に剛体を付与する。

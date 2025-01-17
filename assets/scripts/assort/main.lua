@@ -10,7 +10,13 @@ run_window(800, 600, "assort", function()
     local crb = circle.owner:add_rigidbody()
     crb:plane_shape(0, 1, 0, 0)
     crb.restitution = 0.5
-    Forever(function()
+    Thread.forever("toggle camera mode", function()
         if GetKeyDown('Enter') then camera:toggle_mode() end
     end)
+
+    Wait(2)
+
+    print("動かします。")
+    cube.position = vec3.new(0, 2, 0)
+    Wait(2)
 end)

@@ -108,3 +108,17 @@ function ForeverFun(action)
         Forever(action)
     end
 end
+
+----------------
+-- 疑似スレッド
+----------------
+
+---@class Thread
+Thread = {}
+
+---新たな疑似スレッドを作成する。
+---@param task_name string
+---@param task fun(self: Update)
+function Thread.forever(task_name, task)
+    __CurrentWorld.root:add_update_component(task_name, ForeverFun(task))
+end
