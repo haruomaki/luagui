@@ -118,3 +118,11 @@ class Collider : public Component {
 
     [[nodiscard]] bool is_valid() const { return shape != nullptr; }
 };
+
+// レイキャストの結果を格納する構造体
+struct RaycastHit {
+    const btCollisionObject *hit_object{}; // 衝突したオブジェクト
+    btVector3 hit_point;                   // 衝突位置
+    btVector3 hit_normal;                  // 衝突法線
+    float hit_fraction{};                  // 衝突位置の割合（0.0f ～ 1.0f）
+};

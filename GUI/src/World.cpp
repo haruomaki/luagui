@@ -63,3 +63,41 @@ void World::master_physics() {
 
     bullet_world.step_simulation(dt, 10);
 }
+
+std::vector<RaycastHit> World::raycast(const btVector3 &start, const btVector3 &end) {
+    // 結果を格納するリスト
+    std::vector<RaycastHit> results;
+
+    // コールバックを作成
+    struct CustomRayResultCallback : public btCollisionWorld::AllHitsRayResultCallback {
+        CustomRayResultCallback(const btVector3 &from, const btVector3 &to)
+            : btCollisionWorld::AllHitsRayResultCallback(from, to) {}
+
+        // ヒットしたオブジェクトごとに情報を記録
+        [[nodiscard]] std::vector<RaycastHit> get_results() const {
+            std::vector<RaycastHit> hits;
+
+            for (int i = 0; i < m_collisionObjects.size(); i++) {
+                RaycastHit hit;
+                hit.hit_object = m_collisionObjects[i];
+                hit.hit_point = m_hitPointWorld[i];
+                hit.hit_normal = m_hitNormalWorld[i];
+                hit.hit_fraction = m_hitFractions[i];
+                hits.push_back(hit);
+            }
+
+            return hits;
+        }
+    };
+
+    // レイキャストを実行
+    CustomRayResultCallback callback(start, end);
+    bullet_world.dynamics_world->rayTest(start, end, callback);
+
+    // 衝突したオブジェクトがあれば、結果を取得
+    if (callback.hasHit()) {
+        results = callback.get_results();
+    }
+
+    return results;
+}
