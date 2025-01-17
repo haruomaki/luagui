@@ -2,9 +2,12 @@
 
 ---@class WorldObject
 ---@field id string オブジェクトのID
+---@field world World この物体が属しているワールド
+---@field parent WorldObject 親オブジェクト
 ---@field position vec3 物体の位置
 ---@field rotation quat 物体の回転
 ---@field scale_prop number 物体の幾何平均スケール
+---@field absolute_position vec3 物体の絶対座標
 WorldObject = {}
 
 ---コンポーネント基底クラス

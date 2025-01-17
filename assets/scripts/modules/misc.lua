@@ -69,3 +69,8 @@ function play_music(music)
         obj:erase()
     end)
 end
+
+---物体の正面にレイキャストを行う。
+function WorldObject:raycast_front()
+    return self.world:raycast(self.absolute_position, self:front())
+end

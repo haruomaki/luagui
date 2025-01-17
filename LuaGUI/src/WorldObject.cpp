@@ -2,6 +2,7 @@
 #include <GUI/Mesh.hpp>
 #include <GUI/Rigidbody2D.hpp>
 #include <GUI/Update.hpp>
+#include <GUI/World.hpp> // worldフィールド（プロパティの戻り値）に必要？
 #include <GUI/WorldObject.hpp>
 #include <GUI/sound.hpp>
 
@@ -94,17 +95,21 @@ void register_world_object(sol::state &lua) {
         "append_empty_child",
         [](WorldObject *obj) { return &obj->append_child<WorldObject>(); },
 
+        "world",
+        sol::readonly_property([](WorldObject *obj) { return &obj->get_world(); }),
+        "parent",
+        sol::readonly_property([](WorldObject *obj) { return obj->get_parent(); }),
         "children",
         [](WorldObject *obj) { return sol::as_table(obj->children()); },
 
         "position",
         sol::property([](WorldObject *obj) { return obj->get_position(); }, [](WorldObject *obj, glm::vec3 pos) { obj->set_position(pos); }),
-
         "rotation",
         sol::property([](WorldObject *obj) { return obj->get_rotate(); }, [](WorldObject *obj, glm::quat rot) { obj->set_rotate(rot); }),
-
         "scale_prop",
         sol::property([](WorldObject *obj) { return obj->get_scale_prop(); }, [](WorldObject *obj, float scale) { obj->set_scale_prop(scale); }),
+        "absolute_position",
+        sol::readonly_property([](WorldObject *obj) { return obj->get_absolute_position(); }),
 
         "id",
         &WorldObject::id,

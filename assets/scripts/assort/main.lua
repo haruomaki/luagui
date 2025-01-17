@@ -6,7 +6,7 @@ run_window(800, 600, "assort", function()
     local cube = Util.cube()
 
     Thread.forever("toggle camera mode", function()
-        if GetKeyDown('Enter') then camera:toggle_mode() end
+        if GetKeyDown('M') then camera:toggle_mode() end
     end)
 
     Wait(2)
@@ -14,7 +14,7 @@ run_window(800, 600, "assort", function()
     print("動かします。")
     cube.position = vec3 { 0, 2, 0 }
     Forever(function()
-        local results = world:raycast(vec3 { 0, 0.1, 5 }, vec3 { 0, 0, -10 })
+        local results = camera.owner:raycast_front()
         print(#results)
     end)
 end)
