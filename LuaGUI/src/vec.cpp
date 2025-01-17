@@ -6,6 +6,13 @@ inline float get_or(const vector<float> &v, size_t index, float default_value) {
     return (index < v.size() ? v[index] : default_value);
 }
 
+inline glm::vec3 to_vec3(std::vector<float> &&v) {
+    auto x = get_or(v, 0, 0);
+    auto y = get_or(v, 1, 0);
+    auto z = get_or(v, 2, 0);
+    return {x, y, z};
+}
+
 VI::VI(std::vector<int> tbl)
     : std::vector<int>(std::move(tbl)) {}
 
@@ -20,9 +27,7 @@ V2::V2(Points tbl)
 V3::V3(Points tbl)
     : std::vector<glm::vec3>(tbl.size()) {
     for (size_t i = 0; i < tbl.size(); i++) {
-        (*this)[i].x = get_or(tbl[i], 0, 0);
-        (*this)[i].y = get_or(tbl[i], 1, 0);
-        (*this)[i].z = get_or(tbl[i], 2, 0);
+        (*this)[i] = to_vec3(std::move(tbl[i]));
     }
 }
 
@@ -37,9 +42,17 @@ CV::CV(Points tbl)
 }
 
 void register_vec(sol::state &lua) {
-    lua.new_usertype<VI>(
-        "VI",
-        sol::constructors<VI(std::vector<int>)>());
+    lua.new_usertype<glm::vec3>(
+        "vec3",
+        sol::constructors<glm::vec3(), glm::vec3(float, float, float)>(),
+        "x", &glm::vec3::x,
+        "y", &glm::vec3::y,
+        "z", &glm::vec3::z,
+        sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a + b; },
+        sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; });
+    lua["vec3"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> glm::vec3 { return to_vec3(std::move(v)); }; // HACK: moveにする必要は無いが、警告抑制のため。
+
+    lua.new_usertype<VI>("VI", sol::constructors<VI(std::vector<int>)>());
 
     lua["VI"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<int> tbl) { return VI(std::move(tbl)); };
 

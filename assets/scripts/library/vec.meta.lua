@@ -1,11 +1,34 @@
 ---@meta vec
 
+---三次元ベクトル。
+---@class vec3
+---@field x number
+---@field y number
+---@field z number
+vec3 = {}
+
+---空のvec3を作成する。
+---@return vec3
+function vec3.new() end
+
+---vec3を作成する。
+---@param x number
+---@param y number
+---@param z number
+---@return vec3
+function vec3.new(x, y, z) end
+
+---vec3を作成する。
+---@param point table<integer, number>
+---@return vec3
+function vec3(point) end
+
 ---intの配列。
 ---@class VI
 VI = {}
 
 ---テーブルをintの配列に変換する。
----@param points table<number, integer>
+---@param points table<integer, integer>
 ---@return VI
 function VI(points) end
 

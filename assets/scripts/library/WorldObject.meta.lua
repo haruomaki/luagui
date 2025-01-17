@@ -13,20 +13,6 @@ WorldObject = {}
 ---@field owner WorldObject コンポーネントが所属するオブジェクト
 Component = {}
 
----@class vec3
----@field x number
----@field y number
----@field z number
-vec3 = {}
-
----空のvec3を作成する。
----@return vec3
-function vec3.new() end
-
----vec3を作成する。
----@return vec3
-function vec3.new(x, y, z) end
-
 ---３次元空間内の回転を表す。
 ---@class quat
 quat = {}

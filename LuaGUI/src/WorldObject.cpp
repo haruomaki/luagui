@@ -83,15 +83,6 @@ static sol::object get_component_by_id(sol::state &lua, WorldObject *obj, const 
 }
 
 void register_world_object(sol::state &lua) {
-    lua.new_usertype<glm::vec3>(
-        "vec3",
-        sol::constructors<glm::vec3(), glm::vec3(float, float, float)>(),
-        "x", &glm::vec3::x,
-        "y", &glm::vec3::y,
-        "z", &glm::vec3::z,
-        sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a + b; },
-        sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; });
-
     lua.new_usertype<glm::quat>(
         "quat",
         "angle_axis", [](float angle, glm::vec3 axis) { return glm::angleAxis(angle, axis); },
