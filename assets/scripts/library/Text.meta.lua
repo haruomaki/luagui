@@ -7,7 +7,7 @@ local Font = {}
 __CurrentFont = {}
 
 ---テキストコンポーネント。
----@class Text
+---@class Text : Component
 ---@field message string 表示する文字列。
 local Text = {}
 

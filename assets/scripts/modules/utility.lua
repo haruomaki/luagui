@@ -26,7 +26,7 @@ function Util.cube()
     mesh.colors = CV(color_tmp)
 
     local obj = __CurrentWorld.root:append_empty_child()
-    obj.id = "カラフルキューブ"
+    obj.id = "colorful cube"
     obj.position = vec3.new(0, 2, 0)
     obj.rotation = quat.angle_z(math.pi / 6) * quat.angle_y(math.pi / 6) * quat.angle_x(math.pi / 6)
     obj:add_mesh_component(material, mesh)
@@ -68,7 +68,7 @@ function Util.grid()
     mesh.colors = CV(color_tmp)
 
     local obj = __CurrentWorld.root:append_empty_child()
-    obj.id = "カラフルグリッド"
+    obj.id = "colorful grid"
     obj:add_mesh_component(material, mesh)
     local rb = obj:add_rigidbody()
     rb:plane_shape(0, 1, 0, 0)

@@ -77,7 +77,14 @@ std::vector<RaycastHit> World::raycast(const btVector3 &start, const btVector3 &
         [[nodiscard]] std::vector<RaycastHit> get_results() const {
             std::vector<RaycastHit> hits;
 
+            // fractionでソート
+            std::vector<std::pair<float, int>> tmp_fractions(m_collisionObjects.size());
             for (int i = 0; i < m_collisionObjects.size(); i++) {
+                tmp_fractions[i] = {m_hitFractions[i], i};
+            }
+            std::sort(tmp_fractions.begin(), tmp_fractions.end());
+
+            for (auto [_, i] : tmp_fractions) {
                 RaycastHit hit;
                 if (void *p = m_collisionObjects[i]->getUserPointer()) {
                     hit.hit_object = static_cast<Rigidbody *>(p);

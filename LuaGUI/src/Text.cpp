@@ -7,7 +7,7 @@ void register_text(sol::state &lua) {
     lua.new_usertype<Text>(
         "Text",
         "message", sol::property([](Text *t) { return t->text; }, [](Text *t, std::string msg) { t->text = std::move(msg); }),
-        sol::base_classes, sol::bases<UpdateComponent>());
+        sol::base_classes, sol::bases<Component>());
 
     lua["WorldObject"]["child_text"] = [&](WorldObject &obj, const std::string &text, const sol::table &options) -> Text & {
         Font &font = lua["__CurrentFont"];
