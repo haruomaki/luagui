@@ -12,7 +12,7 @@ __CurrentFont = {}
 local Text = {}
 
 ---テキストを表示する
----@param text string 表示する文字列
+---@param text? string 表示する文字列
 ---@param options? TextOptions 位置や色などのオプション
 ---@return Text
 function WorldObject:child_text(text, options) end

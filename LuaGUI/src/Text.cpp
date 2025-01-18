@@ -9,7 +9,10 @@ void register_text(sol::state &lua) {
         "message", sol::property([](Text *t) { return t->text; }, [](Text *t, std::string msg) { t->text = std::move(msg); }),
         sol::base_classes, sol::bases<Component>());
 
-    lua["WorldObject"]["child_text"] = [&](WorldObject &obj, const std::string &text, const sol::table &options) -> Text & {
+    lua["WorldObject"]["child_text"] = [&](WorldObject &obj, sol::optional<const char *> text_opt, const sol::optional<sol::table> &options_opt) -> Text & {
+        std::string text = text_opt.value_or("");
+        sol::table options = options_opt.value_or(lua.create_table());
+
         Font &font = lua["__CurrentFont"];
         auto &tt = obj.child_component<Text>(font, text, RGBA{0.5, 0.8, 0.2, 0.4});
 
