@@ -79,7 +79,12 @@ std::vector<RaycastHit> World::raycast(const btVector3 &start, const btVector3 &
 
             for (int i = 0; i < m_collisionObjects.size(); i++) {
                 RaycastHit hit;
-                hit.hit_object = m_collisionObjects[i];
+                if (void *p = m_collisionObjects[i]->getUserPointer()) {
+                    hit.hit_object = static_cast<Rigidbody *>(p);
+                } else {
+                    warn("レイキャストで当たった物体はRigidbodyコンポーネント由来でありません。");
+                    hit.hit_object = nullptr;
+                }
                 hit.hit_point = m_hitPointWorld[i];
                 hit.hit_normal = m_hitNormalWorld[i];
                 hit.hit_fraction = m_hitFractions[i];

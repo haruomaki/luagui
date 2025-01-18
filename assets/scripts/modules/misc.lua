@@ -71,6 +71,7 @@ function play_music(music)
 end
 
 ---物体の正面にレイキャストを行う。
+---@return table<integer, RaycastHit>
 function WorldObject:raycast_front()
     return self.world:raycast(self.absolute_position, self:front())
 end

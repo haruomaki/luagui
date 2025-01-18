@@ -34,6 +34,9 @@ class BulletWorld {
     }
 };
 
+inline glm::vec3 bt_to_glm(const btVector3 &v) { return {v.x(), v.y(), v.z()}; }
+inline btVector3 glm_to_bt(const glm::vec3 &v) { return {v.x, v.y, v.z}; }
+
 inline glm::mat4 bt_to_glm(const btTransform &transform) {
     btScalar matrix[16];
     transform.getOpenGLMatrix(matrix);
@@ -121,8 +124,9 @@ class Collider : public Component {
 
 // レイキャストの結果を格納する構造体
 struct RaycastHit {
-    const btCollisionObject *hit_object{}; // 衝突したオブジェクト
-    btVector3 hit_point;                   // 衝突位置
-    btVector3 hit_normal;                  // 衝突法線
-    float hit_fraction{};                  // 衝突位置の割合（0.0f ～ 1.0f）
+    // NOTE: Bulletではどの子シェイプに当たったかどうかの情報を取得できない。
+    Rigidbody *hit_object{}; // 衝突したオブジェクト
+    btVector3 hit_point;     // 衝突位置
+    btVector3 hit_normal;    // 衝突法線
+    float hit_fraction{};    // 衝突位置の割合（0.0f ～ 1.0f）
 };

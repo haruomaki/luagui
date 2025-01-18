@@ -15,6 +15,8 @@ run_window(800, 600, "assort", function()
     cube.position = vec3 { 0, 2, 0 }
     Forever(function()
         local results = camera.owner:raycast_front()
-        print(#results)
+        for _, r in ipairs(results) do
+            print(r.hitObject.owner.id)
+        end
     end)
 end)

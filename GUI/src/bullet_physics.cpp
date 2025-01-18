@@ -26,6 +26,7 @@ Rigidbody::Rigidbody() {
     shapes = std::make_unique<btCompoundShape>();
     btRigidBody::btRigidBodyConstructionInfo rb_info(1, this, shapes.get());
     rigid_body = std::make_unique<btRigidBody>(rb_info);
+    rigid_body->setUserPointer(this);
     world().bullet_world.add_rigidbody(rigid_body);
     set_mass(0);
 
