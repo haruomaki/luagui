@@ -1,10 +1,16 @@
 ---@meta Text
 
+---ロード済みのフォントを表すクラス。
 ---@class Font
-local Font = {}
+Font = {}
 
 ---@type Font
-__CurrentFont = {}
+__CurrentFont = nil
+
+---ストレージからフォントを読み込み、カレントフォントを変更する。
+---@param file_path string
+---@return Font
+function Font.load(file_path) end
 
 ---テキストコンポーネント。
 ---@class Text : Component

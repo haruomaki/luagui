@@ -1,8 +1,26 @@
 #include "Text.hpp"
+#include <GUI/GUI.hpp>
 #include <GUI/Text.hpp>
 #include <GUI/WorldObject.hpp>
+#include <Lunchbox/Storage.hpp>
 
 void register_text(sol::state &lua) {
+    // Fontクラス
+    lua.new_usertype<Font>(
+        "Font",
+        "load", [&lua](const std::string &file_path) -> Font * {
+            GUI &gui = lua["__GUI"];
+            lunchbox::Storage &storage = lua["__Storage"];
+            auto text_shader = GL::ProgramObject{
+                GL::create_shader(GL_VERTEX_SHADER, storage.get_text("shaders/font.vsh")),
+                GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("shaders/font.fsh"))};
+            auto font = storage.get_font(file_path);
+            auto &default_font = gui.resources.append<Font>(std::move(text_shader), font).get();
+            lua["__CurrentFont"] = &default_font;
+            return &default_font;
+        },
+        sol::base_classes, sol::bases<Resource>());
+
     // Textクラス
     lua.new_usertype<Text>(
         "Text",

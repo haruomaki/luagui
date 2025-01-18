@@ -5,6 +5,8 @@ run_window(800, 600, "assort", function()
     local grid = Util.grid()
     local cube = Util.cube()
 
+    Font.load("fonts/UDEVGothic.ttf")
+
     local ui = create_world()
     local ui_camera = CreateCamera2D()
     ui_camera.centering = 'TopLeft'
