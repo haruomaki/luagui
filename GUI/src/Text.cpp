@@ -20,7 +20,7 @@ Font::Font(GL::ProgramObject &&shader, const freetype::Face &ft_face)
     // バイト列の制限（4の倍数byte）を解除する
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
-    for (unsigned char c = 0; c < 128; c++) {
+    for (unsigned long c = 0; c < 256; c++) {
         // load character glyph
         if (FT_Load_Char(face, c, FT_LOAD_RENDER) != 0) {
             std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << '\n';

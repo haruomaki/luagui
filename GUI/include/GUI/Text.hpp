@@ -17,7 +17,7 @@ struct Character {
 // 文字描画用のシェーダと48ptフォントテクスチャのセット
 class Font : public Resource {
     GL::ProgramObject shader_;
-    std::map<char, Character> characters_;
+    std::map<unsigned long, Character> characters_;
     GL::VertexArray vao_;
     GL::VertexBuffer vbo_;
 
