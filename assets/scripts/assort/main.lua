@@ -5,6 +5,10 @@ run_window(800, 600, "assort", function()
     local grid = Util.grid()
     local cube = Util.cube()
 
+    local ui = create_world()
+    CreateCamera2D()
+    ui.root:child_text("kon", {})
+
     Thread.forever("toggle camera mode", function()
         if GetKeyDown('M') then camera:toggle_mode() end
     end)

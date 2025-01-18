@@ -24,7 +24,7 @@ int main() {
     ui_camera_obj.rotate = ANGLE_Y(M_PIf);
     // camera.setScale(0.01F);
     // camera.setScale(100);
-    ui_camera.mode = Camera::TopLeft;
+    ui_camera.centering = Camera::TopLeft;
 
     auto &line = new_points(world.root);
     auto &line_mesh = line.mesh;
