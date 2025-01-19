@@ -88,8 +88,8 @@ void Text::draw() const {
         auto results = font_.hb().shape(text);
 
         // すべてのグリフについてイテレートする。
-        for (auto res : results) {
-            char32_t gid = res.glyph_id;
+        for (auto shaping : results) {
+            char32_t gid = shaping.glyph_id;
             Character ch = font_.characters_.at(gid);
 
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
@@ -127,6 +127,8 @@ void Text::draw() const {
             // render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
             // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+            debug(shaping.x_advance, shaping.y_advance);
+            debug(shaping.x_offset, shaping.y_offset);
             tail += float(ch.advance >> 6) * pt_meter; // bitshift by 6 to get value in pixels (2^6 = 64)
         }
     });

@@ -7,11 +7,20 @@ int main() {
 
     debug(storage.list("/"));
 
-    auto font = storage.get_font("fonts/UDEVGothic.ttf");
-    // auto face = storage.get_font("fonts/HackGen.ttf");
-    auto res = font.shape("鯖と鯖󠄀->");
+    // auto font = storage.get_font("fonts/UDEVGothic.ttf");
+    auto font = storage.get_font("fonts/HackGen.ttf");
+    // hb_face_get_upem(font.get());
+    // auto res = font.shape("鯖と鯖󠄀->");
+    harfbuzz::Buffer buffer;
+    buffer.add_utf8("abcこんにちは");
+    buffer.dump("guess前");
+    hb_buffer_guess_segment_properties(buffer.get());
+    buffer.dump("guess後");
+    auto res = font.shape(buffer);
 
     for (auto r : res) {
-        debug(int(r.glyph_id));
+        // debug(int(r.glyph_id));
+        // debug(r.x_offset, r.y_offset, r.x_advance, r.y_advance);
+        std::cout << int(r.glyph_id) << " ";
     }
 }
