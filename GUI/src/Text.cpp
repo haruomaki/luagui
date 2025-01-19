@@ -9,22 +9,22 @@ DEFINE_RUNTIME_ERROR(FreeTypeException);
 // NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
-Font::Font(GL::ProgramObject &&shader, const harfbuzz::Font &hb_font)
-    : shader_(std::move(shader)) {
-    // フォントを読み込む
-    FT_Face face = hb_font.face();
+Character CharactersCache::at(char32_t c) {
+    if (!cache_.contains(c)) {
+        // フォントを読み込む
+        FT_Face face = font_.face();
 
-    // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
-    FT_Set_Pixel_Sizes(face, 0, 48);
+        // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
+        FT_Set_Pixel_Sizes(face, 0, 48);
 
-    // バイト列の制限（4の倍数byte）を解除する
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
+        // バイト列の制限（4の倍数byte）を解除する
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
-    for (unsigned long c = 0; c < 256; c++) {
         // load character glyph
         if (FT_Load_Char(face, c, FT_LOAD_RENDER) != 0) {
             std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << '\n';
-            continue;
+            warn("フォントにグリフが含まれていません（コードポイント: ", int(c), "）");
+            return {};
         }
         // generate texture
         unsigned int texture;
@@ -51,9 +51,15 @@ Font::Font(GL::ProgramObject &&shader, const harfbuzz::Font &hb_font)
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             static_cast<unsigned int>(face->glyph->advance.x)};
-        characters_.insert(std::pair<char, Character>(c, character));
+        cache_.insert(std::pair<char, Character>(c, character));
     }
 
+    return cache_[c];
+}
+
+Font::Font(GL::ProgramObject &&shader, harfbuzz::Font &&hb_font)
+    : shader_(std::move(shader))
+    , characters_(std::move(hb_font)) {
     this->vbo_ = GL::VertexBuffer(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     this->vao_.bind([&] {
         this->vbo_.bind([&] {

@@ -50,7 +50,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
         GL::create_shader(GL_VERTEX_SHADER, storage.get_text("shaders/font.vsh")),
         GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("shaders/font.fsh"))};
     auto font = storage.get_font("fonts/main.ttf");
-    auto &default_font = gui.resources.append<Font>(std::move(text_shader), font).get();
+    auto &default_font = gui.resources.append<Font>(std::move(text_shader), std::move(font)).get();
     lua["__CurrentFont"] = &default_font;
 
     bool coroutine_finished = false;

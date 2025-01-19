@@ -15,7 +15,7 @@ void register_text(sol::state &lua) {
                 GL::create_shader(GL_VERTEX_SHADER, storage.get_text("shaders/font.vsh")),
                 GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("shaders/font.fsh"))};
             auto font = storage.get_font(file_path);
-            auto &default_font = gui.resources.append<Font>(std::move(text_shader), font).get();
+            auto &default_font = gui.resources.append<Font>(std::move(text_shader), std::move(font)).get();
             lua["__CurrentFont"] = &default_font;
             return &default_font;
         },

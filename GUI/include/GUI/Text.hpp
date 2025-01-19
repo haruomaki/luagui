@@ -14,17 +14,28 @@ struct Character {
     unsigned int advance;    // Offset to advance to next glyph
 };
 
+// 各文字のテクスチャを遅延生成＆取得できるクラス。
+class CharactersCache {
+    harfbuzz::Font font_;
+    std::map<char32_t, Character> cache_;
+
+  public:
+    CharactersCache(harfbuzz::Font font)
+        : font_(std::move(font)) {}
+    Character at(char32_t c);
+};
+
 // 文字描画用のシェーダと48ptフォントテクスチャのセット
 class Font : public Resource {
     GL::ProgramObject shader_;
-    std::map<unsigned long, Character> characters_;
+    CharactersCache characters_;
     GL::VertexArray vao_;
     GL::VertexBuffer vbo_;
 
     friend class Text;
 
   public:
-    Font(GL::ProgramObject &&shader, const harfbuzz::Font &hb_font);
+    Font(GL::ProgramObject &&shader, harfbuzz::Font &&hb_font);
 };
 
 class Text : public UpdateComponent {
