@@ -4,3 +4,4 @@
 
 UDEVGothicNFLG-Regular.ttf v2.1.0
 UDEVGothic35NFLG-Regular.ttf v2.1.0
+HackGenConsoleNF-Regular.ttf v2.10.0
