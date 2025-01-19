@@ -93,7 +93,7 @@ void Text::draw() const {
             Character ch = font_.characters_.at(gid);
 
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
-            // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする TODO: HiDPI（1pt≠1px）時の対応
+            // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする。HiDPI（1pt≠1px）にも対応。
             float xpos = tail + float(ch.bearing.x) * pt_meter;
             float ypos = -float(ch.size.y - ch.bearing.y) * pt_meter;
 
@@ -127,8 +127,9 @@ void Text::draw() const {
             // render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
             // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-            debug(shaping.x_advance, shaping.y_advance);
-            debug(shaping.x_offset, shaping.y_offset);
+            // debug(shaping.x_advance, shaping.y_advance);
+            // debug(shaping.x_offset, shaping.y_offset);
+            // TODO: shaping.x_advanceを活用したいがスケールが合っていない＆正しい値なのかイマイチよく分からない。
             tail += float(ch.advance >> 6) * pt_meter; // bitshift by 6 to get value in pixels (2^6 = 64)
         }
     });

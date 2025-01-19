@@ -6,6 +6,7 @@ run_window(800, 600, "assort", function()
     local cube = Util.cube()
 
     Font.load("fonts/UDEVGothic.ttf")
+    -- Font.load("fonts/main.ttf")
 
     local ui = create_world()
     local ui_camera = CreateCamera2D()
@@ -21,6 +22,7 @@ run_window(800, 600, "assort", function()
             text.message = results[1].hitObject.owner.id
         else
             text.message = "m a >>= (\\x 鯖と鯖󠄀)"
+            -- text.message = "ABCDEFGHIJK"
         end
     end)
 
