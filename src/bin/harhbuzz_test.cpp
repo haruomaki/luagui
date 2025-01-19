@@ -7,8 +7,8 @@ int main() {
 
     debug(storage.list("/"));
 
-    // auto font = storage.get_font("fonts/UDEVGothic.ttf");
-    auto font = storage.get_font("fonts/HackGen.ttf");
+    auto font = storage.get_font("fonts/UDEVGothic.ttf");
+    // auto font = storage.get_font("fonts/main.ttf");
     // hb_face_get_upem(font.get());
     // auto res = font.shape("鯖と鯖󠄀->");
     harfbuzz::Buffer buffer;
@@ -17,6 +17,8 @@ int main() {
     hb_buffer_guess_segment_properties(buffer.get());
     buffer.dump("guess後");
     auto res = font.shape(buffer);
+
+    font.dump();
 
     for (auto r : res) {
         // debug(int(r.glyph_id));

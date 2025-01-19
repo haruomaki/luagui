@@ -12,7 +12,7 @@ constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 Character CharactersCache::at(char32_t gid) {
     if (!cache_.contains(gid)) {
         // フォントを読み込む
-        FT_Face face = font_.face();
+        FT_Face face = font_.ft_face();
 
         // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
         FT_Set_Pixel_Sizes(face, 0, 48);
