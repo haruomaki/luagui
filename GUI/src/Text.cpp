@@ -9,7 +9,7 @@ DEFINE_RUNTIME_ERROR(FreeTypeException);
 // NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
-Character CharactersCache::at(char32_t gid) {
+Character CharactersCache::at(harfbuzz::GlyphID gid) {
     if (!cache_.contains(gid)) {
         // フォントを読み込む
         FT_Face face = font_.ft_face();
@@ -21,7 +21,7 @@ Character CharactersCache::at(char32_t gid) {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
         // load character glyph
-        if (FT_Load_Char(face, gid, FT_LOAD_RENDER) != 0) {
+        if (FT_Load_Glyph(face, gid, FT_LOAD_RENDER) != 0) {
             std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << '\n';
             warn("フォントにグリフが含まれていません（コードポイント: ", int(gid), "）");
             return {};

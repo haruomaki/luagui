@@ -20,7 +20,7 @@ run_window(800, 600, "assort", function()
         if (#results > 0) then
             text.message = results[1].hitObject.owner.id
         else
-            text.message = "abc"
+            text.message = "m a >>= (\\x 鯖と鯖󠄀)"
         end
     end)
 
