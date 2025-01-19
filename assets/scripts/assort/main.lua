@@ -1,9 +1,23 @@
 run_window(800, 600, "assort", function()
     local world = create_world()
     local camera = CreateCamera("quit", "move", "zoom")
+    camera.owner.parent.position = vec3 { 0, 1.5, 4 }
 
-    local grid = Util.grid()
+    -- local grid = Util.grid()
     local cube = Util.cube()
+
+    local block = require("block")
+
+    -- 地面となるブロックを配置
+    for i = -10, 10 do
+        for j = -10, 10 do
+            block.place(vec3 { i, -1, j })
+        end
+    end
+    -- local b1 = block.place(vec3 { 0, -1, 0 })
+    -- local b2 = block.place(vec3 { -1, -1, 0 })
+    -- block.place(vec3 { -1, -1, -1 })
+    -- block.place(vec3 { -1, -1, -1 })
 
     Font.load("fonts/UDEVGothic.ttf")
     -- Font.load("fonts/main.ttf")

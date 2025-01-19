@@ -148,6 +148,8 @@ void MeshDrawManager::drawcall(const StaticMesh &mesh, const Material &material,
     const auto projection_matrix = camera.get_projection_matrix();
     shader.set_uniform("projectionMatrix", projection_matrix);
 
+    // TODO: 「深度テストを行うかどうか」の設定をマテリアルに追加する。
+
     // デプスバッファに書き込むかどうか
     glDepthMask(material.write_depth ? GL_TRUE : GL_FALSE);
 
@@ -158,7 +160,14 @@ void MeshDrawManager::drawcall(const StaticMesh &mesh, const Material &material,
         material.texture.bind([&] {
             if (mesh.use_index) {
                 size_t indices_length = mesh.indices_n_;
-                glDrawElements(mesh.draw_mode, GLsizei(sizeof(int) * indices_length), GL_UNSIGNED_INT, nullptr);
+                glDrawElementsInstanced(mesh.draw_mode, GLsizei(indices_length), GL_UNSIGNED_INT, nullptr, GLsizei(count_instances));
+                // 参考：glDrawElementsInstancedの引数
+                // 1. mode - 描画モード。GL_TRIANGLESなど
+                // 2. count - インデックスの個数。
+                // 3. type - インデックスのデータ型。（例: GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT）
+                // 4. indices - インデックスデータの開始位置。nullptrを指定するとEBOから読み込む。
+                // 5. primcount - インスタンスの個数。
+                // 頂点座標はバインド中のVBOから勝手に読み込まれる。
             } else {
                 size_t vertices_length = mesh.n_;
                 glDrawArraysInstanced(mesh.draw_mode, 0, GLsizei(vertices_length), GLsizei(count_instances));
