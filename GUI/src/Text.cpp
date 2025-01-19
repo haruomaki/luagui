@@ -9,8 +9,8 @@ DEFINE_RUNTIME_ERROR(FreeTypeException);
 // NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
-Character CharactersCache::at(char32_t c) {
-    if (!cache_.contains(c)) {
+Character CharactersCache::at(char32_t gid) {
+    if (!cache_.contains(gid)) {
         // フォントを読み込む
         FT_Face face = font_.face();
 
@@ -21,9 +21,9 @@ Character CharactersCache::at(char32_t c) {
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
         // load character glyph
-        if (FT_Load_Char(face, c, FT_LOAD_RENDER) != 0) {
+        if (FT_Load_Char(face, gid, FT_LOAD_RENDER) != 0) {
             std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << '\n';
-            warn("フォントにグリフが含まれていません（コードポイント: ", int(c), "）");
+            warn("フォントにグリフが含まれていません（コードポイント: ", int(gid), "）");
             return {};
         }
         // generate texture
@@ -51,15 +51,16 @@ Character CharactersCache::at(char32_t c) {
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             static_cast<unsigned int>(face->glyph->advance.x)};
-        cache_.insert(std::pair<char, Character>(c, character));
+        cache_[gid] = character;
     }
 
-    return cache_[c];
+    return cache_[gid];
 }
 
 Font::Font(GL::ProgramObject &&shader, harfbuzz::Font &&hb_font)
     : shader_(std::move(shader))
-    , characters_(std::move(hb_font)) {
+    , hb_font_(std::move(hb_font))
+    , characters_(hb_font_) {
     this->vbo_ = GL::VertexBuffer(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     this->vao_.bind([&] {
         this->vbo_.bind([&] {
@@ -83,9 +84,13 @@ void Text::draw() const {
     this->font_.vao_.bind([&] {
         float tail = 0;
 
-        // iterate through all characters
-        for (char c : text) {
-            Character ch = font_.characters_.at(c);
+        // HarfBuzzを利用してUTF8バイト列からグリフを取得。
+        auto results = font_.hb().shape(text);
+
+        // すべてのグリフについてイテレートする。
+        for (auto res : results) {
+            char32_t gid = res.glyph_id;
+            Character ch = font_.characters_.at(gid);
 
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
             // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする TODO: HiDPI（1pt≠1px）時の対応
