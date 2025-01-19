@@ -97,5 +97,5 @@ class World {
     }
 
     // レイキャストを行う。
-    std::vector<RaycastHit> raycast(const btVector3 &start, const btVector3 &end);
+    std::vector<RaycastHit> raycast(const btVector3 &origin, const btVector3 &direction);
 };
