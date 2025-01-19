@@ -9,10 +9,10 @@ DEFINE_RUNTIME_ERROR(FreeTypeException);
 // NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
-Font::Font(GL::ProgramObject &&shader, const freetype::Face &ft_face)
+Font::Font(GL::ProgramObject &&shader, const harfbuzz::Font &hb_font)
     : shader_(std::move(shader)) {
     // フォントを読み込む
-    FT_Face face = ft_face.get();
+    FT_Face face = hb_font.face();
 
     // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
     FT_Set_Pixel_Sizes(face, 0, 48);

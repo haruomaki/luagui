@@ -3,7 +3,7 @@
 #include "Resource.hpp"
 #include "Update.hpp"
 #include "graphical_base.hpp"
-#include <Lunchbox/core/FreeType.hpp>
+#include <Lunchbox/core/HarfBuzz.hpp>
 #include <SumiGL/Shader.hpp>
 #include <map>
 
@@ -24,7 +24,7 @@ class Font : public Resource {
     friend class Text;
 
   public:
-    Font(GL::ProgramObject &&shader, const freetype::Face &ft_face);
+    Font(GL::ProgramObject &&shader, const harfbuzz::Font &hb_font);
 };
 
 class Text : public UpdateComponent {

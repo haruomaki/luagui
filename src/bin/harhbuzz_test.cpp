@@ -7,12 +7,9 @@ int main() {
 
     debug(storage.list("/"));
 
-    auto face = storage.get_font("fonts/UDEVGothic.ttf");
+    auto font = storage.get_font("fonts/UDEVGothic.ttf");
     // auto face = storage.get_font("fonts/HackGen.ttf");
-    harfbuzz::Font font(face);
-    harfbuzz::Buffer buffer;
-    buffer.add_utf8("鯖と鯖󠄀->");
-    auto res = font.shape(buffer);
+    auto res = font.shape("鯖と鯖󠄀->");
 
     for (auto r : res) {
         debug(int(r.glyph_id));
