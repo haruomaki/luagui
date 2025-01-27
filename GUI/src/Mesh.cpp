@@ -1,6 +1,7 @@
 #include "Mesh.hpp"
 #include "World.hpp"
 #include "WorldObject.hpp"
+#include <algorithm>
 
 MeshComponent::MeshComponent(StaticMesh &mesh, Material *material)
     : mesh(mesh)

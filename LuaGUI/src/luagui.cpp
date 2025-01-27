@@ -83,7 +83,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 }
 
 // "modules.hoge"といったモジュール名を「modules/hoge.lua」の形に変換する。
-static fs::path convert_module_to_path(const std::optional<Path> &cwd, const std::string &module_name) {
+static Path convert_module_to_path(const std::optional<Path> &cwd, const std::string &module_name) {
     std::string path_str = cwd.value_or("").string() + "/" + module_name;
     std::replace(path_str.begin(), path_str.end(), '.', '/');
     path_str += ".lua";

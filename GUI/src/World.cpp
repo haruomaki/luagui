@@ -1,5 +1,6 @@
 #include "World.hpp"
 #include "Window.hpp"
+#include <algorithm>
 
 void World::master_physics() {
     trace("master_physics: ", this);
