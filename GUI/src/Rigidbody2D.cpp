@@ -70,7 +70,7 @@ void Collider2D::append_shape(Rigidbody2D *rbc) {
 
 void Collider2D::drop_shape(Rigidbody2D * /*rbc*/) {
     active_ = false;
-    this->shape_ref_.Destroy(true);
+    this->shape_ref_.Destroy();
 }
 
 Collider2D::Collider2D(ShapeVariant shape, b2::Shape::Params shape_params)
