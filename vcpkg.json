@@ -6,7 +6,6 @@
     "glew",
     "lua",
     "glm",
-    "bullet3",
     "physfs",
     "openal-soft",
     "libsndfile"

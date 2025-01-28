@@ -79,11 +79,6 @@ if (MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /DDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "")
 
-    # WindowsでBulletをデバッグビルドするのに必要？
-#    add_compile_options(
- #       $<$<CONFIG:Debug>:/MTd>
-  #  )
-
   add_compile_options(
         $<$<CONFIG:>:/MT>
         $<$<CONFIG:Debug>:/MTd>

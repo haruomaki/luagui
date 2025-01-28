@@ -34,10 +34,10 @@ target_include_directories(GUI SYSTEM PUBLIC third-party)
 target_link_libraries(GUI PUBLIC box2d)
 
 # Bullet Physics
-find_package(Bullet REQUIRED)
-message("あぽぽ ${BULLET_COLLISION_LIBRARY} ${BULLET_DYNAMICS_LIBRARY} ${BULLET_MATH_LIBRARY}")
-target_link_libraries(GUI PUBLIC ${BULLET_COLLISION_LIBRARY} ${BULLET_DYNAMICS_LIBRARY} ${BULLET_MATH_LIBRARY})
-target_include_directories(GUI SYSTEM PUBLIC ${BULLET_INCLUDE_DIR})
+# INFO: vcpkgだと静的リンク用にビルドができなかったため、直接サブモジュール化している
+add_subdirectory(bullet3)
+target_link_libraries(GUI PUBLIC BulletDynamics BulletCollision LinearMath)
+target_include_directories(GUI SYSTEM PUBLIC bullet3/src)
 
 
 # # コンパイル済みヘッダの設定 NOTE: 逆に遅い？

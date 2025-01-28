@@ -7,3 +7,6 @@
 [submodule "GUI/lunchbox"]
 	path = GUI/lunchbox
 	url = git@codeberg.org:haruomaki/lunchbox.git
+[submodule "GUI/bullet3"]
+	path = GUI/bullet3
+	url = https://github.com/bulletphysics/bullet3.git
