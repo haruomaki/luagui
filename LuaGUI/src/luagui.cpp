@@ -16,8 +16,6 @@
 #include "sound.hpp"
 #include "vec.hpp"
 
-namespace fs = std::filesystem;
-
 // 時刻関連の関数を登録
 static void register_chrono(sol::state &lua) {
     lua.set_function("get_time", []() -> double {

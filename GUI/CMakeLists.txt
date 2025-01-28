@@ -35,6 +35,7 @@ target_link_libraries(GUI PUBLIC box2d)
 
 # Bullet Physics
 find_package(Bullet REQUIRED)
+message("あぽぽ ${BULLET_COLLISION_LIBRARY} ${BULLET_DYNAMICS_LIBRARY} ${BULLET_MATH_LIBRARY}")
 target_link_libraries(GUI PUBLIC ${BULLET_COLLISION_LIBRARY} ${BULLET_DYNAMICS_LIBRARY} ${BULLET_MATH_LIBRARY})
 target_include_directories(GUI SYSTEM PUBLIC ${BULLET_INCLUDE_DIR})
 
