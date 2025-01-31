@@ -13,6 +13,12 @@ World = {}
 ---@type World
 __CurrentWorld = nil
 
+---レイキャストを行う。
+---@param origin vec3
+---@param direction vec3
+---@return table<integer, RaycastHit>
+function World:raycast(origin, direction) end
+
 ---直線を描画する。
 ---@param points Points 頂点の座標
 ---@return MeshComponent

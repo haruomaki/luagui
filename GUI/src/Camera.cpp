@@ -71,16 +71,16 @@ glm::mat4 Camera::get_projection_matrix() const {
     const auto r = owner().get_scale().z;
     const auto ne = -1000.0f * r; // "near"はWindowsだとダメ
     const auto fa = 1000.0f * r;  // "far"もWindowsだとダメ
-    switch (mode) {
-    case CameraMode::Center:
+    switch (centering) {
+    case Centering::Center:
         return glm::ortho(-w / 2, w / 2, -h / 2, h / 2, ne, fa);
-    case CameraMode::TopRight:
+    case Centering::TopRight:
         return glm::ortho(-w, 0.0f, -h, 0.0f, ne, fa);
-    case CameraMode::BottomRight:
+    case Centering::BottomRight:
         return glm::ortho(-w, 0.0f, 0.0f, h, ne, fa);
-    case CameraMode::TopLeft:
+    case Centering::TopLeft:
         return glm::ortho(0.0f, w, -h, 0.0f, ne, fa);
-    case CameraMode::BottomLeft:
+    case Centering::BottomLeft:
         return glm::ortho(0.0f, w, 0.0f, h, ne, fa);
         // case CameraMode::Custom:
         //     // カスタム設定に基づく計算

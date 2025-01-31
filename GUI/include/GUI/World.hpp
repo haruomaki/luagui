@@ -95,4 +95,7 @@ class World {
     CameraInterface *rendering_camera() {
         return this->rendering_camera_;
     }
+
+    // レイキャストを行う。
+    std::vector<RaycastHit> raycast(const btVector3 &origin, const btVector3 &direction);
 };

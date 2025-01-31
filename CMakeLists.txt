@@ -1,16 +1,37 @@
 cmake_minimum_required(VERSION 3.12)
+
+# vcpkgがあれば利用
+if(DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+    message("vcpkgを利用します。${CMAKE_TOOLCHAIN_FILE}")
+
+    # プラットフォームごとの設定
+    if(WIN32)
+        # Windowsの設定
+        set(VCPKG_TARGET_TRIPLET "x64-windows-static")
+    elseif(APPLE)
+        # macOSの設定
+        set(VCPKG_TARGET_TRIPLET "x64-osx-static")
+    elseif(UNIX)
+        # Linuxの設定
+        set(VCPKG_TARGET_TRIPLET "x64-linux-static")
+    endif()
+
+    message("ターゲットトリプレット: ${VCPKG_TARGET_TRIPLET}")
+endif()
+  #  if(VCPKG_TARGET_TRIPLET MATCHES "windows")
+   #     set(VCPKG_TARGET_TRIPLET "${VCPKG_TARGET_TRIPLET}-static")
+    #endif()
+
+# compile_commands.jsonを生成
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+
 project(cppgui CXX)
 
 # CMakeLists.txt内でコンパイラを指定する
 # set(CMAKE_CXX_COMPILER "clang++17")
 # もしくは`cmake -DCMAKE_CXX_COMPILER=***`とする
 # vscodeのkit設定: ~/.local/share/CMakeTools/cmake-tools-kits.jsonを編集 https://qiita.com/kilo/items/05e48d22ceff55049b29
-
-# vcpkgがあれば利用
-if(DEFINED ENV{VCPKG_ROOT})
-    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
-    message("vcpkgを利用します。${CMAKE_TOOLCHAIN_FILE}")
-endif()
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 
@@ -55,7 +76,21 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if (MSVC)
     # ソースファイルのエンコードをUTF-8に決め打ち
     set(CMAKE_CXX_FLAGS "/Zc:preprocessor /EHsc /utf-8")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi /Od /DDEBUG")
+    set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /DDEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "")
+
+    # WindowsでBulletをデバッグビルドするのに必要？
+#    add_compile_options(
+ #       $<$<CONFIG:Debug>:/MTd>
+  #  )
+
+  add_compile_options(
+        $<$<CONFIG:>:/MT>
+        $<$<CONFIG:Debug>:/MTd>
+        $<$<CONFIG:RelWithDebInfo>:/MT>
+        $<$<CONFIG:MinSizeRel>:/MT>
+        $<$<CONFIG:Release>:/MT>
+    )
 else()
     set(CMAKE_CXX_FLAGS "-fPIC -msse4.1")
     set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")

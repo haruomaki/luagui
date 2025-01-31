@@ -33,3 +33,18 @@ Collider = {}
 ---物体に剛体を付与する。
 ---@return Collider
 function WorldObject:add_collider() end
+
+-- lua.new_usertype<RaycastHit>(
+--     "RaycastHit",
+--     "hitObject", &RaycastHit::hit_object,
+--     "hitPoint", sol::readonly_property([](RaycastHit h) { return bt_to_glm(h.hit_point); }),
+--     "hitNormal", sol::readonly_property([](RaycastHit h) { return bt_to_glm(h.hit_normal); }),
+--     "hitFraction", &RaycastHit::hit_fraction);
+
+---レイキャストの結果の情報。
+---@class RaycastHit
+---@field hitObject Rigidbody
+---@field hitPoint vec3
+---@field hitNormal vec3
+---@field hitFraction number
+RaycastHit = {}

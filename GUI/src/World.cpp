@@ -1,5 +1,6 @@
 #include "World.hpp"
 #include "Window.hpp"
+#include <algorithm>
 
 void World::master_physics() {
     trace("master_physics: ", this);
@@ -62,4 +63,56 @@ void World::master_physics() {
     // -------------------------------
 
     bullet_world.step_simulation(dt, 10);
+}
+
+std::vector<RaycastHit> World::raycast(const btVector3 &origin, const btVector3 &direction) {
+    // 結果を格納するリスト
+    std::vector<RaycastHit> results;
+
+    // コールバックを作成
+    struct CustomRayResultCallback : public btCollisionWorld::AllHitsRayResultCallback {
+        CustomRayResultCallback(const btVector3 &from, const btVector3 &to)
+            : btCollisionWorld::AllHitsRayResultCallback(from, to) {}
+
+        // ヒットしたオブジェクトごとに情報を記録
+        [[nodiscard]] std::vector<RaycastHit> get_results() const {
+            std::vector<RaycastHit> hits;
+
+            // fractionでソート
+            std::vector<std::pair<float, int>> tmp_fractions(m_collisionObjects.size());
+            for (int i = 0; i < m_collisionObjects.size(); i++) {
+                tmp_fractions[i] = {m_hitFractions[i], i};
+            }
+            std::sort(tmp_fractions.begin(), tmp_fractions.end());
+
+            for (auto [_, i] : tmp_fractions) {
+                RaycastHit hit;
+                if (void *p = m_collisionObjects[i]->getUserPointer()) {
+                    hit.hit_object = static_cast<Rigidbody *>(p);
+                } else {
+                    warn("レイキャストで当たった物体はRigidbodyコンポーネント由来でありません。");
+                    hit.hit_object = nullptr;
+                }
+                hit.hit_point = m_hitPointWorld[i];
+                hit.hit_normal = m_hitNormalWorld[i];
+                hit.hit_fraction = m_hitFractions[i];
+                hits.push_back(hit);
+            }
+
+            return hits;
+        }
+    };
+
+    // レイキャストを実行
+    btVector3 from = origin;
+    btVector3 to = origin + direction;
+    CustomRayResultCallback callback(from, to);
+    bullet_world.dynamics_world->rayTest(from, to, callback);
+
+    // 衝突したオブジェクトがあれば、結果を取得
+    if (callback.hasHit()) {
+        results = callback.get_results();
+    }
+
+    return results;
 }

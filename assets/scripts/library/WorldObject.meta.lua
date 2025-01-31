@@ -2,9 +2,12 @@
 
 ---@class WorldObject
 ---@field id string オブジェクトのID
+---@field world World この物体が属しているワールド
+---@field parent WorldObject 親オブジェクト
 ---@field position vec3 物体の位置
 ---@field rotation quat 物体の回転
 ---@field scale_prop number 物体の幾何平均スケール
+---@field absolute_position vec3 物体の絶対座標
 WorldObject = {}
 
 ---コンポーネント基底クラス
@@ -12,20 +15,6 @@ WorldObject = {}
 ---@field id string コンポーネントのID
 ---@field owner WorldObject コンポーネントが所属するオブジェクト
 Component = {}
-
----@class vec3
----@field x number
----@field y number
----@field z number
-vec3 = {}
-
----空のvec3を作成する。
----@return vec3
-function vec3.new() end
-
----vec3を作成する。
----@return vec3
-function vec3.new(x, y, z) end
 
 ---３次元空間内の回転を表す。
 ---@class quat

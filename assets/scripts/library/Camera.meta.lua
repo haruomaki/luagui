@@ -5,6 +5,7 @@
 
 ---カメラコンポーネント。
 ---@class Camera : Component
+---@field centering Camera.Centering 画面のどこを中心として風景を描画するか
 ---@field active boolean このカメラからの映像を実際に描画するかどうか
 ---@field projection_mode ProjectionMode 投影モード
 local Camera = {}
@@ -19,3 +20,5 @@ __CurrentCamera = nil
 ---@param projection_mode ProjectionMode
 ---@return Camera
 function WorldObject:add_camera_component(projection_mode) end
+
+---@alias Camera.Centering 'Center' | 'TopLeft' | 'BottomLeft' | 'TopRight' | 'BottomRight'

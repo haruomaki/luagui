@@ -62,6 +62,7 @@ void register_world(sol::state &lua) {
     lua.new_usertype<World>(
         "World",
         "b2world", sol::readonly_property([](World *world) { return &world->b2world; }),
+        "raycast", [](World *w, glm::vec3 origin, glm::vec3 direction) { return w->raycast({origin.x, origin.y, origin.z}, {direction.x, direction.y, direction.z}); },
         "root", &World::root);
 
     // TODO: WorldObject.cppなどへ移動

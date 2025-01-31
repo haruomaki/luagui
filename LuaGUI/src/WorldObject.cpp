@@ -2,6 +2,7 @@
 #include <GUI/Mesh.hpp>
 #include <GUI/Rigidbody2D.hpp>
 #include <GUI/Update.hpp>
+#include <GUI/World.hpp> // worldフィールド（プロパティの戻り値）に必要？
 #include <GUI/WorldObject.hpp>
 #include <GUI/sound.hpp>
 
@@ -83,15 +84,6 @@ static sol::object get_component_by_id(sol::state &lua, WorldObject *obj, const 
 }
 
 void register_world_object(sol::state &lua) {
-    lua.new_usertype<glm::vec3>(
-        "vec3",
-        sol::constructors<glm::vec3(), glm::vec3(float, float, float)>(),
-        "x", &glm::vec3::x,
-        "y", &glm::vec3::y,
-        "z", &glm::vec3::z,
-        sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a + b; },
-        sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; });
-
     lua.new_usertype<glm::quat>(
         "quat",
         "angle_axis", [](float angle, glm::vec3 axis) { return glm::angleAxis(angle, axis); },
@@ -103,17 +95,21 @@ void register_world_object(sol::state &lua) {
         "append_empty_child",
         [](WorldObject *obj) { return &obj->append_child<WorldObject>(); },
 
+        "world",
+        sol::readonly_property([](WorldObject *obj) { return &obj->get_world(); }),
+        "parent",
+        sol::readonly_property([](WorldObject *obj) { return obj->get_parent(); }),
         "children",
         [](WorldObject *obj) { return sol::as_table(obj->children()); },
 
         "position",
         sol::property([](WorldObject *obj) { return obj->get_position(); }, [](WorldObject *obj, glm::vec3 pos) { obj->set_position(pos); }),
-
         "rotation",
         sol::property([](WorldObject *obj) { return obj->get_rotate(); }, [](WorldObject *obj, glm::quat rot) { obj->set_rotate(rot); }),
-
         "scale_prop",
         sol::property([](WorldObject *obj) { return obj->get_scale_prop(); }, [](WorldObject *obj, float scale) { obj->set_scale_prop(scale); }),
+        "absolute_position",
+        sol::readonly_property([](WorldObject *obj) { return obj->get_absolute_position(); }),
 
         "id",
         &WorldObject::id,

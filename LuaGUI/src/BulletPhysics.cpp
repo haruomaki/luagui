@@ -30,4 +30,11 @@ void register_bullet_physics(sol::state &lua) {
     lua["WorldObject"]["add_collider"] = [](WorldObject *obj) -> Collider * {
         return &obj->add_component<Collider>();
     };
+
+    lua.new_usertype<RaycastHit>(
+        "RaycastHit",
+        "hitObject", &RaycastHit::hit_object,
+        "hitPoint", sol::readonly_property([](RaycastHit h) { return bt_to_glm(h.hit_point); }),
+        "hitNormal", sol::readonly_property([](RaycastHit h) { return bt_to_glm(h.hit_normal); }),
+        "hitFraction", &RaycastHit::hit_fraction);
 }

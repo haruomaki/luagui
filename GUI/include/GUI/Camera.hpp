@@ -23,7 +23,7 @@ struct CameraInterface {
 
 class Camera : public CameraInterface, public Component {
   public:
-    enum CameraMode {
+    enum Centering {
         Center,      // 画面中心
         TopRight,    // 右上
         BottomRight, // 右下
@@ -38,7 +38,7 @@ class Camera : public CameraInterface, public Component {
     };
 
     ProjectionMode projection_mode;
-    CameraMode mode = Center;
+    Centering centering = Center;
 
     Camera(Window *window, Camera::ProjectionMode projection_mode = Perspective);
     ~Camera() override;

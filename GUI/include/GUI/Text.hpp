@@ -3,7 +3,7 @@
 #include "Resource.hpp"
 #include "Update.hpp"
 #include "graphical_base.hpp"
-#include <Lunchbox/core/FreeType.hpp>
+#include <Lunchbox/core/HarfBuzz.hpp>
 #include <SumiGL/Shader.hpp>
 #include <map>
 
@@ -14,17 +14,30 @@ struct Character {
     unsigned int advance;    // Offset to advance to next glyph
 };
 
+// 各文字のテクスチャを遅延生成＆取得できるクラス。
+class CharactersCache {
+    const harfbuzz::Font &font_;
+    std::map<harfbuzz::GlyphID, Character> cache_;
+
+  public:
+    CharactersCache(const harfbuzz::Font &font)
+        : font_(font) {}
+    Character at(harfbuzz::GlyphID gid);
+};
+
 // 文字描画用のシェーダと48ptフォントテクスチャのセット
 class Font : public Resource {
     GL::ProgramObject shader_;
-    std::map<char, Character> characters_;
+    harfbuzz::Font hb_font_;
+    CharactersCache characters_;
     GL::VertexArray vao_;
     GL::VertexBuffer vbo_;
 
     friend class Text;
 
   public:
-    Font(GL::ProgramObject &&shader, const freetype::Face &ft_face);
+    Font(GL::ProgramObject &&shader, harfbuzz::Font &&hb_font);
+    [[nodiscard]] const harfbuzz::Font &hb() const { return hb_font_; }
 };
 
 class Text : public UpdateComponent {

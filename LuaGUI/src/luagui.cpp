@@ -16,8 +16,6 @@
 #include "sound.hpp"
 #include "vec.hpp"
 
-namespace fs = std::filesystem;
-
 // 時刻関連の関数を登録
 static void register_chrono(sol::state &lua) {
     lua.set_function("get_time", []() -> double {
@@ -50,7 +48,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
         GL::create_shader(GL_VERTEX_SHADER, storage.get_text("shaders/font.vsh")),
         GL::create_shader(GL_FRAGMENT_SHADER, storage.get_text("shaders/font.fsh"))};
     auto font = storage.get_font("fonts/main.ttf");
-    auto &default_font = gui.resources.append<Font>(std::move(text_shader), font).get();
+    auto &default_font = gui.resources.append<Font>(std::move(text_shader), std::move(font)).get();
     lua["__CurrentFont"] = &default_font;
 
     bool coroutine_finished = false;
@@ -83,7 +81,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 }
 
 // "modules.hoge"といったモジュール名を「modules/hoge.lua」の形に変換する。
-static fs::path convert_module_to_path(const std::optional<Path> &cwd, const std::string &module_name) {
+static Path convert_module_to_path(const std::optional<Path> &cwd, const std::string &module_name) {
     std::string path_str = cwd.value_or("").string() + "/" + module_name;
     std::replace(path_str.begin(), path_str.end(), '.', '/');
     path_str += ".lua";

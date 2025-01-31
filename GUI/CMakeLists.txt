@@ -30,11 +30,12 @@ if (MSVC)
     add_compile_options(/wd4244 /wd4018) # 暗黙の型変換＆比較の警告を抑制
 endif()
 add_subdirectory(box2d)
-target_include_directories(GUI SYSTEM PUBLIC ../external/box2cpp/include)
+target_include_directories(GUI SYSTEM PUBLIC third-party)
 target_link_libraries(GUI PUBLIC box2d)
 
 # Bullet Physics
 find_package(Bullet REQUIRED)
+message("あぽぽ ${BULLET_COLLISION_LIBRARY} ${BULLET_DYNAMICS_LIBRARY} ${BULLET_MATH_LIBRARY}")
 target_link_libraries(GUI PUBLIC ${BULLET_COLLISION_LIBRARY} ${BULLET_DYNAMICS_LIBRARY} ${BULLET_MATH_LIBRARY})
 target_include_directories(GUI SYSTEM PUBLIC ${BULLET_INCLUDE_DIR})
 

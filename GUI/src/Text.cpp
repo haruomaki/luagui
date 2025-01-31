@@ -9,22 +9,22 @@ DEFINE_RUNTIME_ERROR(FreeTypeException);
 // NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
-Font::Font(GL::ProgramObject &&shader, const freetype::Face &ft_face)
-    : shader_(std::move(shader)) {
-    // フォントを読み込む
-    FT_Face face = ft_face.get();
+Character CharactersCache::at(harfbuzz::GlyphID gid) {
+    if (!cache_.contains(gid)) {
+        // フォントを読み込む
+        FT_Face face = font_.ft_face();
 
-    // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
-    FT_Set_Pixel_Sizes(face, 0, 48);
+        // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
+        FT_Set_Pixel_Sizes(face, 0, 48);
 
-    // バイト列の制限（4の倍数byte）を解除する
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
+        // バイト列の制限（4の倍数byte）を解除する
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
 
-    for (unsigned char c = 0; c < 128; c++) {
         // load character glyph
-        if (FT_Load_Char(face, c, FT_LOAD_RENDER) != 0) {
+        if (FT_Load_Glyph(face, gid, FT_LOAD_RENDER) != 0) {
             std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << '\n';
-            continue;
+            warn("フォントにグリフが含まれていません（コードポイント: ", int(gid), "）");
+            return {};
         }
         // generate texture
         unsigned int texture;
@@ -51,9 +51,16 @@ Font::Font(GL::ProgramObject &&shader, const freetype::Face &ft_face)
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
             glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
             static_cast<unsigned int>(face->glyph->advance.x)};
-        characters_.insert(std::pair<char, Character>(c, character));
+        cache_[gid] = character;
     }
 
+    return cache_[gid];
+}
+
+Font::Font(GL::ProgramObject &&shader, harfbuzz::Font &&hb_font)
+    : shader_(std::move(shader))
+    , hb_font_(std::move(hb_font))
+    , characters_(hb_font_) {
     this->vbo_ = GL::VertexBuffer(sizeof(float) * 6 * 4, nullptr, GL_DYNAMIC_DRAW);
     this->vao_.bind([&] {
         this->vbo_.bind([&] {
@@ -77,12 +84,16 @@ void Text::draw() const {
     this->font_.vao_.bind([&] {
         float tail = 0;
 
-        // iterate through all characters
-        for (char c : text) {
-            Character ch = font_.characters_.at(c);
+        // HarfBuzzを利用してUTF8バイト列からグリフを取得。
+        auto results = font_.hb().shape(text);
+
+        // すべてのグリフについてイテレートする。
+        for (auto shaping : results) {
+            char32_t gid = shaping.glyph_id;
+            Character ch = font_.characters_.at(gid);
 
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
-            // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする TODO: HiDPI（1pt≠1px）時の対応
+            // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする。HiDPI（1pt≠1px）にも対応。
             float xpos = tail + float(ch.bearing.x) * pt_meter;
             float ypos = -float(ch.size.y - ch.bearing.y) * pt_meter;
 
@@ -116,6 +127,9 @@ void Text::draw() const {
             // render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
             // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+            // debug(shaping.x_advance, shaping.y_advance);
+            // debug(shaping.x_offset, shaping.y_offset);
+            // TODO: shaping.x_advanceを活用したいがスケールが合っていない＆正しい値なのかイマイチよく分からない。
             tail += float(ch.advance >> 6) * pt_meter; // bitshift by 6 to get value in pixels (2^6 = 64)
         }
     });

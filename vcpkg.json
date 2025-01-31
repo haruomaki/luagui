@@ -2,9 +2,11 @@
   "builtin-baseline": "6f1ddd6b6878e7e66fcc35c65ba1d8feec2e01f8",
   "dependencies": [
     "freetype",
+    "harfbuzz",
     "glew",
     "lua",
     "glm",
+    "bullet3",
     "physfs",
     "openal-soft",
     "libsndfile"
