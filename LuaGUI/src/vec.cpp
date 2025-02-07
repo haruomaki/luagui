@@ -2,11 +2,16 @@
 
 #include <utility>
 
-inline float get_or(const vector<float> &v, size_t index, float default_value) {
+static inline float get_or(const vector<float> &v, size_t index, float default_value) {
     return (index < v.size() ? v[index] : default_value);
 }
 
-inline glm::vec3 to_vec3(std::vector<float> &&v) {
+static inline glm::vec2 to_vec2(std::vector<float> &&v) {
+    auto x = get_or(v, 0, 0);
+    auto y = get_or(v, 1, 0);
+    return {x, y};
+}
+static inline glm::vec3 to_vec3(std::vector<float> &&v) {
     auto x = get_or(v, 0, 0);
     auto y = get_or(v, 1, 0);
     auto z = get_or(v, 2, 0);
@@ -42,6 +47,15 @@ CV::CV(Points tbl)
 }
 
 void register_vec(sol::state &lua) {
+    lua.new_usertype<glm::vec2>(
+        "vec2",
+        sol::constructors<glm::vec2(), glm::vec2(float, float)>(),
+        "x", &glm::vec2::x,
+        "y", &glm::vec2::y,
+        sol::meta_function::addition, [](glm::vec2 a, glm::vec2 b) -> glm::vec2 { return a + b; },
+        sol::meta_function::multiplication, [](glm::vec2 v, float x) -> glm::vec2 { return v * x; });
+    lua["vec2"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> glm::vec2 { return to_vec2(std::move(v)); };
+
     lua.new_usertype<glm::vec3>(
         "vec3",
         sol::constructors<glm::vec3(), glm::vec3(float, float, float)>(),

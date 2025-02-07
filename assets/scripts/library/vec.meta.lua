@@ -1,5 +1,26 @@
 ---@meta vec
 
+---二次元ベクトル。
+---@class vec2
+---@field x number
+---@field y number
+vec2 = {}
+
+---空のvec2を作成する。
+---@return vec2
+function vec2.new() end
+
+---vec2を作成する。
+---@param x number
+---@param y number
+---@return vec2
+function vec2.new(x, y) end
+
+---vec2を作成する。
+---@param point table<integer, number>
+---@return vec2
+function vec2(point) end
+
 ---三次元ベクトル。
 ---@class vec3
 ---@field x number

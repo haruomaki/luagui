@@ -26,8 +26,9 @@ run_window(800, 600, "assort", function()
     local ui_camera = CreateCamera2D()
     ui_camera.centering = 'TopLeft'
     local text = ui.root:child_text()
-    text.owner.position = vec3 { 0.01, -0.02, 0 }
+    text.owner.position = vec3 { 0.002, -0.002, 0 }
     text.font_size = 24
+    text.anchor = vec2 { 0, 1 }
 
     Thread.forever("toggle camera mode", function()
         if GetKeyDown('M') then camera:toggle_mode() end

@@ -26,6 +26,7 @@ void register_text(sol::state &lua) {
         "Text",
         "message", sol::property([](Text *t) { return t->text; }, [](Text *t, std::string msg) { t->text = std::move(msg); }),
         "font_size", &Text::font_size,
+        "anchor", &Text::anchor,
         sol::base_classes, sol::bases<Component>());
 
     lua["WorldObject"]["child_text"] = [&](WorldObject &obj, sol::optional<const char *> text_opt, const sol::optional<sol::table> &options_opt) -> Text & {

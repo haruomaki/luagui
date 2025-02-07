@@ -79,9 +79,10 @@ struct Chip {
 
 struct Layout {
     std::vector<Chip> chips;
+    float width, height;
 };
 
-static Layout layout(CharactersCache &characters, const harfbuzz::Font &font, const std::string &text, int pixel_width, int pixel_height) {
+static Layout layout(CharactersCache &characters, const harfbuzz::Font &font, const std::string &text, float pixel_width, float pixel_height) {
     std::vector<Chip> chips;
     float tail = 0;
 
@@ -91,7 +92,7 @@ static Layout layout(CharactersCache &characters, const harfbuzz::Font &font, co
     // すべてのグリフについてイテレートする。
     for (auto shaping : results) {
         auto gid = shaping.glyph_id;
-        Character ch = characters.at({gid, pixel_width, pixel_height});
+        Character ch = characters.at({gid, int(pixel_width), int(pixel_height)});
 
         // Characterのサイズやオフセット情報から描画位置・幅を計算する
         // 1px = 1/72インチ (≒ 0.3528mm) であると決め打ってスケーリングする。72DPIのディスプレイだと丁度紙面上のptどおりの大きさになる。
@@ -115,7 +116,7 @@ static Layout layout(CharactersCache &characters, const harfbuzz::Font &font, co
         tail += float(ch.advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
     }
 
-    return {chips};
+    return {.chips = chips, .width = tail, .height = pixel_height};
 }
 
 void Text::draw() const {
@@ -126,7 +127,7 @@ void Text::draw() const {
     glActiveTexture(GL_TEXTURE0);
     this->font_.vao_.bind([&] {
         const auto [dpi_scale_x, dpi_scale_y] = gui().monitor_content_scale();
-        auto lout = layout(font_.characters_, font_.hb(), text, int(font_size * dpi_scale_x), int(font_size * dpi_scale_y));
+        auto lout = layout(font_.characters_, font_.hb(), text, font_size * dpi_scale_x, font_size * dpi_scale_y);
 
         // すべてのグリフについてイテレートする。
         for (auto chip : lout.chips) {
@@ -134,8 +135,8 @@ void Text::draw() const {
             // 1px = 1/72インチ (≒ 0.3528mm) であると決め打ってスケーリングする。72DPIのディスプレイだと丁度紙面上のptどおりの大きさになる。
             const float scale_x = px_meter / dpi_scale_x; // 大きめにラスタライズした分、テクスチャ自体が大きくなっているのでCSで割って補正。
             const float scale_y = px_meter / dpi_scale_y;
-            float xpos = chip.xpos * scale_x;
-            float ypos = chip.ypos * scale_y;
+            float xpos = (chip.xpos - lout.width * anchor.x) * scale_x;
+            float ypos = (chip.ypos - lout.height * anchor.y) * scale_y;
             float w = chip.w * scale_x;
             float h = chip.h * scale_y;
             // update VBO for each character
