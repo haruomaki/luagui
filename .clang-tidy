@@ -29,6 +29,7 @@ Checks:
   - -modernize-use-trailing-return-type
   - -modernize-avoid-c-arrays # C言語スタイルの配列を許容
   - performance-*
+  - -performance-enum-size # enumの基底型はintでいい
   - portability-*
   - readability-*
   - -readability-avoid-nested-conditional-operator # 三項演算子のネストを許可

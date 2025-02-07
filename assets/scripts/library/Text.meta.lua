@@ -15,6 +15,7 @@ function Font.load(file_path) end
 ---テキストコンポーネント。
 ---@class Text : Component
 ---@field message string 表示する文字列。
+---@field font_size number フォントの大きさ。
 local Text = {}
 
 ---テキストを表示する
@@ -27,4 +28,5 @@ function WorldObject:child_text(text, options) end
 ---@class TextOptions
 ---@field position Point? 位置
 ---@field scale number? 拡大率
+---@field font_size number? フォントの大きさ
 local TextOptions = {}

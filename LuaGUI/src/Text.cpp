@@ -25,6 +25,7 @@ void register_text(sol::state &lua) {
     lua.new_usertype<Text>(
         "Text",
         "message", sol::property([](Text *t) { return t->text; }, [](Text *t, std::string msg) { t->text = std::move(msg); }),
+        "font_size", &Text::font_size,
         sol::base_classes, sol::bases<Component>());
 
     lua["WorldObject"]["child_text"] = [&](WorldObject &obj, sol::optional<const char *> text_opt, const sol::optional<sol::table> &options_opt) -> Text & {
@@ -39,6 +40,8 @@ void register_text(sol::state &lua) {
 
         float s = options.get_or<float>("scale", 1);
         tt.owner().set_scale_prop(s);
+
+        tt.font_size = options.get_or<float>("font_size", 48);
 
         return tt;
     };
