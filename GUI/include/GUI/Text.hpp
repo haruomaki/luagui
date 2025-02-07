@@ -17,7 +17,7 @@ struct Character {
 // 各文字のテクスチャを遅延生成＆取得できるクラス。
 class CharactersCache {
   public:
-    using Key = std::pair<harfbuzz::GlyphID, int>;
+    using Key = std::tuple<harfbuzz::GlyphID, unsigned int, unsigned int>;
 
   private:
     const harfbuzz::Font &font_;
@@ -52,7 +52,7 @@ class Text : public UpdateComponent {
 
   public:
     std::string text;
-    int font_size_px = 36;
+    float font_size = 64;
 
     Text(Font &font, std::string text, RGBA color);
 };

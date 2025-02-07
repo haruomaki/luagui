@@ -3,20 +3,16 @@
 #include "World.hpp"
 #include <Lunchbox/core/FreeType.hpp>
 #include <SumiGL/Shader.hpp>
-
-DEFINE_RUNTIME_ERROR(FreeTypeException);
-
-// NOLINTNEXTLINE(readability-identifier-naming)
-constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
+#include <SumiGL/constants.hpp>
 
 Character CharactersCache::at(CharactersCache::Key key) {
-    const auto [gid, font_size_px] = key;
+    const auto [gid, pixel_width, pixel_height] = key;
     if (!cache_.contains(key)) {
         // フォントを読み込む
         FT_Face face = font_.ft_face();
 
-        // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
-        FT_Set_Pixel_Sizes(face, 0, font_size_px);
+        // フォントサイズを指定。ここで指定されるpixel_width/heightは、ディスプレイ解像度に合わせて修正済みの値。
+        FT_Set_Pixel_Sizes(face, pixel_width, pixel_height);
 
         // バイト列の制限（4の倍数byte）を解除する
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
@@ -91,15 +87,18 @@ void Text::draw() const {
         // すべてのグリフについてイテレートする。
         for (auto shaping : results) {
             char32_t gid = shaping.glyph_id;
-            Character ch = font_.characters_.at({gid, font_size_px});
+            const auto [dpi_scale_x, dpi_scale_y] = gui().monitor_content_scale();
+            Character ch = font_.characters_.at({gid, font_size * dpi_scale_x, font_size * dpi_scale_y}); // HiDPI（コンテンツスケール:CS設定）環境では、フォントをCSの分だけ大きくラスタライズする。
 
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
-            // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする。HiDPI（1pt≠1px）にも対応。
-            float xpos = tail + float(ch.bearing.x) * pt_meter;
-            float ypos = -float(ch.size.y - ch.bearing.y) * pt_meter;
+            // 1px = 1/72インチ (≒ 0.3528mm) であると決め打ってスケーリングする。72DPIのディスプレイだと丁度紙面上のptどおりの大きさになる。
+            const float scale_x = px_meter / dpi_scale_x / dpi_scale_x; // 大きめにラスタライズした分、テクスチャ自体が大きくなっているのでCSで割って補正。
+            const float scale_y = px_meter / dpi_scale_y / dpi_scale_y; // さらに、一般的なHiDPIのスケーリングのためにもう一度CSで割る。
+            float xpos = tail + float(ch.bearing.x) * scale_x;
+            float ypos = -float(ch.size.y - ch.bearing.y) * scale_y;
 
-            float w = float(ch.size.x) * pt_meter;
-            float h = float(ch.size.y) * pt_meter;
+            float w = float(ch.size.x) * scale_x;
+            float h = float(ch.size.y) * scale_y;
             // update VBO for each character
             float vertices[6][4] = {
                 {xpos, ypos + h, 0.0F, 0.0F},
@@ -131,7 +130,7 @@ void Text::draw() const {
             // debug(shaping.x_advance, shaping.y_advance);
             // debug(shaping.x_offset, shaping.y_offset);
             // TODO: shaping.x_advanceを活用したいがスケールが合っていない＆正しい値なのかイマイチよく分からない。
-            tail += float(ch.advance >> 6) * pt_meter; // bitshift by 6 to get value in pixels (2^6 = 64)
+            tail += float(ch.advance >> 6) * scale_x; // bitshift by 6 to get value in pixels (2^6 = 64)
         }
     });
     glBindTexture(GL_TEXTURE_2D, 0);
