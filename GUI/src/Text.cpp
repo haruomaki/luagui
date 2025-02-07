@@ -72,6 +72,52 @@ Text::Text(Font &font, string text, RGBA color)
     , color_(color)
     , text(std::move(text)) {}
 
+struct Chip {
+    unsigned int texture_id;
+    float xpos, ypos, w, h;
+};
+
+struct Layout {
+    std::vector<Chip> chips;
+};
+
+static Layout layout(CharactersCache &characters, const harfbuzz::Font &font, const std::string &text, int pixel_width, int pixel_height) {
+    std::vector<Chip> chips;
+    float tail = 0;
+
+    // HarfBuzzを利用してUTF8バイト列からグリフを取得。
+    auto results = font.shape(text);
+
+    // すべてのグリフについてイテレートする。
+    for (auto shaping : results) {
+        auto gid = shaping.glyph_id;
+        Character ch = characters.at({gid, pixel_width, pixel_height});
+
+        // Characterのサイズやオフセット情報から描画位置・幅を計算する
+        // 1px = 1/72インチ (≒ 0.3528mm) であると決め打ってスケーリングする。72DPIのディスプレイだと丁度紙面上のptどおりの大きさになる。
+        float xpos = tail + float(ch.bearing.x);
+        float ypos = -float(ch.size.y - ch.bearing.y);
+
+        auto w = float(ch.size.x);
+        auto h = float(ch.size.y);
+
+        chips.emplace_back(
+            ch.texture_id,
+            xpos,
+            ypos,
+            w,
+            h);
+
+        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        // debug(shaping.x_advance, shaping.y_advance);
+        // debug(shaping.x_offset, shaping.y_offset);
+        // TODO: shaping.x_advanceを活用したいがスケールが合っていない＆正しい値なのかイマイチよく分からない。
+        tail += float(ch.advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
+    }
+
+    return {chips};
+}
+
 void Text::draw() const {
     // activate corresponding render state
     CameraInterface &camera = *world().rendering_camera();
@@ -79,26 +125,19 @@ void Text::draw() const {
     font_.shader_.set_uniform("textColor", color_);
     glActiveTexture(GL_TEXTURE0);
     this->font_.vao_.bind([&] {
-        float tail = 0;
-
-        // HarfBuzzを利用してUTF8バイト列からグリフを取得。
-        auto results = font_.hb().shape(text);
+        const auto [dpi_scale_x, dpi_scale_y] = gui().monitor_content_scale();
+        auto lout = layout(font_.characters_, font_.hb(), text, int(font_size * dpi_scale_x), int(font_size * dpi_scale_y));
 
         // すべてのグリフについてイテレートする。
-        for (auto shaping : results) {
-            char32_t gid = shaping.glyph_id;
-            const auto [dpi_scale_x, dpi_scale_y] = gui().monitor_content_scale();
-            Character ch = font_.characters_.at({gid, font_size * dpi_scale_x, font_size * dpi_scale_y}); // HiDPI（コンテンツスケール:CS設定）環境では、フォントをCSの分だけ大きくラスタライズする。
-
+        for (auto chip : lout.chips) {
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
             // 1px = 1/72インチ (≒ 0.3528mm) であると決め打ってスケーリングする。72DPIのディスプレイだと丁度紙面上のptどおりの大きさになる。
             const float scale_x = px_meter / dpi_scale_x; // 大きめにラスタライズした分、テクスチャ自体が大きくなっているのでCSで割って補正。
             const float scale_y = px_meter / dpi_scale_y;
-            float xpos = tail + float(ch.bearing.x) * scale_x;
-            float ypos = -float(ch.size.y - ch.bearing.y) * scale_y;
-
-            float w = float(ch.size.x) * scale_x;
-            float h = float(ch.size.y) * scale_y;
+            float xpos = chip.xpos * scale_x;
+            float ypos = chip.ypos * scale_y;
+            float w = chip.w * scale_x;
+            float h = chip.h * scale_y;
             // update VBO for each character
             float vertices[6][4] = {
                 {xpos, ypos + h, 0.0F, 0.0F},
@@ -109,7 +148,7 @@ void Text::draw() const {
                 {xpos + w, ypos, 1.0F, 1.0F},
                 {xpos + w, ypos + h, 1.0F, 0.0F}};
             // render glyph texture over quad
-            glBindTexture(GL_TEXTURE_2D, ch.texture_id);
+            glBindTexture(GL_TEXTURE_2D, chip.texture_id);
             // update content of VBO memory
             this->font_.vbo_.bind([&] {
                 glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
@@ -126,11 +165,6 @@ void Text::draw() const {
 
             // render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
-            // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-            // debug(shaping.x_advance, shaping.y_advance);
-            // debug(shaping.x_offset, shaping.y_offset);
-            // TODO: shaping.x_advanceを活用したいがスケールが合っていない＆正しい値なのかイマイチよく分からない。
-            tail += float(ch.advance >> 6) * scale_x; // bitshift by 6 to get value in pixels (2^6 = 64)
         }
     });
     glBindTexture(GL_TEXTURE_2D, 0);

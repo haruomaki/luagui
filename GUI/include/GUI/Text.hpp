@@ -7,6 +7,15 @@
 #include <SumiGL/Shader.hpp>
 #include <map>
 
+// namespace typesetting {
+
+// struct Decoration {
+//     std::string text;
+//     const harfbuzz::Font *font;
+// };
+
+// } // namespace typesetting
+
 struct Character {
     unsigned int texture_id; // ID handle of the glyph texture
     glm::ivec2 size;         // Size of glyph
