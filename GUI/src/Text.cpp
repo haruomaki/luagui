@@ -92,8 +92,8 @@ void Text::draw() const {
 
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
             // 1px = 1/72インチ (≒ 0.3528mm) であると決め打ってスケーリングする。72DPIのディスプレイだと丁度紙面上のptどおりの大きさになる。
-            const float scale_x = px_meter / dpi_scale_x / dpi_scale_x; // 大きめにラスタライズした分、テクスチャ自体が大きくなっているのでCSで割って補正。
-            const float scale_y = px_meter / dpi_scale_y / dpi_scale_y; // さらに、一般的なHiDPIのスケーリングのためにもう一度CSで割る。
+            const float scale_x = px_meter / dpi_scale_x; // 大きめにラスタライズした分、テクスチャ自体が大きくなっているのでCSで割って補正。
+            const float scale_y = px_meter / dpi_scale_y;
             float xpos = tail + float(ch.bearing.x) * scale_x;
             float ypos = -float(ch.size.y - ch.bearing.y) * scale_y;
 

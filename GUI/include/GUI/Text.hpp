@@ -52,7 +52,7 @@ class Text : public UpdateComponent {
 
   public:
     std::string text;
-    float font_size = 64;
+    float font_size = 48;
 
     Text(Font &font, std::string text, RGBA color);
 };
