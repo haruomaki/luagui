@@ -9,13 +9,14 @@ DEFINE_RUNTIME_ERROR(FreeTypeException);
 // NOLINTNEXTLINE(readability-identifier-naming)
 constexpr float pt_meter = 0.3528f / 1000.f; // 1ptは0.3528mm
 
-Character CharactersCache::at(harfbuzz::GlyphID gid) {
-    if (!cache_.contains(gid)) {
+Character CharactersCache::at(CharactersCache::Key key) {
+    const auto [gid, font_size_px] = key;
+    if (!cache_.contains(key)) {
         // フォントを読み込む
         FT_Face face = font_.ft_face();
 
         // フォントサイズを指定（48で固定） TODO: ディスプレイ解像度に合わせてテクスチャの大きさを変更
-        FT_Set_Pixel_Sizes(face, 0, 48);
+        FT_Set_Pixel_Sizes(face, 0, font_size_px);
 
         // バイト列の制限（4の倍数byte）を解除する
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
@@ -47,14 +48,14 @@ Character CharactersCache::at(harfbuzz::GlyphID gid) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // now store character for later use
         Character character = {
-            texture,
-            glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-            glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-            static_cast<unsigned int>(face->glyph->advance.x)};
-        cache_[gid] = character;
+            .texture_id = texture,
+            .size = glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+            .bearing = glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+            .advance = static_cast<unsigned int>(face->glyph->advance.x)};
+        cache_[key] = character;
     }
 
-    return cache_[gid];
+    return cache_[key];
 }
 
 Font::Font(GL::ProgramObject &&shader, harfbuzz::Font &&hb_font)
@@ -90,7 +91,7 @@ void Text::draw() const {
         // すべてのグリフについてイテレートする。
         for (auto shaping : results) {
             char32_t gid = shaping.glyph_id;
-            Character ch = font_.characters_.at(gid);
+            Character ch = font_.characters_.at({gid, font_size_px});
 
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
             // 標準48ptのフォント。1pt=1px=0.3528mmだと決め打ってスケーリングする。HiDPI（1pt≠1px）にも対応。
