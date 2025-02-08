@@ -69,8 +69,8 @@ Font::Font(GL::ProgramObject &&shader, harfbuzz::Font &&hb_font)
 Text::Text(Font &font, string text, RGBA color)
     : UpdateComponent([this](auto &) { this->draw(); }, "Draw")
     , font_(font)
-    , color_(color)
-    , text(std::move(text)) {}
+    , text(std::move(text))
+    , color(color) {}
 
 struct Chip {
     unsigned int texture_id;
@@ -123,7 +123,7 @@ void Text::draw() const {
     // activate corresponding render state
     CameraInterface &camera = *world().rendering_camera();
     font_.shader_.use();
-    font_.shader_.set_uniform("textColor", color_);
+    font_.shader_.set_uniform("textColor", color);
     glActiveTexture(GL_TEXTURE0);
     this->font_.vao_.bind([&] {
         const auto [dpi_scale_x, dpi_scale_y] = gui().monitor_content_scale();

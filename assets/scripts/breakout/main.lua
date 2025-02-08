@@ -9,15 +9,12 @@ run_window(800, 600, "ブロック崩し", function()
     camera.owner.scale_prop = 2
     world.b2world.gravity = { 0, -0.1 }
 
-    local text_world = create_world()
-    CreateCamera2D("zoom")
-    __CurrentWorld = world
-
     -- 音声や画像の読み込み
     require("resource")
 
-    text_world.root:child_text("SCORE", { position = { 0.06, 0.02 }, scale = 0.5 })
-    local score_text = text_world.root:child_text("mochi-mochi panic", { position = { 0.06, 0 } })
+    world.root:child_text("SCORE", { position = { 0.15, 0.08 } })
+    local score_text = world.root:child_text("mochi-mochi panic", { position = { 0.15, 0.05 } })
+    score_text.font_size = 80
 
     -- ゲームのスコア
     Score = 0

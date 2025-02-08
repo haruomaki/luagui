@@ -55,12 +55,12 @@ class Font : public Resource {
 
 class Text : public UpdateComponent {
     Font &font_;
-    RGBA color_;
 
     void draw() const;
 
   public:
     std::string text;
+    RGBA color;
     float font_size = 48;
     glm::vec2 anchor = {0, 0};
 

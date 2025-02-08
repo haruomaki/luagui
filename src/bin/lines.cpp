@@ -24,7 +24,7 @@ int main() {
     ui_camera_obj.rotate = ANGLE_Y(M_PIf);
     // camera.setScale(0.01F);
     // camera.setScale(100);
-    ui_camera.centering = Camera::TopLeft;
+    ui_camera.centering = {-1, 1};
 
     auto &line = new_points(world.root);
     auto &line_mesh = line.mesh;
@@ -39,8 +39,9 @@ int main() {
     auto &migmix_font = gui.resources.append<Font>(std::move(text_shader), std::move(font)).get();
     auto &sample_text = ui_world.root.child_component<Text>(migmix_font, "This is sample text 123456789", RGBA{0.5, 0.8, 0.2, 0.4});
     auto &credit_text = ui_world.root.child_component<Text>(migmix_font, "(C) LearnOpenGL.com", RGBA{0.3, 0.7, 0.9, 0.4});
-    sample_text.owner().position = {0.005, -0.02, 0};
-    credit_text.owner().position = {0.1, -0.1, 0};
+    sample_text.owner().position = {0.004, 0, 0};
+    sample_text.anchor = {1, -1};
+    credit_text.owner().position = {0.2, -0.1, 0};
 
     // 三角形の表示
     auto &my_triangle_mesh = new_mesh(gui, GL_TRIANGLE_FAN, {{-0.8, -0.3, 0}, {-0.2, 0.7, 0}, {0.5, -0.5, 0}},
