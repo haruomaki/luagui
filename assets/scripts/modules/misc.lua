@@ -75,3 +75,17 @@ end
 function WorldObject:raycast_front()
     return self.world:raycast(self.absolute_position, self:front())
 end
+
+--------------
+-- 定数など
+--------------
+
+TopLeft = vec2 { -1, 1 }
+TopRight = vec2 { 1, 1 }
+BottomLeft = vec2 { -1, -1 }
+BottomRight = vec2 { 1, -1 }
+MiddleLeft = vec2 { -1, 0 }
+MiddleRight = vec2 { 1, 0 }
+TopMiddle = vec2 { 0, 1 }
+BottomMiddle = vec2 { 0, -1 }
+Center = vec2 { 0, 0 }

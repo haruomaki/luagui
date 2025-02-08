@@ -135,8 +135,8 @@ void Text::draw() const {
             // 1px = 1/72インチ (≒ 0.3528mm) であると決め打ってスケーリングする。72DPIのディスプレイだと丁度紙面上のptどおりの大きさになる。
             const float scale_x = px_meter / dpi_scale_x; // 大きめにラスタライズした分、テクスチャ自体が大きくなっているのでCSで割って補正。
             const float scale_y = px_meter / dpi_scale_y;
-            float xpos = (chip.xpos - lout.width * anchor.x) * scale_x;
-            float ypos = (chip.ypos - lout.height * anchor.y) * scale_y;
+            float xpos = (chip.xpos - lout.width * (1 - anchor.x) / 2) * scale_x;
+            float ypos = (chip.ypos - lout.height * (1 - anchor.y) / 2) * scale_y;
             float w = chip.w * scale_x;
             float h = chip.h * scale_y;
             // update VBO for each character
