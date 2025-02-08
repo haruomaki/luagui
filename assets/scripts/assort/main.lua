@@ -24,7 +24,7 @@ run_window(800, 600, "assort", function()
 
     local ui = create_world()
     local ui_camera = CreateCamera2D()
-    ui_camera.centering = 'TopLeft'
+    ui_camera.centering = TopLeft
     local text = ui.root:child_text()
     text.owner.position = vec3 { 0.002, -0.002, 0 }
     text.font_size = 24

@@ -23,22 +23,13 @@ struct CameraInterface {
 
 class Camera : public CameraInterface, public Component {
   public:
-    enum Centering {
-        Center,      // 画面中心
-        TopRight,    // 右上
-        BottomRight, // 右下
-        TopLeft,     // 左上
-        BottomLeft,  // 左下
-        // Custom       // カスタムモード（詳細は別途指定）
-    };
-
     enum ProjectionMode {
         Perspective,  // 透視投影
         Orthographic, // 平行投影
     };
 
     ProjectionMode projection_mode;
-    Centering centering = Center;
+    glm::vec2 centering = {0, 0};
 
     Camera(Window *window, Camera::ProjectionMode projection_mode = Perspective);
     ~Camera() override;

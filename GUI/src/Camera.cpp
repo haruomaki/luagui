@@ -71,28 +71,11 @@ glm::mat4 Camera::get_projection_matrix() const {
     const auto r = owner().get_scale().z;
     const auto ne = -1000.0f * r; // "near"はWindowsだとダメ
     const auto fa = 1000.0f * r;  // "far"もWindowsだとダメ
-    switch (centering) {
-    case Centering::Center:
-        return glm::ortho(-w / 2, w / 2, -h / 2, h / 2, ne, fa);
-    case Centering::TopRight:
-        return glm::ortho(-w, 0.0f, -h, 0.0f, ne, fa);
-    case Centering::BottomRight:
-        return glm::ortho(-w, 0.0f, 0.0f, h, ne, fa);
-    case Centering::TopLeft:
-        return glm::ortho(0.0f, w, -h, 0.0f, ne, fa);
-    case Centering::BottomLeft:
-        return glm::ortho(0.0f, w, 0.0f, h, ne, fa);
-        // case CameraMode::Custom:
-        //     // カスタム設定に基づく計算
-        //     return glm::ortho(
-        //         custom_origin.x - w / 2 * custom_scale,
-        //         custom_origin.x + w / 2 * custom_scale,
-        //         custom_origin.y - h / 2 * custom_scale,
-        //         custom_origin.y + h / 2 * custom_scale,
-        //         custom_origin.z - 1000.0f,
-        //         custom_origin.z + 1000.0f);
-    }
-    throw std::runtime_error("Unsupported camera mode");
+    const auto left = -w * (1 + centering.x) / 2;
+    const auto right = w * (1 - centering.x) / 2;
+    const auto bottom = -h * (1 + centering.y) / 2;
+    const auto top = h * (1 - centering.y) / 2;
+    return glm::ortho(left, right, bottom, top, ne, fa);
 }
 
 void Camera::toggle_mode() { projection_mode = (projection_mode == Camera::Perspective ? Camera::Orthographic : Camera::Perspective); }
