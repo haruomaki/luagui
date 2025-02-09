@@ -32,29 +32,6 @@ inline void get_errors_pre(const char *file, int line) {
 #define getErrors()
 #endif
 
-struct RGB {
-    unsigned char r, g, b;
-};
-
-struct RGBA {
-    float r, g, b, a;
-
-    operator glm::vec4() const {
-        return {r, g, b, a};
-    }
-
-    // std::vector<RGBA>をSolに渡すために必要。
-    bool operator==(RGBA other) const {
-        return glm::vec4(*this) == glm::vec4(other);
-    }
-};
-
-// operator<< のオーバーロード
-inline std::ostream &operator<<(std::ostream &os, const RGBA &color) {
-    os << "RGBA(" << color.r << ", " << color.g << ", " << color.b << ", " << color.a << ")";
-    return os;
-}
-
 // WARNING: Windows環境だとconstexprを付けられない
 inline glm::mat4 TRANSLATE(glm::vec3 pos) { return glm::translate(glm::mat4(1), pos); }
 inline glm::mat4 ROTATE(float angle, glm::vec3 axis) { return glm::rotate(glm::mat4(1), angle, axis); }

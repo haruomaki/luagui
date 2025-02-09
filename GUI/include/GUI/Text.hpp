@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Color.hpp"
 #include "Resource.hpp"
 #include "Update.hpp"
-#include "graphical_base.hpp"
 #include <Lunchbox/core/HarfBuzz.hpp>
 #include <SumiGL/Shader.hpp>
 #include <map>

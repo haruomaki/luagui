@@ -1,4 +1,4 @@
-#include <GUI/graphical_base.hpp>
+#include <GUI/Color.hpp>
 #include <sol/sol.hpp>
 
 using Points = std::vector<std::vector<float>>;

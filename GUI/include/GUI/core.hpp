@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphical_base.hpp"
+#include "Color.hpp"
 #include "property.hpp"
 
 struct InterleavedVertexInfo {
