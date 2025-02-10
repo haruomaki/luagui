@@ -127,14 +127,15 @@ void Text::draw() const {
     glActiveTexture(GL_TEXTURE0);
     this->font_.vao_.bind([&] {
         const auto [dpi_scale_x, dpi_scale_y] = gui().monitor_content_scale();
-        auto lout = layout(font_.characters_, font_.hb(), text, font_size * dpi_scale_x, font_size * dpi_scale_y);
+        const auto extra_zoom = 1.5f; // ぼやける問題の応急処置として、大きめにラスタライズする。
+        auto lout = layout(font_.characters_, font_.hb(), text, font_size * dpi_scale_x * extra_zoom, font_size * dpi_scale_y * extra_zoom);
 
         // すべてのグリフについてイテレートする。
         for (auto chip : lout.chips) {
             // Characterのサイズやオフセット情報から描画位置・幅を計算する
             // 1px = 1/72インチ (≒ 0.3528mm) であると決め打ってスケーリングする。72DPIのディスプレイだと丁度紙面上のptどおりの大きさになる。
-            const float scale_x = px_meter / dpi_scale_x; // 大きめにラスタライズした分、テクスチャ自体が大きくなっているのでCSで割って補正。
-            const float scale_y = px_meter / dpi_scale_y;
+            const float scale_x = px_meter / (dpi_scale_x * extra_zoom); // 大きめにラスタライズした分、テクスチャ自体が大きくなっているのでCSで割って補正。
+            const float scale_y = px_meter / (dpi_scale_y * extra_zoom);
             float xpos = (chip.xpos - lout.width * (1 - anchor.x) / 2) * scale_x;
             float ypos = (chip.ypos - lout.height * (1 - anchor.y) / 2) * scale_y;
             float w = chip.w * scale_x;
