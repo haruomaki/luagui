@@ -3,6 +3,7 @@
 ---描画設定。
 ---@class Material
 ---@field write_depth boolean デプスバッファに書き込むかどうか
+---@field both boolean ポリゴンの裏面を描画するかどうか
 ---@field line_width number 線の太さ
 ---@field point_size number 点の大きさ
 Material = {}

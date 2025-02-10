@@ -67,6 +67,7 @@ void register_mesh(sol::state &lua) {
         "Material",
         "new", [&lua]() -> Material * {GUI &gui = lua["__GUI"]; return &MaterialBuilder().build(gui); },
         "write_depth", &Material::write_depth,
+        "both", &Material::both,
         "line_width", &Material::line_width,
         "point_size", &Material::point_size,
         "from_image", [&lua](Image &img) -> Material * {

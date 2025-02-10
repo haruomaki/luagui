@@ -8,12 +8,13 @@ Util = {}
 function Util.cube()
     local material = Material.new()
     material.point_size = 20
+    material.both = true
 
     local a = 0.3
     local mesh = Mesh.new()
     mesh.use_index = true
     mesh.draw_mode = 'triangle_strip'
-    mesh.indices = VI { 0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5 }
+    mesh.indices = VI { 0, 2, 1, 3, 7, 2, 6, 0, 4, 1, 5, 7, 4, 6 }
     mesh.coords = V3 { { -a, -a, -a }, { a, -a, -a }, { -a, a, -a }, { a, a, -a }, { -a, -a, a }, { a, -a, a }, { -a, a, a }, { a, a, a } }
 
     local color_tmp = {}
