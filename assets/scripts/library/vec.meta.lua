@@ -44,6 +44,31 @@ function vec3.new(x, y, z) end
 ---@return vec3
 function vec3(point) end
 
+---RGBAの色。
+---@class RGBA
+---@field r number
+---@field g number
+---@field b number
+---@field a number
+RGBA = {}
+
+---空のRGBAを作成する。
+---@return RGBA
+function RGBA.new() end
+
+---RGBAを作成する。
+---@param r number
+---@param g number
+---@param b number
+---@param a number
+---@return RGBA
+function RGBA.new(r, g, b, a) end
+
+---RGBAを作成する。
+---@param point table<integer, number>
+---@return RGBA
+function RGBA(point) end
+
 ---intの配列。
 ---@class VI
 VI = {}

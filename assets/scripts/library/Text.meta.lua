@@ -15,6 +15,7 @@ function Font.load(file_path) end
 ---テキストコンポーネント。
 ---@class Text : Component
 ---@field message string 表示する文字列。
+---@field color RGBA 文字の色
 ---@field font_size number フォントの大きさ。
 ---@field anchor vec2 アンカーポイントの設定。デフォルトは(0,0)で、基点の右上に表示される。(1,1)にすると左下になる。
 local Text = {}

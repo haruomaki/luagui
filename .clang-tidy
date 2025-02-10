@@ -26,8 +26,9 @@ Checks:
   - -misc-non-private-member-variables-in-classes # publicおよびprotectedメンバ変数を無制限に許容
   - -misc-use-anonymous-namespace # static関数でも無名名前空間でもどっちでもいい
   - modernize-*
-  - -modernize-use-trailing-return-type
   - -modernize-avoid-c-arrays # C言語スタイルの配列を許容
+  - -modernize-use-designated-initializers
+  - -modernize-use-trailing-return-type
   - performance-*
   - -performance-enum-size # enumの基底型はintでいい
   - portability-*

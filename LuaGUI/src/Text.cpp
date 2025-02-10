@@ -25,6 +25,7 @@ void register_text(sol::state &lua) {
     lua.new_usertype<Text>(
         "Text",
         "message", sol::property([](Text *t) { return t->text; }, [](Text *t, std::string msg) { t->text = std::move(msg); }),
+        "color", &Text::color,
         "font_size", &Text::font_size,
         "anchor", &Text::anchor,
         sol::base_classes, sol::bases<Component>());

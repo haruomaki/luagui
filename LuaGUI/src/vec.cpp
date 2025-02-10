@@ -6,16 +6,23 @@ static inline float get_or(const vector<float> &v, size_t index, float default_v
     return (index < v.size() ? v[index] : default_value);
 }
 
-static inline glm::vec2 to_vec2(std::vector<float> &&v) {
+static inline glm::vec2 to_vec2(const std::vector<float> &v) {
     auto x = get_or(v, 0, 0);
     auto y = get_or(v, 1, 0);
     return {x, y};
 }
-static inline glm::vec3 to_vec3(std::vector<float> &&v) {
+static inline glm::vec3 to_vec3(const std::vector<float> &v) {
     auto x = get_or(v, 0, 0);
     auto y = get_or(v, 1, 0);
     auto z = get_or(v, 2, 0);
     return {x, y, z};
+}
+static inline RGBA to_rgba(const std::vector<float> &v) {
+    auto r = get_or(v, 0, 0);
+    auto g = get_or(v, 1, 0);
+    auto b = get_or(v, 2, 0);
+    auto a = get_or(v, 3, 1);
+    return {r, g, b, a};
 }
 
 VI::VI(std::vector<int> tbl)
@@ -32,7 +39,7 @@ V2::V2(Points tbl)
 V3::V3(Points tbl)
     : std::vector<glm::vec3>(tbl.size()) {
     for (size_t i = 0; i < tbl.size(); i++) {
-        (*this)[i] = to_vec3(std::move(tbl[i]));
+        (*this)[i] = to_vec3(tbl[i]);
     }
 }
 
@@ -54,7 +61,7 @@ void register_vec(sol::state &lua) {
         "y", &glm::vec2::y,
         sol::meta_function::addition, [](glm::vec2 a, glm::vec2 b) -> glm::vec2 { return a + b; },
         sol::meta_function::multiplication, [](glm::vec2 v, float x) -> glm::vec2 { return v * x; });
-    lua["vec2"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> glm::vec2 { return to_vec2(std::move(v)); };
+    lua["vec2"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> glm::vec2 { return to_vec2(v); }; // NOLINT(performance-unnecessary-value-param)
 
     lua.new_usertype<glm::vec3>(
         "vec3",
@@ -64,7 +71,16 @@ void register_vec(sol::state &lua) {
         "z", &glm::vec3::z,
         sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a + b; },
         sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; });
-    lua["vec3"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> glm::vec3 { return to_vec3(std::move(v)); }; // HACK: moveにする必要は無いが、警告抑制のため。
+    lua["vec3"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> glm::vec3 { return to_vec3(v); }; // NOLINT(performance-unnecessary-value-param)
+
+    lua.new_usertype<RGBA>(
+        "RGBA",
+        sol::constructors<RGBA(), RGBA(float, float, float, float)>(),
+        "r", &RGBA::r,
+        "g", &RGBA::g,
+        "b", &RGBA::b,
+        "a", &RGBA::a);
+    lua["RGBA"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> RGBA { return to_rgba(v); }; // NOLINT(performance-unnecessary-value-param)
 
     lua.new_usertype<VI>("VI", sol::constructors<VI(std::vector<int>)>());
 
