@@ -1,3 +1,5 @@
+local breakout = require("breakout.main")
+
 run_window(800, 600, "assort", function()
     local world = create_world()
     local camera = CreateCamera("quit", "move", "zoom")
@@ -50,5 +52,5 @@ run_window(800, 600, "assort", function()
 
     print("動かします。")
     cube.position = vec3 { 0, 2, 0 }
-    Forever()
+    breakout.main()
 end)

@@ -1,6 +1,8 @@
+local breakout = {}
+
 local figure = require("figure")
 
-run_window(800, 600, "ブロック崩し", function()
+function breakout.main()
     b2SetLengthUnitsPerMeter(0.001)
 
     local world = create_world()
@@ -95,4 +97,6 @@ run_window(800, 600, "ブロック崩し", function()
         print("クリアー！すべてのブロックを消しました。")
         Wait(2)
     end
-end)
+end
+
+return breakout

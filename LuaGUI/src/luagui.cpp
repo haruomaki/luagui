@@ -3,6 +3,7 @@
 #include <GUI/Window.hpp>
 #include <GUI/utility.hpp>
 #include <SumiGL/Context.hpp>
+#include <algorithm>
 #include <luagui.hpp>
 
 #include "Box2D.hpp"
@@ -83,7 +84,7 @@ static void run_window(sol::state &lua, int width, int height, const std::string
 // "modules.hoge"といったモジュール名を「modules/hoge.lua」の形に変換する。
 static Path convert_module_to_path(const std::optional<Path> &cwd, const std::string &module_name) {
     std::string path_str = cwd.value_or("").string() + "/" + module_name;
-    std::replace(path_str.begin(), path_str.end(), '.', '/');
+    std::ranges::replace(path_str, '.', '/');
     path_str += ".lua";
     return path_str;
 }
@@ -105,9 +106,11 @@ static std::string get_code_injected(const lunchbox::Storage &storage, const Pat
     return header + code;
 }
 
-// assetsディレクトリからの相対パスで検索できるようにする。
+// モジュール自身からの相対パスなどで検索できるようにする。
 static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storage) {
     sol::table searchers = lua["package"]["searchers"];
+
+    // モジュール自身からの相対パスで検索。
     searchers.add([&](const std::string &module_name) -> sol::object {
         // requireを呼ぶ直前に、`__CWD_global__`という変数にパスを格納しておくと、そこを基準とした相対パスでアセット内を検索する。
         std::string cwd = lua["__CWD_global__"];
@@ -122,6 +125,19 @@ static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storag
             return module;
         } catch (const std::exception & /*e*/) {
             // ロードに失敗すればエラーメッセージを返す。
+            return sol::make_object(lua, "no asset '" + module_path.string() + "'");
+        }
+    });
+
+    // assets/scriptsディレクトリからの絶対パスで検索。
+    searchers.add([&](const std::string &module_name) -> sol::object {
+        auto module_path = convert_module_to_path("scripts", module_name);
+
+        try {
+            std::string script_content = get_code_injected(storage, module_path);
+            auto module = lua.load(script_content, "@" + module_path.string());
+            return module;
+        } catch (const std::exception & /*e*/) {
             return sol::make_object(lua, "no asset '" + module_path.string() + "'");
         }
     });
