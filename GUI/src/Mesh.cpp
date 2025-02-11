@@ -39,44 +39,37 @@ void MeshDrawManager::set_model_matrix(const MeshComponent *mc) {
             const auto &model_matrix = mc->owner().get_absolute_transform();
             observations_[key].model_matrices[index] = model_matrix;
         } else {
-            // 新たなメッシュオブジェクトの場合、一旦initial_valuesに蓄えておく
-            observations_[key].initial_list.emplace_back(mc);
+            // 新たなメッシュオブジェクトの場合、一旦リクエストに蓄えておく（-1はダミー値）
+            observations_[key].object_index_map.request_set(mc, -1);
         }
     } else {
-        // そもそも初めてのkeyのオブジェクトだった場合、キーを追加してやはりinitial_valuesに蓄える
+        // そもそも初めてのkeyのオブジェクトだった場合、キーを追加してやはりリクエストに蓄える
         observations_[key] = ModelMatricesObservation{};
-        observations_[key].initial_list.emplace_back(mc);
+        observations_[key].object_index_map.request_set(mc, -1);
     }
 }
 
 void MeshDrawManager::delete_model_matrix(const MeshComponent *obj) {
     auto key = key_from(obj);
     assert(observations_.contains(key)); // 一度も登録されていないキーを持つオブジェクトの削除要求
-    observations_[key].delete_list.push_back(obj);
+    observations_[key].object_index_map.request_erase(obj);
 }
 
 void MeshDrawManager::step() {
-    // initial_listとdelete_listのいずれかが空でないすべてのキーについてモデル行列キューを再生成
+    // 追加/削除リクエストキューが空でないすべてのキーについて、モデル行列配列を再生成
     for (auto &[key, obs] : observations_) {
-        if (!obs.initial_list.empty() || !obs.delete_list.empty()) {
+        if (obs.object_index_map.is_dirty()) {
             auto &obj_ix_map = obs.object_index_map;
 
-            // 登録予定キーを追加
-            for (const auto *ptr : obs.initial_list) {
-                obj_ix_map.insert_or_assign(ptr, 0); // ダミーの値を入れておく
-            }
-
-            // 削除予定キーを削除
-            for (const auto *ptr : obs.delete_list) {
-                obj_ix_map.erase(ptr);
-            }
+            // 登録予定/削除予定を実際に反映。
+            obj_ix_map.flush<false>();
 
             // この時点では、obj_ix_mapのキーのみに意味がある。
             // キーが物体の一覧を意味する。
 
-            // インデックスの振り直しとモデル行列キューの再生成を一挙に行う
-            auto queue_size = obj_ix_map.size();
-            obs.model_matrices = std::vector<glm::mat4>(queue_size); // モデル行列キュー再生成
+            // インデックスの振り直しとモデル行列行列の再生成を一挙に行う
+            auto arr_size = obj_ix_map.size();
+            obs.model_matrices = std::vector<glm::mat4>(arr_size); // モデル行列配列再生成
             size_t counter = 0;
             for (auto &[mc, index] : obj_ix_map) {
                 const auto &model_matrix = mc->owner().get_absolute_transform();
@@ -84,16 +77,16 @@ void MeshDrawManager::step() {
                 obs.model_matrices[index] = model_matrix;
             }
         }
-
-        // 各キューを削除
-        obs.initial_list = std::vector<const MeshComponent *>();
-        obs.delete_list = std::vector<const MeshComponent *>();
     }
 
-    // 使われなくなったモデル行列キューは削除する
-    std::erase_if(observations_, [](const auto &item) {
+    // 使われなくなったモデル行列行列は削除する
+    std::erase_if(observations_, [](const std::pair<const KeyType, ModelMatricesObservation> &item) {
         const auto &[key, obs] = item;
-        return (obs.model_matrices.size() == 0); // 必ず obs.object_index_map == 0 でもあるはず
+        if (obs.model_matrices.size() == 0) {
+            assert(!obs.object_index_map.is_dirty() && obs.object_index_map.size() == 0); // 物体一覧も必ず空であるはず
+            return true;
+        }
+        return false;
     });
 }
 

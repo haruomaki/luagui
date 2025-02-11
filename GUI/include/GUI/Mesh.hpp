@@ -105,11 +105,7 @@ struct ModelMatricesObservation {
     // とある物体のモデル行列がmodel_matrices内のどの位置に格納されているかを記録する。
     // ここのキーに無い物体は、そもそもモデル行列が格納されていない。
     // 物体が一つでも追加/削除されるたび、model_matricesに付随して再生成される。
-    std::unordered_map<const MeshComponent *, size_t> object_index_map;
-    // 物体の追加要請。毎フレーム１回フラッシュされ、非空ならmodel_matricesおよびobject_index_mapが再生成される。
-    std::vector<const MeshComponent *> initial_list;
-    // initial_listと同様に、物体の削除要請。TODO: 順序を正確にするために、initial_listと統合すべきか。
-    std::vector<const MeshComponent *> delete_list;
+    BufferedMap<const MeshComponent *, size_t, false> object_index_map;
 
     // 普段はmodel_matricesのdata()と一致する。vector内部でメモリ再確保が行われるのを検知するのに利用。
     const glm::mat4 *matrices_raw = nullptr;

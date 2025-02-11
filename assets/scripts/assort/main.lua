@@ -52,5 +52,6 @@ run_window(800, 600, "assort", function()
 
     print("動かします。")
     cube.position = vec3 { 0, 2, 0 }
-    breakout.main()
+    -- breakout.main()
+    Forever()
 end)
