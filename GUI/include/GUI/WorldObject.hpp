@@ -118,28 +118,15 @@ class WorldObject {
     //     }
     // }
 
-    [[nodiscard]] World &get_world() const {
-        return this->world_;
-    }
+    [[nodiscard]] unsigned long ptr() const { return reinterpret_cast<unsigned long>(this); }
+    bool operator==(const WorldObject &other) const { return ptr() == other.ptr(); }
+    [[nodiscard]] World &get_world() const { return this->world_; }
 
-    [[nodiscard]] const glm::vec3 &get_position() const {
-        return pos_;
-    }
-
-    [[nodiscard]] const glm::quat &get_rotate() const {
-        return rotate_;
-    }
-
-    [[nodiscard]] const glm::vec3 &get_scale() const {
-        return scale_;
-    }
-    [[nodiscard]] float get_scale_prop() const {
-        return std::pow(scale_.x * scale_.y * scale_.z, 1.f / 3);
-    }
-
-    [[nodiscard]] const glm::mat4 &get_absolute_transform() const {
-        return abs_transform_;
-    }
+    [[nodiscard]] const glm::vec3 &get_position() const { return pos_; }
+    [[nodiscard]] const glm::quat &get_rotate() const { return rotate_; }
+    [[nodiscard]] const glm::vec3 &get_scale() const { return scale_; }
+    [[nodiscard]] float get_scale_prop() const { return std::pow(scale_.x * scale_.y * scale_.z, 1.f / 3); }
+    [[nodiscard]] const glm::mat4 &get_absolute_transform() const { return abs_transform_; }
 
     [[nodiscard]] glm::vec3 get_front() const { return abs_transform_ * glm::vec4{0, 0, 1, 0}; }
     [[nodiscard]] glm::vec3 get_back() const { return abs_transform_ * glm::vec4{0, 0, -1, 0}; }

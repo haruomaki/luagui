@@ -4,6 +4,10 @@ local block = {}
 ---@type World
 block.main_world = __CurrentWorld
 
+---現在注目中のブロック
+---@type WorldObject | nil
+block.focus = nil
+
 -- ブロックのマテリアルおよびメッシュを作成
 local material = Material.new()
 material.point_size = 20
@@ -25,6 +29,17 @@ end
 mesh.colors = CV(color_tmp)
 
 
+-- カーソルを当てたときのフレームのメッシュ
+local frame_material = Material.new()
+frame_material.line_width = 3
+local frame_mesh = Mesh.new()
+frame_mesh.use_index = true
+frame_mesh.draw_mode = 'lines'
+frame_mesh.indices = VI { 0, 1, 2, 3, 4, 5, 6, 7, 0, 2, 1, 3, 4, 6, 5, 7, 0, 4, 1, 5, 2, 6, 3, 7 }
+local b = a + 0.002
+frame_mesh.coords = V3 { { -b, -b, -b }, { b, -b, -b }, { -b, b, -b }, { b, b, -b }, { -b, -b, b }, { b, -b, b }, { -b, b, b }, { b, b, b } }
+
+
 ---指定の場所にブロックを置く
 ---@param pos vec3
 function block.place(pos)
@@ -39,6 +54,24 @@ function block.place(pos)
     rb.restitution = 0.8
 
     return obj
+end
+
+---@param obj WorldObject
+local function add_frame(obj)
+    local m = obj:add_mesh_component(frame_material, frame_mesh)
+    m.id = "注目中ブロックの枠線"
+end
+
+---@param obj WorldObject
+local function remove_frame(obj)
+    obj:get_component_by_id("注目中ブロックの枠線"):erase()
+end
+
+---@param new_focusing WorldObject | nil
+function block.refresh_focus(new_focusing)
+    if block.focus ~= nil then remove_frame(block.focus) end
+    if new_focusing ~= nil then add_frame(new_focusing) end
+    block.focus = new_focusing
 end
 
 return block

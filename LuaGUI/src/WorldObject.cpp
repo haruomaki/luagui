@@ -80,6 +80,8 @@ static sol::object get_component_by_id(sol::state &lua, WorldObject *obj, const 
     if (auto *p = dynamic_cast<Rigidbody2D *>(comp)) return sol::make_object(lua, p);
     if (auto *p = dynamic_cast<Collider2D *>(comp)) return sol::make_object(lua, p);
     if (auto *p = dynamic_cast<UpdateComponent *>(comp)) return sol::make_object(lua, p);
+    if (auto *p = dynamic_cast<MeshComponent *>(comp)) return sol::make_object(lua, p);
+    warn("未対応のコンポーネント型のため、キャストできませんでした。");
     return sol::nil;
 }
 
@@ -113,6 +115,11 @@ void register_world_object(sol::state &lua) {
 
         "id",
         &WorldObject::id,
+
+        "ptr", &WorldObject::ptr,
+        // sol::meta_function::equal_to, [](WorldObject &o1, WorldObject &o2) -> bool { print("は？");return o1 == o2; },
+        // sol::meta_function::equal_to, [](WorldObject *o1, WorldObject *o2) -> bool { print("は？");return *o1 == *o2; },
+        sol::meta_function::equal_to, &WorldObject::operator==,
 
         "front", &WorldObject::get_front,
         "back", &WorldObject::get_back,

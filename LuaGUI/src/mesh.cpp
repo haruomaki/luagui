@@ -37,7 +37,7 @@ static GLenum string_to_mode(const std::string &s) {
     return draw_mode_map().at(s);
 }
 
-static Mesh *new_mesh(const sol::state &lua, V3 &&coords, V2 &&uvs) {
+static Mesh *new_mesh(const sol::state &lua, const V3 &coords, const V2 &uvs) {
     GUI &gui = lua["__GUI"];
     auto &mesh = gui.resources.append<Mesh>().get();
 
@@ -79,7 +79,7 @@ void register_mesh(sol::state &lua) {
 
     lua.new_usertype<Mesh>(
         "Mesh",
-        "new", sol::overload([&lua]() -> Mesh * { GUI &gui = lua["__GUI"]; return &gui.resources.append<Mesh>().get(); }, [&lua](V3 coords, V2 uvs) { return new_mesh(lua, std::move(coords), std::move(uvs)); }),
+        "new", sol::overload([&lua]() -> Mesh * { GUI &gui = lua["__GUI"]; return &gui.resources.append<Mesh>().get(); }, [&lua](const V3 &coords, const V2 &uvs) { return new_mesh(lua, coords, uvs); }),
         "indices", sol::property([](Mesh *m) { return m->indices; }, [](Mesh *m, const VI &i) { m->indices = i; }),
         "coords", sol::property([](Mesh *m) { return m->vertices.getCoords(); }, [](Mesh *m, const V3 &c) { m->vertices.setCoords(c); }),
         "colors", sol::property([](Mesh *m) { return m->vertices.getColors(); }, [](Mesh *m, const CV &c) { m->vertices.setColors(c); }),

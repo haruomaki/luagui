@@ -34,13 +34,16 @@ run_window(800, 600, "assort", function()
     Thread.forever("toggle camera mode", function()
         if GetKeyDown('M') then camera:toggle_mode() end
 
+        -- 注目中オブジェクトの更新
+        local new_focus = nil
         local results = camera.owner:raycast_front()
         if (#results > 0) then
-            text.message = results[1].hitObject.owner.id
-        else
-            text.message = "鯖 <-> 鯖󠄀"
-            -- text.message = "ABCDEFGHIJK"
+            new_focus = results[1].hitObject.owner
         end
+        block.refresh_focus(new_focus)
+
+        -- デバッグ情報の更新
+        text.message = block.focus and block.focus.id or ""
     end)
 
     Wait(2)

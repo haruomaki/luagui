@@ -40,6 +40,9 @@ function WorldObject:erase() end
 ---オブジェクトをただちに削除する。
 function WorldObject:force_erase() end
 
+---C++上での生ポインタを取得する。
+function WorldObject:ptr() end
+
 ---@return vec3
 function WorldObject:front() end
 

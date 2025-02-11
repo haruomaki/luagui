@@ -15,6 +15,7 @@ run_window(800, 600, "ブロック崩し", function()
     world.root:child_text("SCORE", { position = { 0.15, 0.08 } })
     local score_text = world.root:child_text("mochi-mochi panic", { position = { 0.15, 0.05 } })
     score_text.font_size = 80
+    score_text.color = RGBA { 0.3, 0.7, 0.4, 1 }
 
     -- ゲームのスコア
     Score = 0
