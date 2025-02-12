@@ -17,6 +17,10 @@ BulletWorld = {}
 ---@field restitution number 反発係数
 Rigidbody = {}
 
+---スリープ状態を解除する
+---@param force_activation boolean? 強制的に解除する
+function Rigidbody:activate(force_activation) end
+
 ---直方体の当たり判定を追加。
 ---@param x number
 ---@param y number

@@ -17,6 +17,7 @@ void register_bullet_physics(sol::state &lua) {
         "plane_shape", &Rigidbody::plane_shape,
         "cylinder_shape", &Rigidbody::cylinder_shape,
         "capsule_shape", &Rigidbody::capsule_shape,
+        "activate", &Rigidbody::activate,
         sol::base_classes, sol::bases<Component>());
 
     lua["WorldObject"]["add_rigidbody"] = [](WorldObject *obj) -> Rigidbody * {

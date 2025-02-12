@@ -92,6 +92,8 @@ class Rigidbody : public Component, public btMotionState {
     [[nodiscard]] float get_restitution() const { return rigid_body->getRestitution(); }
     void set_restitution(float rest) const { rigid_body->setRestitution(rest); }
 
+    void activate(std::optional<bool> force_activation) const { rigid_body->activate(force_activation.value_or(false)); }
+
     // void refresh() const;
     // void switch_type();
 

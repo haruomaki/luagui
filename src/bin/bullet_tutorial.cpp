@@ -44,6 +44,6 @@ int main() {
         std::cout << "Step " << i << ": Sphere at ("
                   << trans.getOrigin().getX() << ", "
                   << trans.getOrigin().getY() << ", "
-                  << trans.getOrigin().getZ() << ")" << std::endl;
+                  << trans.getOrigin().getZ() << ")" << '\n';
     }
 }

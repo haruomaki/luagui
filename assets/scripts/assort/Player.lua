@@ -24,13 +24,15 @@ function Player.spawn()
     __CurrentCamera = camera
 
     body:add_update_component("move by CreateCamera", ForeverFun(function()
+        -- 自機剛体がスリープ状態になるのを防ぐ
+        rb:activate()
+
         local dt = 1 / Screen.refreshRate
-        local speed = 2.5
+        local speed = 2.7
         local angle_speed = 0.8
 
-        if GetKey("LeftControl") then
-            speed = speed * 1.8
-        end
+        -- ダッシュ
+        if GetKey("LeftControl") then speed = speed * 1.7 end
 
         local y = rb.linear_velocity.y
         local newv = vec3 { 0, 0, 0 }
