@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ID.hpp"
 #include <string>
 
 class WorldObject;
@@ -13,6 +14,7 @@ class Component {
     WorldObject *owner_ = nullptr;
 
   public:
+    ID id;
     // すべてのコンポーネントにIDを振るのは面倒＆ID無しも許容したいため、IDでなく型をキーとするmultimapで管理。
     std::string name;
 

@@ -7,6 +7,7 @@ Component::Component()
     if (owner_ == nullptr) {
         throw std::runtime_error("Componentの所有者の設定に失敗");
     }
+    id = gui().idg.generate();
 }
 
 void Component::erase() { owner().components_.request_erase(this); }

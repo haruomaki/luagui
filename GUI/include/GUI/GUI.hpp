@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ID.hpp"
 #include "Resource.hpp"
 #include "sound.hpp"
 #include <SumiGL/Context.hpp>
@@ -22,6 +23,7 @@ class GUI : public GL::Context {
     ResourceManager resources;
     AudioManager audio;
     BufferedSet<std::function<void()> *> resource_updates;
+    IDGeneragor idg;
     std::function<bool()> resume_condition;
 
     GUI();
