@@ -70,6 +70,7 @@ void register_vec(sol::state &lua) {
         "y", &glm::vec3::y,
         "z", &glm::vec3::z,
         sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a + b; },
+        sol::meta_function::subtraction, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a - b; },
         sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; });
     lua["vec3"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> glm::vec3 { return to_vec3(v); }; // NOLINT(performance-unnecessary-value-param)
 

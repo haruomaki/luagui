@@ -2,6 +2,8 @@ local breakout = require("breakout.main")
 local Player = require("Player")
 
 run_window(800, 600, "assort", function()
+    Mouse.disable()
+
     local world = create_world()
     world.bullet_world.gravity = vec3 { 0, -16, 0 }
     local player = Player.spawn()

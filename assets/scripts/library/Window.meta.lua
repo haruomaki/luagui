@@ -42,6 +42,14 @@ __CurrentWindow = {}
 ---| 'Enter'
 ---| 'Escape'
 ---| 'LeftShift'
+---| 'LeftControl'
+---| 'LeftAlt'
+---| 'LeftSuper'
+---| 'RightShift'
+---| 'RightControl'
+---| 'RightAlt'
+---| 'RightSuper'
+---| 'Menu'
 
 --- キー入力をチェックする関数
 ---@param key Keys キーの名前
@@ -65,3 +73,13 @@ function CloseWindow() end
 ---@class Screen
 ---@field refreshRate integer 《読み取り専用》ディスプレイのリフレッシュレート
 Screen = {}
+
+---マウスカーソルに関するプロパティをまとめた静的クラス
+---@class Mouse
+---@field pos vec2 マウスカーソルの位置
+---@field diff vec2 マウスカーソルの移動速度
+Mouse = {}
+
+---マウスカーソルを無効化する。
+---@param flag boolean? trueだとカーソルが消え、仮想的に無制限移動できるようになる
+function Mouse.disable(flag) end

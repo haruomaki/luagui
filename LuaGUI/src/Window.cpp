@@ -42,6 +42,14 @@ static const Keymap &keymap() {
         {"Down", GLFW_KEY_DOWN},
         {"Up", GLFW_KEY_UP},
         {"LeftShift", GLFW_KEY_LEFT_SHIFT},
+        {"LeftControl", GLFW_KEY_LEFT_CONTROL},
+        {"LeftAlt", GLFW_KEY_LEFT_ALT},
+        {"LeftSuper", GLFW_KEY_LEFT_SUPER},
+        {"RightShift", GLFW_KEY_RIGHT_SHIFT},
+        {"RightControl", GLFW_KEY_RIGHT_CONTROL},
+        {"RightAlt", GLFW_KEY_RIGHT_ALT},
+        {"RightSuper", GLFW_KEY_RIGHT_SUPER},
+        {"Menu", GLFW_KEY_MENU},
         // TODO: 他のキーも随時追加
     };
     return *keymap_inner;
@@ -58,6 +66,7 @@ static inline std::optional<int> from_name(const char *name) {
 }
 
 class Screen {};
+class Mouse {};
 
 void register_window(sol::state &lua) {
     lua.set_function("GetKey", [&lua](const char *key) -> bool {
@@ -91,4 +100,21 @@ void register_window(sol::state &lua) {
             GUI &gui = lua["__GUI"];
             return gui.refresh_rate();
         }));
+
+    // マウスカーソルに関する関数群
+    lua.new_usertype<Mouse>(
+        "Mouse",
+        "pos", sol::readonly_property([&lua]() -> glm::vec2 {
+            Window &window = lua["__CurrentWindow"];
+            auto [x, y] = window.cursor_pos();
+            return {x, y};
+        }),
+        "diff", sol::readonly_property([&lua]() -> glm::vec2 {
+            Window &window = lua["__CurrentWindow"];
+            auto [x, y] = window.cursor_diff();
+            return {x, y};
+        }),
+        "disable", [&lua](std::optional<bool> flag) {
+            Window &window = lua["__CurrentWindow"];
+            window.set_input_mode(GLFW_CURSOR, flag.value_or(true) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL); });
 }
