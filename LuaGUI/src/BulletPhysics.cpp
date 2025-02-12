@@ -5,6 +5,8 @@
 void register_bullet_physics(sol::state &lua) {
     lua.new_usertype<Rigidbody>(
         "Rigidbody",
+        "group", sol::property(&Rigidbody::get_group, &Rigidbody::set_group),
+        "mask", sol::property(&Rigidbody::get_mask, &Rigidbody::set_mask),
         "mass", sol::property(&Rigidbody::get_mass, &Rigidbody::set_mass),
         "linear_velocity", sol::property(&Rigidbody::get_linear_velocity, &Rigidbody::set_linear_velocity),
         "linear_factor", sol::property(&Rigidbody::get_linear_factor, &Rigidbody::set_linear_factor),

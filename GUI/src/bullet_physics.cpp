@@ -18,16 +18,14 @@ void Rigidbody::detach_shape(const Collider &cc) const {
     }
 }
 
-Rigidbody::Rigidbody() {
-    assert(owner().get_components<Rigidbody>().empty());
-
+void Rigidbody::create_rigidbody() {
     // 剛体の作成
     // HACK: massを0にするとstaticな剛体が作れる。しかし初めにConstructionInfoに与えるものは非負にしておかないと、その後の質量の変更によるstatic/dynamicの切り替えがうまく働かない。
     shapes = std::make_unique<btCompoundShape>();
     btRigidBody::btRigidBodyConstructionInfo rb_info(1, this, shapes.get());
     rigid_body = std::make_unique<btRigidBody>(rb_info);
     rigid_body->setUserPointer(this);
-    world().bullet_world.add_rigidbody(rigid_body);
+    world().bullet_world.add_rigidbody(rigid_body, group_, mask_);
     set_mass(0);
 
     // 既にColliderがあれば、それを遅延的に実体化する。
@@ -36,12 +34,26 @@ Rigidbody::Rigidbody() {
     }
 }
 
-Rigidbody::~Rigidbody() {
+void Rigidbody::delete_rigidbody() {
     // Colliderがあれば実体が存在するので、それを削除。
     for (auto *cc : owner().get_components<Collider>()) {
         detach_shape(*cc);
     }
     world().bullet_world.remove_rigidbody(rigid_body);
+}
+
+void Rigidbody::regenerate_rigidbody() {
+    delete_rigidbody();
+    create_rigidbody();
+}
+
+Rigidbody::Rigidbody() {
+    assert(owner().get_components<Rigidbody>().empty());
+    create_rigidbody();
+}
+
+Rigidbody::~Rigidbody() {
+    delete_rigidbody();
 }
 
 void Rigidbody::set_mass(float mass) const {

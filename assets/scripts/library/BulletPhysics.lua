@@ -7,6 +7,8 @@ BulletWorld = {}
 
 ---一つの剛体を表すコンポーネント。
 ---@class Rigidbody : Component
+---@field group integer 衝突グループ
+---@field mask integer 衝突マスク
 ---@field mass number 質量
 ---@field linear_velocity vec3 速度
 ---@field linear_factor vec3 移動制限

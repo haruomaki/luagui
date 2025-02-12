@@ -29,7 +29,7 @@ class BulletWorld {
     }
 
     // 必要に応じて初期化やリソースの追加用メソッドを追加
-    void add_rigidbody(const std::unique_ptr<btRigidBody> &body) const { dynamics_world->addRigidBody(body.get()); }
+    void add_rigidbody(const std::unique_ptr<btRigidBody> &body, int group, int mask) const { dynamics_world->addRigidBody(body.get(), group, mask); }
     void remove_rigidbody(const std::unique_ptr<btRigidBody> &body) const { dynamics_world->removeRigidBody(body.get()); }
 
     void step_simulation(float delta_time, int max_sub_steps = 1) const {
@@ -67,12 +67,32 @@ class Rigidbody : public Component, public btMotionState {
     void attach_shape(const Collider &cc) const;
     void detach_shape(const Collider &cc) const;
 
+    void create_rigidbody();
+    void delete_rigidbody();
+    void regenerate_rigidbody();
+
+    // グループとマスクはbtRigidBody内で変えられないため、ここで保持する。
+    int group_ = 1;
+    int mask_ = -1;
+
   public:
     std::unique_ptr<btRigidBody> rigid_body;
     std::unique_ptr<btCompoundShape> shapes;
 
     Rigidbody();
     ~Rigidbody() override;
+
+    // グループとマスクの設定
+    [[nodiscard]] int get_group() const { return group_; }
+    void set_group(int group) {
+        group_ = group;
+        regenerate_rigidbody();
+    }
+    [[nodiscard]] int get_mask() const { return mask_; }
+    void set_mask(int mask) {
+        mask_ = mask;
+        regenerate_rigidbody();
+    }
 
     // ゲッターとセッター
     [[nodiscard]] float get_mass() const { return rigid_body->getMass(); }

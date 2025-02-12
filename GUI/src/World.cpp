@@ -107,6 +107,7 @@ std::vector<RaycastHit> World::raycast(const btVector3 &origin, const btVector3 
     btVector3 from = origin;
     btVector3 to = origin + direction;
     CustomRayResultCallback callback(from, to);
+    callback.m_collisionFilterMask = 0b0001; // グループ1にだけレイを当てる TODO: マスクを任意に指定できるように
     bullet_world.dynamics_world->rayTest(from, to, callback);
 
     // 衝突したオブジェクトがあれば、結果を取得

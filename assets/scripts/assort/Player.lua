@@ -16,6 +16,7 @@ function Player.spawn()
     local camera = head:add_camera_component("Perspective")
 
     local rb = body:add_rigidbody()
+    rb.group = 2
     rb.mass = 1
     rb.friction = 0
     rb.restitution = 0
