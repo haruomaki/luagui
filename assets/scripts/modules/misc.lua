@@ -71,9 +71,10 @@ function play_music(music)
 end
 
 ---物体の正面にレイキャストを行う。
+---@param distance number レイの射程
 ---@return table<integer, RaycastHit>
-function WorldObject:raycast_front()
-    return self.world:raycast(self.absolute_position, self:front())
+function WorldObject:raycast_front(distance)
+    return self.world:raycast(self.absolute_position, self:front() * distance)
 end
 
 --------------

@@ -3,6 +3,7 @@ local Player = require("Player")
 
 run_window(800, 600, "assort", function()
     local world = create_world()
+    world.bullet_world.gravity = vec3 { 0, -16, 0 }
     local player = Player.spawn()
     -- local camera = CreateCamera("quit", "move", "zoom")
     -- camera.owner.parent.position = vec3 { 0, 1.5, 4 }
@@ -38,7 +39,7 @@ run_window(800, 600, "assort", function()
     Thread.forever("toggle camera mode", function()
         -- 注目中オブジェクトの更新
         local new_focus = nil
-        local results = player.camera.owner:raycast_front()
+        local results = player.head:raycast_front(5)
         if (#results > 0) then
             new_focus = results[1].hitObject.owner
         end

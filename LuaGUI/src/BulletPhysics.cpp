@@ -7,9 +7,12 @@ void register_bullet_physics(sol::state &lua) {
         "Rigidbody",
         "mass", sol::property(&Rigidbody::get_mass, &Rigidbody::set_mass),
         "linear_velocity", sol::property(&Rigidbody::get_linear_velocity, &Rigidbody::set_linear_velocity),
+        "linear_factor", sol::property(&Rigidbody::get_linear_factor, &Rigidbody::set_linear_factor),
+        "angular_velocity", sol::property(&Rigidbody::get_angular_velocity, &Rigidbody::set_angular_velocity),
         "angular_factor", sol::property(&Rigidbody::get_angular_factor, &Rigidbody::set_angular_factor),
         "inertia", sol::property(&Rigidbody::get_inertia, &Rigidbody::set_inertia),
-        "restitution", sol::property([](Rigidbody *r) { return r->rigid_body->getRestitution(); }, [](Rigidbody *r, float rest) { r->rigid_body->setRestitution(rest); }),
+        "friction", sol::property(&Rigidbody::get_friction, &Rigidbody::set_friction),
+        "restitution", sol::property(&Rigidbody::get_restitution, &Rigidbody::set_restitution),
         "box_shape", &Rigidbody::box_shape,
         "plane_shape", &Rigidbody::plane_shape,
         sol::base_classes, sol::bases<Component>());
@@ -25,6 +28,11 @@ void register_bullet_physics(sol::state &lua) {
     lua["WorldObject"]["add_collider"] = [](WorldObject *obj) -> Collider * {
         return &obj->add_component<Collider>();
     };
+
+    // ワールドの設定
+    lua.new_usertype<BulletWorld>(
+        "BulletWorld",
+        "gravity", sol::property(&BulletWorld::get_gravity, &BulletWorld::set_gravity));
 
     lua.new_usertype<RaycastHit>(
         "RaycastHit",

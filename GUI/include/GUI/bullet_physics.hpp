@@ -5,6 +5,9 @@
 #include <btBulletDynamicsCommon.h>
 #include <memory>
 
+inline glm::vec3 bt_to_glm(const btVector3 &v) { return {v.x(), v.y(), v.z()}; }
+inline btVector3 glm_to_bt(const glm::vec3 &v) { return {v.x, v.y, v.z}; }
+
 class BulletWorld {
   public:
     std::unique_ptr<btDefaultCollisionConfiguration> collision_configuration;
@@ -32,10 +35,11 @@ class BulletWorld {
     void step_simulation(float delta_time, int max_sub_steps = 1) const {
         dynamics_world->stepSimulation(delta_time, max_sub_steps);
     }
-};
 
-inline glm::vec3 bt_to_glm(const btVector3 &v) { return {v.x(), v.y(), v.z()}; }
-inline btVector3 glm_to_bt(const glm::vec3 &v) { return {v.x, v.y, v.z}; }
+    // 各種プロパティ
+    [[nodiscard]] glm::vec3 get_gravity() const { return bt_to_glm(dynamics_world->getGravity()); }
+    void set_gravity(glm::vec3 v) const { dynamics_world->setGravity(glm_to_bt(v)); }
+};
 
 inline glm::mat4 bt_to_glm(const btTransform &transform) {
     btScalar matrix[16];
@@ -75,10 +79,18 @@ class Rigidbody : public Component, public btMotionState {
     void set_mass(float mass) const;
     [[nodiscard]] glm::vec3 get_linear_velocity() const { return bt_to_glm(rigid_body->getLinearVelocity()); }
     void set_linear_velocity(glm::vec3 v) const { rigid_body->setLinearVelocity(glm_to_bt(v)); }
+    [[nodiscard]] glm::vec3 get_linear_factor() const { return bt_to_glm(rigid_body->getLinearFactor()); }
+    void set_linear_factor(glm::vec3 v) const { rigid_body->setLinearFactor(glm_to_bt(v)); }
+    [[nodiscard]] glm::vec3 get_angular_velocity() const { return bt_to_glm(rigid_body->getAngularVelocity()); }
+    void set_angular_velocity(glm::vec3 v) const { rigid_body->setAngularVelocity(glm_to_bt(v)); }
     [[nodiscard]] glm::vec3 get_angular_factor() const { return bt_to_glm(rigid_body->getAngularFactor()); }
     void set_angular_factor(glm::vec3 v) const { rigid_body->setAngularFactor(glm_to_bt(v)); }
     [[nodiscard]] glm::vec3 get_inertia() const { return bt_to_glm(rigid_body->getLocalInertia()); }
     void set_inertia(glm::vec3 v) const { rigid_body->setMassProps(get_mass(), glm_to_bt(v)); }
+    [[nodiscard]] float get_friction() const { return rigid_body->getFriction(); }
+    void set_friction(float frict) const { rigid_body->setFriction(frict); }
+    [[nodiscard]] float get_restitution() const { return rigid_body->getRestitution(); }
+    void set_restitution(float rest) const { rigid_body->setRestitution(rest); }
 
     // void refresh() const;
     // void switch_type();

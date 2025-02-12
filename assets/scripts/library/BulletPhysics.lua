@@ -1,11 +1,19 @@
 ---@meta BulletPhysics
 
+---Bullet Physicsのシミュレーション世界を表すクラス。
+---@class BulletWorld
+---@field gravity vec3 重力加速度
+BulletWorld = {}
+
 ---一つの剛体を表すコンポーネント。
 ---@class Rigidbody : Component
 ---@field mass number 質量
----@field linear_velocity vec3 質量
+---@field linear_velocity vec3 速度
+---@field linear_factor vec3 移動制限
+---@field angular_velocity vec3 角速度
 ---@field angular_factor vec3 回転制限
 ---@field inertia vec3 回転のしにくさ
+---@field friction number 摩擦係数
 ---@field restitution number 反発係数
 Rigidbody = {}
 

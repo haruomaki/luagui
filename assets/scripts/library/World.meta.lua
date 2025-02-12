@@ -7,6 +7,7 @@ function create_world(debug) end
 
 ---@class World
 ---@field b2world b2World
+---@field bullet_world BulletWorld
 ---@field root WorldObject
 World = {}
 

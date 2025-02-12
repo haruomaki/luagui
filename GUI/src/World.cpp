@@ -83,7 +83,7 @@ std::vector<RaycastHit> World::raycast(const btVector3 &origin, const btVector3 
             for (int i = 0; i < m_collisionObjects.size(); i++) {
                 tmp_fractions[i] = {m_hitFractions[i], i};
             }
-            std::sort(tmp_fractions.begin(), tmp_fractions.end());
+            std::ranges::sort(tmp_fractions);
 
             for (auto [_, i] : tmp_fractions) {
                 RaycastHit hit;
