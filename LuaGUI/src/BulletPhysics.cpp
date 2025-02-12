@@ -15,6 +15,8 @@ void register_bullet_physics(sol::state &lua) {
         "restitution", sol::property(&Rigidbody::get_restitution, &Rigidbody::set_restitution),
         "box_shape", &Rigidbody::box_shape,
         "plane_shape", &Rigidbody::plane_shape,
+        "cylinder_shape", &Rigidbody::cylinder_shape,
+        "capsule_shape", &Rigidbody::capsule_shape,
         sol::base_classes, sol::bases<Component>());
 
     lua["WorldObject"]["add_rigidbody"] = [](WorldObject *obj) -> Rigidbody * {

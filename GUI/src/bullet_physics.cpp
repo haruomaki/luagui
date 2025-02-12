@@ -79,6 +79,16 @@ Collider &Rigidbody::plane_shape(float x, float y, float z, float distance) {
     cc.set_shape<btStaticPlaneShape>(btVector3{x, y, z}, distance);
     return cc;
 }
+Collider &Rigidbody::cylinder_shape(float x, float y, float z) {
+    auto &cc = owner().add_component<Collider>();
+    cc.set_shape<btCylinderShape>(btVector3{x, y, z});
+    return cc;
+}
+Collider &Rigidbody::capsule_shape(float radius, float height) {
+    auto &cc = owner().add_component<Collider>();
+    cc.set_shape<btCapsuleShape>(radius, height);
+    return cc;
+}
 
 void Rigidbody::getWorldTransform(btTransform &world_trans) const {
     auto btt = owner().get_absolute_transform();

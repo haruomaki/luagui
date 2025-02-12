@@ -67,10 +67,12 @@ static sol::object get_component(sol::state &lua, WorldObject *obj, const std::s
         auto *rbc = obj->get_component<Rigidbody2D>();
         return sol::make_object(lua, rbc);
     }
+    if (component_type == "Rigidbody") return sol::make_object(lua, obj->get_component<Rigidbody>());
     if (component_type == "SoundSource") {
         auto *ss = obj->get_component<SoundSource>();
         return sol::make_object(lua, ss);
     }
+    warn("未対応のコンポーネントクラス名です。");
     return sol::nil;
 }
 

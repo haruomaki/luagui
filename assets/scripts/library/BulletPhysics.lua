@@ -32,6 +32,19 @@ function Rigidbody:box_shape(x, y, z) end
 ---@return Collider
 function Rigidbody:plane_shape(x, y, z, distance) end
 
+---円柱状の当たり判定を追加。
+---@param x number
+---@param y number
+---@param z number
+---@return Collider
+function Rigidbody:cylinder_shape(x, y, z) end
+
+---カプセル型の当たり判定を追加。
+---@param radius number
+---@param height number
+---@return Collider
+function Rigidbody:capsule_shape(radius, height) end
+
 ---物体に剛体を付与する。
 ---@return Rigidbody
 function WorldObject:add_rigidbody() end

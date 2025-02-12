@@ -8,8 +8,14 @@ run_window(800, 600, "assort", function()
     -- local camera = CreateCamera("quit", "move", "zoom")
     -- camera.owner.parent.position = vec3 { 0, 1.5, 4 }
 
-    -- local grid = Util.grid()
+    -- キューブを生成
     local cube = Util.cube()
+    cube:add_update_component("落下したキューブのリスポーン", ForeverFun(function()
+        if cube.position.y < -10 then
+            cube.position = vec3 { 0, 3, 0 }
+            cube:get_component("Rigidbody").linear_velocity = vec3 { 0, -10, 0 }
+        end
+    end))
 
     local block = require("block")
 
@@ -19,6 +25,7 @@ run_window(800, 600, "assort", function()
             block.place(vec3 { i, -1, j })
         end
     end
+    block.place(vec3 { -1, 0, -1 })
     -- local b1 = block.place(vec3 { 0, -1, 0 })
     -- local b2 = block.place(vec3 { -1, -1, 0 })
     -- block.place(vec3 { -1, -1, -1 })
@@ -49,10 +56,5 @@ run_window(800, 600, "assort", function()
         text.message = block.focus and block.focus.id or ""
     end)
 
-    Wait(2)
-
-    print("動かします。")
-    cube.position = vec3 { 0, 2, 0 }
-    -- breakout.main()
     Forever()
 end)

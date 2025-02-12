@@ -7,17 +7,17 @@ local Player = {}
 ---@return Player
 function Player.spawn()
     local body = __CurrentWorld.root:append_empty_child()
-    body.position = vec3.new(0, 0, 3)
+    body.position = vec3.new(0, 0.75, 3)
     body.rotation = quat.angle_y(math.pi)
     local head = body:append_empty_child()
-    head.position = vec3 { 0, 1.6, 0 }
+    head.position = vec3 { 0, 0.75, 0 }
     local camera = head:add_camera_component("Perspective")
 
     local rb = body:add_rigidbody()
     rb.mass = 1
     rb.friction = 0
-    rb.restitution = 0.1
-    rb:box_shape(0.25, 0.15, 0.8)
+    rb.restitution = 0
+    rb:cylinder_shape(0.25, 0.75, 0.25)
 
     __CurrentCamera = camera
 
@@ -45,7 +45,7 @@ function Player.spawn()
         if GetKey('Up') then head.rotation = head.rotation * quat.angle_x(-angle_speed * dt) end
         if GetKey('Down') then head.rotation = head.rotation * quat.angle_x(angle_speed * dt) end
 
-        if GetKeyDown('Q') then
+        if GetKeyDown('Q') or body.position.y < -100 then
             CloseWindow()
         end
     end))

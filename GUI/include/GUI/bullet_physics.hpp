@@ -97,6 +97,8 @@ class Rigidbody : public Component, public btMotionState {
 
     Collider &box_shape(float x, float y, float z);
     Collider &plane_shape(float x, float y, float z, float distance);
+    Collider &cylinder_shape(float x, float y, float z);
+    Collider &capsule_shape(float radius, float height);
 
     void getWorldTransform(btTransform &world_trans) const override;
     void setWorldTransform(const btTransform &world_trans) override;
