@@ -1,9 +1,11 @@
 local breakout = require("breakout.main")
+local Player = require("Player")
 
 run_window(800, 600, "assort", function()
     local world = create_world()
-    local camera = CreateCamera("quit", "move", "zoom")
-    camera.owner.parent.position = vec3 { 0, 1.5, 4 }
+    local player = Player.spawn()
+    -- local camera = CreateCamera("quit", "move", "zoom")
+    -- camera.owner.parent.position = vec3 { 0, 1.5, 4 }
 
     -- local grid = Util.grid()
     local cube = Util.cube()
@@ -34,11 +36,9 @@ run_window(800, 600, "assort", function()
     text.color = RGBA { 0.8, 0.7, 0.3 }
 
     Thread.forever("toggle camera mode", function()
-        if GetKeyDown('M') then camera:toggle_mode() end
-
         -- 注目中オブジェクトの更新
         local new_focus = nil
-        local results = camera.owner:raycast_front()
+        local results = player.camera.owner:raycast_front()
         if (#results > 0) then
             new_focus = results[1].hitObject.owner
         end
@@ -52,6 +52,6 @@ run_window(800, 600, "assort", function()
 
     print("動かします。")
     cube.position = vec3 { 0, 2, 0 }
-    breakout.main()
-    -- Forever()
+    -- breakout.main()
+    Forever()
 end)

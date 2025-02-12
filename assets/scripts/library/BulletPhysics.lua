@@ -3,7 +3,9 @@
 ---一つの剛体を表すコンポーネント。
 ---@class Rigidbody : Component
 ---@field mass number 質量
----@field inertia Point 回転のしにくさ
+---@field linear_velocity vec3 質量
+---@field angular_factor vec3 回転制限
+---@field inertia vec3 回転のしにくさ
 ---@field restitution number 反発係数
 Rigidbody = {}
 

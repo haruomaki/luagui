@@ -70,7 +70,15 @@ class Rigidbody : public Component, public btMotionState {
     Rigidbody();
     ~Rigidbody() override;
 
+    // ゲッターとセッター
+    [[nodiscard]] float get_mass() const { return rigid_body->getMass(); }
     void set_mass(float mass) const;
+    [[nodiscard]] glm::vec3 get_linear_velocity() const { return bt_to_glm(rigid_body->getLinearVelocity()); }
+    void set_linear_velocity(glm::vec3 v) const { rigid_body->setLinearVelocity(glm_to_bt(v)); }
+    [[nodiscard]] glm::vec3 get_angular_factor() const { return bt_to_glm(rigid_body->getAngularFactor()); }
+    void set_angular_factor(glm::vec3 v) const { rigid_body->setAngularFactor(glm_to_bt(v)); }
+    [[nodiscard]] glm::vec3 get_inertia() const { return bt_to_glm(rigid_body->getLocalInertia()); }
+    void set_inertia(glm::vec3 v) const { rigid_body->setMassProps(get_mass(), glm_to_bt(v)); }
 
     // void refresh() const;
     // void switch_type();
