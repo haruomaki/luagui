@@ -7,13 +7,13 @@
 
 void Rigidbody::attach_shape(const Collider &cc) const {
     if (cc.shape) {
-        info("attach shape: ", cc.id);
+        info("attach shape: ", cc.name);
         shapes->addChildShape(btTransform::getIdentity(), cc.shape.get());
     }
 }
 void Rigidbody::detach_shape(const Collider &cc) const {
     if (cc.shape) {
-        info("detach shape: ", cc.id);
+        info("detach shape: ", cc.name);
         shapes->removeChildShape(cc.shape.get());
     }
 }

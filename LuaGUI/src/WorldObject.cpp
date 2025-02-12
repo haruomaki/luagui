@@ -35,7 +35,7 @@ static UpdateComponent *add_update_component(sol::state &lua, WorldObject *obj, 
     };
 
     auto &uc = obj->add_component<UpdateComponent>(std::move(runner));
-    uc.id = std::move(id);
+    uc.name = std::move(id);
     // print("add_update_componentおわり,", uc, ", ", uc->id);
     return &uc;
 }
@@ -74,8 +74,8 @@ static sol::object get_component(sol::state &lua, WorldObject *obj, const std::s
     return sol::nil;
 }
 
-static sol::object get_component_by_id(sol::state &lua, WorldObject *obj, const std::string &id) {
-    Component *comp = obj->get_component_by_id(id);
+static sol::object get_component_by_name(sol::state &lua, WorldObject *obj, const std::string &name) {
+    Component *comp = obj->get_component_by_name(name);
     // debug(id, comp);
     if (auto *p = dynamic_cast<Rigidbody2D *>(comp)) return sol::make_object(lua, p);
     if (auto *p = dynamic_cast<Collider2D *>(comp)) return sol::make_object(lua, p);
@@ -137,8 +137,8 @@ void register_world_object(sol::state &lua) {
         "get_component",
         [&lua](WorldObject *obj, const std::string &component_type) { return get_component(lua, obj, component_type); },
 
-        "get_component_by_id",
-        [&lua](WorldObject *obj, const std::string &id) { return get_component_by_id(lua, obj, id); },
+        "get_component_by_name",
+        [&lua](WorldObject *obj, const std::string &name) { return get_component_by_name(lua, obj, name); },
 
         "erase",
         [](WorldObject *obj) { obj->erase(); },
@@ -149,9 +149,9 @@ void register_world_object(sol::state &lua) {
     // Componentクラス
     lua.new_usertype<Component>(
         "Component",
-        "id", &Component::id,
+        "name", &Component::name,
         "owner", sol::readonly_property([](Component *comp) { return &comp->owner(); }),
-        "erase", [](Component *comp) { trace("[LuaGUI] Component:erase id=", comp->id); comp->erase(); });
+        "erase", [](Component *comp) { trace("[LuaGUI] Component:erase id=", comp->name); comp->erase(); });
 
     // Updateコンポーネント
     lua.new_usertype<UpdateComponent>(

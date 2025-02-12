@@ -95,7 +95,7 @@ void WorldObject::clear() {
     // オブジェクトの寿命はコンポーネントの寿命より長い（コンポーネントのデストラクタでget_owner()が無効にならないようにする）
     components_.flush(); // これが無いと、コンポーネントとその親の物体を同時に消すときなどに二重削除になる。
     components_.foreach ([](auto &comp) {
-        trace("component iteration ", comp->id);
+        trace("component iteration ", comp->name);
         comp->erase();
     });
     components_.flush();

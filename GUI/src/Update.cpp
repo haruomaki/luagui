@@ -3,7 +3,7 @@
 
 UpdateComponent::UpdateComponent(const std::function<void(UpdateComponent &)> &f, std::string category)
     : category_(std::move(category)) {
-    this->func_ = [f, this] { trace("lambda from UpdateComponent:", this->category_, " (id: ", this->id, ")"); f(*this); trace("lambda ended"); };
+    this->func_ = [f, this] { trace("lambda from UpdateComponent:", this->category_, " (id: ", this->name, ")"); f(*this); trace("lambda ended"); };
     if (category_ == "Update") {
         world().updates.request_set(&this->func_);
     } else if (category_ == "Draw") {

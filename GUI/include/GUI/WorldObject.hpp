@@ -235,10 +235,10 @@ class WorldObject {
         return result;
     }
 
-    Component *get_component_by_id(std::string_view id) {
+    Component *get_component_by_name(std::string_view id) {
         Component *ret = nullptr;
         for (auto &[k, comp] : components_) {
-            if (id == comp->id) {
+            if (id == comp->name) {
                 if (ret != nullptr) warn("同一IDの異なるコンポーネントがあります: ", id);
                 ret = comp.get();
             }

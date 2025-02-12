@@ -12,7 +12,7 @@ WorldObject = {}
 
 ---コンポーネント基底クラス
 ---@class Component
----@field id string コンポーネントのID
+---@field name string コンポーネントの名前
 ---@field owner WorldObject コンポーネントが所属するオブジェクト
 Component = {}
 
@@ -79,9 +79,9 @@ function WorldObject:add_rigidbody2d_component(body_params) end
 function WorldObject:get_component(typename) end
 
 ---IDを指定してコンポーネントを取得する
----@param id string コンポーネントのID
+---@param name string コンポーネントの名前
 ---@return Component comp キャスト済みのコンポーネント
-function WorldObject:get_component_by_id(id) end
+function WorldObject:get_component_by_name(name) end
 
 ---コンポーネントを削除する
 function Component:erase() end

@@ -14,7 +14,7 @@ class Component {
 
   public:
     // すべてのコンポーネントにIDを振るのは面倒＆ID無しも許容したいため、IDでなく型をキーとするmultimapで管理。
-    std::string id;
+    std::string name;
 
     Component();
     virtual ~Component() = default;

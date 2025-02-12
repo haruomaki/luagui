@@ -59,12 +59,12 @@ end
 ---@param obj WorldObject
 local function add_frame(obj)
     local m = obj:add_mesh_component(frame_material, frame_mesh)
-    m.id = "注目中ブロックの枠線"
+    m.name = "注目中ブロックの枠線"
 end
 
 ---@param obj WorldObject
 local function remove_frame(obj)
-    obj:get_component_by_id("注目中ブロックの枠線"):erase()
+    obj:get_component_by_name("注目中ブロックの枠線"):erase()
 end
 
 ---@param new_focusing WorldObject | nil
