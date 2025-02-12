@@ -80,7 +80,8 @@ void register_vec(sol::state &lua) {
         "r", &RGBA::r,
         "g", &RGBA::g,
         "b", &RGBA::b,
-        "a", &RGBA::a);
+        "a", &RGBA::a,
+        sol::meta_function::multiplication, [](RGBA c, size_t n) -> CV { return {n, c}; });
     lua["RGBA"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> RGBA { return to_rgba(v); }; // NOLINT(performance-unnecessary-value-param)
 
     lua.new_usertype<VI>("VI", sol::constructors<VI(std::vector<int>)>());

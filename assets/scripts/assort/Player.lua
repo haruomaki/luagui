@@ -3,7 +3,7 @@
 ---@field head WorldObject
 local Player = {}
 
-local HEIGHT = 1.5
+local HEIGHT = 1.75
 
 ---プレイヤーを出現させる。
 ---@return Player
@@ -12,7 +12,7 @@ function Player.spawn()
     body.position = vec3.new(0, HEIGHT / 2, 3)
     body.rotation = quat.angle_y(math.pi)
     local head = body:append_empty_child()
-    head.position = vec3 { 0, HEIGHT / 2, 0 }
+    head.position = vec3 { 0, HEIGHT / 2 - 0.2, 0 }
     local camera = head:add_camera_component("Perspective")
 
     local rb = body:add_rigidbody()
@@ -20,7 +20,7 @@ function Player.spawn()
     rb.mass = 1
     rb.friction = 0
     rb.restitution = 0
-    rb:cylinder_shape(0.25, HEIGHT / 2.1, 0.25)
+    rb:cylinder_shape(0.25, HEIGHT / 2, 0.25)
 
     __CurrentCamera = camera
 

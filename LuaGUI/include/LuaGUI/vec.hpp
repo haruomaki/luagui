@@ -17,6 +17,8 @@ struct V3 : std::vector<glm::vec3> {
 
 struct CV : std::vector<RGBA> {
     CV(Points tbl);
+    CV(size_t n, RGBA c)
+        : std::vector<RGBA>(n, c) {}
 };
 
 void register_vec(sol::state &lua);
