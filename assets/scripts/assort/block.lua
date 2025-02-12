@@ -69,9 +69,11 @@ end
 
 ---@param new_focusing WorldObject | nil
 function block.refresh_focus(new_focusing)
-    if block.focus ~= nil then remove_frame(block.focus) end
-    if new_focusing ~= nil then add_frame(new_focusing) end
-    block.focus = new_focusing
+    if new_focusing ~= block.focus then
+        if block.focus ~= nil then remove_frame(block.focus) end
+        if new_focusing ~= nil then add_frame(new_focusing) end
+        block.focus = new_focusing
+    end
 end
 
 return block

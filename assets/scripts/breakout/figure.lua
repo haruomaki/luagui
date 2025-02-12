@@ -46,9 +46,9 @@ function figure.block(parent, x, y)
         halfHeight = BlockHalfHeight,
         on_collision_enter = function(self, other)
             -- 削除済みチェック。複数のボールが同時にぶつかったときに二重削除を防止する。
-            if not ERASED_BLOCKS[self.owner.name] then
+            if not ERASED_BLOCKS[self.owner.id] then
                 -- 音を再生して消滅する
-                ERASED_BLOCKS[self.owner.name] = true
+                ERASED_BLOCKS[self.owner.id] = true
                 self.owner:erase()
                 Score = Score + 1
                 play_music(BlockSound)
