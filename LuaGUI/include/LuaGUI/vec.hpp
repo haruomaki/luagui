@@ -8,7 +8,17 @@ struct VI : std::vector<int> {
 };
 
 struct V2 : std::vector<glm::vec2> {
+    V2() = default;
     V2(Points tbl);
+    V2 operator*(size_t n) {
+        V2 ret;
+        for (size_t i = 0; i < n; i++) {
+            for (auto e : *this) {
+                ret.push_back(e);
+            }
+        }
+        return {ret};
+    }
 };
 
 struct V3 : std::vector<glm::vec3> {

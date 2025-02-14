@@ -9,24 +9,23 @@ block.main_world = __CurrentWorld
 block.focus = nil
 
 -- ブロックのマテリアルおよびメッシュを作成
-local material = Material.new()
+local wood_image = Image.load("images/白い木の板.jpg")
+local material = Material.from_image(wood_image)
 material.point_size = 20
 
 local a = 0.5
 local mesh = Mesh.new()
-mesh.use_index = true
-mesh.draw_mode = 'triangle_strip'
-mesh.indices = VI { 0, 2, 1, 3, 7, 2, 6, 0, 4, 1, 5, 7, 4, 6 }
-mesh.coords = V3 { { -a, -a, -a }, { a, -a, -a }, { -a, a, -a }, { a, a, -a }, { -a, -a, a }, { a, -a, a }, { -a, a, a }, { a, a, a } }
-
-local color_tmp = {}
-for i = 0, 7 do
-    local r = math.sin(0.4 * i + 1) ^ 2
-    local g = math.sin(0.4 * i + 1.5) ^ 2
-    local b = math.sin(0.4 * i + 1.8) ^ 2
-    color_tmp[i] = { r, g, b, 1 }
-end
-mesh.colors = CV(color_tmp)
+mesh.draw_mode = 'triangles'
+local p1 = { -a, -a, a }
+local p2 = { a, -a, a }
+local p3 = { -a, -a, -a }
+local p4 = { a, -a, -a }
+local p5 = { -a, a, a }
+local p6 = { a, a, a }
+local p7 = { -a, a, -a }
+local p8 = { a, a, -a }
+mesh.coords = V3 { p3, p4, p1, p1, p4, p2, p1, p2, p5, p5, p2, p6, p2, p4, p6, p6, p4, p8, p4, p3, p8, p8, p3, p7, p3, p1, p7, p7, p1, p5, p5, p6, p7, p7, p6, p8 }
+mesh.uvs = V2 { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 0, 1 }, { 1, 0 }, { 1, 1 } } * 6
 
 
 -- カーソルを当てたときのフレームのメッシュ

@@ -90,7 +90,8 @@ void register_vec(sol::state &lua) {
 
     lua.new_usertype<V2>(
         "V2",
-        sol::constructors<V2(Points)>());
+        sol::constructors<V2(Points)>(),
+        sol::meta_function::multiplication, &V2::operator*);
 
     // `V2 {...}`のように、クラス名自体に対して関数呼び出しを可能に。
     lua["V2"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, Points tbl) { return V2(std::move(tbl)); };

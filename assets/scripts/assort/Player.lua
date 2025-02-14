@@ -9,7 +9,7 @@ local HEIGHT = 1.75
 ---@return Player
 function Player.spawn()
     local body = __CurrentWorld.root:append_empty_child()
-    body.position = vec3.new(0, HEIGHT / 2, 3)
+    body.position = vec3.new(0, HEIGHT / 2, 5)
     body.rotation = quat.angle_y(math.pi)
     local head = body:append_empty_child()
     head.position = vec3 { 0, HEIGHT / 2 - 0.2, 0 }
@@ -33,7 +33,7 @@ function Player.spawn()
         local angle_speed = 0.8
 
         -- ダッシュ
-        if GetKey("LeftControl") then speed = speed * 1.7 end
+        if GetKey("LeftShift") then speed = speed * 1.7 end
 
         local y = rb.linear_velocity.y
         local newv = vec3 { 0, 0, 0 }
