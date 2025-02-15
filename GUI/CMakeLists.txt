@@ -34,9 +34,9 @@ target_include_directories(GUI SYSTEM PUBLIC third-party)
 target_link_libraries(GUI PUBLIC box2d)
 
 # Bullet Physics
-find_package(Bullet REQUIRED)
-message("あぽぽ ${BULLET_COLLISION_LIBRARY} ${BULLET_DYNAMICS_LIBRARY} ${BULLET_MATH_LIBRARY}")
-target_link_libraries(GUI PUBLIC ${BULLET_COLLISION_LIBRARY} ${BULLET_DYNAMICS_LIBRARY} ${BULLET_MATH_LIBRARY})
+find_package(Bullet CONFIG REQUIRED) # CONFIGを付けないとDebug/Release両対応にならない
+message("ライブラリ「Bullet」 ${BULLET_LIBRARIES}")
+target_link_libraries(GUI PUBLIC ${BULLET_LIBRARIES})
 target_include_directories(GUI SYSTEM PUBLIC ${BULLET_INCLUDE_DIR})
 
 
