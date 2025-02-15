@@ -75,7 +75,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (MSVC)
     # ソースファイルのエンコードをUTF-8に決め打ち
-    set(CMAKE_CXX_FLAGS "/Zc:preprocessor /EHsc /utf-8")
+    set(CMAKE_CXX_FLAGS "/Zc:preprocessor /EHsc /utf-8 /MP")
     set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /DDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE "")
 
