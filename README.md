@@ -1,4 +1,19 @@
 # ビルド方法
+
+## Windows
+
+開発者用コマンドプロンプトにて、
+```bat
+cmake -B build
+:: ビルド
+cmake --build build --config Release --target main
+:: 実行
+.\build\Release\main
+```
+
+
+## Linux
+
 GLEW, glm, FreeType, Luaが必要。
 ```bash
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_CXX_COMPILER:FILEPATH=clang++ -B ./build -G "Ninja Multi-Config"
