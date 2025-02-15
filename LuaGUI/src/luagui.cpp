@@ -111,7 +111,8 @@ static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storag
     sol::table searchers = lua["package"]["searchers"];
 
     // モジュール自身からの相対パスで検索。
-    searchers.add([&](const std::string &module_name) -> sol::object {
+    // NOTE: GCCだとsearchers.add()メソッドが動かないのでsize()を利用。
+    searchers[searchers.size() + 1] = [&](const std::string &module_name) -> sol::object {
         // requireを呼ぶ直前に、`__CWD_global__`という変数にパスを格納しておくと、そこを基準とした相対パスでアセット内を検索する。
         std::string cwd = lua["__CWD_global__"];
         // モジュール名をスクリプトアセットのフルパスに変換。
@@ -127,10 +128,10 @@ static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storag
             // ロードに失敗すればエラーメッセージを返す。
             return sol::make_object(lua, "no asset '" + module_path.string() + "'");
         }
-    });
+    };
 
     // assets/scriptsディレクトリからの絶対パスで検索。
-    searchers.add([&](const std::string &module_name) -> sol::object {
+    searchers[searchers.size() + 1] = [&](const std::string &module_name) -> sol::object {
         auto module_path = convert_module_to_path("scripts", module_name);
 
         try {
@@ -140,7 +141,7 @@ static void add_custom_searcher(sol::state &lua, const lunchbox::Storage &storag
         } catch (const std::exception & /*e*/) {
             return sol::make_object(lua, "no asset '" + module_path.string() + "'");
         }
-    });
+    };
 }
 
 LuaGUI::LuaGUI() {

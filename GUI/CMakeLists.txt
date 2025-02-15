@@ -35,9 +35,9 @@ target_link_libraries(GUI PUBLIC box2d)
 
 # Bullet Physics
 find_package(Bullet CONFIG REQUIRED) # CONFIGを付けないとDebug/Release両対応にならない
-message("ライブラリ「Bullet」 ${BULLET_LIBRARIES}")
+message("ライブラリ「Bullet」 ${BULLET_LIBRARIES} | ${BULLET_ROOT_DIR}/${BULLET_INCLUDE_DIR}")
 target_link_libraries(GUI PUBLIC ${BULLET_LIBRARIES})
-target_include_directories(GUI SYSTEM PUBLIC ${BULLET_INCLUDE_DIR})
+target_include_directories(GUI SYSTEM PUBLIC ${BULLET_ROOT_DIR}/${BULLET_INCLUDE_DIR})
 
 
 # # コンパイル済みヘッダの設定 NOTE: 逆に遅い？
