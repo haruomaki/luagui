@@ -2,14 +2,22 @@
 
 ## Windows
 
-開発者用コマンドプロンプトにて、
+Visual Studioで、C++コンパイラ/CMake/vcpkgをインストールしておきます。
+
+開発者用コマンドプロンプトを開き、`cl`コマンドや`cmake`コマンドが利用可能で、かつ環境変数`%VCPKG_ROOT%` or `$env:VCPKG_ROOT`が定義されていれば準備完了です。
+
 ```bat
+:: 準備
 cmake -B build
 :: ビルド
 cmake --build build --config Release --target main
 :: 実行
 .\build\Release\main
 ```
+
+と入力すると、`.\build`以下に成果物が生成されます。
+
+もしくはVisual Studioの画面上からもビルド可能です。その際の出力先は`.\out\build`以下になります。
 
 
 ## Linux
