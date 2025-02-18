@@ -26,9 +26,6 @@ add_subdirectory(lunchbox)
 target_link_libraries(GUI PUBLIC lunchbox)
 
 # Box2D & box2cpp Worldから直接扱えるようにPUBLIC
-if (MSVC)
-    add_compile_options(/wd4244 /wd4018) # 暗黙の型変換＆比較の警告を抑制
-endif()
 add_subdirectory(box2d)
 target_include_directories(GUI SYSTEM PUBLIC third-party)
 target_link_libraries(GUI PUBLIC box2d)

@@ -7,7 +7,9 @@
 #include "WorldObject.hpp"
 
 // ヘッダオンリーでお手軽に。virtual関数をヘッダ内で実装するときの警告抑制
+#ifdef __clang__
 #pragma clang diagnostic ignored "-Wweak-vtables"
+#endif
 
 // // 常に画面の左上にある点
 // class StickyPointTopLeft : public Update {
