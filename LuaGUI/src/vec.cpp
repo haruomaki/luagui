@@ -2,7 +2,7 @@
 
 #include <utility>
 
-static inline float get_or(const vector<float> &v, size_t index, float default_value) {
+static inline float get_or(const std::vector<float> &v, size_t index, float default_value) {
     return (index < v.size() ? v[index] : default_value);
 }
 

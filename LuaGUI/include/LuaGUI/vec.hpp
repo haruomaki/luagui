@@ -1,4 +1,6 @@
 #include <GUI/Color.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <sol/sol.hpp>
 
 using Points = std::vector<std::vector<float>>;
