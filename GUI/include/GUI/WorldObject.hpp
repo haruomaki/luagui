@@ -4,6 +4,7 @@
 #include "graphical_base.hpp"
 #include "property.hpp"
 #include <SumiGL/buffered_container.hpp>
+#include <memory> // Ubuntuで必要
 
 inline glm::mat4 triple_to_glm(glm::vec3 p, glm::quat r, glm::vec3 s) {
     return TRANSLATE(p) * glm::mat4_cast(r) * SCALE(s);
