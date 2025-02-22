@@ -33,12 +33,12 @@ target_link_libraries(GUI PUBLIC box2d)
 # Bullet Physics
 if (DEFINED CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "vcpkg.cmake")
     find_package(Bullet CONFIG REQUIRED) # CONFIGを付けないとDebug/Release両対応にならない
-    message("ライブラリ「Bullet」 ${BULLET_LIBRARIES} | ${BULLET_ROOT_DIR}/${BULLET_LIBRARY_DIRS} | ${BULLET_INCLUDE_DIR}")
-    target_link_libraries(GUI PUBLIC ${BULLET_LIBRARY_DIRS})
+    message("ライブラリ「Bullet」with vcpkg ${BULLET_LIBRARIES} | ${BULLET_ROOT_DIR}/${BULLET_LIBRARY_DIRS} | ${BULLET_INCLUDE_DIR}")
+    target_link_libraries(GUI PUBLIC ${BULLET_LIBRARIES})
     target_include_directories(GUI SYSTEM PUBLIC ${BULLET_INCLUDE_DIR}) # Windows(vcpkg?)だとフルパスになる
 else()
     find_package(Bullet CONFIG REQUIRED)
-    message("ライブラリ「Bullet」 ${BULLET_LIBRARIES} | ${BULLET_ROOT_DIR}/${BULLET_LIBRARY_DIRS} | ${BULLET_INCLUDE_DIR}")
+    message("ライブラリ「Bullet」${BULLET_ROOT_DIR}/${BULLET_INCLUDE_DIR}")
     target_link_libraries(GUI PUBLIC LinearMath BulletCollision BulletDynamics) #  ${BULLET_ROOT_DIR}/${BULLET_INCLUDE_DIR}だとUbuntuで動かない
     target_include_directories(GUI SYSTEM PUBLIC ${BULLET_ROOT_DIR}/${BULLET_INCLUDE_DIR})
 endif()
