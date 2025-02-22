@@ -68,7 +68,7 @@ jobs:
         path: ./release-files
 
     - name: List downloaded files
-      run: dir /s ./release-files  # 確認用（Linuxなら `ls -R`）
+      run: Get-ChildItem -Recurse ./release-files  # 確認用（Linuxなら `ls -R`）
 
     - name: Create GitHub Release
       env:
