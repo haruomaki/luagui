@@ -28,6 +28,22 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
     
+    - name: Check if vcpkg is installed
+      run: |
+        if (Test-Path -Path "C:\path\to\vcpkg\vcpkg.exe") {
+          .\vcpkg\vcpkg.exe --version
+        } else {
+          echo "vcpkg is not installed."
+        }
+  
+    - name: Set up VCPKG if not installed
+      if: failure()
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+      env:
+        VCPKG_ROOT: ${{ github.workspace }}\vcpkg
+
     # - name: Install vcpkg dependencies
     #   run: |
     #     git clone https://github.com/microsoft/vcpkg.git "C:\vcpkg"
@@ -37,8 +53,9 @@ jobs:
     #     .\vcpkg install freetype harfbuzz glew lua glm bullet3 physfs openal-soft sndfile --triplet x64-windows-static
 
     - name: Configure CMake
-      run: |
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+      run: cmake -B ${{ steps.strings.outputs.build-output-dir }}
+      env:
+        VCPKG_ROOT: ${{ github.workspace }}\vcpkg
 
     - name: Build
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target minimum
