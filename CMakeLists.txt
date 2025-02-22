@@ -26,10 +26,10 @@ if (DEFINED CMAKE_TOOLCHAIN_FILE)
         set(VCPKG_TARGET_TRIPLET "x64-windows-static")
     elseif(APPLE)
         # macOSの設定
-        set(VCPKG_TARGET_TRIPLET "x64-osx-static")
+        set(VCPKG_TARGET_TRIPLET "x64-osx")
     elseif(UNIX)
         # Linuxの設定
-        set(VCPKG_TARGET_TRIPLET "x64-linux-static")
+        set(VCPKG_TARGET_TRIPLET "x64-linux")
     endif()
 
     message("ターゲットトリプレット: ${VCPKG_TARGET_TRIPLET}")
