@@ -1,8 +1,23 @@
 cmake_minimum_required(VERSION 3.12)
 
-# vcpkgがあれば利用
-if(DEFINED ENV{VCPKG_ROOT})
-    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+# vcpkgの利用方法は、
+# - VCPKG_ROOTをあらかじめ設定しておく
+# - VCPKG_INSTALLATION_ROOTをあらかじめ設定しておく
+# - cmakeのコンフィギュレーションの際、-DCMAKE_TOOLCHAIN_FILE=***を明示する
+# の三種類。
+if (NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    if(DEFINED ENV{VCPKG_INSTALLATION_ROOT})
+        message("環境変数 VCPKG_INSTALLATION_ROOT を発見。")
+        set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake")
+    elseif(DEFINED ENV{VCPKG_ROOT})
+        message("環境変数 VCPKG_ROOT を発見。")
+        set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+    else()
+        message("環境変数 VCPKG_INSTALLATION_ROOT もしくは VCPKG_ROOT が設定されていません…")
+    endif()
+endif()
+
+if (DEFINED CMAKE_TOOLCHAIN_FILE)
     message("vcpkgを利用します。${CMAKE_TOOLCHAIN_FILE}")
 
     # プラットフォームごとの設定
@@ -18,10 +33,10 @@ if(DEFINED ENV{VCPKG_ROOT})
     endif()
 
     message("ターゲットトリプレット: ${VCPKG_TARGET_TRIPLET}")
+else()
+    message("vcpkgは利用しません。")
 endif()
-  #  if(VCPKG_TARGET_TRIPLET MATCHES "windows")
-   #     set(VCPKG_TARGET_TRIPLET "${VCPKG_TARGET_TRIPLET}-static")
-    #endif()
+
 
 # compile_commands.jsonを生成
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)

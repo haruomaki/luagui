@@ -32,9 +32,9 @@ target_link_libraries(GUI PUBLIC box2d)
 
 # Bullet Physics
 find_package(Bullet CONFIG REQUIRED) # CONFIGを付けないとDebug/Release両対応にならない
-message("ライブラリ「Bullet」 ${BULLET_LIBRARIES} | ${BULLET_ROOT_DIR}/${BULLET_LIBRARY_DIRS} | ${BULLET_ROOT_DIR}/${BULLET_INCLUDE_DIR}")
+message("ライブラリ「Bullet」 ${BULLET_LIBRARIES} | ${BULLET_ROOT_DIR}/${BULLET_LIBRARY_DIRS} | ${BULLET_INCLUDE_DIR}")
 target_link_libraries(GUI PUBLIC LinearMath BulletCollision BulletDynamics) #  ${BULLET_ROOT_DIR}/${BULLET_INCLUDE_DIR}だとUbuntuで動かない
-target_include_directories(GUI SYSTEM PUBLIC ${BULLET_ROOT_DIR}/${BULLET_INCLUDE_DIR})
+target_include_directories(GUI SYSTEM PUBLIC ${BULLET_INCLUDE_DIR}) # BULLET_ROOT_DIRは使わなくてよさそう。特にWindowsではこうでないと動かない。
 
 
 # # コンパイル済みヘッダの設定 NOTE: 逆に遅い？
