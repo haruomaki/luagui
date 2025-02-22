@@ -8,6 +8,9 @@ on:
   pull_request:
     branches: [ "github" ]
 
+permissions:
+  contents: write  # リリースページの作成に必要
+
 jobs:
   build:
     runs-on: windows-latest
@@ -68,11 +71,11 @@ jobs:
         path: ./release-files
 
     - name: List downloaded files
-      run: Get-ChildItem -Recurse ./release-files  # 確認用（Linuxなら `ls -R`）
+      run: Get-ChildItem -Recurse .\release-files  # 確認用（Linuxなら `ls -R`）
 
     - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        $files = Get-ChildItem -Path ".\release-files" | ForEach-Object { $_.FullName }
+        $files = Get-ChildItem -Path .\release-files | ForEach-Object { $_.FullName }
         gh release create "${{ github.ref_name }}" $files --title "Release ${{ github.ref_name }}" --notes "Automated release for ${{ github.ref_name }}"
