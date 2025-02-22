@@ -74,4 +74,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release create "${{ github.ref_name }}" ./release-files/* --title "Release ${{ github.ref_name }}" --notes "Automated release for ${{ github.ref_name }}"
+        $files = Get-ChildItem -Path ".\release-files" | ForEach-Object { $_.FullName }
+        gh release create "${{ github.ref_name }}" $files --title "Release ${{ github.ref_name }}" --notes "Automated release for ${{ github.ref_name }}"
