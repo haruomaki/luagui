@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12)
 # - VCPKG_INSTALLATION_ROOTをあらかじめ設定しておく
 # - cmakeのコンフィギュレーションの際、-DCMAKE_TOOLCHAIN_FILE=***を明示する
 # の三種類。
-if (NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+if (NOT DISABLE_VCPKG AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     if(DEFINED ENV{VCPKG_INSTALLATION_ROOT})
         message("環境変数 VCPKG_INSTALLATION_ROOT を発見。")
         set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake")
@@ -17,7 +17,7 @@ if (NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     endif()
 endif()
 
-if (DEFINED CMAKE_TOOLCHAIN_FILE)
+if (DEFINED CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "vcpkg.cmake")
     message("vcpkgを利用します。${CMAKE_TOOLCHAIN_FILE}")
 
     # プラットフォームごとの設定
