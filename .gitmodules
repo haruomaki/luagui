@@ -3,7 +3,7 @@
 	url = https://github.com/erincatto/box2d.git
 [submodule "GUI/sumigl"]
 	path = GUI/sumigl
-	url = git@codeberg.org:haruomaki/sumigl.git
+	url = https://codeberg.org/haruomaki/sumigl.git
 [submodule "GUI/lunchbox"]
 	path = GUI/lunchbox
-	url = git@codeberg.org:haruomaki/lunchbox.git
+	url = https://codeberg.org/haruomaki/lunchbox.git

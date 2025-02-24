@@ -1,0 +1,68 @@
+name: CMake on Linux
+
+on:
+  push:
+    branches: [ "github" ]
+  pull_request:
+    branches: [ "github" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        include:
+          - build_type: Release
+            cpp_compiler: g++
+          - build_type: Release
+            cpp_compiler: clang++
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          cmake ninja-build p7zip-full \
+          xorg-dev libglu1-mesa-dev\
+          libfreetype6-dev \
+          libharfbuzz-dev \
+          libglew-dev \
+          liblua5.3-dev \
+          libglm-dev \
+          libbullet-dev \
+          libphysfs-dev \
+          libopenal-dev \
+          libsndfile1-dev
+
+    - name: Configure CMake
+      run: |
+        cmake -B ${{ steps.strings.outputs.build-output-dir }} \
+              -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DDISABLE_VCPKG=ON \
+              -S ${{ github.workspace }} \
+              -G Ninja
+
+    - name: Build
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target assort
+
+    - name: Upload artifact
+      if: matrix.cpp_compiler == 'g++'
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifact-linux
+        path: ${{ steps.strings.outputs.build-output-dir }}

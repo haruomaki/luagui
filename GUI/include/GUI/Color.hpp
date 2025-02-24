@@ -1,6 +1,7 @@
 #pragma once
 
-#include <GUI/graphical_base.hpp>
+#include <glm/vec4.hpp>
+#include <iostream>
 
 // struct RGBA;
 

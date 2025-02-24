@@ -1,0 +1,81 @@
+name: CMake on Windows
+
+on:
+  push:
+    branches: [ "github" ]
+    tags: [ "*" ]  # タグのプッシュ時にリリースを作成
+
+  pull_request:
+    branches: [ "github" ]
+
+permissions:
+  contents: write  # リリースページの作成に必要
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release]
+
+    env:
+      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}\build" >> "$GITHUB_OUTPUT"
+
+    - name: Export GitHub Actions cache environment variables
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: Configure CMake
+      run: cmake -B ${{ steps.strings.outputs.build-output-dir }}
+
+    - name: Build
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target assort
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifact-windows
+        path: ${{ steps.strings.outputs.build-output-dir }}\Release
+
+  release:
+    # タグのプッシュ時のみ実行
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: windows-latest
+    needs: build  # `build` ジョブの完了を待つ
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifact-windows
+        path: ./release-files
+
+    - name: List downloaded files
+      run: Get-ChildItem -Recurse .\release-files  # 確認用（Linuxなら `ls -R`）
+
+    - name: Create GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        $files = Get-ChildItem -Path .\release-files | ForEach-Object { $_.FullName }
+        gh release create "${{ github.ref_name }}" $files --title "Release ${{ github.ref_name }}" --notes "Automated release for ${{ github.ref_name }}"

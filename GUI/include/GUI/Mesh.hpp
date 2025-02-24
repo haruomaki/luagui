@@ -40,12 +40,12 @@ class StaticMesh : virtual public Resource {
     InterleavedVertexInfoVector vertices;
     std::vector<int> indices;
 
-    StaticMesh(GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
+    StaticMesh(GLenum draw_mode = GL_TRIANGLE_STRIP, const std::vector<glm::vec3> &coords = {}, const std::vector<RGBA> &colors = {}, const std::vector<glm::vec2> &uvs = {}, GLenum usage = GL_STATIC_DRAW)
         : usage_(usage)
         , n_(coords.size())
         , capacity_(coords.capacity())
         , draw_mode(draw_mode) {
-        vector<InterleavedVertexInfo> vers(n_);
+        std::vector<InterleavedVertexInfo> vers(n_);
         for (size_t i = 0; i < n_; i++) {
             vers[i].coord = coords[i];
             if (i < colors.size()) vers[i].color = colors[i]; // 色情報がないときは白色に
@@ -84,7 +84,7 @@ class Mesh : public StaticMesh, public ResourceUpdate {
     }
 
   public:
-    Mesh(GLenum draw_mode = GL_TRIANGLE_STRIP, const vector<glm::vec3> &coords = {}, const vector<RGBA> &colors = {}, const vector<glm::vec2> &uvs = {})
+    Mesh(GLenum draw_mode = GL_TRIANGLE_STRIP, const std::vector<glm::vec3> &coords = {}, const std::vector<RGBA> &colors = {}, const std::vector<glm::vec2> &uvs = {})
         : StaticMesh(draw_mode, coords, colors, uvs, GL_DYNAMIC_DRAW) {}
 };
 
@@ -101,7 +101,7 @@ class MeshComponent : public Component {
 struct ModelMatricesObservation {
     // 同一のKey三項組を持つ物体たちのモデル行列をひとまとめに格納する。
     // 物体が一つでも追加/削除されるたび、再生成される。
-    vector<glm::mat4> model_matrices;
+    std::vector<glm::mat4> model_matrices;
     // とある物体のモデル行列がmodel_matrices内のどの位置に格納されているかを記録する。
     // ここのキーに無い物体は、そもそもモデル行列が格納されていない。
     // 物体が一つでも追加/削除されるたび、model_matricesに付随して再生成される。

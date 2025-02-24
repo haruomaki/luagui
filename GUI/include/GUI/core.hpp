@@ -9,12 +9,12 @@ struct InterleavedVertexInfo {
     glm::vec2 uv = {0, 0};
 };
 
-struct InterleavedVertexInfoVector : public vector<InterleavedVertexInfo> {
+struct InterleavedVertexInfoVector : public std::vector<InterleavedVertexInfo> {
     // コンストラクタのオーバーロード
     InterleavedVertexInfoVector() = default;
 
     // vector<T> を TVector に代入するための代入演算子のオーバーロード
-    InterleavedVertexInfoVector &operator=(const vector<InterleavedVertexInfo> &other) {
+    InterleavedVertexInfoVector &operator=(const std::vector<InterleavedVertexInfo> &other) {
         vector<InterleavedVertexInfo>::operator=(other);
         return *this;
     }
