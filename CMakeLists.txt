@@ -38,8 +38,8 @@ else()
 endif()
 
 
-# compile_commands.jsonを生成
-set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+# # compile_commands.jsonを生成
+# set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 project(cppgui CXX)
 
@@ -49,6 +49,8 @@ project(cppgui CXX)
 # vscodeのkit設定: ~/.local/share/CMakeTools/cmake-tools-kits.jsonを編集 https://qiita.com/kilo/items/05e48d22ceff55049b29
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+# set(LIBTYPE STATIC) # openal-softを静的ビルド
+# option(FORCE_STATIC_VCRT "Force /MT だよ" ON)
 
 # コンパイルオプション（-Weverythingを使いたいためclangのときだけ）
 # 適用したいプロジェクトに対して、target_compile_options(*** PRIVATE ${WARNINGS})とする
@@ -99,16 +101,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if (MSVC)
     # ソースファイルのエンコードをUTF-8に決め打ち
     set(CMAKE_CXX_FLAGS "/Zc:preprocessor /EHsc /utf-8 /MP")
-    set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /DDEBUG")
-    set(CMAKE_CXX_FLAGS_RELEASE "")
+    set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /DDEBUG /MTd")
+    set(CMAKE_CXX_FLAGS_RELEASE "/MT")
 
-    # WindowsでBulletをデバッグビルドするのに必要？
-#    add_compile_options(
- #       $<$<CONFIG:Debug>:/MTd>
-  #  )
-
+  # MSBuildなど、マルチコンフィグなジェネレータ用に必要
   add_compile_options(
-        $<$<CONFIG:>:/MT>
         $<$<CONFIG:Debug>:/MTd>
         $<$<CONFIG:RelWithDebInfo>:/MT>
         $<$<CONFIG:MinSizeRel>:/MT>
