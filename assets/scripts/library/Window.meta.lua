@@ -78,7 +78,25 @@ Screen = {}
 ---@class Mouse
 ---@field pos vec2 マウスカーソルの位置
 ---@field diff vec2 マウスカーソルの移動速度
+---@field left boolean 左ボタンが押されているか
+---@field right boolean 右ボタンが押されているか
 Mouse = {}
+
+---左クリックされたかどうかを返す。
+---@return boolean
+function Mouse.LeftDown() end
+
+---右クリックされたかどうかを返す。
+---@return boolean
+function Mouse.RightDown() end
+
+---左クリックが解消されたかどうかを返す。
+---@return boolean
+function Mouse.LeftUp() end
+
+---右クリックが解消されたかどうかを返す。
+---@return boolean
+function Mouse.RightUp() end
 
 ---マウスカーソルを無効化する。
 ---@param flag boolean? trueだとカーソルが消え、仮想的に無制限移動できるようになる

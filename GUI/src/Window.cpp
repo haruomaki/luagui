@@ -1,6 +1,7 @@
 #include "Window.hpp"
 #include "Camera.hpp"
 #include "GUI.hpp"
+#include <GLFW/glfw3.h>
 #include <SumiGL/Context.hpp>
 
 using namespace std::chrono_literals;
@@ -37,6 +38,16 @@ Window::Window(GUI &gui, int width, int height, const std::string &title)
         }
     });
 
+    // 同じく、マウスボタンのクリックを記録する。mouse_down()/mouse_up()に必要
+    glfwSetMouseButtonCallback(gwin(), [](GLFWwindow *gwin, int button, int action, int mods) {
+        auto *window = GL::get_user_pointer<Window>(gwin);
+        if (action == GLFW_PRESS) {
+            window->mouse_down_.at(button) = true;
+        } else if (action == GLFW_RELEASE) {
+            window->mouse_up_.at(button) = true;
+        }
+    });
+
     gui.windows.request_set(this);
 }
 
@@ -53,6 +64,8 @@ Window &Window::operator=(Window &&other) noexcept {
         other.gui_ = nullptr; // ムーブ元のインスタンスを無効化
         key_down_ = other.key_down_;
         key_up_ = other.key_up_;
+        mouse_down_ = other.mouse_down_;
+        mouse_up_ = other.mouse_up_;
         last_cursor_ = other.last_cursor_;
         diff_ = other.diff_;
 
@@ -129,9 +142,11 @@ void Window::step() {
     // フレームバッファサイズを更新
     fbsize_cache = framebuffer_size();
 
-    // 今フレームのキーイベント発生状況を0にリセットする
+    // 今フレームのキー/マウスイベント発生状況を0にリセットする
     key_down_.fill(false);
     key_up_.fill(false);
+    mouse_down_.fill(false);
+    mouse_up_.fill(false);
 
     // カーソル位置を更新
     const auto [x, y] = cursor_pos();

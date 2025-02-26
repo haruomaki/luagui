@@ -1,6 +1,7 @@
 #include "Window.hpp"
 #include <GUI/GUI.hpp>
 #include <GUI/Window.hpp>
+#include <sol/sol.hpp>
 
 using Keymap = std::unordered_map<std::string_view, int>;
 
@@ -114,6 +115,26 @@ void register_window(sol::state &lua) {
             auto [x, y] = window.cursor_diff();
             return {x, y};
         }),
+        "left", sol::readonly_property([&lua]() -> bool {
+            Window &window = lua["__CurrentWindow"];
+            return window.mouse(GLFW_MOUSE_BUTTON_LEFT);
+        }),
+        "right", sol::readonly_property([&lua]() -> bool {
+            Window &window = lua["__CurrentWindow"];
+            return window.mouse(GLFW_MOUSE_BUTTON_RIGHT);
+        }),
+        "LeftDown", [&lua]() -> bool {
+            Window &window = lua["__CurrentWindow"];
+            return window.mouse_down()[GLFW_MOUSE_BUTTON_LEFT]; },
+        "RightDown", [&lua]() -> bool {
+            Window &window = lua["__CurrentWindow"];
+            return window.mouse_down()[GLFW_MOUSE_BUTTON_RIGHT]; },
+        "LeftUp", [&lua]() -> bool {
+                Window &window = lua["__CurrentWindow"];
+                return window.mouse_up()[GLFW_MOUSE_BUTTON_LEFT]; },
+        "RightUp", [&lua]() -> bool {
+                Window &window = lua["__CurrentWindow"];
+                return window.mouse_up()[GLFW_MOUSE_BUTTON_RIGHT]; },
         "disable", [&lua](std::optional<bool> flag) {
             Window &window = lua["__CurrentWindow"];
             window.set_input_mode(GLFW_CURSOR, flag.value_or(true) ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL); });

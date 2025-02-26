@@ -13,7 +13,9 @@ struct CameraInterface;
 class Window : public GL::Window {
     GUI *gui_ = nullptr; // インスタンスが有効か無効かの目印
     using KeyArray = std::array<bool, 512>;
+    using MouseArray = std::array<bool, GLFW_MOUSE_BUTTON_LAST + 1>;
     KeyArray key_down_{}, key_up_{};
+    MouseArray mouse_down_{}, mouse_up_{};
     std::pair<double, double> last_cursor_ = cursor_pos(), diff_ = {0, 0};
 
     friend class GUI; // step()を呼ぶため
@@ -53,4 +55,10 @@ class Window : public GL::Window {
 
     // 現在フレームにおける、キー変更イベント（離した）の有無を表す
     [[nodiscard]] const KeyArray &key_up() const { return key_up_; }
+
+    // 現在フレームにおける、マウスボタン変更イベント（押した）の有無を表す
+    [[nodiscard]] const MouseArray &mouse_down() const { return mouse_down_; }
+
+    // 現在フレームにおける、マウスボタン変更イベント（離した）の有無を表す
+    [[nodiscard]] const MouseArray &mouse_up() const { return mouse_up_; }
 };
