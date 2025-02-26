@@ -11,7 +11,7 @@ block.focus = nil
 -- ブロックのマテリアルおよびメッシュを作成
 -- local wood_image = Image.load("images/白い木の板.jpg")
 -- local material = Material.from_image(wood_image)
-material = Material.load("models/ブロック.glb")
+local material = Material.load("models/ブロック.glb")
 material.point_size = 20
 
 local a = 0.5

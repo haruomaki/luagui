@@ -23,7 +23,7 @@ run_window(800, 600, "assort", function()
 
     -- 地面となるブロックを配置
     for i = -10, 10 do
-        for j = -10, 10 do
+        for j = -30, 30 do
             block.place(vec3 { i, -1, j })
         end
     end

@@ -8,6 +8,21 @@
 inline glm::vec3 bt_to_glm(const btVector3 &v) { return {v.x(), v.y(), v.z()}; }
 inline btVector3 glm_to_bt(const glm::vec3 &v) { return {v.x, v.y, v.z}; }
 
+// デバッグビルド時にも静的オブジェクト同士の衝突を完全に無視する。
+class CustomCollisionDispatcher : public btCollisionDispatcher {
+  public:
+    CustomCollisionDispatcher(btCollisionConfiguration *config)
+        : btCollisionDispatcher(config) {}
+
+    bool needsCollision(const btCollisionObject *body0, const btCollisionObject *body1) override {
+        if ((body0->getCollisionFlags() & btCollisionObject::CF_STATIC_OBJECT) &&
+            (body1->getCollisionFlags() & btCollisionObject::CF_STATIC_OBJECT)) {
+            return false; // 静的オブジェクト同士の衝突を完全に無視
+        }
+        return btCollisionDispatcher::needsCollision(body0, body1);
+    }
+};
+
 class BulletWorld {
   public:
     std::unique_ptr<btDefaultCollisionConfiguration> collision_configuration;
@@ -18,7 +33,7 @@ class BulletWorld {
 
     BulletWorld() {
         collision_configuration = std::make_unique<btDefaultCollisionConfiguration>();
-        dispatcher = std::make_unique<btCollisionDispatcher>(collision_configuration.get());
+        dispatcher = std::make_unique<CustomCollisionDispatcher>(collision_configuration.get());
         overlapping_pair_cache = std::make_unique<btDbvtBroadphase>();
         solver = std::make_unique<btSequentialImpulseConstraintSolver>();
         dynamics_world = std::make_unique<btDiscreteDynamicsWorld>(
