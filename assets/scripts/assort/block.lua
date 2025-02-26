@@ -14,18 +14,18 @@ local material = Material.from_image(wood_image)
 material.point_size = 20
 
 local a = 0.5
-local mesh = Mesh.new()
-mesh.draw_mode = 'triangles'
-local p1 = { -a, -a, a }
-local p2 = { a, -a, a }
-local p3 = { -a, -a, -a }
-local p4 = { a, -a, -a }
-local p5 = { -a, a, a }
-local p6 = { a, a, a }
-local p7 = { -a, a, -a }
-local p8 = { a, a, -a }
-mesh.coords = V3 { p3, p4, p1, p1, p4, p2, p1, p2, p5, p5, p2, p6, p2, p4, p6, p6, p4, p8, p4, p3, p8, p8, p3, p7, p3, p1, p7, p7, p1, p5, p5, p6, p7, p7, p6, p8 }
-mesh.uvs = V2 { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 0, 1 }, { 1, 0 }, { 1, 1 } } * 6
+local mesh = Mesh.load("models/ブロック.glb")
+-- mesh.draw_mode = 'triangles'
+-- local p1 = { -a, -a, a }
+-- local p2 = { a, -a, a }
+-- local p3 = { -a, -a, -a }
+-- local p4 = { a, -a, -a }
+-- local p5 = { -a, a, a }
+-- local p6 = { a, a, a }
+-- local p7 = { -a, a, -a }
+-- local p8 = { a, a, -a }
+-- mesh.coords = V3 { p3, p4, p1, p1, p4, p2, p1, p2, p5, p5, p2, p6, p2, p4, p6, p6, p4, p8, p4, p3, p8, p8, p3, p7, p3, p1, p7, p7, p1, p5, p5, p6, p7, p7, p6, p8 }
+-- mesh.uvs = V2 { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 0, 1 }, { 1, 0 }, { 1, 1 } } * 6
 
 
 -- カーソルを当てたときのフレームのメッシュ

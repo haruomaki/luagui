@@ -1,4 +1,5 @@
 #include "mesh.hpp"
+#include "Lunchbox/core/glTF.hpp"
 #include "vec.hpp"
 #include <GUI/GUI.hpp>
 #include <GUI/Mesh.hpp>
@@ -86,6 +87,18 @@ void register_mesh(sol::state &lua) {
         "uvs", sol::property([](Mesh *m) { return m->vertices.get_uvs(); }, [](Mesh *m, const V2 &u) { m->vertices.set_uvs(u); }),
         "use_index", &Mesh::use_index,
         "draw_mode", sol::property([](Mesh *m) { return mode_to_string(m->draw_mode); }, [](Mesh *m, const std::string &s) { m->draw_mode = string_to_mode(s); }),
+        "load", [&lua](const std::string &file_path) -> Mesh * {
+            GUI &gui = lua["__GUI"];
+            lunchbox::Storage &storage = lua["__Storage"];
+            auto model = storage.get_model(file_path);
+            auto &mesh = gui.resources.append<Mesh>().get();
+            mesh.vertices.setCoords(gltf::vertex_data(model));
+            mesh.vertices.set_uvs(gltf::uv_data(model));
+            mesh.indices = gltf::index_data(model);
+            mesh.use_index = true;
+            mesh.draw_mode = GL_TRIANGLES;
+            return &mesh;
+        },
         sol::base_classes, sol::bases<Resource>());
 
     lua["WorldObject"]["add_mesh_component"] = [](WorldObject &parent, Material *material, Mesh *mesh) -> MeshComponent * {

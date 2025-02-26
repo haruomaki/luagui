@@ -57,3 +57,8 @@ function Mesh.new(coords, uvs) end
 ---@param mesh Mesh
 ---@return MeshComponent
 function WorldObject:add_mesh_component(material, mesh) end
+
+---ファイルからメッシュを読み込む。
+---@param file_path string ファイルパス
+---@return Mesh
+function Mesh.load(file_path) end
