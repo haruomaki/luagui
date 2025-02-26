@@ -47,15 +47,14 @@ run_window(800, 600, "assort", function()
 
     Thread.forever("toggle camera mode", function()
         -- 注目中オブジェクトの更新
-        local new_focus = nil
-        local results = player.head:raycast_front(5)
-        if (#results > 0) then
-            new_focus = results[1].hitObject.owner
-        end
-        block.refresh_focus(new_focus)
+        block.refresh_focus(player.head)
 
         -- デバッグ情報の更新
         text.message = block.focus and block.focus.id or ""
+
+        if Mouse.LeftDown() and block.focus then
+            print("左クリック", block.focus.position)
+        end
     end)
 
     Forever()

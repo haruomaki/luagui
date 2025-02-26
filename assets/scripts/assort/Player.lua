@@ -56,14 +56,6 @@ function Player.spawn()
         if GetKey('Down') then head.rotation = head.rotation * quat.angle_x(angle_speed * dt) end
         head.rotation = head.rotation * quat.angle_x(Mouse.diff.y * 0.2 * dt)
 
-        if Mouse.LeftDown() then
-            print("左クリック！")
-        end
-
-        if Mouse.RightDown() then
-            print("右クリック！")
-        end
-
         if GetKeyDown('Q') or body.position.y < -20 then
             CloseWindow()
         end

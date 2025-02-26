@@ -8,6 +8,10 @@ block.main_world = __CurrentWorld
 ---@type WorldObject | nil
 block.focus = nil
 
+---現在のレイキャスト結果
+---@type RaycastHit | nil
+block.raycast_result = nil
+
 -- ブロックのマテリアルおよびメッシュを作成
 -- local wood_image = Image.load("images/白い木の板.jpg")
 -- local material = Material.from_image(wood_image)
@@ -27,6 +31,7 @@ local mesh = Mesh.load("models/ブロック.glb")
 -- local p8 = { a, a, -a }
 -- mesh.coords = V3 { p3, p4, p1, p1, p4, p2, p1, p2, p5, p5, p2, p6, p2, p4, p6, p6, p4, p8, p4, p3, p8, p8, p3, p7, p3, p1, p7, p7, p1, p5, p5, p6, p7, p7, p6, p8 }
 -- mesh.uvs = V2 { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 0, 1 }, { 1, 0 }, { 1, 1 } } * 6
+print(mesh.coords)
 
 
 -- カーソルを当てたときのフレームのメッシュ
@@ -68,8 +73,16 @@ local function remove_frame(obj)
     obj:get_component_by_name("注目中ブロックの枠線"):erase()
 end
 
----@param new_focusing WorldObject | nil
-function block.refresh_focus(new_focusing)
+---レイキャストを行い、注目中のブロックを更新する
+---@param player_head WorldObject
+function block.refresh_focus(player_head)
+    local new_focusing = nil
+    local results = player_head:raycast_front(5)
+    block.raycast_result = results[1] -- 先頭の物体にレイが当たったら保存。当たらなかったらnil。
+    if (block.raycast_result ~= nil) then
+        new_focusing = block.raycast_result.hitObject.owner
+    end
+
     if new_focusing ~= block.focus then
         if block.focus ~= nil then remove_frame(block.focus) end
         if new_focusing ~= nil then add_frame(new_focusing) end
