@@ -1,27 +1,30 @@
-#include <Lunchbox/OpenAL.hpp>
-#include <Lunchbox/Storage.hpp>
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <Lunchbox/core/third-party/tiny_gltf.h>
-#include <SumiGL/misc.hpp>
+#include <iostream>
+
+bool load_model(tinygltf::Model &model, const std::string &filename) {
+    tinygltf::TinyGLTF loader;
+    std::string err;
+    std::string warn;
+
+    bool res = loader.LoadBinaryFromFile(&model, &err, &warn, filename);
+    if (!warn.empty()) {
+        std::cout << "Warning: " << warn << std::endl;
+    }
+    if (!err.empty()) {
+        std::cout << "Error: " << err << std::endl;
+    }
+    return res;
+}
 
 int main() {
-    setUTF8();
-    std::cout << "こんにちは\n";
-
-    OpenAL::Context openal_ctx;
-    lunchbox::Storage storage;
-    std::cout << storage.get_text("shaders/hello.vsh");
-
-    const auto sound = storage.get_sound("audio/テスト音声.wav");
-
-    // // OpenALバッファとソース作成
-    // OpenAL::Buffer al_buffer(sound.wave, sound.channels == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, sound.samplerate);
-    // OpenAL::Source source(al_buffer);
-
-    // // 再生
-    // source.play();
-    // source.set_gain(1); // 音量調節も可能
-    // std::cout << "再生中...\n";
-
-    // // 再生が終了するまで待機
-    // while (source.is_playing());
+    tinygltf::Model model;
+    if (load_model(model, "assets/models/cube.glb")) {
+        std::cout << "Model loaded successfully!" << std::endl;
+    } else {
+        std::cout << "Failed to load model." << std::endl;
+    }
+    return 0;
 }
