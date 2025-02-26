@@ -1,13 +1,9 @@
-#include <Lunchbox/core/glTF.hpp>
+#include <Lunchbox/Storage.hpp>
 #include <iostream>
 
 int main() {
-    tinygltf::Model model;
-    if (gltf::load_model(model, "assets/models/cube.glb")) {
-        std::cout << "Model loaded successfully!" << std::endl;
-    } else {
-        std::cout << "Failed to load model." << std::endl;
-    }
+    lunchbox::Storage storage;
+    auto model = storage.get_model("models/cube.glb");
 
     for (size_t i = 0; auto v : gltf::vertex_data(model)) {
         std::cout << "Vertexv " << i++ << ": " << v.x << " "
