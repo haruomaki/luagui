@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 
 # vcpkgの利用方法は、
 # - VCPKG_ROOTをあらかじめ設定しておく
@@ -51,6 +51,7 @@ project(cppgui CXX)
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 # set(LIBTYPE STATIC) # openal-softを静的ビルド
 # option(FORCE_STATIC_VCRT "Force /MT だよ" ON)
+# set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF)
 
 # コンパイルオプション（-Weverythingを使いたいためclangのときだけ）
 # 適用したいプロジェクトに対して、target_compile_options(*** PRIVATE ${WARNINGS})とする
@@ -101,16 +102,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if (MSVC)
     # ソースファイルのエンコードをUTF-8に決め打ち
     set(CMAKE_CXX_FLAGS "/Zc:preprocessor /EHsc /utf-8 /MP")
-    set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /DDEBUG /MTd")
-    set(CMAKE_CXX_FLAGS_RELEASE "/MT")
-
-  # MSBuildなど、マルチコンフィグなジェネレータ用に必要
-  add_compile_options(
-        $<$<CONFIG:Debug>:/MTd>
-        $<$<CONFIG:RelWithDebInfo>:/MT>
-        $<$<CONFIG:MinSizeRel>:/MT>
-        $<$<CONFIG:Release>:/MT>
-    )
+    set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /DDEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 else()
     set(CMAKE_CXX_FLAGS "-fPIC -msse4.1")
     set(CMAKE_CXX_FLAGS_DEBUG "-g3 -O0 -DDEBUG")
