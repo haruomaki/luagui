@@ -2,9 +2,9 @@ name: CMake on Linux
 
 on:
   push:
-    branches: [ "github" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "github" ]
+    branches: [ "main" ]
 
 jobs:
   build:

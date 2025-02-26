@@ -2,11 +2,11 @@ name: CMake on Windows
 
 on:
   push:
-    branches: [ "github" ]
+    branches: [ "main" ]
     tags: [ "*" ]  # タグのプッシュ時にリリースを作成
 
   pull_request:
-    branches: [ "github" ]
+    branches: [ "main" ]
 
 permissions:
   contents: write  # リリースページの作成に必要
