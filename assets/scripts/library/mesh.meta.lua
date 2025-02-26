@@ -42,6 +42,11 @@ function Material.new() end
 ---@return Material
 function Material.from_image(image) end
 
+---3Dモデルファイルからマテリアルを読み込む。
+---@param file_path string ファイルパス
+---@return Material
+function Material.load(file_path) end
+
 ---空のメッシュを作成する。
 ---@return Mesh
 function Mesh.new() end

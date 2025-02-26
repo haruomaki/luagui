@@ -76,6 +76,14 @@ void register_mesh(sol::state &lua) {
             auto texture = GL::create_texture(img.width, img.height, img.channels, img.pixels.get());
             Material &material = MaterialBuilder().texture(std::move(texture)).build(gui);
             return &material; },
+        "load", [&lua](const std::string &file_path) -> Material * {
+            GUI &gui = lua["__GUI"];
+            lunchbox::Storage &storage = lua["__Storage"];
+            auto model = storage.get_model(file_path);
+            auto img = gltf::textures(model);
+            auto texture = GL::create_texture(img.width, img.height, img.channels, img.pixels.get());
+            Material &material = MaterialBuilder().texture(std::move(texture)).build(gui);
+            return &material; },
         sol::base_classes, sol::bases<Resource>());
 
     lua.new_usertype<Mesh>(
