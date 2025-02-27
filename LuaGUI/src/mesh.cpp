@@ -89,10 +89,10 @@ void register_mesh(sol::state &lua) {
     lua.new_usertype<Mesh>(
         "Mesh",
         "new", sol::overload([&lua]() -> Mesh * { GUI &gui = lua["__GUI"]; return &gui.resources.append<Mesh>().get(); }, [&lua](const V3 &coords, const V2 &uvs) { return new_mesh(lua, coords, uvs); }),
-        "indices", sol::property([](Mesh *m) { return m->indices; }, [](Mesh *m, const VI &i) { m->indices = i; }),
-        "coords", sol::property([](Mesh *m) { return m->vertices.getCoords(); }, [](Mesh *m, const V3 &c) { m->vertices.setCoords(c); }),
-        "colors", sol::property([](Mesh *m) { return m->vertices.getColors(); }, [](Mesh *m, const CV &c) { m->vertices.setColors(c); }),
-        "uvs", sol::property([](Mesh *m) { return m->vertices.get_uvs(); }, [](Mesh *m, const V2 &u) { m->vertices.set_uvs(u); }),
+        "indices", sol::property([](Mesh *m) { return VI(m->indices); }, [](Mesh *m, const VI &i) { m->indices = i; }),
+        "coords", sol::property([](Mesh *m) { return V3(m->vertices.getCoords()); }, [](Mesh *m, const V3 &c) { m->vertices.setCoords(c); }),
+        "colors", sol::property([](Mesh *m) { return CV(m->vertices.getColors()); }, [](Mesh *m, const CV &c) { m->vertices.setColors(c); }),
+        "uvs", sol::property([](Mesh *m) { return V2(m->vertices.get_uvs()); }, [](Mesh *m, const V2 &u) { m->vertices.set_uvs(u); }),
         "use_index", &Mesh::use_index,
         "draw_mode", sol::property([](Mesh *m) { return mode_to_string(m->draw_mode); }, [](Mesh *m, const std::string &s) { m->draw_mode = string_to_mode(s); }),
         "load", [&lua](const std::string &file_path) -> Mesh * {

@@ -1,8 +1,7 @@
 #include "Window.hpp"
 #include "Camera.hpp"
-#include "GUI.hpp"
-#include <GLFW/glfw3.h>
-#include <SumiGL/Context.hpp>
+#include <GUI/GUI.hpp> // MSVCだとgui.hppとGUI.hppが区別できないのでフルパス指定。
+#include <SumiGL/Window.hpp>
 
 using namespace std::chrono_literals;
 
@@ -39,7 +38,7 @@ Window::Window(GUI &gui, int width, int height, const std::string &title)
     });
 
     // 同じく、マウスボタンのクリックを記録する。mouse_down()/mouse_up()に必要
-    glfwSetMouseButtonCallback(gwin(), [](GLFWwindow *gwin, int button, int action, int mods) {
+    glfwSetMouseButtonCallback(gwin(), [](GLFWwindow *gwin, int button, int action, int /*mods*/) {
         auto *window = GL::get_user_pointer<Window>(gwin);
         if (action == GLFW_PRESS) {
             window->mouse_down_.at(button) = true;

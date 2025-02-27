@@ -1,6 +1,5 @@
 #include "vec.hpp"
 
-#include <ostream>
 #include <utility>
 
 static inline float get_or(const std::vector<float> &v, size_t index, float default_value) {

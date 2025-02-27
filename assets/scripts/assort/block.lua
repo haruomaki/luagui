@@ -32,6 +32,8 @@ local mesh = Mesh.load("models/ブロック.glb")
 -- mesh.coords = V3 { p3, p4, p1, p1, p4, p2, p1, p2, p5, p5, p2, p6, p2, p4, p6, p6, p4, p8, p4, p3, p8, p8, p3, p7, p3, p1, p7, p7, p1, p5, p5, p6, p7, p7, p6, p8 }
 -- mesh.uvs = V2 { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 0, 1 }, { 1, 0 }, { 1, 1 } } * 6
 print(mesh.coords)
+print(mesh.uvs)
+print(mesh.indices)
 
 
 -- カーソルを当てたときのフレームのメッシュ
