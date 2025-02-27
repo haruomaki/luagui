@@ -14,6 +14,10 @@ end
 
 local walking_score = 0
 
+---プレイヤーが地面に接地しているかどうか。
+---@type boolean
+Player.is_ground = false
+
 ---プレイヤーを出現させる。
 ---@return Player
 function Player.spawn()
@@ -37,6 +41,10 @@ function Player.spawn()
         -- 自機剛体がスリープ状態になるのを防ぐ
         rb:activate()
 
+        -- 接地しているかどうかチェック。
+        local results = body:raycast(vec3 { 0, -HEIGHT / 1.8, 0 })
+        Player.is_ground = results[1] ~= nil
+
         local dt = 1 / Screen.refreshRate
         local speed = 2.8
         local angle_speed = 0.8
@@ -51,7 +59,7 @@ function Player.spawn()
         if GetKey('A') then d = d + body:left() end
         if GetKey('S') then d = d + body:back() end
         if GetKey('D') then d = d + body:right() end
-        if GetKeyDown('Space') then y = 6.7 end
+        if GetKeyDown('Space') and Player.is_ground then y = 6.7 end
         if d:length() > 0 then d = d:normalize() end -- ゼロベクトルなら正規化しない
         rb.linear_velocity = d * speed + vec3 { 0, y, 0 }
 
@@ -74,11 +82,13 @@ function Player.spawn()
         -- 足音を鳴らす。
         local walk_vec = rb.linear_velocity
         walk_vec.y = 0
-        walking_score = walking_score + math.log(walk_vec:length() * dt + 1)
-        if walking_score > 1.2 then
-            -- print("ポコっ")
-            walking_score = 0
-            play_music(footprint_sounds[math.random(1, 6)])
+        if Player.is_ground then
+            walking_score = walking_score + math.log(walk_vec:length() * dt + 1)
+            if walking_score > 1.2 then
+                -- print("ポコっ")
+                walking_score = 0
+                play_music(footprint_sounds[math.random(1, 6)])
+            end
         end
     end))
 

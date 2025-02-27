@@ -70,11 +70,18 @@ function play_music(music)
     end)
 end
 
+---物体を基点にしてレイキャストを行う。
+---@param direction vec3 レイの方向ベクトル（長さが射程となる）
+---@return table<integer, RaycastHit>
+function WorldObject:raycast(direction)
+    return self.world:raycast(self.absolute_position, direction)
+end
+
 ---物体の正面にレイキャストを行う。
 ---@param distance number レイの射程
 ---@return table<integer, RaycastHit>
 function WorldObject:raycast_front(distance)
-    return self.world:raycast(self.absolute_position, self:front() * distance)
+    return self:raycast(self:front() * distance)
 end
 
 --------------
