@@ -72,7 +72,7 @@ function block.place(pos)
     local z = math.floor(pos.z + 0.5)
 
     local obj = block.main_world.root:append_empty_child()
-    obj.id = "ブロック"
+    obj.name = "ブロック"
     obj.position = vec3 { x, y, z } + vec3 { 0.5, 0.5, 0.5 }
     obj:add_mesh_component(material, mesh)
 
@@ -96,10 +96,12 @@ local function remove_frame(obj)
 end
 
 function block.erase_focusing()
-    if block.focus ~= nil then
+    if block.focus ~= nil and block.focus.name == "ブロック" then
+        -- print("破壊！")
         remove_frame(block.focus)
         block.focus:erase()
         block.focus = nil
+        block.play_break_sound()
     end
 end
 

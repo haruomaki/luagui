@@ -1,7 +1,7 @@
 ---@meta WorldObject
 
 ---@class WorldObject
----@field id string オブジェクトのID
+---@field name string オブジェクトに付けた名前
 ---@field world World この物体が属しているワールド
 ---@field parent WorldObject 親オブジェクト
 ---@field position vec3 物体の位置

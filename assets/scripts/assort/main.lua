@@ -63,7 +63,7 @@ run_window(800, 600, "assort", function()
         block.refresh_focus(player.head)
 
         -- デバッグ情報の更新
-        text.message = block.focus and block.focus.id or ""
+        text.message = block.focus and block.focus.name or ""
 
         -- ブロックの設置/破壊
         if Mouse.left and world.root:find_component_by_name("左クリック長押し") == nil then
@@ -72,9 +72,7 @@ run_window(800, 600, "assort", function()
                 while not Mouse.LeftUp() and block.focus do
                     if get_time() - break_lasttime > 0.25 then
                         break_lasttime = get_time()
-                        print("破壊！")
                         block.erase_focusing()
-                        block.play_break_sound()
                     end
                     Yield()
                 end

@@ -121,7 +121,7 @@ void register_world_object(sol::state &lua) {
         "absolute_position",
         sol::readonly_property([](WorldObject *obj) { return obj->get_absolute_position(); }),
 
-        "id",
+        "name",
         &WorldObject::id,
 
         "ptr", &WorldObject::ptr,
