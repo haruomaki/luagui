@@ -12,7 +12,7 @@ for i = 1, 6 do
     footprint_sounds[i] = Music.load(path)
 end
 
-local footprint_charge = 0
+local walking_score = 0
 
 ---プレイヤーを出現させる。
 ---@return Player
@@ -46,13 +46,14 @@ function Player.spawn()
 
         -- 移動とジャンプ
         local y = rb.linear_velocity.y
-        local newv = vec3 { 0, 0, 0 }
-        if GetKey('W') then newv = newv + body:front() * speed end
-        if GetKey('A') then newv = newv + body:left() * speed end
-        if GetKey('S') then newv = newv + body:back() * speed end
-        if GetKey('D') then newv = newv + body:right() * speed end
+        local d = vec3 { 0, 0, 0 }
+        if GetKey('W') then d = d + body:front() end
+        if GetKey('A') then d = d + body:left() end
+        if GetKey('S') then d = d + body:back() end
+        if GetKey('D') then d = d + body:right() end
         if GetKeyDown('Space') then y = 6.7 end
-        rb.linear_velocity = vec3 { newv.x, y, newv.z }
+        if d:length() > 0 then d = d:normalize() end -- ゼロベクトルなら正規化しない
+        rb.linear_velocity = d * speed + vec3 { 0, y, 0 }
 
         -- 左右首振り
         local newav = vec3 { 0, 0, 0 }
@@ -68,6 +69,16 @@ function Player.spawn()
 
         if GetKeyDown('Q') or body.position.y < -20 then
             CloseWindow()
+        end
+
+        -- 足音を鳴らす。
+        local walk_vec = rb.linear_velocity
+        walk_vec.y = 0
+        walking_score = walking_score + math.log(walk_vec:length() * dt + 1)
+        if walking_score > 1.2 then
+            -- print("ポコっ")
+            walking_score = 0
+            play_music(footprint_sounds[math.random(1, 6)])
         end
     end))
 
