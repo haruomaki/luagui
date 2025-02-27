@@ -18,6 +18,8 @@ local walking_score = 0
 ---@type boolean
 Player.is_ground = false
 
+Player.air_jump = 1
+
 ---プレイヤーを出現させる。
 ---@return Player
 function Player.spawn()
@@ -42,12 +44,18 @@ function Player.spawn()
         rb:activate()
 
         -- 接地しているかどうかチェック。
-        local results = body:raycast(vec3 { 0, -HEIGHT / 1.8, 0 })
+        local results = body:raycast(vec3 { 0, -HEIGHT / 1.9, 0 })
         Player.is_ground = results[1] ~= nil
+
+        -- 接地していたらジャンプ回数を回復。
+        if Player.is_ground then
+            Player.air_jump = 3
+        end
 
         local dt = 1 / Screen.refreshRate
         local speed = 2.8
         local angle_speed = 0.8
+        local jump_velocity = 6.7
 
         -- ダッシュ
         if GetKey("LeftShift") then speed = speed * 1.65 end
@@ -59,7 +67,13 @@ function Player.spawn()
         if GetKey('A') then d = d + body:left() end
         if GetKey('S') then d = d + body:back() end
         if GetKey('D') then d = d + body:right() end
-        if GetKeyDown('Space') and Player.is_ground then y = 6.7 end
+        if Player.is_ground and GetKey('Space') then
+            y = jump_velocity
+        end
+        if not Player.is_ground and GetKeyDown('Space') and Player.air_jump > 0 then
+            Player.air_jump = Player.air_jump - 1
+            y = jump_velocity
+        end
         if d:length() > 0 then d = d:normalize() end -- ゼロベクトルなら正規化しない
         rb.linear_velocity = d * speed + vec3 { 0, y, 0 }
 
