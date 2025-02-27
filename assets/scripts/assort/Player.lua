@@ -101,7 +101,7 @@ function Player.spawn()
             if walking_score > 1.2 then
                 -- print("ポコっ")
                 walking_score = 0
-                play_music(footprint_sounds[math.random(1, 6)])
+                play_music("効果音1", footprint_sounds[math.random(1, 6)])
             end
         end
     end))

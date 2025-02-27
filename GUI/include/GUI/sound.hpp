@@ -5,6 +5,7 @@
 #include <Lunchbox/OpenAL.hpp>
 #include <Lunchbox/core/sound.hpp>
 #include <SumiGL/buffered_container.hpp>
+#include <map>
 
 class Music : public Resource, public OpenAL::Buffer {
   public:
@@ -20,6 +21,8 @@ class SoundSource : public Component, OpenAL::Source {
     friend class AudioManager; // OpenAL::Sourceのメソッドに触れるように
 
   public:
+    std::string group_name;
+
     SoundSource(const Music &music);
     ~SoundSource() override;
 
@@ -30,26 +33,30 @@ class SoundSource : public Component, OpenAL::Source {
 class AudioManager {
   public:
     BufferedSet<SoundSource *> sources; // 管理対象のSource一覧 INFO: Bufferedである必要は無いけど念のため。
-    float master_volume = 1.0f;         // 全体の最大音量
+    float master_volume = 1.0f;         // 全体の最大音量 // TODO: グループごとに最大音量を設定できるようにする。
 
     AudioManager() = default;
 
     void adjust_overall_gain() {
-        float total_gain = 0.0f;
+        std::map<std::string, float> total_gain;
 
-        // 各Sourceの現在の音量を取得
+        // グループごとに、各Sourceの現在の音量を取得
         sources.flush();
         for (SoundSource *source : sources) {
             ALfloat gain = source->get_gain();
-            total_gain += gain;
+            total_gain[source->group_name] += gain;
         }
 
         // 全体の音量合計がmaster_volumeになるように正規化
-        float scale = master_volume / total_gain;
+        // float scale = master_volume / total_gain;
+        std::map<std::string, float> scale;
+        for (const auto &[k, v] : total_gain) {
+            scale[k] = master_volume / v;
+        }
         for (SoundSource *source : sources) {
             ALfloat gain;
             alGetSourcef(source->get(), AL_GAIN, &gain);
-            source->set_gain(gain * scale);
+            source->set_gain(gain * scale[source->group_name]);
         }
     }
 };

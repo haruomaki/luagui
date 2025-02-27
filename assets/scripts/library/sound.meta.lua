@@ -12,9 +12,10 @@ SoundSource = {}
 function Music.load(file_path) end
 
 ---音源を表すコンポーネントを追加する。
----@param music Music
+---@param group_name string グループ名
+---@param music Music 再生する音声
 ---@return SoundSource
-function WorldObject:add_soundsource_component(music) end
+function WorldObject:add_soundsource_component(group_name, music) end
 
 ---音声を再生する。
 function SoundSource:play() end

@@ -60,10 +60,10 @@ end
 
 ---音声を再生するだけの物体を生成する。再生し終わったら消滅する。
 ---@param music Music 再生する音声
-function play_music(music)
+function play_music(group_name, music)
     local obj = __CurrentWorld.root:append_empty_child()
     obj:add_update_component("_(play_music)音声再生用", function()
-        local ss = obj:add_soundsource_component(music)
+        local ss = obj:add_soundsource_component(group_name, music)
         ss:play()
         WaitWhile(function() return ss:is_playing() end)
         obj:erase()
@@ -71,10 +71,11 @@ function play_music(music)
 end
 
 ---音声を再生するだけの物体を生成し、再生が終わるまで待機する。再生し終わったら消滅する。
+---@param group_name string グループ名
 ---@param music Music 再生する音声
-function play_music_blocking(music)
+function play_music_blocking(group_name, music)
     local obj = __CurrentWorld.root:append_empty_child()
-    local ss = obj:add_soundsource_component(music)
+    local ss = obj:add_soundsource_component(group_name, music)
     ss:play()
     WaitWhile(function() return ss:is_playing() end)
     obj:erase()

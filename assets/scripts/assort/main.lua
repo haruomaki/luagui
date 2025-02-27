@@ -18,7 +18,7 @@ run_window(800, 600, "assort", function()
 
     -- BGMを流す
     Thread.forever("BGMを流すスレッド", function()
-        play_music_blocking(bgm1)
+        play_music_blocking("BGM", bgm1)
     end)
 
     -- キューブを生成

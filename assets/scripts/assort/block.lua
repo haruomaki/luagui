@@ -55,13 +55,13 @@ frame_mesh.colors = RGBA { 0.9, 0.9, 0.9 } * 24
 -- 設置するときの効果音
 local put_sound = Music.load("audio/茶碗を置く.mp3")
 function block.play_put_sound()
-    play_music(put_sound)
+    play_music("効果音1", put_sound)
 end
 
 -- 破壊するときの効果音
 local break_sound = Music.load("audio/鍵を置く.mp3")
 function block.play_break_sound()
-    play_music(break_sound)
+    play_music("効果音1", break_sound)
 end
 
 ---指定の場所にブロックを置く
