@@ -1,5 +1,4 @@
 #include "vec.hpp"
-#include "SumiGL/extra_formatter.hpp"
 
 #include <glm/geometric.hpp>
 #include <utility>

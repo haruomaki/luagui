@@ -77,6 +77,7 @@ function play_music_blocking(group_name, music)
     local obj = __CurrentWorld.root:append_empty_child()
     local ss = obj:add_soundsource_component(group_name, music)
     ss:play()
+    print("ぐるーぷ", ss.group_name)
     WaitWhile(function() return ss:is_playing() end)
     obj:erase()
 end

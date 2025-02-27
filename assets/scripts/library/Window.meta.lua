@@ -6,7 +6,7 @@
 local Window = {}
 
 ---@type Window
-__CurrentWindow = {}
+__CurrentWindow = nil
 
 ---@alias Keys
 ---| 'Space'

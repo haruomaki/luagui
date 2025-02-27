@@ -20,43 +20,47 @@ class AudioManager;
 class SoundSource : public Component, OpenAL::Source {
     friend class AudioManager; // OpenAL::Sourceのメソッドに触れるように
 
-  public:
-    std::string group_name;
+    const std::string group_name_;
 
-    SoundSource(const Music &music);
+  public:
+    SoundSource(std::string &&group_name, const Music &music);
     ~SoundSource() override;
 
+    std::string_view group_name() { return group_name_; }
     void play() { OpenAL::Source::play(); }
     bool is_playing() { return OpenAL::Source::is_playing(); }
 };
 
 class AudioManager {
   public:
-    BufferedSet<SoundSource *> sources; // 管理対象のSource一覧 INFO: Bufferedである必要は無いけど念のため。
-    float master_volume = 1.0f;         // 全体の最大音量 // TODO: グループごとに最大音量を設定できるようにする。
+    BufferedSet<SoundSource *> sources;        // 管理対象のSource一覧 INFO: Bufferedである必要は無いけど念のため。
+    std::map<std::string, float> group_volume; // グループ内の最大音量
 
     AudioManager() = default;
 
     void adjust_overall_gain() {
+        // print("あじゃすとです！");
         std::map<std::string, float> total_gain;
 
         // グループごとに、各Sourceの現在の音量を取得
         sources.flush();
         for (SoundSource *source : sources) {
             ALfloat gain = source->get_gain();
-            total_gain[source->group_name] += gain;
+            total_gain[source->group_name_] += gain;
         }
 
         // 全体の音量合計がmaster_volumeになるように正規化
-        // float scale = master_volume / total_gain;
+        // float scale = group_volume / total_gain;
         std::map<std::string, float> scale;
         for (const auto &[k, v] : total_gain) {
-            scale[k] = master_volume / v;
+            if (!group_volume.contains(k)) group_volume[k] = 1.0f;
+            // debug(k, group_volume[k]);
+            scale[k] = group_volume[k] / v;
         }
         for (SoundSource *source : sources) {
             ALfloat gain;
             alGetSourcef(source->get(), AL_GAIN, &gain);
-            source->set_gain(gain * scale[source->group_name]);
+            source->set_gain(gain * scale[source->group_name_]);
         }
     }
 };
