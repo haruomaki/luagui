@@ -112,8 +112,8 @@ void GUI::default_routine1() {
         glfwMakeContextCurrent(window->gwin());
 
         // 画面の初期化
-        constexpr RGBA bg_color{.r = 0.2f, .g = 0.2f, .b = 0.2f, .a = 1};
-        glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
+        const RGBA bg = window->background_color;
+        glClearColor(bg.r, bg.g, bg.b, bg.a);
         glDepthMask(GL_TRUE); // ONになっていないとデプスバッファがクリアできない
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

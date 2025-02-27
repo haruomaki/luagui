@@ -2,6 +2,7 @@
 
 ---一つのウィンドウを表すクラス
 ---@class Window
+---@field background_color RGBA ウィンドウの背景色
 local Window = {}
 
 ---@type Window

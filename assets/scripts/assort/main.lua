@@ -2,6 +2,10 @@ local breakout = require("breakout.main")
 local Player = require("Player")
 
 run_window(800, 600, "assort", function()
+    -- 背景色。
+    __CurrentWindow.background_color = Hex("#86aae3")
+
+    -- マウスカーソルを非表示にし、無制限に移動。
     Mouse.disable()
 
     local world = create_world()
@@ -43,7 +47,7 @@ run_window(800, 600, "assort", function()
     text.owner.position = vec3 { 0.002, -0.002, 0 }
     text.font_size = 24
     text.anchor = BottomRight
-    text.color = RGBA { 0.8, 0.7, 0.3 }
+    text.color = Hex("#324537")
 
     Thread.forever("toggle camera mode", function()
         -- 注目中オブジェクトの更新

@@ -94,6 +94,10 @@ void register_window(sol::state &lua) {
         window.close();
     });
 
+    lua.new_usertype<Window>(
+        "Window",
+        "background_color", &Window::background_color);
+
     // リフレッシュレートを取得する関数
     lua.new_usertype<Screen>(
         "Screen",

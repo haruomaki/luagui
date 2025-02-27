@@ -76,3 +76,14 @@ function Util.grid()
     rb.restitution = 0.5
     return obj
 end
+
+--- 16進数の色コードをRGB値に変換する関数
+---@param hex string
+---@return RGBA
+function Hex(hex)
+    hex = hex:gsub("#", "")
+    local r = tonumber(hex:sub(1, 2), 16) / 255
+    local g = tonumber(hex:sub(3, 4), 16) / 255
+    local b = tonumber(hex:sub(5, 6), 16) / 255
+    return RGBA { r, g, b, 1 }
+end

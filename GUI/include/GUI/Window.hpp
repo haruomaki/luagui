@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Color.hpp"
 #include "Resource.hpp"
 #include <SumiGL/Window.hpp>
 #include <array>
@@ -23,6 +24,8 @@ class Window : public GL::Window {
     void step();
 
   public:
+    RGBA background_color = {0.3, 0.1, 0.7, 1};
+
     // ウィンドウ内描画領域の大きさを表す変数。framebuffer_size()は直接取得する（故に重い）のに対し、ここには毎フレーム自動で取得されたものがキャッシュされている。
     std::pair<int, int> fbsize_cache = framebuffer_size();
 

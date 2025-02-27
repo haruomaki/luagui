@@ -5,6 +5,15 @@ local Player = {}
 
 local HEIGHT = 1.75
 
+-- 足音の効果音。
+local footprint_sounds = {}
+for i = 1, 6 do
+    local path = string.format("audio/足音/足音%d.mp3", i)
+    footprint_sounds[i] = Music.load(path)
+end
+
+local footprint_charge = 0
+
 ---プレイヤーを出現させる。
 ---@return Player
 function Player.spawn()
