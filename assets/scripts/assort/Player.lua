@@ -29,19 +29,20 @@ function Player.spawn()
         rb:activate()
 
         local dt = 1 / Screen.refreshRate
-        local speed = 2.7
+        local speed = 2.8
         local angle_speed = 0.8
 
         -- ダッシュ
-        if GetKey("LeftShift") then speed = speed * 1.7 end
+        if GetKey("LeftShift") then speed = speed * 1.6 end
 
+        -- 移動とジャンプ
         local y = rb.linear_velocity.y
         local newv = vec3 { 0, 0, 0 }
         if GetKey('W') then newv = newv + body:front() * speed end
         if GetKey('A') then newv = newv + body:left() * speed end
         if GetKey('S') then newv = newv + body:back() * speed end
         if GetKey('D') then newv = newv + body:right() * speed end
-        if GetKeyDown('Space') then y = 6 end
+        if GetKeyDown('Space') then y = 6.7 end
         rb.linear_velocity = vec3 { newv.x, y, newv.z }
 
         -- 左右首振り

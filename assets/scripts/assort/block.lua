@@ -35,9 +35,9 @@ local mesh = Mesh.load("models/ブロック.glb")
 -- local p8 = { a, a, -a }
 -- mesh.coords = V3 { p3, p4, p1, p1, p4, p2, p1, p2, p5, p5, p2, p6, p2, p4, p6, p6, p4, p8, p4, p3, p8, p8, p3, p7, p3, p1, p7, p7, p1, p5, p5, p6, p7, p7, p6, p8 }
 -- mesh.uvs = V2 { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 0, 1 }, { 1, 0 }, { 1, 1 } } * 6
-print(mesh.coords)
-print(mesh.uvs)
-print(mesh.indices)
+-- print(mesh.coords)
+-- print(mesh.uvs)
+-- print(mesh.indices)
 
 
 -- カーソルを当てたときのフレームのメッシュ
@@ -81,6 +81,14 @@ end
 ---@param obj WorldObject
 local function remove_frame(obj)
     obj:get_component_by_name("注目中ブロックの枠線"):erase()
+end
+
+function block.erase_focusing()
+    if block.focus ~= nil then
+        remove_frame(block.focus)
+        block.focus:erase()
+        block.focus = nil
+    end
 end
 
 ---レイキャストを行い、注目中のブロックを更新する
