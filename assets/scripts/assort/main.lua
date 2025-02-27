@@ -61,6 +61,7 @@ run_window(800, 600, "assort", function()
                         break_lasttime = get_time()
                         print("破壊！")
                         block.erase_focusing()
+                        block.play_break_sound()
                     end
                     Yield()
                 end
@@ -75,6 +76,7 @@ run_window(800, 600, "assort", function()
                         local p = block.focus.position + Direction[block.focus_surface] - vec3 { 0.5, 0.5, 0.5 }
                         print("設置！", p)
                         block.place(p)
+                        block.play_put_sound()
                     end
                     Yield()
                 end
