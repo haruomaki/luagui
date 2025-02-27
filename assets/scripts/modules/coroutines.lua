@@ -116,7 +116,14 @@ end
 ---@class Thread
 Thread = {}
 
----新たな疑似スレッドを作成する。
+---新たな疑似スレッドを作成し、1回だけ実行する。
+---@param task_name string
+---@param task fun(self: Update)
+function Thread.oneshot(task_name, task)
+    __CurrentWorld.root:add_update_component(task_name, task)
+end
+
+---新たな疑似スレッドを作成し、無限回実行する。
 ---@param task_name string
 ---@param task fun(self: Update)
 function Thread.forever(task_name, task)

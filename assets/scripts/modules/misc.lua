@@ -70,6 +70,16 @@ function play_music(music)
     end)
 end
 
+---音声を再生するだけの物体を生成し、再生が終わるまで待機する。再生し終わったら消滅する。
+---@param music Music 再生する音声
+function play_music_blocking(music)
+    local obj = __CurrentWorld.root:append_empty_child()
+    local ss = obj:add_soundsource_component(music)
+    ss:play()
+    WaitWhile(function() return ss:is_playing() end)
+    obj:erase()
+end
+
 ---物体を基点にしてレイキャストを行う。
 ---@param direction vec3 レイの方向ベクトル（長さが射程となる）
 ---@return table<integer, RaycastHit>

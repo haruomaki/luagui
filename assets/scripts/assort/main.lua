@@ -1,6 +1,8 @@
 local breakout = require("breakout.main")
 local Player = require("Player")
 
+local bgm1 = Music.load("audio/BGM/雨のち小夜時雨.mp3")
+
 run_window(800, 600, "assort", function()
     -- 背景色。
     __CurrentWindow.background_color = Hex("#86aae3")
@@ -13,6 +15,11 @@ run_window(800, 600, "assort", function()
     local player = Player.spawn()
     -- local camera = CreateCamera("quit", "move", "zoom")
     -- camera.owner.parent.position = vec3 { 0, 1.5, 4 }
+
+    -- BGMを流す
+    Thread.forever("BGMを流すスレッド", function()
+        play_music_blocking(bgm1)
+    end)
 
     -- キューブを生成
     local cube = Util.cube()
