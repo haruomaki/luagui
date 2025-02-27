@@ -236,15 +236,15 @@ class WorldObject {
         return result;
     }
 
-    Component *get_component_by_name(std::string_view id) {
+    Component *get_component_by_name(std::string_view name, bool warn_not_found = true) {
         Component *ret = nullptr;
         for (auto &[k, comp] : components_) {
-            if (id == comp->name) {
-                if (ret != nullptr) warn("同一IDの異なるコンポーネントがあります: ", id);
+            if (name == comp->name) {
+                if (ret != nullptr) warn("同一IDの異なるコンポーネントがあります: ", name);
                 ret = comp.get();
             }
         }
-        if (ret == nullptr) warn("ID=\"", id, "\"のコンポーネントが見つかりませんでした。");
+        if (ret == nullptr && warn_not_found) warn("ID=\"", name, "\"のコンポーネントが見つかりませんでした。");
         return ret;
     }
 };

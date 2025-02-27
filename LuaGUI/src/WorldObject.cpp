@@ -63,6 +63,7 @@ static Rigidbody2D *add_rigidbody_component(sol::state &lua, WorldObject *obj, c
 
 static sol::object get_component(sol::state &lua, WorldObject *obj, const std::string &component_type) {
     // TODO: あらゆるクラス名に対応
+    if (component_type == "Update") return sol::make_object(lua, obj->get_component<UpdateComponent>());
     if (component_type == "Rigidbody2D") {
         auto *rbc = obj->get_component<Rigidbody2D>();
         return sol::make_object(lua, rbc);
@@ -76,9 +77,14 @@ static sol::object get_component(sol::state &lua, WorldObject *obj, const std::s
     return sol::nil;
 }
 
-static sol::object get_component_by_name(sol::state &lua, WorldObject *obj, const std::string &name) {
-    Component *comp = obj->get_component_by_name(name);
+static sol::object get_component_by_name(sol::state &lua, WorldObject *obj, const std::string &name, bool warn_not_found) {
+    Component *comp = obj->get_component_by_name(name, warn_not_found);
+    if (comp == nullptr) {
+        if (warn_not_found) warn("コンポーネントが見つかりませんでした。");
+        return sol::nil;
+    }
     // debug(id, comp);
+    if (auto *p = dynamic_cast<UpdateComponent *>(comp)) return sol::make_object(lua, p);
     if (auto *p = dynamic_cast<Rigidbody2D *>(comp)) return sol::make_object(lua, p);
     if (auto *p = dynamic_cast<Collider2D *>(comp)) return sol::make_object(lua, p);
     if (auto *p = dynamic_cast<UpdateComponent *>(comp)) return sol::make_object(lua, p);
@@ -140,7 +146,9 @@ void register_world_object(sol::state &lua) {
         [&lua](WorldObject *obj, const std::string &component_type) { return get_component(lua, obj, component_type); },
 
         "get_component_by_name",
-        [&lua](WorldObject *obj, const std::string &name) { return get_component_by_name(lua, obj, name); },
+        [&lua](WorldObject *obj, const std::string &name) { return get_component_by_name(lua, obj, name, true); },
+        "find_component_by_name",
+        [&lua](WorldObject *obj, const std::string &name) { return get_component_by_name(lua, obj, name, false); },
 
         "erase",
         [](WorldObject *obj) { obj->erase(); },

@@ -45,9 +45,6 @@ run_window(800, 600, "assort", function()
     text.anchor = BottomRight
     text.color = RGBA { 0.8, 0.7, 0.3 }
 
-    local break_lasttime = 0
-    local place_lasttime = 0
-
     Thread.forever("toggle camera mode", function()
         -- 注目中オブジェクトの更新
         block.refresh_focus(player.head)
@@ -56,54 +53,32 @@ run_window(800, 600, "assort", function()
         text.message = block.focus and block.focus.id or ""
 
         -- ブロックの設置/破壊
-        if Mouse.left and block.focus then
-            if get_time() - break_lasttime > 0.25 then
-                break_lasttime = get_time()
-                print("左クリック", block.focus_surface)
-                block.erase_focusing()
-            end
+        if Mouse.left and world.root:find_component_by_name("左クリック長押し") == nil then
+            world.root:add_update_component("左クリック長押し", function()
+                local break_lasttime = 0
+                while not Mouse.LeftUp() and block.focus do
+                    if get_time() - break_lasttime > 0.25 then
+                        break_lasttime = get_time()
+                        print("破壊！")
+                        block.erase_focusing()
+                    end
+                    Yield()
+                end
+            end)
         end
-        -- if Mouse.RightDown() then
-        --     world.root:add_update_component("右クリック長押し", function()
-        --         local place_lasttime = 0
-        --         WaitUntil(function()
-        --             if get_time() - place_lasttime > 0.2 then
-        --                 place_lasttime = get_time()
-        --                 local p = block.focus.position + Direction[block.focus_surface] - vec3 { 0.5, 0.5, 0.5 }
-        --                 print("設置", p)
-        --                 block.place(p)
-        --             end
-        --             return Mouse.RightUp()
-        --         end)
-        --     end)
-        -- end
-
-        -- local function place()
-        --     local p = block.focus.position + Direction[block.focus_surface] - vec3 { 0.5, 0.5, 0.5 }
-        --     print("設置！", p)
-        --     block.place(p)
-
-        --     local lasttime = get_time()
-        --     while get_time() - lasttime < 0.2 do
-        --         if Mouse.RightUp() or block.focus == nil then
-        --             return
-        --         end
-        --         Yield()
-        --     end
-        --     world.root:add_update_component("右クリック長押し設置", place)
-        -- end
-
-        -- if Mouse.RightDown() and block.focus then
-        --     world.root:add_update_component("右クリック長押し設置", place)
-        -- end
-
-        if Mouse.right and block.focus then
-            if get_time() - place_lasttime > 0.2 then
-                place_lasttime = get_time()
-                local p = block.focus.position + Direction[block.focus_surface] - vec3 { 0.5, 0.5, 0.5 }
-                print("設置！", p)
-                block.place(p)
-            end
+        if Mouse.right and world.root:find_component_by_name("右クリック長押し") == nil then
+            world.root:add_update_component("右クリック長押し", function()
+                local place_lasttime = 0
+                while not Mouse.RightUp() and block.focus do
+                    if get_time() - place_lasttime > 0.2 then
+                        place_lasttime = get_time()
+                        local p = block.focus.position + Direction[block.focus_surface] - vec3 { 0.5, 0.5, 0.5 }
+                        print("設置！", p)
+                        block.place(p)
+                    end
+                    Yield()
+                end
+            end)
         end
     end)
 

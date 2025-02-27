@@ -33,7 +33,7 @@ function Player.spawn()
         local angle_speed = 0.8
 
         -- ダッシュ
-        if GetKey("LeftShift") then speed = speed * 1.6 end
+        if GetKey("LeftShift") then speed = speed * 1.65 end
 
         -- 移動とジャンプ
         local y = rb.linear_velocity.y

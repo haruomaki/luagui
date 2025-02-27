@@ -83,6 +83,11 @@ function WorldObject:get_component(typename) end
 ---@return Component comp キャスト済みのコンポーネント
 function WorldObject:get_component_by_name(name) end
 
+---IDを指定してコンポーネントを検索・取得する
+---@param name string コンポーネントの名前
+---@return Component | nil comp キャスト済みのコンポーネント
+function WorldObject:find_component_by_name(name) end
+
 ---コンポーネントを削除する
 function Component:erase() end
 
