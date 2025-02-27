@@ -90,3 +90,12 @@ MiddleRight = vec2 { 1, 0 }
 TopMiddle = vec2 { 0, 1 }
 BottomMiddle = vec2 { 0, -1 }
 Center = vec2 { 0, 0 }
+
+Front = vec3 { 0, 0, 1 }
+Back = vec3 { 0, 0, -1 }
+Left = vec3 { 1, 0, 0 }
+Right = vec3 { -1, 0, 0 }
+Up = vec3 { 0, 1, 0 }
+Down = vec3 { 0, -1, 0 }
+
+Direction = { Front = Front, Back = Back, Left = Left, Right = Right, Up = Up, Down = Down }

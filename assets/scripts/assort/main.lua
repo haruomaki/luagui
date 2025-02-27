@@ -52,8 +52,16 @@ run_window(800, 600, "assort", function()
         -- デバッグ情報の更新
         text.message = block.focus and block.focus.id or ""
 
-        if Mouse.LeftDown() and block.focus then
-            print("左クリック", block.focus.position)
+        -- ブロックの設置/破壊
+        -- if Mouse.LeftDown() and block.focus then
+        --     print("左クリック", block.focus_surface)
+        --     local p = block.focus.position + Direction[block.focus_surface] - vec3 { 0.5, 0.5, 0.5 }
+        --     block.place(p)
+        -- end
+        if Mouse.RightDown() and block.focus then
+            print("右クリック", block.focus_surface)
+            local p = block.focus.position + Direction[block.focus_surface] - vec3 { 0.5, 0.5, 0.5 }
+            block.place(p)
         end
     end)
 

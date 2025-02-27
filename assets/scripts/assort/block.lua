@@ -12,6 +12,10 @@ block.focus = nil
 ---@type RaycastHit | nil
 block.raycast_result = nil
 
+---現在注目中のブロックの面方向
+---@type string
+block.focus_surface = ""
+
 -- ブロックのマテリアルおよびメッシュを作成
 -- local wood_image = Image.load("images/白い木の板.jpg")
 -- local material = Material.from_image(wood_image)
@@ -51,9 +55,13 @@ frame_mesh.colors = RGBA { 0.9, 0.9, 0.9 } * 24
 ---指定の場所にブロックを置く
 ---@param pos vec3
 function block.place(pos)
+    local x = math.floor(pos.x + 0.5)
+    local y = math.floor(pos.y + 0.5)
+    local z = math.floor(pos.z + 0.5)
+
     local obj = block.main_world.root:append_empty_child()
     obj.id = "ブロック"
-    obj.position = pos + vec3 { 0.5, 0.5, 0.5 }
+    obj.position = vec3 { x, y, z } + vec3 { 0.5, 0.5, 0.5 }
     obj:add_mesh_component(material, mesh)
 
     local rb = obj:add_rigidbody()
@@ -79,10 +87,19 @@ end
 ---@param player_head WorldObject
 function block.refresh_focus(player_head)
     local new_focusing = nil
+    block.focus_surface = ""
     local results = player_head:raycast_front(5)
     block.raycast_result = results[1] -- 先頭の物体にレイが当たったら保存。当たらなかったらnil。
     if (block.raycast_result ~= nil) then
         new_focusing = block.raycast_result.hitObject.owner
+
+        -- 面の判定（法線の成分で判断）
+        local normal = block.raycast_result.hitNormal
+        for key, value in pairs(Direction) do
+            if normal:dot(value) > 0.7 then
+                block.focus_surface = key
+            end
+        end
     end
 
     if new_focusing ~= block.focus then

@@ -26,6 +26,9 @@ function vec2(point) end
 ---@field x number
 ---@field y number
 ---@field z number
+---@operator add(vec3): vec3
+---@operator sub(vec3): vec3
+---@operator mul(integer): vec3
 vec3 = {}
 
 ---空のvec3を作成する。
@@ -43,6 +46,11 @@ function vec3.new(x, y, z) end
 ---@param point table<integer, number>
 ---@return vec3
 function vec3(point) end
+
+---内積を求める。
+---@param a vec3
+---@param b vec3
+function vec3.dot(a, b) end
 
 ---RGBAの色。
 ---@class RGBA

@@ -1,5 +1,6 @@
 #include "vec.hpp"
 
+#include <glm/geometric.hpp>
 #include <utility>
 
 static inline float get_or(const std::vector<float> &v, size_t index, float default_value) {
@@ -69,6 +70,8 @@ void register_vec(sol::state &lua) {
         "x", &glm::vec3::x,
         "y", &glm::vec3::y,
         "z", &glm::vec3::z,
+        "dot", [](glm::vec3 a, glm::vec3 b) -> float { return glm::dot(a, b); },
+        "cross", [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return glm::cross(a, b); },
         sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a + b; },
         sol::meta_function::subtraction, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a - b; },
         sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; }
