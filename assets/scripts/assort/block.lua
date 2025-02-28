@@ -96,6 +96,7 @@ local function remove_frame(obj)
     obj:get_component_by_name("注目中ブロックの枠線"):erase()
 end
 
+---@return boolean
 function block.erase_focusing()
     if block.focus ~= nil and block.focus.name == "ブロック" then
         -- print("破壊！")
@@ -103,6 +104,9 @@ function block.erase_focusing()
         block.focus:erase()
         block.focus = nil
         block.play_break_sound()
+        return true
+    else
+        return false
     end
 end
 

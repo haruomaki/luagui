@@ -17,7 +17,7 @@ run_window(800, 600, "assort", function()
     -- camera.owner.parent.position = vec3 { 0, 1.5, 4 }
 
     -- BGMを流す
-    Music.set_group_volume("BGM", 0.25)
+    Music.set_group_volume("BGM", 0.2)
     Thread.forever("BGMを流すスレッド", function()
         play_music_blocking("BGM", bgm1)
     end)
@@ -58,22 +58,20 @@ run_window(800, 600, "assort", function()
     text.color = Hex("#324537")
 
     -- クロスヘア
-    local cross_hair = create_world()
-    local cross_hair_camera = CreateCamera2D()
+    create_world()
+    CreateCamera2D()
     local glass_image = Image.load("images/クロスヘア.png")
     local glass_mat = Material.from_image(glass_image)
-    -- Util.rect(glass_mat, V3 { { 0, 0, 0 }, { 0.05, 0, 0 }, { 0.05, 0.05, 0 }, { 0, 0.05, 0 } })
     Util.rect(glass_mat, 0.006, 0.006)
 
 
     -- ジャンプアイコン
     create_world()
-    local jmp_camera = CreateCamera2D()
-    jmp_camera.centering = BottomLeft
+    CreateCamera2D().centering = BottomLeft
     local jmp_image = Image.load("images/ジャンプアイコン.png")
     local jmps = {}
     for i = 1, Player.MAX_AIR_JUMP do
-        jmps[i] = Util.rect_image(jmp_image, 0.02, TopRight)
+        jmps[i] = Util.rect_image(jmp_image, 0.015, TopRight)
     end
 
 
@@ -92,7 +90,9 @@ run_window(800, 600, "assort", function()
                 while not Mouse.LeftUp() and block.focus do
                     if get_time() - break_lasttime > 0.25 then
                         break_lasttime = get_time()
-                        block.erase_focusing()
+                        local res = block.erase_focusing()
+                        -- ブロックを壊すことに成功したらジャンプ回数を回復できる。
+                        if res then Player.air_jump = Player.MAX_AIR_JUMP end
                     end
                     Yield()
                 end
@@ -108,6 +108,8 @@ run_window(800, 600, "assort", function()
                         print("設置！", p)
                         block.place(p)
                         block.play_put_sound()
+                        -- ブロックを置いてもジャンプ回数を回復できる。
+                        Player.air_jump = Player.MAX_AIR_JUMP
                     end
                     Yield()
                 end
@@ -117,7 +119,7 @@ run_window(800, 600, "assort", function()
         -- ジャンプアイコンの表示/非表示
         for i = 1, Player.MAX_AIR_JUMP do
             if i <= Player.air_jump then
-                jmps[i].position = vec3 { (i - 1) * 0.015 + 0.002, 0.002, 0 }
+                jmps[i].position = vec3 { (i - 1) * 0.011 + 0.002, 0.002, 0 }
             else
                 jmps[i].position = vec3 { 0, -100, 0 }
             end
