@@ -21,6 +21,7 @@ block.focus_surface = ""
 -- local material = Material.from_image(wood_image)
 local material = Material.load("models/ブロック.glb")
 material.point_size = 20
+material.both = false
 
 local a = 0.5
 local mesh = Mesh.load("models/ブロック.glb")

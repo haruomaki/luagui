@@ -18,7 +18,6 @@ run_window(800, 600, "assort", function()
 
     -- BGMを流す
     Music.set_group_volume("BGM", 0.3)
-    print("最大音量をセットしました")
     Thread.forever("BGMを流すスレッド", function()
         play_music_blocking("BGM", bgm1)
     end)

@@ -4,13 +4,6 @@
 #include <ostream>
 #include <sol/sol.hpp>
 
-// vec3などをlua側でprintするのに必要。
-template <int length, typename T>
-std::ostream &operator<<(std::ostream &os, const glm::vec<length, T> & /*v*/) {
-    // os << "[" << v.x << ", " << v.y << ", " << v.z << "]"; 内容は不要。
-    return os;
-}
-
 using Points = std::vector<std::vector<float>>;
 
 struct VI : std::vector<int> {

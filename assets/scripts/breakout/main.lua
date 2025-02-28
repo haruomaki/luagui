@@ -85,7 +85,7 @@ function breakout.main()
         for i = -4, 4, 1 do
             for j = 5, 18, 1 do
                 local mesh = figure.block(block_container, BlockHalfWidth * 2 * i, BlockHalfHeight * 2 * j)
-                mesh.owner.id = string.format("(%d,%d)のブロック", i, j)
+                mesh.owner.name = string.format("(%d,%d)のブロック", i, j)
                 -- print(mesh.owner.id, mesh.owner)
             end
         end

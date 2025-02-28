@@ -4,6 +4,10 @@
 ---@class vec2
 ---@field x number
 ---@field y number
+---@operator add(vec2): vec2
+---@operator sub(vec2): vec2
+---@operator mul(integer): vec2
+---@operator div(integer): vec2
 vec2 = {}
 
 ---空のvec2を作成する。

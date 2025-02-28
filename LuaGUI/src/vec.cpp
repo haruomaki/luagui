@@ -61,7 +61,10 @@ void register_vec(sol::state &lua) {
         "x", &glm::vec2::x,
         "y", &glm::vec2::y,
         sol::meta_function::addition, [](glm::vec2 a, glm::vec2 b) -> glm::vec2 { return a + b; },
-        sol::meta_function::multiplication, [](glm::vec2 v, float x) -> glm::vec2 { return v * x; });
+        sol::meta_function::subtraction, [](glm::vec2 a, glm::vec2 b) -> glm::vec2 { return a - b; },
+        sol::meta_function::multiplication, [](glm::vec2 v, float x) -> glm::vec2 { return v * x; },
+        sol::meta_function::division, [](glm::vec2 v, float x) -> glm::vec2 { return v / x; },
+        sol::meta_function::to_string, [](const glm::vec2 &v) -> std::string { std::stringstream ss; ss << "[" << v.x << ", " << v.y << "]"; return ss.str(); });
     lua["vec2"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> glm::vec2 { return to_vec2(v); }; // NOLINT(performance-unnecessary-value-param)
 
     lua.new_usertype<glm::vec3>(
@@ -77,10 +80,10 @@ void register_vec(sol::state &lua) {
         sol::meta_function::addition, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a + b; },
         sol::meta_function::subtraction, [](glm::vec3 a, glm::vec3 b) -> glm::vec3 { return a - b; },
         sol::meta_function::multiplication, [](glm::vec3 v, float x) -> glm::vec3 { return v * x; },
-        sol::meta_function::division, [](glm::vec3 v, float x) -> glm::vec3 { return v / x; }
-        // sol::meta_function::to_string, [](const glm::vec3 &v) -> std::string { std::stringstream ss; ss << "[" << v.x << ", " << v.y << ", " << v.z << "]"; return ss.str(); });
-        // sol::meta_function::to_string, [](const glm::vec3 &v) -> char * { char buf[128]; sprintf(buf, "HAHAHA"); return buf; });
-    );
+        sol::meta_function::division, [](glm::vec3 v, float x) -> glm::vec3 { return v / x; },
+        sol::meta_function::to_string, [](const glm::vec3 &v) -> std::string {
+            // NOTE: <<のオーバーロードがあれば不要かと思ったが、Linux環境だと出力できなかったので__to_stringを明示。
+            std::stringstream ss; ss << "[" << v.x << ", " << v.y << ", " << v.z << "]"; return ss.str(); });
     lua["vec3"][sol::metatable_key]["__call"] = [](const sol::table & /*self*/, std::vector<float> v) -> glm::vec3 { return to_vec3(v); }; // NOLINT(performance-unnecessary-value-param)
 
     lua.new_usertype<RGBA>(

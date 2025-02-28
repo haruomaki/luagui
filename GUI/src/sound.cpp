@@ -3,7 +3,7 @@
 
 SoundSource::SoundSource(std::string &&group_name, const Music &music)
     : OpenAL::Source(music)
-    , group_name_(group_name) {
+    , group_name_(std::move(group_name)) {
     gui().audio.sources.request_set(this);
     gui().audio.adjust_overall_gain(); // ここで音量調整することで突発ノイズを防げる。
 }
