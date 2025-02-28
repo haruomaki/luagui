@@ -1,3 +1,20 @@
+# luagui
+
+https://github.com/user-attachments/assets/1918655c-3a77-457d-b4bd-72b2df879890
+
+Lua言語でスクリプティング可能な極小のゲームエンジンです。
+
+- コルーチン機構
+- Bullet Physicsによる物理演算
+- 3Dモデル（`.glb`）の読み込み
+- 効果音
+- 日本語を含むフォントレンダリング
+
+などの機能を備えています。
+
+デモを兼ねて、これを利用して作成したミニゲーム`assort.exe`を[リリースページ](https://github.com/haruomaki/luagui/releases)からダウンロードできます。
+
+
 # ビルド方法
 
 ## Windows
