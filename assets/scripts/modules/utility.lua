@@ -77,6 +77,34 @@ function Util.grid()
     return obj
 end
 
+---二次元のメッシュを簡単に作成する。
+---@param material Material
+---@param coords V3
+---@return WorldObject
+function Util.mesh2d(material, coords)
+    local mesh = Mesh.new()
+    mesh.draw_mode = 'triangle_fan'
+    mesh.coords = coords
+    mesh.uvs = V2 { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } }
+
+    local obj = __CurrentWorld.root:append_empty_child()
+    obj.name = "四角"
+    obj.position = vec3.new(0, 0, 0)
+    obj:add_mesh_component(material, mesh)
+
+    return obj
+end
+
+---矩形のメッシュを簡単に作成する。
+---@param material Material
+---@param width number
+---@param height number
+---@return WorldObject
+function Util.rect(material, width, height)
+    return Util.mesh2d(material,
+        V3 { { -width / 2, -height / 2 }, { width / 2, -height / 2 }, { width / 2, height / 2 }, { -width / 2, height / 2 } })
+end
+
 --- 16進数の色コードをRGB値に変換する関数
 ---@param hex string
 ---@return RGBA

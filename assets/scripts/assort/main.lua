@@ -57,6 +57,15 @@ run_window(800, 600, "assort", function()
     text.anchor = BottomRight
     text.color = Hex("#324537")
 
+    -- クロスヘア
+    local cross_hair = create_world()
+    local cross_hair_camera = CreateCamera2D()
+    local glass_image = Image.load("images/クロスヘア.png")
+    local glass_mat = Material.from_image(glass_image)
+    -- Util.rect(glass_mat, V3 { { 0, 0, 0 }, { 0.05, 0, 0 }, { 0.05, 0.05, 0 }, { 0, 0.05, 0 } })
+    Util.rect(glass_mat, 0.006, 0.006)
+
+
     Thread.forever("toggle camera mode", function()
         -- 注目中オブジェクトの更新
         block.refresh_focus(player.head)
