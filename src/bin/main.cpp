@@ -1,5 +1,5 @@
 #include <SumiGL/Texture.hpp>
-#include <gui.hpp>
+#include <gui_all.hpp>
 #include <lunchbox.hpp>
 
 int main() {

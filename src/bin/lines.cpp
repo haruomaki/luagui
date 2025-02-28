@@ -1,6 +1,6 @@
 // FIXME: 正確な寸法に修正したのに合わせ、文字サイズ要再調整。
 
-#include <gui.hpp>
+#include <gui_all.hpp>
 #include <lunchbox.hpp>
 
 static float f(float x) {

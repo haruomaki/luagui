@@ -1,6 +1,6 @@
 #include "Window.hpp"
 #include "Camera.hpp"
-#include <GUI/GUI.hpp> // MSVCだとgui.hppとGUI.hppが区別できないのでフルパス指定。
+#include "GUI.hpp"
 #include <SumiGL/Window.hpp>
 
 using namespace std::chrono_literals;

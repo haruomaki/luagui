@@ -8,7 +8,7 @@ int main() {
     for (size_t i = 0; auto v : gltf::vertex_data(model)) {
         std::cout << "Vertexv " << i++ << ": " << v.x << " "
                   << v.y << " "
-                  << v.z << std::endl;
+                  << v.z << "\n";
     }
     gltf::uv_data(model);
     gltf::index_data(model);

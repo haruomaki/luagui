@@ -1,5 +1,5 @@
 #include "sound.hpp"
-#include <GUI/GUI.hpp> // MSVCだとgui.hppと区別が付かないためフルパスで。
+#include "GUI.hpp"
 
 SoundSource::SoundSource(std::string &&group_name, const Music &music)
     : OpenAL::Source(music)

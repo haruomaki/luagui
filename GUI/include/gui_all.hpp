@@ -1,3 +1,5 @@
+// GUI.hppとの混同を避けるために"gui.hpp"ではなく"gui_all.hpp"と名付ける。
+
 #pragma once
 
 #include <GUI/Camera.hpp>
