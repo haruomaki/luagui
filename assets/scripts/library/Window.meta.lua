@@ -2,8 +2,8 @@
 
 ---一つのウィンドウを表すクラス
 ---@class Window
----@field background_color RGBA ウィンドウの背景色
-local Window = {}
+---@field background_color RGBA 現在のウィンドウの背景色（読み書き可）
+Window = {}
 
 ---@type Window
 __CurrentWindow = nil

@@ -5,7 +5,7 @@ local bgm1 = Music.load("audio/BGM/雨のち小夜時雨.mp3")
 
 run_window(800, 600, "assort", function()
     -- 背景色。
-    __CurrentWindow.background_color = Hex("#86aae3")
+    Window.background_color = Hex("#86aae3")
 
     -- マウスカーソルを非表示にし、無制限に移動。
     Mouse.disable()

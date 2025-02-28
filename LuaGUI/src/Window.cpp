@@ -94,9 +94,23 @@ void register_window(sol::state &lua) {
         window.close();
     });
 
-    lua.new_usertype<Window>(
-        "Window",
-        "background_color", &Window::background_color);
+    // Window.background_colorのような静的プロパティが欲しいので、__indexと__newindexを自作する。
+    lua.new_usertype<Window>("Window");
+    lua["Window"][sol::metatable_key]["__index"] = [&lua](const sol::table & /*tbl*/, sol::stack_object key) -> sol::object {
+        // print("__indexだよ！", key.as<std::string>());
+        Window &window = lua["__CurrentWindow"];
+        if (key.as<std::string>() == "background_color") {
+            return sol::make_object(lua, window.background_color);
+        }
+        return sol::nil;
+    };
+    lua["Window"][sol::metatable_key]["__newindex"] = [&lua](const sol::table & /*tbl*/, sol::stack_object key, sol::stack_object value) {
+        // print("__newindexだよ！", key.as<std::string>());
+        Window &window = lua["__CurrentWindow"];
+        if (key.as<std::string>() == "background_color") {
+            window.background_color = value.as<RGBA>();
+        }
+    };
 
     // リフレッシュレートを取得する関数
     lua.new_usertype<Screen>(
