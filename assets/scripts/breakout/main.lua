@@ -3,9 +3,6 @@ local breakout = {}
 local figure = require("figure")
 
 function breakout.main()
-    -- 背景色。
-    Window.background_color = Hex("#403938")
-
     b2SetLengthUnitsPerMeter(0.001)
 
     local world = create_world()

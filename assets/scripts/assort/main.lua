@@ -131,5 +131,7 @@ run_window(800, 600, "assort", function()
         end
     end)
 
+    -- breakout.main()
+
     Forever()
 end)
