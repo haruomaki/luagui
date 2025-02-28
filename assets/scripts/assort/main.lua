@@ -71,10 +71,10 @@ run_window(800, 600, "assort", function()
     local jmp_camera = CreateCamera2D()
     jmp_camera.centering = BottomLeft
     local jmp_image = Image.load("images/ジャンプアイコン.png")
-    -- local jmp_mat = Material.from_image(jmp_image)
-    -- Util.rect(jmp_mat, jmp_image.width * px_meter / 64, jmp_image.height * px_meter / 64, TopRight)
-    Util.rect_image(jmp_image, 0.02, TopRight)
-    -- Util.rect(jmp_mat, 0.05, 0.05, TopRight)
+    local jmps = {}
+    for i = 1, Player.MAX_AIR_JUMP do
+        jmps[i] = Util.rect_image(jmp_image, 0.02, TopRight)
+    end
 
 
 
@@ -112,6 +112,15 @@ run_window(800, 600, "assort", function()
                     Yield()
                 end
             end)
+        end
+
+        -- ジャンプアイコンの表示/非表示
+        for i = 1, Player.MAX_AIR_JUMP do
+            if i <= Player.air_jump then
+                jmps[i].position = vec3 { (i - 1) * 0.015 + 0.002, 0.002, 0 }
+            else
+                jmps[i].position = vec3 { 0, -100, 0 }
+            end
         end
     end)
 

@@ -18,7 +18,14 @@ local walking_score = 0
 ---@type boolean
 Player.is_ground = false
 
-Player.air_jump = 1
+---空中ジャンプの残り回数。
+---@type integer
+Player.air_jump = 0
+
+---空中ジャンプの最大回数。
+---@type integer
+Player.MAX_AIR_JUMP = 3
+
 
 ---プレイヤーを出現させる。
 ---@return Player
@@ -49,7 +56,7 @@ function Player.spawn()
 
         -- 接地していたらジャンプ回数を回復。
         if Player.is_ground then
-            Player.air_jump = 3
+            Player.air_jump = Player.MAX_AIR_JUMP
         end
 
         local dt = 1 / Screen.refreshRate
