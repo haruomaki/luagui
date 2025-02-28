@@ -1,7 +1,11 @@
 local breakout = require("breakout.main")
 local Player = require("Player")
 
-local bgm1 = Music.load("audio/BGM/雨のち小夜時雨.mp3")
+local bgms = {}
+for i, value in ipairs(Storage.ls("/audio/BGM")) do
+    print(i, value)
+    bgms[i] = Music.load("audio/BGM/" .. value)
+end
 
 run_window(800, 600, "assort", function()
     -- 背景色。
@@ -19,7 +23,8 @@ run_window(800, 600, "assort", function()
     -- BGMを流す
     Music.set_group_volume("BGM", 0.2)
     Thread.forever("BGMを流すスレッド", function()
-        play_music_blocking("BGM", bgm1)
+        play_music_blocking("BGM", bgms[math.random(1, #bgms)])
+        Wait(math.random(10, 60))
     end)
 
     -- キューブを生成

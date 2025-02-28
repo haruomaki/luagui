@@ -9,6 +9,7 @@
 #include "Box2D.hpp"
 #include "BulletPhysics.hpp"
 #include "Camera.hpp"
+#include "Lunchbox/Storage.hpp"
 #include "Text.hpp"
 #include "Window.hpp"
 #include "World.hpp"
@@ -25,6 +26,21 @@ static void register_chrono(sol::state &lua) {
         auto seconds = std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
         return seconds;
     });
+}
+
+// ストレージ関連のクラスと関数を登録
+static void register_storage(sol::state &lua) {
+    lua.new_usertype<lunchbox::Storage>(
+        "Storage",
+        "ls", [&lua](const std::string &path) -> std::vector<std::string> {
+            // TODO: std::stringではなくPathを返す
+            lunchbox::Storage &storage = lua["__Storage"];
+            std::vector<std::string> ret;
+            for (const auto &p : storage.list(path)) {
+                ret.emplace_back(p.string());
+            }
+            return ret;
+        });
 }
 
 static void run_window(sol::state &lua, int width, int height, const std::string &title, sol::function func) {
@@ -167,6 +183,7 @@ LuaGUI::LuaGUI() {
     register_vec(lua);
     register_chrono(lua);
     register_window(lua);
+    register_storage(lua); // windowの後（__Storageの初期化）
     register_world_object(lua);
     register_world(lua);
     register_camera(lua);
