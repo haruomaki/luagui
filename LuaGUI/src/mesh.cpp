@@ -1,5 +1,7 @@
 #include "mesh.hpp"
 #include "Lunchbox/core/glTF.hpp"
+#include "SumiGL/Window.hpp"
+#include "SumiGL/constants.hpp"
 #include "vec.hpp"
 #include <GUI/GUI.hpp>
 #include <GUI/Mesh.hpp>
@@ -105,8 +107,18 @@ void register_mesh(sol::state &lua) {
             mesh.indices = gltf::index_data(model);
             mesh.use_index = true;
             mesh.draw_mode = GL_TRIANGLES;
-            return &mesh;
-        },
+            return &mesh; },
+        "from_image", [&lua](const std::string &file_path) -> Mesh * {
+            GUI &gui = lua["__GUI"];
+            lunchbox::Storage &storage = lua["__Storage"];
+            auto image = storage.get_image(file_path);
+            auto &mesh = gui.resources.append<Mesh>().get();
+            const float w = float(image.width) * px_meter;
+            const float h = float(image.height) * px_meter;
+            mesh.vertices.setCoords({{-w, -h, 0}, {w, -h, 0}, {w, h, 0}, {-w, h, 0}});
+            mesh.vertices.set_uvs({{0, 1}, {1, 1}, {1, 0}, {0, 0}});
+            mesh.draw_mode = GL_TRIANGLE_FAN;
+            return &mesh; },
         sol::base_classes, sol::bases<Resource>());
 
     lua["WorldObject"]["add_mesh_component"] = [](WorldObject &parent, Material *material, Mesh *mesh) -> MeshComponent * {

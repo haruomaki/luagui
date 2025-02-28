@@ -112,6 +112,26 @@ function Util.rect(material, width, height, anchor)
         })
 end
 
+---画像から矩形のメッシュを簡単に作成する。
+---@param image Image 画像
+---@param scale? number 拡大率
+---@param anchor? vec2 中心のオフセット。デフォルトはど真ん中。
+---@return WorldObject
+function Util.rect_image(image, scale, anchor)
+    scale = scale or 1
+    anchor = anchor or Center
+    local material = Material.from_image(image) -- TODO: マテリアルを使いまわす
+    local width = image.width * px_meter * scale
+    local height = image.height * px_meter * scale
+    return Util.mesh2d(material,
+        V3 {
+            { width * (anchor.x - 1) / 2, height * (anchor.y - 1) / 2 },
+            { width * (anchor.x + 1) / 2, height * (anchor.y - 1) / 2 },
+            { width * (anchor.x + 1) / 2, height * (anchor.y + 1) / 2 },
+            { width * (anchor.x - 1) / 2, height * (anchor.y + 1) / 2 },
+        })
+end
+
 --- 16進数の色コードをRGB値に変換する関数
 ---@param hex string
 ---@return RGBA

@@ -67,3 +67,8 @@ function WorldObject:add_mesh_component(material, mesh) end
 ---@param file_path string ファイルパス
 ---@return Mesh
 function Mesh.load(file_path) end
+
+---画像のサイズに合わせた矩形状のメッシュを作成する。
+---@param file_path string ファイルパス
+---@return Mesh
+function Mesh.from_image(file_path) end

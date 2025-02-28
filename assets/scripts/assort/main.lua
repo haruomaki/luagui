@@ -66,6 +66,18 @@ run_window(800, 600, "assort", function()
     Util.rect(glass_mat, 0.006, 0.006)
 
 
+    -- ジャンプアイコン
+    create_world()
+    local jmp_camera = CreateCamera2D()
+    jmp_camera.centering = BottomLeft
+    local jmp_image = Image.load("images/ジャンプアイコン.png")
+    -- local jmp_mat = Material.from_image(jmp_image)
+    -- Util.rect(jmp_mat, jmp_image.width * px_meter / 64, jmp_image.height * px_meter / 64, TopRight)
+    Util.rect_image(jmp_image, 0.02, TopRight)
+    -- Util.rect(jmp_mat, 0.05, 0.05, TopRight)
+
+
+
     Thread.forever("toggle camera mode", function()
         -- 注目中オブジェクトの更新
         block.refresh_focus(player.head)

@@ -117,3 +117,6 @@ Up = vec3 { 0, 1, 0 }
 Down = vec3 { 0, -1, 0 }
 
 Direction = { Front = Front, Back = Back, Left = Left, Right = Right, Up = Up, Down = Down }
+
+inch_meter = 0.0254        -- 1インチは正確に2.54cm
+px_meter = inch_meter / 72 -- 72dpiディスプレイ上で、1ピクセルは1/72インチ(≒0.3528mm)
