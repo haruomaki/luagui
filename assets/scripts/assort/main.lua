@@ -17,7 +17,7 @@ run_window(800, 600, "assort", function()
     -- camera.owner.parent.position = vec3 { 0, 1.5, 4 }
 
     -- BGMを流す
-    Music.set_group_volume("BGM", 0.3)
+    Music.set_group_volume("BGM", 0.25)
     Thread.forever("BGMを流すスレッド", function()
         play_music_blocking("BGM", bgm1)
     end)

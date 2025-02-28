@@ -96,13 +96,20 @@ function Util.mesh2d(material, coords)
 end
 
 ---矩形のメッシュを簡単に作成する。
----@param material Material
----@param width number
----@param height number
+---@param material Material 表示する物体のマテリアル
+---@param width number 矩形の幅
+---@param height number 矩形の高さ
+---@param anchor? vec2 中心のオフセット。デフォルトはど真ん中。
 ---@return WorldObject
-function Util.rect(material, width, height)
+function Util.rect(material, width, height, anchor)
+    anchor = anchor or Center
     return Util.mesh2d(material,
-        V3 { { -width / 2, -height / 2 }, { width / 2, -height / 2 }, { width / 2, height / 2 }, { -width / 2, height / 2 } })
+        V3 {
+            { width * (anchor.x - 1) / 2, height * (anchor.y - 1) / 2 },
+            { width * (anchor.x + 1) / 2, height * (anchor.y - 1) / 2 },
+            { width * (anchor.x + 1) / 2, height * (anchor.y + 1) / 2 },
+            { width * (anchor.x - 1) / 2, height * (anchor.y + 1) / 2 },
+        })
 end
 
 --- 16進数の色コードをRGB値に変換する関数
