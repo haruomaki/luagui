@@ -1,8 +1,6 @@
 #include <gui_all.hpp>
 
 int main() {
-    setUTF8();
-
     std::cout << "The quick brown fox jumps over the lazy dog.\n";
     std::cout << "素早い茶色の狐が怠け者の犬を飛び越える。\n";
     std::cout << "1234567890!@#$%^&*()_+-=[]{}|;:'\",.<>?/\\\n";
