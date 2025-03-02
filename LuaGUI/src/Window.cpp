@@ -1,5 +1,6 @@
 #include "Window.hpp"
 #include <GUI/GUI.hpp>
+#include <GUI/Image.hpp>
 #include <GUI/Window.hpp>
 #include <sol/sol.hpp>
 
@@ -109,6 +110,15 @@ void register_window(sol::state &lua) {
         Window &window = lua["__CurrentWindow"];
         if (key.as<std::string>() == "background_color") {
             window.background_color = value.as<RGBA>();
+        }
+        if (key.as<std::string>() == "icon") {
+            auto &image = value.as<Image>();
+            if (image.channels != 4) {
+                warn("アイコンに設定する画像はRGBA形式にしてください。");
+                return;
+            }
+            GLFWimage imm = {image.width, image.height, reinterpret_cast<unsigned char *>(image.pixels.get())};
+            glfwSetWindowIcon(window.gwin(), 1, &imm);
         }
     };
 

@@ -8,8 +8,9 @@ for i, value in ipairs(Storage.ls("/audio/BGM")) do
 end
 
 run_window(800, 600, "assort", function()
-    -- 背景色。
+    -- 背景色とアイコン。
     Window.background_color = Hex("#86aae3")
+    Window.icon = Image.load("images/青いガラス玉.png")
 
     -- マウスカーソルを非表示にし、無制限に移動。
     Mouse.disable()

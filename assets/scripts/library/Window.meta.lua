@@ -3,6 +3,7 @@
 ---一つのウィンドウを表すクラス
 ---@class Window
 ---@field background_color RGBA 現在のウィンドウの背景色（読み書き可）
+---@field icon Image タスクバーなどに表示されるアイコン（書き込み専用）
 Window = {}
 
 ---@type Window
