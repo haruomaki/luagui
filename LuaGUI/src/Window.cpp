@@ -1,7 +1,7 @@
 #include "Window.hpp"
 #include <GUI/GUI.hpp>
-#include <GUI/Image.hpp>
 #include <GUI/Window.hpp>
+#include <GUI/image.hpp>
 #include <sol/sol.hpp>
 
 using Keymap = std::unordered_map<std::string_view, int>;

@@ -18,6 +18,9 @@ static void set_console_color(WORD color) {
 }
 
 // ユーザに見せるmain関数。
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wmain"
+#endif
 int main(int argc, const char *argv[]);
 
 // Windows環境での本当のエントリポイント。

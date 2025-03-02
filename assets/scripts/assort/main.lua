@@ -24,8 +24,8 @@ run_window(800, 600, "assort", function()
     -- BGMを流す
     Music.set_group_volume("BGM", 0.2)
     Thread.forever("BGMを流すスレッド", function()
+        Wait(math.random(10, 30))
         play_music_blocking("BGM", bgms[math.random(1, #bgms)])
-        Wait(math.random(10, 60))
     end)
 
     -- キューブを生成

@@ -119,7 +119,7 @@ class WorldObject {
     //     }
     // }
 
-    [[nodiscard]] unsigned long ptr() const { return reinterpret_cast<unsigned long>(this); }
+    [[nodiscard]] uintptr_t ptr() const { return reinterpret_cast<uintptr_t>(this); }
     bool operator==(const WorldObject &other) const { return ptr() == other.ptr(); }
     [[nodiscard]] World &get_world() const { return this->world_; }
 
